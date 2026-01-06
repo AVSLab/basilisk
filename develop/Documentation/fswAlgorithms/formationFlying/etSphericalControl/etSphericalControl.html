@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: etSphericalControl &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="etSphericalControl" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">etSphericalControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../formationBarycenter/index.html">formationBarycenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillStateConverter/index.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillToAttRef/index.html">hillToAttRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanOEFeedback/index.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftPointing/index.html">spacecraftPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftReconfig/index.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="index.html">etSphericalControl</a></li>
+      <li class="breadcrumb-item active">Module: etSphericalControl</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/formationFlying/etSphericalControl/etSphericalControl.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-etsphericalcontrol">
+<span id="etsphericalcontrol"></span><h1>Module: etSphericalControl<a class="headerlink" href="#module-etsphericalcontrol" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes the control thrust force of the Electrostatic Tractor Relative Motion Control. A servicing
+satellite and a debris (or other satellite) are charged to different electrostatic potentials, resulting in an
+attractive force between the two craft. The Electrostatic Tractor (ET) concept uses this attractive force to tug the debris to another orbit. See <a class="reference external" href="https://doi.org/10.2514/1.56118">Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections</a> for more information on the ET relative motion control.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-et-spherical-control"></span><img alt="../../../../_images/moduleEtSphericalControl.svg" src="../../../../_images/moduleEtSphericalControl.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">etSphericalControl()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>servicerTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>Servicer position and velocity input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>debrisTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>Debris position and velocity input message</p></td>
+</tr>
+<tr class="row-even"><td><p>servicerAttInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>Servicer attitude input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerVehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Servicer vehicle configuration (mass information) input message</p></td>
+</tr>
+<tr class="row-even"><td><p>debrisVehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Debris vehicle configuration (mass information) input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>eForceInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a></p></td>
+<td><p>Inertial electrostatic force that acts on servicer input message</p></td>
+</tr>
+<tr class="row-even"><td><p>forceInertialOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a></p></td>
+<td><p>Inertial frame control thrust force output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>forceBodyOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#cmdforcebodymsgpayload"><span class="std std-ref">CmdForceBodyMsgPayload</span></a></p></td>
+<td><p>Body frame control thrust force output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This control law in this module is based on an attractive electrostatic force between the two craft, so the electric potentials of the two craft must be different in sign (assuming that both craft are fully conducting).</p>
+<section id="equations">
+<h3>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h3>
+<p>The necessary equations for this module are given in <a class="reference external" href="https://doi.org/10.2514/1.56118">Relative Motion Control For Two-Spacecraft Electrostatic Orbit
+Corrections</a>. Note that Eq. (45) in this paper should be</p>
+<div class="math notranslate nohighlight">
+\[{\bf T}_t = m_T [ {\bf u} - {\bf F}_c (1/m_T + 1/m_D)]\]</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The ETcontrol module is created using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">etSphericalControl</span> <span class="o">=</span> <span class="n">etSphericalControl</span><span class="o">.</span><span class="n">etSphericalControl</span><span class="p">()</span>
+<span class="linenos">2</span><span class="n">etSphericalControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;etSphericalControl&quot;</span>
+<span class="linenos">3</span><span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">etSphericalControl</span><span class="p">,</span> <span class="n">etSphericalControl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The reference position variables in the spherical frame <span class="math notranslate nohighlight">\(L_r\)</span>, <span class="math notranslate nohighlight">\(theta_r\)</span>, <span class="math notranslate nohighlight">\(phi_r\)</span>,
+the feedback gains <span class="math notranslate nohighlight">\(K\)</span> and <span class="math notranslate nohighlight">\(P\)</span>, and the gravitational parameter mu must
+be added to etSphericalControl.</p>
+<p>The module computes the control force vector both with respect to the inertial and body frame as
+separate output messages.  Depending on the needs of the developer, the control force can be connected
+in either frame to down-stream modules.  However, don’t connect both output messages because
+this would result in the control force being applied twice.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427SelfInit_etSphericalControlP24etSphericalControlConfig7int64_t">
+<span id="_CPPv327SelfInit_etSphericalControlP24etSphericalControlConfig7int64_t"></span><span id="_CPPv227SelfInit_etSphericalControlP24etSphericalControlConfig7int64_t"></span><span id="SelfInit_etSphericalControl__etSphericalControlConfigP.int64_t"></span><span class="target" id="et_spherical_control_8h_1abca68860b6cbacf4127dc9a3b11a00dc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_etSphericalControl</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424etSphericalControlConfig" title="etSphericalControlConfig"><span class="n"><span class="pre">etSphericalControlConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427SelfInit_etSphericalControlP24etSphericalControlConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425Update_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t">
+<span id="_CPPv325Update_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t"></span><span id="_CPPv225Update_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t"></span><span id="Update_etSphericalControl__etSphericalControlConfigP.uint64_t.int64_t"></span><span class="target" id="et_spherical_control_8h_1a48fd282a1f657871dac36b91d7ec914f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_etSphericalControl</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424etSphericalControlConfig" title="etSphericalControlConfig"><span class="n"><span class="pre">etSphericalControlConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425Update_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a description of what this main Update() routine does for this module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424Reset_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t">
+<span id="_CPPv324Reset_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t"></span><span id="_CPPv224Reset_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t"></span><span id="Reset_etSphericalControl__etSphericalControlConfigP.uint64_t.int64_t"></span><span class="target" id="et_spherical_control_8h_1a596a5d02ecbc0fd0f6c6dafe113ae615"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_etSphericalControl</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424etSphericalControlConfig" title="etSphericalControlConfig"><span class="n"><span class="pre">etSphericalControlConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424Reset_etSphericalControlP24etSphericalControlConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426calc_RelativeMotionControlP24etSphericalControlConfig18NavTransMsgPayload18NavTransMsgPayload16NavAttMsgPayload23VehicleConfigMsgPayload23VehicleConfigMsgPayload26CmdForceInertialMsgPayloadP26CmdForceInertialMsgPayloadP22CmdForceBodyMsgPayload">
+<span id="_CPPv326calc_RelativeMotionControlP24etSphericalControlConfig18NavTransMsgPayload18NavTransMsgPayload16NavAttMsgPayload23VehicleConfigMsgPayload23VehicleConfigMsgPayload26CmdForceInertialMsgPayloadP26CmdForceInertialMsgPayloadP22CmdForceBodyMsgPayload"></span><span id="_CPPv226calc_RelativeMotionControlP24etSphericalControlConfig18NavTransMsgPayload18NavTransMsgPayload16NavAttMsgPayload23VehicleConfigMsgPayload23VehicleConfigMsgPayload26CmdForceInertialMsgPayloadP26CmdForceInertialMsgPayloadP22CmdForceBodyMsgPayload"></span><span id="calc_RelativeMotionControl__etSphericalControlConfigP.NavTransMsgPayload.NavTransMsgPayload.NavAttMsgPayload.VehicleConfigMsgPayload.VehicleConfigMsgPayload.CmdForceInertialMsgPayload.CmdForceInertialMsgPayloadP.CmdForceBodyMsgPayloadP"></span><span class="target" id="et_spherical_control_8h_1ab2002282362062c7ce41eeba2478829e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calc_RelativeMotionControl</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424etSphericalControlConfig" title="etSphericalControlConfig"><span class="n"><span class="pre">etSphericalControlConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">servicerTransInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">debrisTransInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">servicerAttInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">servicerVehicleConfigInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">debrisVehicleConfigInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#_CPPv426CmdForceInertialMsgPayload" title="CmdForceInertialMsgPayload"><span class="n"><span class="pre">CmdForceInertialMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">eForceInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#_CPPv426CmdForceInertialMsgPayload" title="CmdForceInertialMsgPayload"><span class="n"><span class="pre">CmdForceInertialMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">forceInertialOutMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#_CPPv422CmdForceBodyMsgPayload" title="CmdForceBodyMsgPayload"><span class="n"><span class="pre">CmdForceBodyMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">forceBodyOutMsgBuffer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426calc_RelativeMotionControlP24etSphericalControlConfig18NavTransMsgPayload18NavTransMsgPayload16NavAttMsgPayload23VehicleConfigMsgPayload23VehicleConfigMsgPayload26CmdForceInertialMsgPayloadP26CmdForceInertialMsgPayloadP22CmdForceBodyMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>This function calculates the control force of the Electrostatic Tractor Relative Motion Control based on current relative position and velocity, and desired relative position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>servicerTransInMsgBuffer</strong> – Servicer’s position and velocity </p></li>
+<li><p><strong>debrisTransInMsgBuffer</strong> – Debris’ position and velocity </p></li>
+<li><p><strong>servicerAttInMsgBuffer</strong> – Servicer’s attitude </p></li>
+<li><p><strong>servicerVehicleConfigInMsgBuffer</strong> – Servicer Vehicle Configuration </p></li>
+<li><p><strong>debrisVehicleConfigInMsgBuffer</strong> – Servicer Vehicle Configuration </p></li>
+<li><p><strong>eForceInMsgBuffer</strong> – Electrostatic force on servicer </p></li>
+<li><p><strong>forceInertialOutMsgBuffer</strong> – inertial force output (3-axis) </p></li>
+<li><p><strong>forceBodyOutMsgBuffer</strong> – body force output (3-axis) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv424etSphericalControlConfig">
+<span id="_CPPv324etSphericalControlConfig"></span><span id="_CPPv224etSphericalControlConfig"></span><span id="etSphericalControlConfig"></span><span class="target" id="structet_spherical_control_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">etSphericalControlConfig</span></span></span><a class="headerlink" href="#_CPPv424etSphericalControlConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;etSphericalControl.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig18servicerTransInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig18servicerTransInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig18servicerTransInMsgE"></span><span id="etSphericalControlConfig::servicerTransInMsg__NavTransMsg_C"></span><span class="target" id="structet_spherical_control_config_1a93db751c36787c50c8a4c59117e9c684"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig18servicerTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer orbit input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig16debrisTransInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig16debrisTransInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig16debrisTransInMsgE"></span><span id="etSphericalControlConfig::debrisTransInMsg__NavTransMsg_C"></span><span class="target" id="structet_spherical_control_config_1af57fb46d48ee5ab4239bc7a33d382eed"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">debrisTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig16debrisTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>debris orbit input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig16servicerAttInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig16servicerAttInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig16servicerAttInMsgE"></span><span id="etSphericalControlConfig::servicerAttInMsg__NavAttMsg_C"></span><span class="target" id="structet_spherical_control_config_1a040f24165cf069d427c5f06afae175bc"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerAttInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig16servicerAttInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer attitude input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig26servicerVehicleConfigInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig26servicerVehicleConfigInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig26servicerVehicleConfigInMsgE"></span><span id="etSphericalControlConfig::servicerVehicleConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="structet_spherical_control_config_1a5dbc2dc657c98569c159786188582c7f"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerVehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig26servicerVehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer vehicle configuration (mass) input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig24debrisVehicleConfigInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig24debrisVehicleConfigInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig24debrisVehicleConfigInMsgE"></span><span id="etSphericalControlConfig::debrisVehicleConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="structet_spherical_control_config_1a32c0de8612bcee7c83d04e4946b0d30a"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">debrisVehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig24debrisVehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>debris vehicle configuration (mass) input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig11eForceInMsgE">
+<span id="_CPPv3N24etSphericalControlConfig11eForceInMsgE"></span><span id="_CPPv2N24etSphericalControlConfig11eForceInMsgE"></span><span id="etSphericalControlConfig::eForceInMsg__CmdForceInertialMsg_C"></span><span class="target" id="structet_spherical_control_config_1a13c6f6007267693e52ce733a3f0440b7"></span><span class="n"><span class="pre">CmdForceInertialMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eForceInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig11eForceInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer electrostatic force input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig19forceInertialOutMsgE">
+<span id="_CPPv3N24etSphericalControlConfig19forceInertialOutMsgE"></span><span id="_CPPv2N24etSphericalControlConfig19forceInertialOutMsgE"></span><span id="etSphericalControlConfig::forceInertialOutMsg__CmdForceInertialMsg_C"></span><span class="target" id="structet_spherical_control_config_1aa4a62ec6e15e6314ce0032a499a19ef2"></span><span class="n"><span class="pre">CmdForceInertialMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceInertialOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig19forceInertialOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer inertial frame control force output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig15forceBodyOutMsgE">
+<span id="_CPPv3N24etSphericalControlConfig15forceBodyOutMsgE"></span><span id="_CPPv2N24etSphericalControlConfig15forceBodyOutMsgE"></span><span id="etSphericalControlConfig::forceBodyOutMsg__CmdForceBodyMsg_C"></span><span class="target" id="structet_spherical_control_config_1aba7ef2564a4f579c1e7c2ef683f6a1ae"></span><span class="n"><span class="pre">CmdForceBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceBodyOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig15forceBodyOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>servicer body frame control force output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig2muE">
+<span id="_CPPv3N24etSphericalControlConfig2muE"></span><span id="_CPPv2N24etSphericalControlConfig2muE"></span><span id="etSphericalControlConfig::mu__double"></span><span class="target" id="structet_spherical_control_config_1a19897edeef78eaf58e8ce799d0b24f9b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3/s^2] gravitational parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig3L_rE">
+<span id="_CPPv3N24etSphericalControlConfig3L_rE"></span><span id="_CPPv2N24etSphericalControlConfig3L_rE"></span><span id="etSphericalControlConfig::L_r__double"></span><span class="target" id="structet_spherical_control_config_1a0ae7a00e8b6c02d0a937134332571288"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L_r</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig3L_rE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] reference separation distance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig7theta_rE">
+<span id="_CPPv3N24etSphericalControlConfig7theta_rE"></span><span id="_CPPv2N24etSphericalControlConfig7theta_rE"></span><span id="etSphericalControlConfig::theta_r__double"></span><span class="target" id="structet_spherical_control_config_1a0a79a8fbffbb1fd5afd6d20792937ed1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta_r</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig7theta_rE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] reference in-plane rotation angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig5phi_rE">
+<span id="_CPPv3N24etSphericalControlConfig5phi_rE"></span><span id="_CPPv2N24etSphericalControlConfig5phi_rE"></span><span id="etSphericalControlConfig::phi_r__double"></span><span class="target" id="structet_spherical_control_config_1ae9086273d435f6269441c83a013e69ad"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phi_r</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig5phi_rE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] reference out-of-plane rotation angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig1KE">
+<span id="_CPPv3N24etSphericalControlConfig1KE"></span><span id="_CPPv2N24etSphericalControlConfig1KE"></span><span id="etSphericalControlConfig::K__doubleA"></span><span class="target" id="structet_spherical_control_config_1a7d2cfe612ad731f0d39930735f2355a7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig1KE" title="Link to this definition"></a><br /></dt>
+<dd><p>3x3 symmetric positive definite feedback gain matrix [K] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig1PE">
+<span id="_CPPv3N24etSphericalControlConfig1PE"></span><span id="_CPPv2N24etSphericalControlConfig1PE"></span><span id="etSphericalControlConfig::P__doubleA"></span><span class="target" id="structet_spherical_control_config_1ae6dcb4e13771662b235604de43822a83"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>3x3 symmetric positive definite feedback gain matrix [P] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24etSphericalControlConfig9bskLoggerE">
+<span id="_CPPv3N24etSphericalControlConfig9bskLoggerE"></span><span id="_CPPv2N24etSphericalControlConfig9bskLoggerE"></span><span id="etSphericalControlConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structet_spherical_control_config_1aef8af40ae7701444cbe64cab13d4f923"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N24etSphericalControlConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="etSphericalControl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

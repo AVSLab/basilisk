@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: magneticFieldCenteredDipole &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="magneticFieldCenteredDipole" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">magneticFieldCenteredDipole</a></li>
+      <li class="breadcrumb-item active">Module: magneticFieldCenteredDipole</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/magneticFieldCenteredDipole/magneticFieldCenteredDipole.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-magneticfieldcentereddipole">
+<span id="magneticfieldcentereddipole"></span><h1>Module: magneticFieldCenteredDipole<a class="headerlink" href="#module-magneticfieldcentereddipole" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Evaluate a centered dipole magnetic field model about a planet for a range of spacecraft locations.
+For more information on this module see this <a class="reference download internal" download="" href="../../../../_downloads/b63a192273f6e7775553c1e8244940f3/Basilisk-magFieldDipole-20190309.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+<p>The module is a sub-class of the <a class="reference internal" href="../_GeneralModuleFiles/magneticFieldBase.html#magneticfieldbase"><span class="std std-ref">Module: magneticFieldBase</span></a> base class.  See that class for the nominal messages
+used and general instructions.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv427MagneticFieldCenteredDipole">
+<span id="_CPPv327MagneticFieldCenteredDipole"></span><span id="_CPPv227MagneticFieldCenteredDipole"></span><span id="MagneticFieldCenteredDipole"></span><span class="target" id="class_magnetic_field_centered_dipole"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MagneticFieldCenteredDipole</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/magneticFieldBase.html#_CPPv417MagneticFieldBase" title="MagneticFieldBase"><span class="n"><span class="pre">MagneticFieldBase</span></span></a><a class="headerlink" href="#_CPPv427MagneticFieldCenteredDipole" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;magneticFieldCenteredDipole.h&gt;</em></div>
+<p>magnetic field centered dipole class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole27MagneticFieldCenteredDipoleEv">
+<span id="_CPPv3N27MagneticFieldCenteredDipole27MagneticFieldCenteredDipoleEv"></span><span id="_CPPv2N27MagneticFieldCenteredDipole27MagneticFieldCenteredDipoleEv"></span><span id="MagneticFieldCenteredDipole::MagneticFieldCenteredDipole"></span><span class="target" id="class_magnetic_field_centered_dipole_1a68a0bcb9606beb8b7d2ab5e0962a4e28"></span><span class="sig-name descname"><span class="n"><span class="pre">MagneticFieldCenteredDipole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole27MagneticFieldCenteredDipoleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipoleD0Ev">
+<span id="_CPPv3N27MagneticFieldCenteredDipoleD0Ev"></span><span id="_CPPv2N27MagneticFieldCenteredDipoleD0Ev"></span><span id="MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole"></span><span class="target" id="class_magnetic_field_centered_dipole_1a9df2b5929b389f8ecb4987bee1aa91f3"></span><span class="sig-name descname"><span class="n"><span class="pre">~MagneticFieldCenteredDipole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipoleD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Empty destructor method. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole3g10E">
+<span id="_CPPv3N27MagneticFieldCenteredDipole3g10E"></span><span id="_CPPv2N27MagneticFieldCenteredDipole3g10E"></span><span id="MagneticFieldCenteredDipole::g10__double"></span><span class="target" id="class_magnetic_field_centered_dipole_1ac59d39977b220e8113d3a0874dbdf10c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">g10</span></span></span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole3g10E" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] IGRF coefficient g_1^0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole3g11E">
+<span id="_CPPv3N27MagneticFieldCenteredDipole3g11E"></span><span id="_CPPv2N27MagneticFieldCenteredDipole3g11E"></span><span id="MagneticFieldCenteredDipole::g11__double"></span><span class="target" id="class_magnetic_field_centered_dipole_1ac1048918b074a9821c363ed448c6e01d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">g11</span></span></span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole3g11E" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] IGRF coefficient g_1^1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole3h11E">
+<span id="_CPPv3N27MagneticFieldCenteredDipole3h11E"></span><span id="_CPPv2N27MagneticFieldCenteredDipole3h11E"></span><span id="MagneticFieldCenteredDipole::h11__double"></span><span class="target" id="class_magnetic_field_centered_dipole_1ae2e7e01cc5e60de104ec5495cd7034d8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h11</span></span></span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole3h11E" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] IGRF coefficient h_1^1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole9bskLoggerE">
+<span id="_CPPv3N27MagneticFieldCenteredDipole9bskLoggerE"></span><span id="_CPPv2N27MagneticFieldCenteredDipole9bskLoggerE"></span><span id="MagneticFieldCenteredDipole::bskLogger__BSKLogger"></span><span class="target" id="class_magnetic_field_centered_dipole_1a18188875a49735ad1bdd230ed16b13f3"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27MagneticFieldCenteredDipole26evaluateMagneticFieldModelEP23MagneticFieldMsgPayloadd">
+<span id="_CPPv3N27MagneticFieldCenteredDipole26evaluateMagneticFieldModelEP23MagneticFieldMsgPayloadd"></span><span id="_CPPv2N27MagneticFieldCenteredDipole26evaluateMagneticFieldModelEP23MagneticFieldMsgPayloadd"></span><span id="MagneticFieldCenteredDipole::evaluateMagneticFieldModel__MagneticFieldMsgPayloadP.double"></span><span class="target" id="class_magnetic_field_centered_dipole_1a0c8351541dd88a15e5e65710e721e1ad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateMagneticFieldModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/MagneticFieldMsgPayload.html#_CPPv423MagneticFieldMsgPayload" title="MagneticFieldMsgPayload"><span class="n"><span class="pre">MagneticFieldMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27MagneticFieldCenteredDipole26evaluateMagneticFieldModelEP23MagneticFieldMsgPayloadd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is evaluates the centered dipole magnetic field model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> – magnetic field message structure </p></li>
+<li><p><strong>currentTime</strong> – current time (s) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="magneticFieldCenteredDipole" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

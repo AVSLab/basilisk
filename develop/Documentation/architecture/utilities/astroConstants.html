@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>astroConstants &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="avsEigenMRP" href="avsEigenMRP.html" />
+    <link rel="prev" title="BSpline" href="BSpline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">astroConstants</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/astroConstants.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="astroconstants">
+<span id="id1"></span><h1>astroConstants<a class="headerlink" href="#astroconstants" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.G_UNIVERSIAL">
+<span class="target" id="astro_constants_8h_1a60ae8867fce66c48dcbabb2150fbb551"></span><span class="sig-name descname"><span class="n"><span class="pre">G_UNIVERSIAL</span></span></span><a class="headerlink" href="#c.G_UNIVERSIAL" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.AU">
+<span class="target" id="astro_constants_8h_1ae992e5b7e1e6bc540e74aa4d3f63a269"></span><span class="sig-name descname"><span class="n"><span class="pre">AU</span></span></span><a class="headerlink" href="#c.AU" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.AU2KM">
+<span class="target" id="astro_constants_8h_1a366f883d08de8f6b64637d2348fff338"></span><span class="sig-name descname"><span class="n"><span class="pre">AU2KM</span></span></span><a class="headerlink" href="#c.AU2KM" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SPEED_LIGHT">
+<span class="target" id="astro_constants_8h_1a4ad362d24482ad4f50118d6e5775a02b"></span><span class="sig-name descname"><span class="n"><span class="pre">SPEED_LIGHT</span></span></span><a class="headerlink" href="#c.SPEED_LIGHT" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SOLAR_FLUX_EARTH">
+<span class="target" id="astro_constants_8h_1a0206aee0fba35b4a0f19eadfd9b8b244"></span><span class="sig-name descname"><span class="n"><span class="pre">SOLAR_FLUX_EARTH</span></span></span><a class="headerlink" href="#c.SOLAR_FLUX_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MPI">
+<span class="target" id="astro_constants_8h_1a4fe908ff500f843cc7602b8afd5367d2"></span><span class="sig-name descname"><span class="n"><span class="pre">MPI</span></span></span><a class="headerlink" href="#c.MPI" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MPI_2">
+<span class="target" id="astro_constants_8h_1a42cc9a6571268e31f999a9e7841cac4f"></span><span class="sig-name descname"><span class="n"><span class="pre">MPI_2</span></span></span><a class="headerlink" href="#c.MPI_2" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.M_E">
+<span class="target" id="astro_constants_8h_1a9bf5d952c5c93c70f9e66c9794d406c9"></span><span class="sig-name descname"><span class="n"><span class="pre">M_E</span></span></span><a class="headerlink" href="#c.M_E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.D2R">
+<span class="target" id="astro_constants_8h_1a0a3cc1d5cde549e408f825ddd7f5853d"></span><span class="sig-name descname"><span class="n"><span class="pre">D2R</span></span></span><a class="headerlink" href="#c.D2R" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.R2D">
+<span class="target" id="astro_constants_8h_1a39c663074332446065723e9be9350139"></span><span class="sig-name descname"><span class="n"><span class="pre">R2D</span></span></span><a class="headerlink" href="#c.R2D" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.NAN">
+<span class="target" id="astro_constants_8h_1a8abfcc76130f3f991d124dd22d7e69bc"></span><span class="sig-name descname"><span class="n"><span class="pre">NAN</span></span></span><a class="headerlink" href="#c.NAN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.RPM">
+<span class="target" id="astro_constants_8h_1a4e26e2cffb6043421a57ed275829c11f"></span><span class="sig-name descname"><span class="n"><span class="pre">RPM</span></span></span><a class="headerlink" href="#c.RPM" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SEC2DAY">
+<span class="target" id="astro_constants_8h_1a4360830cd4bfc5415a87c2d65e43ea1d"></span><span class="sig-name descname"><span class="n"><span class="pre">SEC2DAY</span></span></span><a class="headerlink" href="#c.SEC2DAY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.EARTH_GRAV">
+<span class="target" id="astro_constants_8h_1a997e6d389eefc6ea386158701c184d81"></span><span class="sig-name descname"><span class="n"><span class="pre">EARTH_GRAV</span></span></span><a class="headerlink" href="#c.EARTH_GRAV" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_SUN">
+<span class="target" id="astro_constants_8h_1a861a3b4ea504dd73565c3ad15ffbcb74"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_SUN</span></span></span><a class="headerlink" href="#c.MU_SUN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_MERCURY">
+<span class="target" id="astro_constants_8h_1ab09853e071949edf728addfb5809d1d5"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_MERCURY</span></span></span><a class="headerlink" href="#c.MU_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_VENUS">
+<span class="target" id="astro_constants_8h_1abe4e9158ca4aac80836f1c86f7e66fe4"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_VENUS</span></span></span><a class="headerlink" href="#c.MU_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_EARTH">
+<span class="target" id="astro_constants_8h_1a5f59161a437b7001e53ca9f74e2d7c95"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_EARTH</span></span></span><a class="headerlink" href="#c.MU_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_MOON">
+<span class="target" id="astro_constants_8h_1a9b4ca47beb442d5bc5b29f79e2218e35"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_MOON</span></span></span><a class="headerlink" href="#c.MU_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_MARS">
+<span class="target" id="astro_constants_8h_1a8dc01018248f5a2f27d9ac8411c18cdb"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_MARS</span></span></span><a class="headerlink" href="#c.MU_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_JUPITER">
+<span class="target" id="astro_constants_8h_1a95fafc4afdf7a1183bb8d2dc482a1dbd"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_JUPITER</span></span></span><a class="headerlink" href="#c.MU_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_SATURN">
+<span class="target" id="astro_constants_8h_1a238701d147397618dba997179fe7e6cd"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_SATURN</span></span></span><a class="headerlink" href="#c.MU_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_URANUS">
+<span class="target" id="astro_constants_8h_1a72625a0bc7aa877cc353cf1175342ba8"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_URANUS</span></span></span><a class="headerlink" href="#c.MU_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_NEPTUNE">
+<span class="target" id="astro_constants_8h_1afe50dab64c764aaaa60a3153b653b876"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_NEPTUNE</span></span></span><a class="headerlink" href="#c.MU_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MU_PLUTO">
+<span class="target" id="astro_constants_8h_1a317cef83511301afddfea4c202805c0b"></span><span class="sig-name descname"><span class="n"><span class="pre">MU_PLUTO</span></span></span><a class="headerlink" href="#c.MU_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_SUN">
+<span class="target" id="astro_constants_8h_1a70f4a65673cc96941ad52163a1aedf7d"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_SUN</span></span></span><a class="headerlink" href="#c.REQ_SUN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_MERCURY">
+<span class="target" id="astro_constants_8h_1a7b6b4986296301d33e414c487cc8a233"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_MERCURY</span></span></span><a class="headerlink" href="#c.REQ_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_MERCURY">
+<span class="target" id="astro_constants_8h_1afbb064e559e23540bee5298966e94a56"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_MERCURY</span></span></span><a class="headerlink" href="#c.J2_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_MERCURY">
+<span class="target" id="astro_constants_8h_1a4262742a115d25876c8526555f0a633a"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_MERCURY</span></span></span><a class="headerlink" href="#c.SMA_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_MERCURY">
+<span class="target" id="astro_constants_8h_1ae1e523b08d72b35bfc6e45bf2cf787ca"></span><span class="sig-name descname"><span class="n"><span class="pre">I_MERCURY</span></span></span><a class="headerlink" href="#c.I_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_MERCURY">
+<span class="target" id="astro_constants_8h_1a0e46d494e3c5dd0e5100666365fff9a1"></span><span class="sig-name descname"><span class="n"><span class="pre">E_MERCURY</span></span></span><a class="headerlink" href="#c.E_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_MERCURY">
+<span class="target" id="astro_constants_8h_1a486a060d334b7436cf0eda28c0dffbd9"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_MERCURY</span></span></span><a class="headerlink" href="#c.OMEGA_MERCURY" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_VENUS">
+<span class="target" id="astro_constants_8h_1a1fbac698ef0380623976baab45cbbe59"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_VENUS</span></span></span><a class="headerlink" href="#c.REQ_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_VENUS">
+<span class="target" id="astro_constants_8h_1adfc63c046bb90ae45470569962df4b9a"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_VENUS</span></span></span><a class="headerlink" href="#c.J2_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_VENUS">
+<span class="target" id="astro_constants_8h_1aa0c055cc766a2d031f96bb28e685c7fd"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_VENUS</span></span></span><a class="headerlink" href="#c.SMA_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_VENUS">
+<span class="target" id="astro_constants_8h_1ab98e1aeddf4f2fe4d5557b45fa1db817"></span><span class="sig-name descname"><span class="n"><span class="pre">I_VENUS</span></span></span><a class="headerlink" href="#c.I_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_VENUS">
+<span class="target" id="astro_constants_8h_1a9532adb3807f94853c3fc8d95808fb26"></span><span class="sig-name descname"><span class="n"><span class="pre">E_VENUS</span></span></span><a class="headerlink" href="#c.E_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_VENUS">
+<span class="target" id="astro_constants_8h_1a7faa56350bcb94fa442bbf67f73f36fa"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_VENUS</span></span></span><a class="headerlink" href="#c.OMEGA_VENUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_EARTH">
+<span class="target" id="astro_constants_8h_1ad572742db77bcd6a91fc93c42edff7a8"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_EARTH</span></span></span><a class="headerlink" href="#c.REQ_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.RP_EARTH">
+<span class="target" id="astro_constants_8h_1a33628db640915f31f2e460a47ef4aada"></span><span class="sig-name descname"><span class="n"><span class="pre">RP_EARTH</span></span></span><a class="headerlink" href="#c.RP_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_EARTH">
+<span class="target" id="astro_constants_8h_1a760840ecfd5677fe0ca1f1a0016fef15"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_EARTH</span></span></span><a class="headerlink" href="#c.J2_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J3_EARTH">
+<span class="target" id="astro_constants_8h_1a78878a54fcd8dd194e5a78e1d55f18d2"></span><span class="sig-name descname"><span class="n"><span class="pre">J3_EARTH</span></span></span><a class="headerlink" href="#c.J3_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J4_EARTH">
+<span class="target" id="astro_constants_8h_1aef83902be1b441beff2d973aac6f23b1"></span><span class="sig-name descname"><span class="n"><span class="pre">J4_EARTH</span></span></span><a class="headerlink" href="#c.J4_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J5_EARTH">
+<span class="target" id="astro_constants_8h_1abc6c89093993d799d32c40a6b83a5ca4"></span><span class="sig-name descname"><span class="n"><span class="pre">J5_EARTH</span></span></span><a class="headerlink" href="#c.J5_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J6_EARTH">
+<span class="target" id="astro_constants_8h_1a49b8eda06dfb86e3cc30526df5193b20"></span><span class="sig-name descname"><span class="n"><span class="pre">J6_EARTH</span></span></span><a class="headerlink" href="#c.J6_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_EARTH">
+<span class="target" id="astro_constants_8h_1a5b609c1dda434cdd38000913f23bdebc"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_EARTH</span></span></span><a class="headerlink" href="#c.SMA_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_EARTH">
+<span class="target" id="astro_constants_8h_1aee080f34c3f8e24d1448fd778ab3973a"></span><span class="sig-name descname"><span class="n"><span class="pre">I_EARTH</span></span></span><a class="headerlink" href="#c.I_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_EARTH">
+<span class="target" id="astro_constants_8h_1a1e6f454bb46d33680048d4d137150d7d"></span><span class="sig-name descname"><span class="n"><span class="pre">E_EARTH</span></span></span><a class="headerlink" href="#c.E_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_EARTH">
+<span class="target" id="astro_constants_8h_1aa190ae020a1ec102f09bd4d9741a19e1"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_EARTH</span></span></span><a class="headerlink" href="#c.OMEGA_EARTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_MOON">
+<span class="target" id="astro_constants_8h_1acabaa6fac952b820443b11f7b4b5f9e9"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_MOON</span></span></span><a class="headerlink" href="#c.REQ_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_MOON">
+<span class="target" id="astro_constants_8h_1a7f077d2ccd4ab04febf586e57d6810fe"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_MOON</span></span></span><a class="headerlink" href="#c.J2_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_MOON">
+<span class="target" id="astro_constants_8h_1ab924f4a608ee5920529e343597ccc568"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_MOON</span></span></span><a class="headerlink" href="#c.SMA_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_MOON">
+<span class="target" id="astro_constants_8h_1afb8b8526e4957b933c3eca15202685a1"></span><span class="sig-name descname"><span class="n"><span class="pre">E_MOON</span></span></span><a class="headerlink" href="#c.E_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_MOON">
+<span class="target" id="astro_constants_8h_1a6d71e08c56fc3810b933e8c22818d06a"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_MOON</span></span></span><a class="headerlink" href="#c.OMEGA_MOON" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_MARS">
+<span class="target" id="astro_constants_8h_1a71f5774f1c30f47d6c91d4e4cc6451fd"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_MARS</span></span></span><a class="headerlink" href="#c.REQ_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.RP_MARS">
+<span class="target" id="astro_constants_8h_1a0242d09b36347942d618f7531a0127a5"></span><span class="sig-name descname"><span class="n"><span class="pre">RP_MARS</span></span></span><a class="headerlink" href="#c.RP_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_MARS">
+<span class="target" id="astro_constants_8h_1ab23c19d34748325fc773c5dd3efffcca"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_MARS</span></span></span><a class="headerlink" href="#c.J2_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_MARS">
+<span class="target" id="astro_constants_8h_1a8888a32a8c87782be14ad3e3864400fd"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_MARS</span></span></span><a class="headerlink" href="#c.SMA_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_MARS">
+<span class="target" id="astro_constants_8h_1a9056f998baa1ceb5e2d29ce3615e8c1d"></span><span class="sig-name descname"><span class="n"><span class="pre">I_MARS</span></span></span><a class="headerlink" href="#c.I_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_MARS">
+<span class="target" id="astro_constants_8h_1adba4e61688d497cca524d63537efea62"></span><span class="sig-name descname"><span class="n"><span class="pre">E_MARS</span></span></span><a class="headerlink" href="#c.E_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_MARS">
+<span class="target" id="astro_constants_8h_1a11d552194142552a5cde2017d0c972f4"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_MARS</span></span></span><a class="headerlink" href="#c.OMEGA_MARS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_PHOBOS">
+<span class="target" id="astro_constants_8h_1a26cf1719abdb2fc5cbff774be049746b"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_PHOBOS</span></span></span><a class="headerlink" href="#c.REQ_PHOBOS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_DEIMOS">
+<span class="target" id="astro_constants_8h_1ae6c32c031910bde9a7a7268e693ba181"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_DEIMOS</span></span></span><a class="headerlink" href="#c.REQ_DEIMOS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_JUPITER">
+<span class="target" id="astro_constants_8h_1a723d6b757a64732ae141c6439794f7a8"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_JUPITER</span></span></span><a class="headerlink" href="#c.REQ_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_JUPITER">
+<span class="target" id="astro_constants_8h_1affea33989b3553ae9bbe650dc7c328d8"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_JUPITER</span></span></span><a class="headerlink" href="#c.J2_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_JUPITER">
+<span class="target" id="astro_constants_8h_1a8e42b6a7248eedb2b88b801247e7c517"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_JUPITER</span></span></span><a class="headerlink" href="#c.SMA_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_JUPITER">
+<span class="target" id="astro_constants_8h_1afaa0ff0e422ce75883e77c9b5e129ecd"></span><span class="sig-name descname"><span class="n"><span class="pre">I_JUPITER</span></span></span><a class="headerlink" href="#c.I_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_JUPITER">
+<span class="target" id="astro_constants_8h_1a80fcc93e7a3f47190e018fb716a1d036"></span><span class="sig-name descname"><span class="n"><span class="pre">E_JUPITER</span></span></span><a class="headerlink" href="#c.E_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_JUPITER">
+<span class="target" id="astro_constants_8h_1ad10bd501a06aa47711671d7bb0cb75b3"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_JUPITER</span></span></span><a class="headerlink" href="#c.OMEGA_JUPITER" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_SATURN">
+<span class="target" id="astro_constants_8h_1a56797e58c77cbcbf80a8f3097d20ea2c"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_SATURN</span></span></span><a class="headerlink" href="#c.REQ_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_SATURN">
+<span class="target" id="astro_constants_8h_1a657b4459f5ea6b6cd12a92013de15bef"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_SATURN</span></span></span><a class="headerlink" href="#c.J2_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_SATURN">
+<span class="target" id="astro_constants_8h_1a334a85406e0c76f64533e86c1c4a459f"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_SATURN</span></span></span><a class="headerlink" href="#c.SMA_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_SATURN">
+<span class="target" id="astro_constants_8h_1a0f829071178689560ab73beef2f9d639"></span><span class="sig-name descname"><span class="n"><span class="pre">I_SATURN</span></span></span><a class="headerlink" href="#c.I_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_SATURN">
+<span class="target" id="astro_constants_8h_1a877c778100633f4cbbbb0c8c129977f5"></span><span class="sig-name descname"><span class="n"><span class="pre">E_SATURN</span></span></span><a class="headerlink" href="#c.E_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_SATURN">
+<span class="target" id="astro_constants_8h_1a5e51ee61da5a65b30a6227b3ea50cb90"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_SATURN</span></span></span><a class="headerlink" href="#c.OMEGA_SATURN" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_URANUS">
+<span class="target" id="astro_constants_8h_1a6d017223f668a4dda78e347d3e7a2dc6"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_URANUS</span></span></span><a class="headerlink" href="#c.REQ_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_URANUS">
+<span class="target" id="astro_constants_8h_1afbc70aaa2ba8f6123b62808298c7ec48"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_URANUS</span></span></span><a class="headerlink" href="#c.J2_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_URANUS">
+<span class="target" id="astro_constants_8h_1a1843f5eed35e6224dd3a6c7bc534c0ec"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_URANUS</span></span></span><a class="headerlink" href="#c.SMA_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_URANUS">
+<span class="target" id="astro_constants_8h_1aa970878031c22cf29daab7930d509a3a"></span><span class="sig-name descname"><span class="n"><span class="pre">I_URANUS</span></span></span><a class="headerlink" href="#c.I_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_URANUS">
+<span class="target" id="astro_constants_8h_1a1553270097327bd06e7875345845000d"></span><span class="sig-name descname"><span class="n"><span class="pre">E_URANUS</span></span></span><a class="headerlink" href="#c.E_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_URANUS">
+<span class="target" id="astro_constants_8h_1a1b34e68e61c7a3dc17aed1116b228912"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_URANUS</span></span></span><a class="headerlink" href="#c.OMEGA_URANUS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_NEPTUNE">
+<span class="target" id="astro_constants_8h_1ab2f607088532d3d121402dcfb9f09ed2"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_NEPTUNE</span></span></span><a class="headerlink" href="#c.REQ_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.J2_NEPTUNE">
+<span class="target" id="astro_constants_8h_1a0b27fbb48c34bad42a879590f16e2823"></span><span class="sig-name descname"><span class="n"><span class="pre">J2_NEPTUNE</span></span></span><a class="headerlink" href="#c.J2_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_NEPTUNE">
+<span class="target" id="astro_constants_8h_1a19123575ecb296faff24eab72ce9e011"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_NEPTUNE</span></span></span><a class="headerlink" href="#c.SMA_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_NEPTUNE">
+<span class="target" id="astro_constants_8h_1a24a10626c0e2d20d3594933abbfa7067"></span><span class="sig-name descname"><span class="n"><span class="pre">I_NEPTUNE</span></span></span><a class="headerlink" href="#c.I_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_NEPTUNE">
+<span class="target" id="astro_constants_8h_1a5c28286d55446547b2d95c9f9a693992"></span><span class="sig-name descname"><span class="n"><span class="pre">E_NEPTUNE</span></span></span><a class="headerlink" href="#c.E_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_NEPTUNE">
+<span class="target" id="astro_constants_8h_1a22937e4fc8aaeb588c6bde8b4e77ff79"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_NEPTUNE</span></span></span><a class="headerlink" href="#c.OMEGA_NEPTUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.REQ_PLUTO">
+<span class="target" id="astro_constants_8h_1adce977a7fcb1d5589555ebbf2bc25f4c"></span><span class="sig-name descname"><span class="n"><span class="pre">REQ_PLUTO</span></span></span><a class="headerlink" href="#c.REQ_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SMA_PLUTO">
+<span class="target" id="astro_constants_8h_1a32f0b2d41d34a3084f837c1e44720735"></span><span class="sig-name descname"><span class="n"><span class="pre">SMA_PLUTO</span></span></span><a class="headerlink" href="#c.SMA_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.I_PLUTO">
+<span class="target" id="astro_constants_8h_1ac3036ee2a7dab6bb76cdd66b5b26f260"></span><span class="sig-name descname"><span class="n"><span class="pre">I_PLUTO</span></span></span><a class="headerlink" href="#c.I_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.E_PLUTO">
+<span class="target" id="astro_constants_8h_1af34b805e8b5e72f2665bf44c76c2b642"></span><span class="sig-name descname"><span class="n"><span class="pre">E_PLUTO</span></span></span><a class="headerlink" href="#c.E_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.OMEGA_PLUTO">
+<span class="target" id="astro_constants_8h_1a5079033d60e1755f0761fe2f11464c52"></span><span class="sig-name descname"><span class="n"><span class="pre">OMEGA_PLUTO</span></span></span><a class="headerlink" href="#c.OMEGA_PLUTO" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BSpline.html" class="btn btn-neutral float-left" title="BSpline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="avsEigenMRP.html" class="btn btn-neutral float-right" title="avsEigenMRP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

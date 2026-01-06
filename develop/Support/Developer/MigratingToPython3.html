@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Migrating BSK Scripts to Python 3 &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Adding Support Data Files" href="addSupportData.html" />
+    <link rel="prev" title="Migrating Basilisk Modules from Version 1.X to 2.X" href="migratingBskModuleToBsk2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Migrating BSK Scripts to Python 3</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dividing-scalars">Dividing Scalars</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returning-lists-instead-of-iterables">Returning Lists Instead of Iterables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#range-map-zip">Range, Map, Zip</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#print">Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#strings">Strings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyswice-imports">Pyswice Imports</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Migrating BSK Scripts to Python 3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/MigratingToPython3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="migrating-bsk-scripts-to-python-3">
+<span id="migratingtopython3"></span><h1>Migrating BSK Scripts to Python 3<a class="headerlink" href="#migrating-bsk-scripts-to-python-3" title="Link to this heading"></a></h1>
+<p>With release Basilisk v0.8.x onward the software framework now supports using Python 3. The purpose of this document is to illustrate how to
+migrate Python 2 BSK scripts such that they will function in both Python
+3 and Python 2. For the time being Python 2 is still supported as a
+depreciated functionality. But, python scripts committed to Basilisk
+should be written such that they support Python 3 and 2 for now. This
+document serves as compilation of BSK common syntactical adjustments
+needed to use Python 3. It is not a comprehensive list of the
+differences between Python 2 and Python 3.</p>
+<section id="dividing-scalars">
+<h2>Dividing Scalars<a class="headerlink" href="#dividing-scalars" title="Link to this heading"></a></h2>
+<p>Python 2 and 3 treat the devide operator <code class="docutils literal notranslate"><span class="pre">/</span></code> differently if two
+integers operated on. Thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="o">/</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>resulted in an integer value of 1 in Python 2, but yields a float value
+of 1.5 in Python 3. To get the same result in Python 3 and 2, you can
+use either of the following options which work in both version of
+Python:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="o">//</span><span class="mi">2</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">3.</span><span class="o">/</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>Without modification the user will see an error in Python 3 complaining about an unsupported type conversion:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">File</span> <span class="s2">&quot;/Users/hp/Documents/Research/Basilisk/dist3/Basilisk/simulation/sim_model/sim_model.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">4351</span><span class="p">,</span> <span class="ow">in</span> <span class="n">logThisMessage</span>
+    <span class="k">return</span> <span class="n">_sim_model</span><span class="o">.</span><span class="n">SimModel_logThisMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">messageName</span><span class="p">,</span> <span class="n">messagePeriod</span><span class="p">)</span>
+<span class="ne">NotImplementedError</span><span class="p">:</span> <span class="n">Wrong</span> <span class="n">number</span> <span class="ow">or</span> <span class="nb">type</span> <span class="n">of</span> <span class="n">arguments</span> <span class="k">for</span> <span class="n">overloaded</span> <span class="n">function</span> <span class="s1">&#39;SimModel_logThisMessage&#39;</span><span class="o">.</span>
+  <span class="n">Possible</span> <span class="n">C</span><span class="o">/</span><span class="n">C</span><span class="o">++</span> <span class="n">prototypes</span> <span class="n">are</span><span class="p">:</span>
+    <span class="n">SimModel</span><span class="p">::</span><span class="n">logThisMessage</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="p">,</span><span class="n">uint64_t</span><span class="p">)</span>
+    <span class="n">SimModel</span><span class="p">::</span><span class="n">logThisMessage</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="returning-lists-instead-of-iterables">
+<h2>Returning Lists Instead of Iterables<a class="headerlink" href="#returning-lists-instead-of-iterables" title="Link to this heading"></a></h2>
+<p>Python 3 removed <code class="docutils literal notranslate"><span class="pre">iteritems()</span></code> method. The same functionality can be achieved in both Python 2 and 3 with <code class="docutils literal notranslate"><span class="pre">items()</span></code>.</p>
+</section>
+<section id="range-map-zip">
+<h2>Range, Map, Zip<a class="headerlink" href="#range-map-zip" title="Link to this heading"></a></h2>
+<p>In Python 2 range() returns a list, while in Python 3 it returns an
+iterable object. To preserve functionality, cast as a list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="print">
+<h2>Print<a class="headerlink" href="#print" title="Link to this heading"></a></h2>
+<p>Print is treated as a statement in Python 2 and strictly a function in Python 3. For both 3 and 2:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A sample warning is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>File &quot;scenarioAttitudeFeedbackRW.py&quot;, line 715
+    print dataUsReq
+                  ^
+SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(dataUsReq)?
+</pre></div>
+</div>
+</section>
+<section id="strings">
+<h2>Strings<a class="headerlink" href="#strings" title="Link to this heading"></a></h2>
+<p>External python packages will give warnings in <code class="docutils literal notranslate"><span class="pre">pytest</span></code> if
+python strings include ‘’ where x is not a pythonic valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sa">r</span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+<p>A sample warning is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">hp</span><span class="o">/</span><span class="n">Documents</span><span class="o">/</span><span class="n">Research</span><span class="o">/</span><span class="n">Basilisk</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">testScripts</span><span class="o">/../</span><span class="n">scenarios</span><span class="o">/</span><span class="n">scenarioAttitudeFeedbackRW</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">91</span><span class="p">:</span> <span class="ne">DeprecationWarning</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">escape</span> <span class="n">sequence</span> \<span class="n">o</span>
+  <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$\omega_{BR,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pyswice-imports">
+<h2>Pyswice Imports<a class="headerlink" href="#pyswice-imports" title="Link to this heading"></a></h2>
+<p>Changes to BSK module importing has changed the
+pyswice importing convention to be completely explicit:</p>
+<p>From:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="n">pyswice</span><span class="o">.</span><span class="n">spkRead</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.pyswice.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+<span class="n">spkRead</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="migratingBskModuleToBsk2.html" class="btn btn-neutral float-left" title="Migrating Basilisk Modules from Version 1.X to 2.X" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="addSupportData.html" class="btn btn-neutral float-right" title="Adding Support Data Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

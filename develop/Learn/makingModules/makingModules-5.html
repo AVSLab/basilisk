@@ -1,0 +1,179 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Common Basilisk Support Files &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Advanced Topics" href="advancedTopics.html" />
+    <link rel="prev" title="Automation Script to Create a New Basilisk Module" href="makingDraftModule.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+      <li class="breadcrumb-item active">Common Basilisk Support Files</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/makingModules/makingModules-5.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="common-basilisk-support-files">
+<span id="makingmodules-5"></span><h1>Common Basilisk Support Files<a class="headerlink" href="#common-basilisk-support-files" title="Link to this heading"></a></h1>
+<p>The folder <code class="docutils literal notranslate"><span class="pre">src/architecture/utilities</span></code> contains a number of C code support libraries that simplify the mathematics of writing Basilisk modules.  This page highlights some common libraries used.</p>
+<dl class="simple">
+<dt><cite>astroConstants.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/astroConstants.html#astroconstants"><span class="std std-ref">astroConstants</span></a> contains a range of orbital mechanics related variable definition.</p>
+</dd>
+<dt><cite>avsEigenMRP.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/avsEigenMRP.html#avseigenmrp"><span class="std std-ref">avsEigenMRP</span></a> provides MRP capabilities to the <a class="reference external" href="https://eigen.tuxfamily.org/">Intel Eigen library</a>.</p>
+</dd>
+<dt><cite>avsEigenSupport.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/avsEigenSupport.html#avseigensupport"><span class="std std-ref">avsEigenSupport</span></a> provides a range of helper function to convert between C array variables and <a class="reference external" href="https://eigen.tuxfamily.org/">Intel Eigen library</a> vectors and matrices.</p>
+</dd>
+<dt><cite>discretize.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/discretize.html#discretize"><span class="std std-ref">discretize</span></a> provides functions to discretize a real number.</p>
+</dd>
+<dt><cite>gauss_markov.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/gauss_markov.html#gauss-markov"><span class="std std-ref">gauss_markov</span></a> provides functions to apply a second-order bounded Gauss-Markov random walk on top of an upper level process.</p>
+</dd>
+<dt><cite>geodeticConversion.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/geodeticConversion.html#geodeticconversion"><span class="std std-ref">geodeticConversion</span></a> provides a collection of functions to convert to and from planet centered frames.</p>
+</dd>
+<dt><cite>keplerianOrbit.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/keplerianOrbit.html#keplerianorbit"><span class="std std-ref">keplerianOrbit</span></a> class represents an elliptical orbit and provides a coherent set of common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the utility orbitalMotion to do orbital element to position and velocity conversion.</p>
+</dd>
+<dt><cite>linearAlgebra.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/linearAlgebra.html#linearalgebra"><span class="std std-ref">linearAlgebra</span></a> provides a collection of functions perfrom 2D, 3D, 4D and N-dimensional matrix math in C</p>
+</dd>
+<dt><cite>macroDefinitions.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/macroDefinitions.html#macrodefinitions"><span class="std std-ref">macroDefinitions</span></a> provides a collection of convenient macro definitions</p>
+</dd>
+<dt><cite>orbitalMotion.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/utilities/orbitalMotion.html#orbitalmotion"><span class="std std-ref">orbitalMotion</span></a> provides a collection of orbital mechanics related function.</p>
+</dd>
+<dt><cite>rigidBodyKinematics.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/utilities/RigidBodyKinematics.html#rigidbodykinematics"><span class="std std-ref">RigidBodyKinematics</span></a> provides a collection of rigid body kinematics transformations.  This includes functions to map between a range of attitude coordinates.</p>
+</dd>
+<dt><cite>saturate.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/saturate.html#saturate"><span class="std std-ref">saturate</span></a> is used to saturate an output variable</p>
+</dd>
+<dt><cite>signalCondition.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/signalCondition.html#signalcondition"><span class="std std-ref">signalCondition</span></a> provides provides a low-pass filter to an output variable</p>
+</dd>
+<dt><cite>simDefinitions.h</cite></dt><dd><p><a class="reference internal" href="../../Documentation/architecture/utilities/simDefinitions.html#simdefinitions"><span class="std std-ref">simDefinitions</span></a> provides common simulation related definition such as default epoch states, etc.</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="makingDraftModule.html" class="btn btn-neutral float-left" title="Automation Script to Create a New Basilisk Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="advancedTopics.html" class="btn btn-neutral float-right" title="Advanced Topics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

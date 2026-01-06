@@ -1,0 +1,933 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_gravity &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_gravity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_gravity</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBodyGravity</span>
+
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">pointMassGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">sphericalHarmonicsGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spiceInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="n">TEST_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">XML_PATH_BALL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TEST_FOLDER</span><span class="si">}</span><span class="s2">/test_ball.xml&quot;</span>
+<span class="n">XML_PATH_DUMBBELL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TEST_FOLDER</span><span class="si">}</span><span class="s2">/test_dumbbell.xml&quot;</span>
+
+
+<div class="viewcode-block" id="test_pointMass">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.html#test_gravity.test_pointMass">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;showPlots&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_pointMass</span><span class="p">(</span><span class="n">showPlots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that the gravity model with point-mass gravity conserves the</span>
+<span class="sd">    initial orbital elements after two orbits.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Orbital parameters for the body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># m**3/s**2</span>
+
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+
+    <span class="n">period</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>  <span class="c1"># s</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">period</span>
+
+    <span class="c1"># Because we use an adaptive integrator we can set the</span>
+    <span class="c1"># time step to be the final time, and let the adaptive</span>
+    <span class="c1"># integrator pick the most efficient step</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">tf</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">showPlots</span> <span class="k">else</span> <span class="n">tf</span> <span class="o">/</span> <span class="mi">100</span>
+
+    <span class="c1"># Create simulation, process, and task</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="c1"># Create the MJScene from a simple cannonball body</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH_BALL</span><span class="p">)</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">absTol</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">relTol</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1">### Create the NBodyGravity model</span>
+    <span class="c1"># add model to the dynamics task of the scene</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="c1"># Create a point-mass gravity source</span>
+    <span class="n">gravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">gravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">gravityModel</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create a gravity target from the mujoco body</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+    <span class="c1"># Create recorders for the state of the body</span>
+    <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># Initialize sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Set initial the position and velocity of the body</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Add random attitude and attitude rate, which should have no impact</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setAttitude</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">euler1232MRP</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">]))</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>  <span class="c1"># rad/s</span>
+
+    <span class="c1"># Run sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+                <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">l</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;X-position [m]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Y-position [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">oePost</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span>
+            <span class="n">mu</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;Omega&quot;</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oePost</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">oe</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="mf">1e-4</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_dumbbell">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.html#test_gravity.test_dumbbell">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;showPlots, initialAngularRate&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_dumbbell</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="n">initialAngularRate</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Test gravity on a compound spacecraft made up of two point masses</span>
+<span class="sd">    rigidly connected but separated by 200 m:</span>
+
+<span class="sd">    .. code-block:: text</span>
+
+<span class="sd">          _____</span>
+<span class="sd">         /     \            &lt;----------- 200 m -----------&gt;</span>
+<span class="sd">        | Earth |          O---------------@---------------O</span>
+<span class="sd">         \_____/        &#39;left&#39;          &#39;center&#39;         &#39;right&#39;</span>
+
+<span class="sd">    The &#39;left&#39; body starts closer to the Earth. The &#39;right&#39; body has the same</span>
+<span class="sd">    mass as the &#39;left&#39; body and starts further from the Earth. The &#39;left&#39;, &#39;right&#39;,</span>
+<span class="sd">    and center of the Earth are initially located in the same line. &#39;center&#39; is</span>
+<span class="sd">    a &quot;fictitious&quot; (zero-mass) body that we can use to represent the center of</span>
+<span class="sd">    mass of the spacecraft.</span>
+
+<span class="sd">    If ``initialAngularRate`` is True, then the total configuration is given</span>
+<span class="sd">    an angular velocity equal to 2pi over the period of the orbit, which means</span>
+<span class="sd">    that the body will tend to rotate about its center once every time the</span>
+<span class="sd">    spacecraft rotates about the Earth. If ``initialAngularRate`` is False, then</span>
+<span class="sd">    no initial rotation rate is given</span>
+
+<span class="sd">    We can check two things:</span>
+
+<span class="sd">    - The center of mass of this spacecraft should maintain constant</span>
+<span class="sd">      orbital parameters given that this is a point-mass problem and</span>
+<span class="sd">      all bodies are rigidly connected.</span>
+<span class="sd">    - The two bodies are far apart enough for the gravity gradient to</span>
+<span class="sd">      be noticeable over an orbit. The gradient will tend to</span>
+<span class="sd">      keep the line connecting the two masses parallel to the line connecting</span>
+<span class="sd">      the Earth to the spacecraft (keep the spacecraft pointing towards Earth).</span>
+
+<span class="sd">     - If ``initialAngularRate`` is True, then the initial angular rate</span>
+<span class="sd">       is such that this pointing is also maintained. Since we have both</span>
+<span class="sd">       the initial rate and gravity gradient favoring this alignment, we can</span>
+<span class="sd">       expect the alignment to indeed be maintained exactly through the orbit.</span>
+<span class="sd">     - If ``initialAngularRate`` is False, then alignment will not be maintained</span>
+<span class="sd">       exactly, but the gradient is strong enough that we can expect the &quot;inner&quot;</span>
+<span class="sd">       body to always remain closer to Earth than the &quot;outer&quot; body, since it feels</span>
+<span class="sd">       a stronger gravity pull.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initial orbital parameters of the body: circular equatorial LEO orbit</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># m**3/s**2</span>
+
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+
+    <span class="n">period</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>  <span class="c1"># s</span>
+
+    <span class="c1"># Integrate for an orbit, record 50 points through orbit</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">period</span> <span class="o">*</span> <span class="mi">1</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">period</span> <span class="o">/</span> <span class="mi">50</span>
+
+    <span class="c1"># Create simulation, process, and task</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="c1"># Create MJScene, set adaptive integrator</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH_DUMBBELL</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mujocoScene&quot;</span>
+    <span class="c1"># We will be logging forces, so we need an extra call to the EoM after each integrator hop</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">absTol</span> <span class="o">=</span> <span class="mf">1e-14</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">relTol</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># Create gravity model and add it to the scene dynamics task</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;gravity&quot;</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="c1"># Set a point mass gravity source</span>
+    <span class="n">gravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">gravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">gravityModel</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Add a gravity target for each of the bodies of the spacecraft</span>
+    <span class="c1"># Note that because &#39;center&#39; has zero mass, no force should be</span>
+    <span class="c1"># produced on this body.</span>
+    <span class="c1"># Also, create recorders for the state of each body and for the</span>
+    <span class="c1"># gravity force exerted on each body.</span>
+    <span class="n">bodies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">]</span>
+    <span class="n">forceRecorders</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">bodyStateRecorders</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">bodyName</span> <span class="ow">in</span> <span class="n">bodies</span><span class="p">:</span>
+        <span class="n">body</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">bodyName</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="n">bodyName</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="n">forceRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">massFixedForceOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">forceRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">])</span>
+
+        <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">]</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">])</span>
+
+    <span class="c1"># Initialize sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+
+    <span class="c1"># Set the initial state of the spacecraft</span>
+    <span class="n">mainBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+    <span class="n">mainBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">mainBody</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">mainBody</span><span class="o">.</span><span class="n">setAttitude</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">euler1232MRP</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">mainBody</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">period</span> <span class="k">if</span> <span class="n">initialAngularRate</span> <span class="k">else</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># rad/s</span>
+
+    <span class="c1"># Run sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="n">relative</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">-</span> <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="p">)</span>
+        <span class="n">centerNormalized</span> <span class="o">=</span> <span class="n">center</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">relativeNormalized</span> <span class="o">=</span> <span class="n">relative</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">relative</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">centerNormalized</span> <span class="o">*</span> <span class="n">relativeNormalized</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="n">anomaly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">centerNormalized</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">centerNormalized</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">anomaly</span><span class="p">[</span><span class="n">anomaly</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">360</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">anomaly</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;True Anomaly [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Angle between left-&gt;right vector and center position vector [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">anomaly</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">anomaly</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">period</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">anomaly</span><span class="p">),</span>
+            <span class="s2">&quot;k--&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\omega_</span><span class="si">{ref}</span><span class="s2">=2\pi/T_</span><span class="si">{orbit}</span><span class="s2">$&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;True Anomaly [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Attitude Rate along Z-axis [rad/s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="n">bodies</span><span class="p">:</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">body</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">anomaly</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;True Anomaly [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Orbital Radius [m]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">anomaly</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">forceRecorders</span><span class="p">[</span><span class="n">body</span><span class="p">]</span><span class="o">.</span><span class="n">force_S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;True Anomaly [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Gravitational force acting on body [N]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bodyName</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">bodyName</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">bodyName</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;X-position [m]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Y-position [m]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">oePost</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span>
+            <span class="n">mu</span><span class="p">,</span>
+            <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># The orbital parameters should be maintained through the orbit</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oePost</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">oe</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">)</span>
+
+        <span class="c1"># If the initial angular rate is set, we expect the gravity gradient to not</span>
+        <span class="c1"># interfere with this rate (see function docstring), thus it must be</span>
+        <span class="c1"># constant in time.</span>
+        <span class="k">if</span> <span class="n">initialAngularRate</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">assert</span> <span class="n">bodyStateRecorders</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+                    <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">period</span><span class="p">,</span> <span class="mf">1e-6</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;At time index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># If no initial rate is given, we can still check that the inner body</span>
+        <span class="c1"># is kept close to the Earth due to gravity gradient</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">body</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">bodyStateRecorders</span><span class="p">[</span><span class="n">body</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="n">bodies</span>
+            <span class="p">}</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">radius</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">radius</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="loadSatelliteTrajectory">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.html#test_gravity.loadSatelliteTrajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadSatelliteTrajectory</span><span class="p">(</span><span class="n">utcCalInit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stopTimeSeconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dtSeconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the trajectory of a GPS satellite from SPICE kernels from the</span>
+<span class="sd">    given date (``utcCalInit``), for ``stopTimeSeconds`` seconds, with the position</span>
+<span class="sd">    reported every ``dtSeconds`` seconds.&quot;&quot;&quot;</span>
+
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">),</span>
+        <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/gnss_221111_221123_v01.bsp&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># load spice kernels</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">:</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="c1"># initial time in UTC to ET</span>
+    <span class="n">etArray</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">str2et_c</span><span class="p">(</span><span class="n">utcCalInit</span><span class="p">,</span> <span class="n">etArray</span><span class="p">)</span>
+    <span class="n">et0</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">etArray</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># times where the state should be recovered</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stopTimeSeconds</span> <span class="o">+</span> <span class="n">dtSeconds</span><span class="p">,</span> <span class="n">dtSeconds</span><span class="p">)</span>
+
+    <span class="c1"># Get states</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="n">et0</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">tUtc</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">et2utc_c</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">&quot;Yo&quot;</span><span class="p">)</span>
+        <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span><span class="s2">&quot;-36585&quot;</span><span class="p">,</span> <span class="n">tUtc</span><span class="p">,</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;EARTH&quot;</span><span class="p">)</span>
+
+    <span class="c1"># unload spice kernels</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">:</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">state</span></div>
+
+
+
+<div class="viewcode-block" id="test_gps">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.html#test_gravity.test_gps">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;showPlots, useSphericalHarmonics, useThirdBodies&quot;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gps</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">useThirdBodies</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compares the trajectory produced by Basilisk with the true trajectory</span>
+<span class="sd">    of a GPS satellite, as obtained from SPICE kernels.</span>
+
+<span class="sd">    The ``useSphericalHarmonics`` and ``useThirdBodies`` entries can be used to</span>
+<span class="sd">    tune the accuracy of the gravity model, and thus how close should the</span>
+<span class="sd">    Basilisk result be to the SPICE data.</span>
+
+<span class="sd">    The satellite state is initialized from SPICE, then propagated with Basilisk</span>
+<span class="sd">    for 1 hour. The final state is expected to match the SPICE state at the time</span>
+<span class="sd">    by:</span>
+
+<span class="sd">    - &lt; 300 m if point mass gravity is used.</span>
+<span class="sd">    - &lt; 30 m if spherical harmonics is used by no third-body effects.</span>
+<span class="sd">    - &lt; 30 m if spherical harmonics and third-body effects are considered.</span>
+
+<span class="sd">    Note that the inclusion of third body effects seems to have no effect on the</span>
+<span class="sd">    accuracy. Something that should be investigated further.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># initial date, simulation time, and time step</span>
+    <span class="n">utcCalInit</span> <span class="o">=</span> <span class="s2">&quot;2022 NOV 14 00:01:10&quot;</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">3600</span>  <span class="c1"># s</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># s</span>
+
+    <span class="c1"># load trajectory from SPICE</span>
+    <span class="n">spiceSatelliteState</span> <span class="o">=</span> <span class="n">loadSatelliteTrajectory</span><span class="p">(</span><span class="n">utcCalInit</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+    <span class="c1"># Create simulation, process, and task</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="c1"># Create MJScene (cannonball) and configure integrator</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH_BALL</span><span class="p">)</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">absTol</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">relTol</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># Create the spice interface module, which reports the state of</span>
+    <span class="c1"># planetary bodies</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpiceInterface&quot;</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">([</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">])</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">utcCalInit</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spice</span><span class="p">)</span>
+
+    <span class="c1"># Create NBody Gravity</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="c1"># Create gravity sources (Earth, Moon, Sun)</span>
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+        <span class="n">earthGravityModel</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">sphericalHarmonicsGravityModel</span><span class="o">.</span><span class="n">SphericalHarmonicsGravityModel</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">earthGravityModel</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="mf">0.6378136300e7</span>
+        <span class="n">ggm03s_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S</span><span class="p">)</span>
+        <span class="n">earthGravityModel</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s_path</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># J4 should be plenty</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">earthGravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">earthGravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>
+    <span class="n">earthGravitySource</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span>
+        <span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">earthGravityModel</span><span class="p">,</span> <span class="n">isCentralBody</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">earthGravitySource</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">useThirdBodies</span><span class="p">:</span>
+        <span class="n">moonGravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+        <span class="n">moonGravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="mf">4.902799e12</span>
+        <span class="n">moonGravitySource</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span>
+            <span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="n">moonGravityModel</span><span class="p">,</span> <span class="n">isCentralBody</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">moonGravitySource</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">useThirdBodies</span><span class="p">:</span>
+        <span class="n">sunGravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+        <span class="n">sunGravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="mf">1.32712440018e20</span>
+        <span class="n">sunGravitySource</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span>
+            <span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="n">sunGravityModel</span><span class="p">,</span> <span class="n">isCentralBody</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">sunGravitySource</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="c1"># Create gravity target</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+    <span class="c1"># Create gravity force and body state recorders</span>
+    <span class="n">forceRecorder</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">massFixedForceOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">forceRecorder</span><span class="p">)</span>
+
+    <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># initialize sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+
+    <span class="c1"># Initialize the body to the same position and velocity as the SPICE result</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">spiceSatelliteState</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># m</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">spiceSatelliteState</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># m</span>
+
+    <span class="c1"># Run sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="n">spiceSatelliteState</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">-</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position diff between SPICE and Basilisk [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">t</span><span class="p">,</span>
+            <span class="n">spiceSatelliteState</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SPICE x&quot;</span><span class="p">,</span> <span class="s2">&quot;SPICE y&quot;</span><span class="p">,</span> <span class="s2">&quot;SPICE z&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;BSK x&quot;</span><span class="p">,</span> <span class="s2">&quot;BSK y&quot;</span><span class="p">,</span> <span class="s2">&quot;BSK z&quot;</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">lastSpice</span> <span class="o">=</span> <span class="n">spiceSatelliteState</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">lastBsk</span> <span class="o">=</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># Depending on the gravity model used, we use a different tolerance</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">lastBsk</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">lastSpice</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">useThirdBodies</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">lastBsk</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">lastSpice</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span> <span class="ow">and</span> <span class="n">useThirdBodies</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">lastBsk</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">lastSpice</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_mujocoVsSpacecraft">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.html#test_gravity.test_mujocoVsSpacecraft">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;showPlots, useSpice, useSphericalHarmonics, useThirdBodies&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_mujocoVsSpacecraft</span><span class="p">(</span>
+    <span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">useSpice</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">useThirdBodies</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests that the same scenario (simple LEO orbit with only gravity)</span>
+<span class="sd">    produces the same results when running with a ``spacecraft.Spacecraft``</span>
+<span class="sd">    dynamical object and a ``mujoco.MJScene``.</span>
+
+<span class="sd">    If ``showPlots`` is ``True``, the scenario is run for 24 hr and the</span>
+<span class="sd">    differences are shown in plots. If it&#39;s ``False``, then the scenario</span>
+<span class="sd">    is only run for 10 seconds and an assertion is raised if the results</span>
+<span class="sd">    disagree on a very tight tolerances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">useThirdBodies</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">useSpice</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;If using third bodies, we must use spice&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Initial time, final time, and time step</span>
+    <span class="c1"># We run for 24hr only if we want to plot results</span>
+    <span class="n">utcCalInit</span> <span class="o">=</span> <span class="s2">&quot;2022 NOV 14 00:01:10&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># s</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span> <span class="k">if</span> <span class="n">showPlots</span> <span class="k">else</span> <span class="mi">10</span>  <span class="c1"># s</span>
+
+    <span class="c1"># initial state of the body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># m**3/s**2</span>
+
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="c1"># Create GravBodies, which will be used for the spacecraft</span>
+    <span class="c1"># and also the mujoco sim</span>
+    <span class="n">bodies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">useThirdBodies</span><span class="p">:</span>
+        <span class="n">bodies</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">])</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravBodies</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createBodies</span><span class="p">(</span><span class="n">bodies</span><span class="p">)</span>
+    <span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+        <span class="n">ggm03s_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S</span><span class="p">)</span>
+        <span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s_path</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="c1"># A decorator that times how long the function takes and</span>
+    <span class="c1"># prints it to the console</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timed</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">():</span>
+            <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">fn</span><span class="p">()</span>
+            <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> took </span><span class="si">{</span><span class="n">toc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">return</span> <span class="n">wrap</span>
+
+    <span class="c1"># NOTE: in the two simulation defined below we use the Euler integrator.</span>
+    <span class="c1"># this is because, for the ``spacecraft`` dynamic object, the spice interface</span>
+    <span class="c1"># is called once per task step, while for the mujoco dynamic object the</span>
+    <span class="c1"># interface is called once per integrator step. Euler is the only integrator</span>
+    <span class="c1"># where one integrator step is taken per task step, which allows us to</span>
+    <span class="c1"># produce equivalent results.</span>
+
+    <span class="nd">@timed</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spacecraftSim</span><span class="p">():</span>
+        <span class="c1"># Create sim, process, and task</span>
+        <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+        <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+        <span class="c1"># Create spice interface and add to task</span>
+        <span class="k">if</span> <span class="n">useSpice</span><span class="p">:</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">utcCalInit</span><span class="p">)</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Create spacecraft</span>
+        <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+        <span class="n">integSc</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorEuler</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>  <span class="c1"># MUST BE EULER!</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integSc</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="c1"># initialize spacecraft parameters</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># kg</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">]</span>  <span class="c1"># kg*m**2</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s</span>
+
+        <span class="c1"># Create recorder</span>
+        <span class="n">scStateRecorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scStateRecorder</span><span class="p">)</span>
+
+        <span class="c1"># initialize and run sim</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">scStateRecorder</span>
+
+    <span class="nd">@timed</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mujocoSim</span><span class="p">():</span>
+        <span class="c1"># Create sim, process, and task</span>
+        <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+        <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+        <span class="c1"># Create the spice interface module, which reports the state of</span>
+        <span class="c1"># planetary bodies</span>
+        <span class="n">spice</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpiceInterface&quot;</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">([</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">])</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">utcCalInit</span>
+        <span class="c1"># spice.zeroBase = &#39;Earth&#39; # Not actually needed for NBodyGravity</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+
+        <span class="c1"># Create mujoco scene</span>
+        <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH_BALL</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mujocoScene&quot;</span>
+        <span class="n">integScene</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorEuler</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>  <span class="c1"># MUST BE EULER!</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integScene</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+        <span class="c1"># Create N-Body Gravity</span>
+        <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">gravBody</span><span class="p">),</span> <span class="n">stateOuMsg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">gravBodies</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span>
+        <span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">gravityModel</span><span class="p">,</span> <span class="n">isCentralBody</span><span class="o">=</span><span class="p">(</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">useSpice</span><span class="p">:</span>
+                <span class="n">source</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">stateOuMsg</span><span class="p">)</span>
+
+        <span class="n">body</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">)</span>
+        <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="p">)</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+
+        <span class="c1"># Initialize mujoco body to the same position and velocity as the spacecraft</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">bodyStateRecorder</span>
+
+    <span class="n">scStateRecorder</span> <span class="o">=</span> <span class="n">spacecraftSim</span><span class="p">()</span>
+    <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">mujocoSim</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">scStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">-</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position Difference ``Spacecraft`` vs. ``MJScene`` [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">scStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Spacecraft&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;MJScene&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position [m]&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+            <span class="n">scStateRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="mf">1e-10</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">test_pointMass</span><span class="p">(</span><span class="n">showPlots</span><span class="p">)</span>
+        <span class="n">test_dumbbell</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">test_dumbbell</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">test_gps</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">test_gps</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">test_gps</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">test_mujocoVsSpacecraft</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

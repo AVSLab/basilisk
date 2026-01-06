@@ -1,0 +1,704 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenario_StationKeepingMultiSat &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenario_StationKeepingMultiSat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenario_StationKeepingMultiSat</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script sets up three 6-DOF spacecraft orbiting the Earth in formation. The goal of this scenario is to</span>
+
+<span class="sd">#. introduce formation flying control with desired orbital element differences,</span>
+<span class="sd">#. evidence how the module can conciliate attitude requests with thruster requirements, and</span>
+<span class="sd">#. show how one can choose whether the chief of the formation is a spacecraft or the formation&#39;s barycenter.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::</span>
+
+<span class="sd">      python3 scenario_StationKeepingMultiSat.py</span>
+
+<span class="sd">This simulation is based on the :ref:`scenario_AttGuidMultiSat` with the addition of station keeping control. Attitude</span>
+<span class="sd">mode requests are processed in the same way as before, but now there is the added complexity of introducing formation</span>
+<span class="sd">control, which can influence attitude requests.</span>
+
+<span class="sd">The user can choose whether to use the zeroth index spacecraft or the formation&#39;s barycenter as the formation&#39;s chief.</span>
+<span class="sd">On that note, some geometries are not possible when using the barycenter as a reference point for the formation. This is</span>
+<span class="sd">because the barycenter is influenced by the spacecraft reorienting themselves, and so only some geometries are feasible.</span>
+<span class="sd">Failure to take this into account results in the spacecraft continuously correcting their orbits without ever</span>
+<span class="sd">converging.</span>
+
+<span class="sd">For simplicity, the script plots only the information related to one of the spacecraft, despite logging the necessary</span>
+<span class="sd">information for all spacecraft in the simulation.</span>
+
+<span class="sd">Custom Dynamics Configurations Instructions</span>
+<span class="sd">-------------------------------------------</span>
+
+<span class="sd">The dynamics modules required for this scenario are the same used in :ref:`scenario_BasicOrbitMultiSat` and</span>
+<span class="sd">:ref:`scenario_AttGuidMultiSat`. However, this example takes full advantage of all the features of the dynamics class,</span>
+<span class="sd">which includes thrusters for orbit corrections.</span>
+
+<span class="sd">Custom FSW Configurations Instructions</span>
+<span class="sd">--------------------------------------</span>
+
+<span class="sd">As stated in the previous section, the :ref:`BSK_MultiSatFsw` class used in this example is the same as the one used in</span>
+<span class="sd">:ref:`scenario_AttGuidMultiSat`. The main difference is that the station keeping module is now used, which allows for</span>
+<span class="sd">relative orbit geometry control.</span>
+
+<span class="sd">If no station keeping is desired, then the FSW stack works exactly as in :ref:`scenario_AttGuidMultiSat`. However, if</span>
+<span class="sd">station keeping is set properly, the FSW events work as follows. First, the attitude reference is set given the pointing</span>
+<span class="sd">requirements. Then, the station keeping module computes the information regarding the necessary corrective burns, such</span>
+<span class="sd">as point in orbit, duration, thrust, attitude requirements, etc. With this information, the module then chooses whether</span>
+<span class="sd">the spacecraft is in a point in orbit where a burn is required. If it is, the attitude reference from the pointing</span>
+<span class="sd">requirement is overruled in favor of the necessary attitude to complete the current burn. If it is not, the reference</span>
+<span class="sd">attitude passes through unchanged.</span>
+
+<span class="sd">The control law used to drive the formation to its intended orbital element differences is guaranteed to converge if the</span>
+<span class="sd">chief has Keplerian motion. This might not be the case when the chief is the formation&#39;s barycenter, as its orbital</span>
+<span class="sd">elements change in accordance to how each spacecraft is maneuvering. One way to help with convergence is to make sure</span>
+<span class="sd">that the barycenter has invariant orbital elements. This can be achieved by guaranteeing that the following equation</span>
+<span class="sd">holds:</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    \sum_i m_i\Delta oe_i = 0</span>
+
+<span class="sd">Activation of the station keeping mode is done through the ``stationKeeping`` flag. If set to ``True``, formation</span>
+<span class="sd">control will be activated.</span>
+
+<span class="sd">Due to the fact that the ``spacecraftReconfig`` module only accepts messages of the type :ref:`attRefMsgPayload`, the</span>
+<span class="sd">``locationPointing`` module always outputs a reference message and the ``attTrackingError`` module is always called,</span>
+<span class="sd">unlike how it happens in :ref:`scenario_AttGuidMultiSat`.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">Since three spacecraft are simulated, and to prevent excessively busy plots, only the information pertaining to one</span>
+<span class="sd">spacecraft is plotted per simulation.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, numberSpacecraft=3, relativeNavigation=False</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitude.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rate.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitudeTrackingError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_trackingErrorRate.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitudeReference.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rateReference.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rwMotorTorque.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rwSpeeds.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_orbits.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_relativeOrbits.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_oeDifferences.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_power.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_fuel.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_thrustPercentage.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="c1"># Get current file path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="c1"># Import utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="c1"># Import master classes: simulation base class and scenario base class</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../modelsMultiSat&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../plottingMultiSat&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_MultiSatMasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_EnvironmentEarth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_MultiSatDynamics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_MultiSatFsw</span>
+
+<span class="c1"># Import plotting files for your scenario</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_MultiSatPlotting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Create your own scenario child class</span>
+<div class="viewcode-block" id="scenario_StationKeepingFormationFlying">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html#scenario_StationKeepingMultiSat.scenario_StationKeepingFormationFlying">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">scenario_StationKeepingFormationFlying</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numberSpacecraft</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">scenario_StationKeepingFormationFlying</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">numberSpacecraft</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="o">=</span><span class="n">relativeNavigation</span><span class="p">,</span> <span class="n">fswRate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dynRate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">envRate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relNavRate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;scenario_StationKeepingFormationFlying&#39;</span>
+
+        <span class="c1"># Connect the environment, dynamics and FSW classes. It is crucial that these are set in the order specified, as</span>
+        <span class="c1"># some connects made imply that some modules already exist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_EnvModel</span><span class="p">(</span><span class="n">BSK_EnvironmentEarth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">([</span><span class="n">BSK_MultiSatDynamics</span><span class="p">]</span> <span class="o">*</span> <span class="n">numberSpacecraft</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">([</span><span class="n">BSK_MultiSatFsw</span><span class="p">]</span> <span class="o">*</span> <span class="n">numberSpacecraft</span><span class="p">)</span>
+
+        <span class="c1"># declare empty class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snAttLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrorLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pmLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwPowerLogs</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuelLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrLogs</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chiefTransLog</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># declare empty containers for orbital elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Set initial conditions and record the relevant messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">(</span><span class="n">relativeNavigation</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+            <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following line</span>
+            <span class="n">DynModelsList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rwStateEffectorList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">thDynamicEffectorList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+                <span class="n">DynModelsList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="p">)</span>
+                <span class="n">rwStateEffectorList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="p">)</span>
+                <span class="n">thDynamicEffectorList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">thrusterDynamicEffector</span><span class="p">])</span>
+
+            <span class="n">gsList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># Initialize the vizPanels list before the loop</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vizPanels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+                <span class="n">batteryPanel</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericStorage</span><span class="p">()</span>
+                <span class="n">batteryPanel</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Battery&quot;</span>
+                <span class="n">batteryPanel</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;Ws&quot;</span>
+                <span class="n">batteryPanel</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;lightgreen&quot;</span><span class="p">))</span>
+                <span class="n">batteryPanel</span><span class="o">.</span><span class="n">thresholds</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">([</span><span class="mi">20</span><span class="p">])</span>
+                <span class="n">batteryInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PowerStorageStatusMsgReader</span><span class="p">()</span>
+                <span class="n">batteryInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">powerMonitor</span><span class="o">.</span><span class="n">batPowerOutMsg</span><span class="p">)</span>
+                <span class="n">batteryPanel</span><span class="o">.</span><span class="n">batteryStateInMsg</span> <span class="o">=</span> <span class="n">batteryInMsg</span>
+
+                <span class="n">tankPanel</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericStorage</span><span class="p">()</span>
+                <span class="n">tankPanel</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Tank&quot;</span>
+                <span class="n">tankPanel</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;kg&quot;</span>
+                <span class="n">tankPanel</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span>
+                <span class="n">tankInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">FuelTankMsgReader</span><span class="p">()</span>
+                <span class="n">tankInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="o">.</span><span class="n">fuelTankOutMsg</span><span class="p">)</span>
+                <span class="n">tankPanel</span><span class="o">.</span><span class="n">fuelTankStateInMsg</span> <span class="o">=</span> <span class="n">tankInMsg</span>
+
+                <span class="c1"># Append panels to the class-level list</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vizPanels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batteryPanel</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vizPanels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tankPanel</span><span class="p">)</span>
+                <span class="n">gsList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">batteryPanel</span><span class="p">,</span> <span class="n">tankPanel</span><span class="p">])</span>
+
+            <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="n">DynModelsList</span>
+                                                      <span class="c1"># , saveFile=__file__</span>
+                                                      <span class="p">,</span> <span class="n">rwEffectorList</span><span class="o">=</span><span class="n">rwStateEffectorList</span>
+                                                      <span class="p">,</span> <span class="n">thrEffectorList</span><span class="o">=</span><span class="n">thDynamicEffectorList</span>
+                                                      <span class="p">,</span> <span class="n">genericStorageList</span><span class="o">=</span><span class="n">gsList</span>
+                                                      <span class="p">)</span>
+            <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showSpacecraftLabels</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">orbitLinesOn</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># show osculating relative orbit trajectories</span>
+            <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">mainCameraTarget</span> <span class="o">=</span> <span class="s2">&quot;sat-1&quot;</span>
+            <span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">relativeOrbitChief</span> <span class="o">=</span> <span class="s2">&quot;sat-0&quot;</span>  <span class="c1"># set the chief for relative orbit trajectory</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">setInstrumentGuiSetting</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">spacecraftName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span>
+                                                   <span class="n">showGenericStoragePanel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="scenario_StationKeepingFormationFlying.configure_initial_conditions">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html#scenario_StationKeepingMultiSat.scenario_StationKeepingFormationFlying.configure_initial_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">EnvModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_EnvModel</span><span class="p">()</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+
+        <span class="c1"># Configure initial conditions for spacecraft 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.4</span><span class="o">*</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">planetRadius</span>  <span class="c1"># meters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">45.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+        <span class="c1"># Configure initial conditions for spacecraft 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">f</span> <span class="o">*=</span> <span class="mf">1.001</span>
+        <span class="n">rN2</span><span class="p">,</span> <span class="n">vN2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN2</span><span class="p">,</span> <span class="n">vN2</span><span class="p">)</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN2</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN2</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+        <span class="c1"># Configure initial conditions for spacecraft 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">f</span> <span class="o">*=</span> <span class="mf">0.999</span>
+        <span class="n">rN3</span><span class="p">,</span> <span class="n">vN3</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN3</span><span class="p">,</span> <span class="n">vN3</span><span class="p">)</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN3</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN3</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="n">DynModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span></div>
+
+
+<div class="viewcode-block" id="scenario_StationKeepingFormationFlying.log_outputs">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html#scenario_StationKeepingMultiSat.scenario_StationKeepingFormationFlying.log_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">):</span>
+        <span class="c1"># Process outputs</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">FswModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+
+        <span class="c1"># Set the sampling time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Log the barycentre&#39;s position and velocity</span>
+        <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chiefTransLog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relativeNavigationModule</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relativeNavigationTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiefTransLog</span><span class="p">)</span>
+
+        <span class="c1"># Loop through every spacecraft</span>
+        <span class="k">for</span> <span class="n">spacecraft</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+
+            <span class="c1"># log the navigation messages</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snAttLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snAttLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log the reference messages</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attRefLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FswModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">attRefMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log the attitude error messages</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attErrorLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FswModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrorLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log the RW torque messages</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">FswModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log the RW wheel speed information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log addition RW information (power, etc)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">numRW</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwOutMsgs</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rwPowerLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">rwPowerList</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">nodePowerOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">][</span><span class="n">item</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwPowerLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">][</span><span class="n">item</span><span class="p">])</span>
+
+            <span class="c1"># log the remaining power modules</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">solarPanel</span><span class="o">.</span><span class="n">nodePowerOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">psLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">powerSink</span><span class="o">.</span><span class="n">nodePowerOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pmLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">powerMonitor</span><span class="o">.</span><span class="n">batPowerOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">psLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log fuel information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fuelLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="o">.</span><span class="n">fuelTankOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelLog</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">])</span>
+
+            <span class="c1"># log thruster information</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">numThr</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">thrLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">thrusterOutMsgs</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrLogs</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">][</span><span class="n">item</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="scenario_StationKeepingFormationFlying.pull_outputs">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html#scenario_StationKeepingMultiSat.scenario_StationKeepingFormationFlying.pull_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">,</span> <span class="n">spacecraftIndex</span><span class="p">):</span>
+        <span class="c1"># Process outputs</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">EnvModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_EnvModel</span><span class="p">()</span>
+
+        <span class="c1">#</span>
+        <span class="c1">#   Retrieve the logged data</span>
+        <span class="c1">#</span>
+        <span class="n">dataUsReq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">motorTorque</span>
+        <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrorLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_BR</span>
+        <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrorLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">omega_BR_B</span>
+        <span class="n">dataSigmaBN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snAttLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_BN</span>
+        <span class="n">dataOmegaBN_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snAttLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">omega_BN_B</span>
+        <span class="n">dataOmegaRW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">wheelSpeeds</span>
+        <span class="n">dataSigmaRN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_RN</span>
+        <span class="n">dataOmegaRN_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">omega_RN_N</span>
+        <span class="n">dataFuelMass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">fuelMass</span>
+
+        <span class="c1"># Save RW information</span>
+        <span class="n">dataRW</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dataRWPower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">numRW</span><span class="p">):</span>
+            <span class="n">dataRW</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">u_current</span><span class="p">)</span>
+            <span class="n">dataRWPower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwPowerLogs</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">netPower</span><span class="p">)</span>
+
+        <span class="c1"># Save thrusters information</span>
+        <span class="n">dataThrust</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dataThrustPercentage</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">numThr</span><span class="p">):</span>
+            <span class="n">dataThrust</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrLogs</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">thrustForce_B</span><span class="p">)</span>
+            <span class="n">dataThrustPercentage</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrLogs</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">thrustFactor</span><span class="p">)</span>
+
+        <span class="c1"># Save power info</span>
+        <span class="n">supplyData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">netPower</span>
+        <span class="n">sinkData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">netPower</span>
+        <span class="n">storageData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">storageLevel</span>
+        <span class="n">netData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">currentNetPower</span>
+
+        <span class="c1"># Retrieve the time info</span>
+        <span class="n">timeLineSetMin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+        <span class="n">timeLineSetSec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+
+        <span class="c1"># Compute the number of time steps of the simulation</span>
+        <span class="n">simLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">)</span>
+
+        <span class="c1"># Convert the reference attitude rate into body frame components</span>
+        <span class="n">dataOmegaRN_B</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">simLength</span><span class="p">):</span>
+            <span class="n">dcmBN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">dataSigmaBN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">dataOmegaRN_B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dcmBN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dataOmegaRN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]))</span>
+        <span class="n">dataOmegaRN_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataOmegaRN_B</span><span class="p">)</span>
+
+        <span class="c1"># Extract position and velocity information for all spacecraft</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">v_BN_N</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+            <span class="n">r_BN_N</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+            <span class="n">v_BN_N</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snTransLog</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+
+        <span class="c1"># Extract position and velocity information of the chief</span>
+        <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+            <span class="n">dataChiefPosition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiefTransLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+            <span class="n">dataChiefVelocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiefTransLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataChiefPosition</span> <span class="o">=</span> <span class="n">r_BN_N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dataChiefVelocity</span> <span class="o">=</span> <span class="n">v_BN_N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Compute the relative position in the Hill frame</span>
+        <span class="n">dr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+                <span class="n">rd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2hill</span><span class="p">(</span><span class="n">dataChiefPosition</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">dataChiefVelocity</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">r_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">item</span><span class="p">],</span>
+                                                     <span class="n">v_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">item</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">simLength</span><span class="p">)])</span>
+                <span class="n">dr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+                <span class="n">rd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2hill</span><span class="p">(</span><span class="n">dataChiefPosition</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">dataChiefVelocity</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">r_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">item</span><span class="p">],</span>
+                                                     <span class="n">v_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">item</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">simLength</span><span class="p">)])</span>
+                <span class="n">dr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rd</span><span class="p">)</span>
+
+        <span class="c1"># Compute the orbital element differences between the spacecraft and the chief</span>
+        <span class="n">oed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simLength</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">simLength</span><span class="p">):</span>
+            <span class="n">oe_tmp</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">dataChiefPosition</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dataChiefVelocity</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">oe2_tmp</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">v_BN_N</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">oe2_tmp</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">a</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">e</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">i</span> <span class="o">-</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">i</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">Omega</span> <span class="o">-</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">Omega</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">omega</span>
+            <span class="n">E_tmp</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe_tmp</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">E2_tmp</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe2_tmp</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">E2_tmp</span><span class="p">,</span> <span class="n">oe2_tmp</span><span class="o">.</span><span class="n">e</span><span class="p">)</span> <span class="o">-</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">E_tmp</span><span class="p">,</span> <span class="n">oe_tmp</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                    <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+                <span class="k">if</span> <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                    <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">oed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+
+        <span class="c1"># Compute the orbit period</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oe</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># Plot results</span>
+        <span class="c1">#</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_attitude</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataSigmaBN</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_rate</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataOmegaBN_B</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_attitude_reference</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataSigmaRN</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_rate_reference</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataOmegaRN_B</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_rw_motor_torque</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">,</span> <span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">numRW</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">numRW</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_orbits</span><span class="p">(</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_relative_orbits</span><span class="p">(</span><span class="n">dr</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dr</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_orbital_element_differences</span><span class="p">(</span><span class="n">timeLineSetSec</span> <span class="o">/</span> <span class="n">T</span><span class="p">,</span> <span class="n">oed</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_power</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">netData</span><span class="p">,</span> <span class="n">supplyData</span><span class="p">,</span> <span class="n">sinkData</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_fuel</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataFuelMass</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot_thrust_percentage</span><span class="p">(</span><span class="n">timeLineSetMin</span><span class="p">,</span> <span class="n">dataThrustPercentage</span><span class="p">,</span> <span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">numThr</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+        <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitude&quot;</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="s2">&quot;attitudeTrackingError&quot;</span><span class="p">,</span> <span class="s2">&quot;trackingErrorRate&quot;</span><span class="p">,</span> <span class="s2">&quot;attitudeReference&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;rateReference&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeeds&quot;</span><span class="p">,</span> <span class="s2">&quot;orbits&quot;</span><span class="p">,</span> <span class="s2">&quot;relativeOrbits&quot;</span><span class="p">,</span> <span class="s2">&quot;oeDifferences&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;fuel&quot;</span><span class="p">,</span> <span class="s2">&quot;thrustPercentage&quot;</span><span class="p">]</span>
+            <span class="n">figureList</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
+
+        <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">figureList</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">):</span>
+    <span class="c1"># Get the environment model</span>
+    <span class="n">EnvModel</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get_EnvModel</span><span class="p">()</span>
+
+    <span class="c1"># Configure initial FSW attitude modes</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;sunPointing&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;inertialPointing&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;locationPointing&quot;</span>
+
+    <span class="c1"># Configure station keeping module</span>
+    <span class="k">for</span> <span class="n">spacecraft</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">numberSpacecraft</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">relativeNavigationModule</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">,</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">simpleMassPropsObject</span><span class="o">.</span><span class="n">vehicleConfigOutMsg</span><span class="p">)</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">chiefTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">relativeNavigationModule</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraft</span><span class="p">]</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">chiefTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Configure the relative navigation module</span>
+    <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">relativeNavigationModule</span><span class="o">.</span><span class="n">useOrbitalElements</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">relativeNavigationModule</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># Set up the station keeping requirements</span>
+    <span class="k">if</span> <span class="n">relativeNavigation</span><span class="p">:</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">=</span> <span class="s2">&quot;ON&quot;</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">targetClassicOED</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.005</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">]</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">=</span> <span class="s2">&quot;ON&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">targetClassicOED</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.003</span><span class="p">]</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">=</span> <span class="s2">&quot;ON&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">targetClassicOED</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.000</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">]</span>
+
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure run time and execute simulation</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">hour2nano</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Reconfigure FSW attitude modes</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;locationPointing&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;sunPointing&quot;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;inertialPointing&quot;</span>
+
+    <span class="c1"># Execute the simulation</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html#scenario_StationKeepingMultiSat.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="n">numberSpacecraft</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool): Determines if the script should display plots</span>
+<span class="sd">        numberSpacecraft (int): Number of spacecraft in the simulation</span>
+<span class="sd">        relativeNavigation (bool): Determines if the formation&#39;s chief is the barycenter or the zeroth index spacecraft</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Configure a scenario in the base simulation</span>
+    <span class="n">TheScenario</span> <span class="o">=</span> <span class="n">scenario_StationKeepingFormationFlying</span><span class="p">(</span><span class="n">numberSpacecraft</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">)</span>
+    <span class="n">runScenario</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">TheScenario</span><span class="o">.</span><span class="n">pull_outputs</span><span class="p">(</span><span class="n">showPlots</span><span class="p">,</span> <span class="n">relativeNavigation</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">numberSpacecraft</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">relativeNavigation</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spacecraftLocation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spacecraftLocation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spacecraftLocation</a></li>
+      <li class="breadcrumb-item active">Module: spacecraftLocation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spacecraftlocation">
+<span id="spacecraftlocation"></span><h1>Module: spacecraftLocation<a class="headerlink" href="#module-spacecraftlocation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module determines if one satellite has a line of sight vector to another satellite.  An oblate planet is modeled through the equatorial and the polar radius. If the line of sight vector between two satellites is above this surface, then the output access message is set to true.  The module has a primary spacecraft which determines access to <cite>N</cite> other spacecraft orbiting the same planet.</p>
+<p>Further, the module tracks a body-fixed location <cite>L</cite> on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> and a center-to-edge sensor/communication cone angle <span class="math notranslate nohighlight">\(\theta\)</span>.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.</p>
+<p>Lighting conditions are also considered. If <cite>theta_solar</cite> is set, the module will check that the normal <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> is illuminated by the sun with at most that incidence angle.</p>
+<p>Finally, if the other spacecraft is accessible, the range to the other satellite is stored in the output message.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This module assumes all spacecraft are orbiting the same planet.  The planet shape is assumed to be an ellipsoid specified through the equatorial and polar radius.  To account for a planet’s atmosphere, increase these radii to account for the atmospheric height.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>planetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) planet state input message. Default is a zero state for the planet.</p></td>
+</tr>
+<tr class="row-odd"><td><p>primaryScStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>primary spacecraft state message relative to which to evaluate access to other spacecraft in <code class="docutils literal notranslate"><span class="pre">scStateInMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>scStateInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of other spacecraft state input messages.  These are set through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>sunInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) sun state input message. Used for illumination checking if the message is connected and <code class="docutils literal notranslate"><span class="pre">theta_solar</span></code> is set.</p></td>
+</tr>
+<tr class="row-even"><td><p>eclipseInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
+<td><p>(optional) eclipse input message. Used for illumination checking if the message is connected and <code class="docutils literal notranslate"><span class="pre">min_shadow_factor</span></code> is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p>accessOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#accessmsgpayload"><span class="std std-ref">AccessMsgPayload</span></a></p></td>
+<td><p>output vector of ground location access messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">spacecraftLocation</span></code> module handles the following behavior:</p>
+<ol class="arabic simple">
+<li><p>Spacecraft body-fixed location representation: a single <code class="docutils literal notranslate"><span class="pre">spacecraftLocation</span></code> instance represents one body-fixed location on a
+spacecraft</p></li>
+<li><p>The planet-centered planet-fixed frame is either a zero state (default), or read in through an optional planet ephemeris message</p></li>
+<li><p>An optional sensor axis can be specified to ensure the primary spacecraft is pointing this axis</p></li>
+<li><p>Computation of spacecraft visibility (i.e. access) considering range and relative field-of-view constraints</p></li>
+<li><p>Support for multiple other spacecraft given one <code class="docutils literal notranslate"><span class="pre">spacecraftLocation</span></code> instance</p></li>
+</ol>
+<section id="determining-line-of-sight-to-another-spacecraft">
+<h3>Determining Line of Sight to another spacecraft<a class="headerlink" href="#determining-line-of-sight-to-another-spacecraft" title="Link to this heading"></a></h3>
+<p>Let <cite>P</cite> be the planet-centered planet-fixed frame.  The inertial planet origin is given by <span class="math notranslate nohighlight">\({}^{N} {\bf r}_{P/N}\)</span>.  The inertial position vector of the primary spacecraft <cite>B</cite> is <span class="math notranslate nohighlight">\({}^{N}{\bf r}_{B/N}\)</span>, while the inertial position vector to the other satellite is <span class="math notranslate nohighlight">\({}^{\cal N}{\bf r}_{S/N}\)</span>.  The first step is to determine the spacecraft positions, expressed in the <cite>P</cite> frame.</p>
+<div class="math notranslate nohighlight">
+\[{}^{P} {\bf r}_{B/P} = [PN] ( {}^{N} {\bf r}_{B/N} - {}^{N} {\bf r}_{P/N})\]</div>
+<div class="math notranslate nohighlight">
+\[{}^{P} {\bf r}_{S/P} = [PN] ( {}^{N} {\bf r}_{S/N} - {}^{N} {\bf r}_{P/N})\]</div>
+<div class="math notranslate nohighlight">
+\[{}^{P} {\bf r}_{S/B} = {}^{P} {\bf r}_{S/P} - {}^{P} {\bf r}_{B/P}\]</div>
+<p>The line of sight vector is defined through the point <cite>B</cite> and the direction <span class="math notranslate nohighlight">\({\bf r}_{S/B}\)</span>.  Let <span class="math notranslate nohighlight">\(\kappa\)</span> be a scaling factor, the line is then defined as:</p>
+<div class="math notranslate nohighlight">
+\[{\bf l} =  {\bf r}_{B/P} + \kappa * {\bf r}_{S/B}\]</div>
+<p>The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follow.  The planet is assumed to have rotational symmetry about the 3:sup`rd` axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3:sup`rd` coordinates must scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.</p>
+<p>To determine the minimum distance of the line <span class="math notranslate nohighlight">\(\bf l\)</span> to the planet origin, consider the cost function <span class="math notranslate nohighlight">\(J\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[J = {\bf l} \cdot {\bf l} = {\bf r}_{B/P} \cdot {\bf r}_{B/P} + 2 \kappa {\bf r}_{B/P} \cdot {\bf r}_{S/B} + \kappa^2 {\bf r}_{S/B} \cdot {\bf r}_{S/B}\]</div>
+<p>Setting the first variation of <span class="math notranslate nohighlight">\(J\)</span> with respect to <span class="math notranslate nohighlight">\(\kappa\)</span> to zero and solving for optimal <span class="math notranslate nohighlight">\(\kappa^\ast\)</span> yields</p>
+<div class="math notranslate nohighlight">
+\[\kappa^\ast = - \frac{{\bf r}_{B/P} \cdot {\bf r}_{S/B}}{{\bf r}_{S/B} \cdot {\bf r}_{S/B}}\]</div>
+<p>Note that if <span class="math notranslate nohighlight">\(\kappa&lt;0\)</span> or <span class="math notranslate nohighlight">\(\kappa&gt;1\)</span>, then the point of closed approach is outside of the
+line-of-sight interval between the two spacecraft and the planet cannot be blocking access
+of one spacecraft from another.</p>
+<p>Thus, the point of closed approach is determined through:</p>
+<div class="math notranslate nohighlight">
+\[{\bf r}^\ast = {\bf r}_{B/P} + \kappa^\ast * {\bf r}_{S/B}\]</div>
+<p>If <span class="math notranslate nohighlight">\(|{\bf r}^\ast| &gt; r_{\text{eq}}\)</span> then the other spacecraft is visible relative to the primary spacecraft.</p>
+</section>
+<section id="determining-sensor-cone-inclusion">
+<h3>Determining Sensor Cone Inclusion<a class="headerlink" href="#determining-sensor-cone-inclusion" title="Link to this heading"></a></h3>
+<p>If the line of sight property is established, then the module can also take into consideration a sensor or communication boresight axis <span class="math notranslate nohighlight">\(\hat {\bf a}\)</span> which is fixed relative to the primary spacecraft body frame.  The angle <span class="math notranslate nohighlight">\(\phi\)</span> between the relative position vector and this body fixed unit direction vector is found through:</p>
+<div class="math notranslate nohighlight">
+\[\phi = \arccos \left( \frac{ {\bf r}_{S/B} \cdot \hat{\bf a}}{|{\bf r}_{S/B} |} \right)\]</div>
+<p>The module sets the sensor cone half-angle <span class="math notranslate nohighlight">\(\theta\)</span>.  If <span class="math notranslate nohighlight">\(\phi &gt; \theta\)</span> then the sensor or communication axis does not have access to the other spacecraft.</p>
+<p>If this <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> is considered, then the access output message sets the message elevation angle as</p>
+<div class="math notranslate nohighlight">
+\[\text{elevation} = \frac{\pi}{2} - \phi\]</div>
+</section>
+<section id="determining-solar-illumination">
+<h3>Determining Solar Illumination<a class="headerlink" href="#determining-solar-illumination" title="Link to this heading"></a></h3>
+<p>If the <code class="docutils literal notranslate"><span class="pre">sunInMsg</span></code> is connected and <span class="math notranslate nohighlight">\(\theta_{\text{solar,max}}\)</span> is set, the illumination of the surface is considered, treating <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> as the surface normal. Taking <span class="math notranslate nohighlight">\(\hat{\bf s}\)</span> as the sun vector, the illumination incidence condition is met if</p>
+<div class="math notranslate nohighlight">
+\[\arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}\]</div>
+<p>If an eclipse message is connected and <code class="docutils literal notranslate"><span class="pre">min_shadow_factor</span></code> is set, the module will also check that the shadow factor is above this threshold.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>A new instance of <code class="docutils literal notranslate"><span class="pre">spacecraftLocation</span></code>, alongside necessary user-supplied parameters, can be created by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+<span class="n">location</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;scLocation&quot;</span>
+<span class="n">location</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+<span class="n">location</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">RP_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># optional, include to account for oblateness</span>
+<span class="n">location</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># optinal, sets maximum range for visibility in meters</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The variable <code class="docutils literal notranslate"><span class="pre">maximumRange</span></code> is optional and set to -1 by default.  If it is set to a positive value, then the <code class="docutils literal notranslate"><span class="pre">hasAccess</span></code> variable is only set to 1 if the relative spacecraft distance is less than this maximum range.</p>
+<p>A optional planet emphemeris is connected via the``planetInMsg`` input message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It this message is not connected, then zero planet position and attitude orientation are set.</p>
+<p>To set a primary spacecraft body fixed sensor or communication axis <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> and half-cone angle <span class="math notranslate nohighlight">\(\theta\)</span>, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">xxx</span><span class="p">,</span> <span class="n">xxx</span><span class="p">,</span> <span class="n">xxx</span><span class="p">]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">xxx</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+</pre></div>
+</div>
+<p>Spacecraft can be added to the model by calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">location</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">location</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc2</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The access output messages can be logged through:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataRec0</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">dataRec1</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418SpacecraftLocation">
+<span id="_CPPv318SpacecraftLocation"></span><span id="_CPPv218SpacecraftLocation"></span><span id="SpacecraftLocation"></span><span class="target" id="class_spacecraft_location"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftLocation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv418SpacecraftLocation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftLocation.h&gt;</em></div>
+<p>ground location class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation18SpacecraftLocationEv">
+<span id="_CPPv3N18SpacecraftLocation18SpacecraftLocationEv"></span><span id="_CPPv2N18SpacecraftLocation18SpacecraftLocationEv"></span><span id="SpacecraftLocation::SpacecraftLocation"></span><span class="target" id="class_spacecraft_location_1a4792c6aa6bb6362268950eb11a77a955"></span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation18SpacecraftLocationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an instance of the <a class="reference internal" href="#class_spacecraft_location"><span class="std std-ref">SpacecraftLocation</span></a> class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocationD0Ev">
+<span id="_CPPv3N18SpacecraftLocationD0Ev"></span><span id="_CPPv2N18SpacecraftLocationD0Ev"></span><span id="SpacecraftLocation::~SpacecraftLocation"></span><span class="target" id="class_spacecraft_location_1ac6b64d12ad1f6211eb81d015cf56d4ce"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpacecraftLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Empty destructor method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation11UpdateStateE8uint64_t">
+<span id="_CPPv3N18SpacecraftLocation11UpdateStateE8uint64_t"></span><span id="_CPPv2N18SpacecraftLocation11UpdateStateE8uint64_t"></span><span id="SpacecraftLocation::UpdateState__uint64_t"></span><span class="target" id="class_spacecraft_location_1a3b6b47c002de413828bfc5f2205b48ed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>update module </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation5ResetE8uint64_t">
+<span id="_CPPv3N18SpacecraftLocation5ResetE8uint64_t"></span><span id="_CPPv2N18SpacecraftLocation5ResetE8uint64_t"></span><span id="SpacecraftLocation::Reset__uint64_t"></span><span class="target" id="class_spacecraft_location_1a3032e9b177877165cc36080474af4568"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets the internal position to the specified initial position. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation12ReadMessagesEv">
+<span id="_CPPv3N18SpacecraftLocation12ReadMessagesEv"></span><span id="_CPPv2N18SpacecraftLocation12ReadMessagesEv"></span><span id="SpacecraftLocation::ReadMessages"></span><span class="target" id="class_spacecraft_location_1ae691c1c94f731db9ae8f9a74a110bfc2"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation12ReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation13WriteMessagesE8uint64_t">
+<span id="_CPPv3N18SpacecraftLocation13WriteMessagesE8uint64_t"></span><span id="_CPPv2N18SpacecraftLocation13WriteMessagesE8uint64_t"></span><span id="SpacecraftLocation::WriteMessages__uint64_t"></span><span class="target" id="class_spacecraft_location_1a9c5eadb9a0a2bda33909d2232ac14b49"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation13WriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>write module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N18SpacecraftLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N18SpacecraftLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="SpacecraftLocation::addSpacecraftToModel__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_spacecraft_location_1a3dd2d760274186d9fd9161960d6e903d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation8rEquatorE">
+<span id="_CPPv3N18SpacecraftLocation8rEquatorE"></span><span id="_CPPv2N18SpacecraftLocation8rEquatorE"></span><span id="SpacecraftLocation::rEquator__double"></span><span class="target" id="class_spacecraft_location_1a96a1c2a600dc6fc213e70edb91c57789"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEquator</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation8rEquatorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] equatorial planet radius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6rPolarE">
+<span id="_CPPv3N18SpacecraftLocation6rPolarE"></span><span id="_CPPv2N18SpacecraftLocation6rPolarE"></span><span id="SpacecraftLocation::rPolar__double"></span><span class="target" id="class_spacecraft_location_1ab3c063afb680432cceb01c37a232b23a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPolar</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6rPolarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] polar planet radius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation12maximumRangeE">
+<span id="_CPPv3N18SpacecraftLocation12maximumRangeE"></span><span id="_CPPv2N18SpacecraftLocation12maximumRangeE"></span><span id="SpacecraftLocation::maximumRange__double"></span><span class="target" id="class_spacecraft_location_1a91fbdd6ef9021dd2dc6e2c0e0d348c40"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maximumRange</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation12maximumRangeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6aHat_BE">
+<span id="_CPPv3N18SpacecraftLocation6aHat_BE"></span><span id="_CPPv2N18SpacecraftLocation6aHat_BE"></span><span id="SpacecraftLocation::aHat_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1abc99c836f7cb0ff41817a2d629125f05"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aHat_B</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6aHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] (optional) unit direction vector of the sensor/communication boresight axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation5thetaE">
+<span id="_CPPv3N18SpacecraftLocation5thetaE"></span><span id="_CPPv2N18SpacecraftLocation5thetaE"></span><span id="SpacecraftLocation::theta__double"></span><span class="target" id="class_spacecraft_location_1a51459ea0105a078fa2f711529d934a00"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation11theta_solarE">
+<span id="_CPPv3N18SpacecraftLocation11theta_solarE"></span><span id="_CPPv2N18SpacecraftLocation11theta_solarE"></span><span id="SpacecraftLocation::theta_solar__double"></span><span class="target" id="class_spacecraft_location_1a91f8b1368da8a6871079513a40b35c3d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta_solar</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation11theta_solarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] (optional) illumination half-cone angle, treating aHat_B as the surface normal </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation17min_shadow_factorE">
+<span id="_CPPv3N18SpacecraftLocation17min_shadow_factorE"></span><span id="_CPPv2N18SpacecraftLocation17min_shadow_factorE"></span><span id="SpacecraftLocation::min_shadow_factor__double"></span><span class="target" id="class_spacecraft_location_1aff9ee0088956bf48fcc8af099a3d530b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">min_shadow_factor</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation17min_shadow_factorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] (optional) minimum amount of illumination due to eclipse necessary to observe </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation19primaryScStateInMsgE">
+<span id="_CPPv3N18SpacecraftLocation19primaryScStateInMsgE"></span><span id="_CPPv2N18SpacecraftLocation19primaryScStateInMsgE"></span><span id="SpacecraftLocation::primaryScStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_spacecraft_location_1a1dcee881809b0b0ea05889c47afff524"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">primaryScStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation19primaryScStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>primary spacecraft input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation11planetInMsgE">
+<span id="_CPPv3N18SpacecraftLocation11planetInMsgE"></span><span id="_CPPv2N18SpacecraftLocation11planetInMsgE"></span><span id="SpacecraftLocation::planetInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_spacecraft_location_1a8d8ec7f181ff7dc64d1a8049d95ffc66"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation11planetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) planet state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation8sunInMsgE">
+<span id="_CPPv3N18SpacecraftLocation8sunInMsgE"></span><span id="_CPPv2N18SpacecraftLocation8sunInMsgE"></span><span id="SpacecraftLocation::sunInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_spacecraft_location_1a7f491a6a9343b939d455bdf816bf58df"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation8sunInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) sun data input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation12eclipseInMsgE">
+<span id="_CPPv3N18SpacecraftLocation12eclipseInMsgE"></span><span id="_CPPv2N18SpacecraftLocation12eclipseInMsgE"></span><span id="SpacecraftLocation::eclipseInMsg__ReadFunctor:EclipseMsgPayload:"></span><span class="target" id="class_spacecraft_location_1a1c6d89a6c691ceba8f12b4e65ba38ec3"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation12eclipseInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) eclipse input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation13accessOutMsgsE">
+<span id="_CPPv3N18SpacecraftLocation13accessOutMsgsE"></span><span id="_CPPv2N18SpacecraftLocation13accessOutMsgsE"></span><span id="SpacecraftLocation::accessOutMsgs__std::vector:Message:AccessMsgPayload:P:"></span><span class="target" id="class_spacecraft_location_1af0af040058fee4c026abc23790c09e02"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation13accessOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of ground location access messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation13scStateInMsgsE">
+<span id="_CPPv3N18SpacecraftLocation13scStateInMsgsE"></span><span id="_CPPv2N18SpacecraftLocation13scStateInMsgsE"></span><span id="SpacecraftLocation::scStateInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_spacecraft_location_1aae7d3e1a59856c8d0a2ba1db5dce8c97"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation13scStateInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of other sc state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6r_LB_BE">
+<span id="_CPPv3N18SpacecraftLocation6r_LB_BE"></span><span id="_CPPv2N18SpacecraftLocation6r_LB_BE"></span><span id="SpacecraftLocation::r_LB_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1a3b1e1d00b9f1e474000d9b654eff91d5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LB_B</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6r_LB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position of the location relative to the spacecraft frame origin B, in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation9bskLoggerE">
+<span id="_CPPv3N18SpacecraftLocation9bskLoggerE"></span><span id="_CPPv2N18SpacecraftLocation9bskLoggerE"></span><span id="SpacecraftLocation::bskLogger__BSKLogger"></span><span class="target" id="class_spacecraft_location_1a9376c74221c9e8a294e4e3ad052324c8"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation13computeAccessEv">
+<span id="_CPPv3N18SpacecraftLocation13computeAccessEv"></span><span id="_CPPv2N18SpacecraftLocation13computeAccessEv"></span><span id="SpacecraftLocation::computeAccess"></span><span class="target" id="class_spacecraft_location_1a53b2125c40284a039f8f8ed7c8925a00"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAccess</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation13computeAccessEv" title="Link to this definition"></a><br /></dt>
+<dd><p>compute the spacecraft to spacecraft access messages </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation15accessMsgBufferE">
+<span id="_CPPv3N18SpacecraftLocation15accessMsgBufferE"></span><span id="_CPPv2N18SpacecraftLocation15accessMsgBufferE"></span><span id="SpacecraftLocation::accessMsgBuffer__std::vector:AccessMsgPayload:"></span><span class="target" id="class_spacecraft_location_1a140f6748f0df1f49f1447f3f8c666840"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation15accessMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of access output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation14scStatesBufferE">
+<span id="_CPPv3N18SpacecraftLocation14scStatesBufferE"></span><span id="_CPPv2N18SpacecraftLocation14scStatesBufferE"></span><span id="SpacecraftLocation::scStatesBuffer__std::vector:SCStatesMsgPayload:"></span><span class="target" id="class_spacecraft_location_1aeab6e1a6d17dc54a59f7cf1863f15e38"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStatesBuffer</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation14scStatesBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of other spacecraft states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation21primaryScStatesBufferE">
+<span id="_CPPv3N18SpacecraftLocation21primaryScStatesBufferE"></span><span id="_CPPv2N18SpacecraftLocation21primaryScStatesBufferE"></span><span id="SpacecraftLocation::primaryScStatesBuffer__SCStatesMsgPayload"></span><span class="target" id="class_spacecraft_location_1ae1bbbe3da0f403902035aed627d5f08e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">primaryScStatesBuffer</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation21primaryScStatesBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of primary spacecraft states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation11planetStateE">
+<span id="_CPPv3N18SpacecraftLocation11planetStateE"></span><span id="_CPPv2N18SpacecraftLocation11planetStateE"></span><span id="SpacecraftLocation::planetState__SpicePlanetStateMsgPayload"></span><span class="target" id="class_spacecraft_location_1a210ec0e6f3aed7fcc6d2949f6d15f846"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetState</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation11planetStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of planet data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation7sunDataE">
+<span id="_CPPv3N18SpacecraftLocation7sunDataE"></span><span id="_CPPv2N18SpacecraftLocation7sunDataE"></span><span id="SpacecraftLocation::sunData__SpicePlanetStateMsgPayload"></span><span class="target" id="class_spacecraft_location_1ac20d65d310f28086adf9efe72f03a46a"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunData</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation7sunDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of sun data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation16eclipseInMsgDataE">
+<span id="_CPPv3N18SpacecraftLocation16eclipseInMsgDataE"></span><span id="_CPPv2N18SpacecraftLocation16eclipseInMsgDataE"></span><span id="SpacecraftLocation::eclipseInMsgData__EclipseMsgPayload"></span><span class="target" id="class_spacecraft_location_1a396c9796d7b3af49e4f1c9bb07a41a78"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseInMsgData</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation16eclipseInMsgDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of eclipse data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6dcm_PNE">
+<span id="_CPPv3N18SpacecraftLocation6dcm_PNE"></span><span id="_CPPv2N18SpacecraftLocation6dcm_PNE"></span><span id="SpacecraftLocation::dcm_PN__Eigen::Matrix3d"></span><span class="target" id="class_spacecraft_location_1a3cb7337f9a4bd4bf20bd8e9bc4946e95"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6dcm_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6r_PN_NE">
+<span id="_CPPv3N18SpacecraftLocation6r_PN_NE"></span><span id="_CPPv2N18SpacecraftLocation6r_PN_NE"></span><span id="SpacecraftLocation::r_PN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1a58da61f82b32e1a909e006cbe1703d91"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Planet to inertial frame origin vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6r_BP_PE">
+<span id="_CPPv3N18SpacecraftLocation6r_BP_PE"></span><span id="_CPPv2N18SpacecraftLocation6r_BP_PE"></span><span id="SpacecraftLocation::r_BP_P__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1a7be5a75bfcb0f3e1434e89fff6c7ddb6"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6r_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>primary spacecraft relative to planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6r_BN_NE">
+<span id="_CPPv3N18SpacecraftLocation6r_BN_NE"></span><span id="_CPPv2N18SpacecraftLocation6r_BN_NE"></span><span id="SpacecraftLocation::r_BN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1ab10576b4e98c97a4d65fc3c736719561"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6r_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>primary spacecraft relative to inertial </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6zScaleE">
+<span id="_CPPv3N18SpacecraftLocation6zScaleE"></span><span id="_CPPv2N18SpacecraftLocation6zScaleE"></span><span id="SpacecraftLocation::zScale__double"></span><span class="target" id="class_spacecraft_location_1a4f979b37a40325996bd96f7674ad5900"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">zScale</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6zScaleE" title="Link to this definition"></a><br /></dt>
+<dd><p>ration of rEquator over rPolar, used for affine scaling to turn ellipsoid to sphere </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation6r_HN_NE">
+<span id="_CPPv3N18SpacecraftLocation6r_HN_NE"></span><span id="_CPPv2N18SpacecraftLocation6r_HN_NE"></span><span id="SpacecraftLocation::r_HN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_location_1ae3d3f5673a3ebd82381695007118ed05"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_HN_N</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation6r_HN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sun position in inertial frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spacecraftLocation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

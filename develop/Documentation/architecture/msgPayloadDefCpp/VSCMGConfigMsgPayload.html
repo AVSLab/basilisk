@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VSCMGConfigMsgPayload &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VizUserInputMsgPayload" href="VizUserInputMsgPayload.html" />
+    <link rel="prev" title="THROutputMsgPayload" href="THROutputMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefCpp</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigLogMsgPayload.html">CSSConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ChargeMsmMsgPayload.html">ChargeMsmMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataStorageStatusMsgPayload.html">DataStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="JointArrayStateMsgPayload.html">JointArrayStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJJointReactionsMsgPayload.html">MJJointReactionsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJSceneStateMsgPayload.html">MJSceneStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJSysMassMatrixMsgPayload.html">MJSysMassMatrixMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THROutputMsgPayload.html">THROutputMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">VSCMGConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VizUserInputMsgPayload.html">VizUserInputMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefCpp</a></li>
+      <li class="breadcrumb-item active">VSCMGConfigMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefCpp/VSCMGConfigMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vscmgconfigmsgpayload">
+<span id="id1"></span><h1>VSCMGConfigMsgPayload<a class="headerlink" href="#vscmgconfigmsgpayload" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv411VSCMGModels">
+<span id="_CPPv311VSCMGModels"></span><span id="_CPPv211VSCMGModels"></span><span class="target" id="_v_s_c_m_g_config_msg_payload_8h_1af7486fd0d571aa66247b8b5884cc647c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VSCMGModels</span></span></span><a class="headerlink" href="#_CPPv411VSCMGModels" title="Link to this definition"></a><br /></dt>
+<dd><p>enumeration definiting the types of VSCMG modes </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11VSCMGModels19vscmgBalancedWheelsE">
+<span id="_CPPv3N11VSCMGModels19vscmgBalancedWheelsE"></span><span id="_CPPv2N11VSCMGModels19vscmgBalancedWheelsE"></span><span class="target" id="_v_s_c_m_g_config_msg_payload_8h_1af7486fd0d571aa66247b8b5884cc647ca41584d05c988a2d59ca29668716fa23a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgBalancedWheels</span></span></span><a class="headerlink" href="#_CPPv4N11VSCMGModels19vscmgBalancedWheelsE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11VSCMGModels17vscmgJitterSimpleE">
+<span id="_CPPv3N11VSCMGModels17vscmgJitterSimpleE"></span><span id="_CPPv2N11VSCMGModels17vscmgJitterSimpleE"></span><span class="target" id="_v_s_c_m_g_config_msg_payload_8h_1af7486fd0d571aa66247b8b5884cc647ca80844c23a961d6e97a21c0c5b471debf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgJitterSimple</span></span></span><a class="headerlink" href="#_CPPv4N11VSCMGModels17vscmgJitterSimpleE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11VSCMGModels23vscmgJitterFullyCoupledE">
+<span id="_CPPv3N11VSCMGModels23vscmgJitterFullyCoupledE"></span><span id="_CPPv2N11VSCMGModels23vscmgJitterFullyCoupledE"></span><span class="target" id="_v_s_c_m_g_config_msg_payload_8h_1af7486fd0d571aa66247b8b5884cc647cadee508551545bced3be34ddaded744b3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgJitterFullyCoupled</span></span></span><a class="headerlink" href="#_CPPv4N11VSCMGModels23vscmgJitterFullyCoupledE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421VSCMGConfigMsgPayload">
+<span id="_CPPv321VSCMGConfigMsgPayload"></span><span id="_CPPv221VSCMGConfigMsgPayload"></span><span id="VSCMGConfigMsgPayload"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VSCMGConfigMsgPayload</span></span></span><a class="headerlink" href="#_CPPv421VSCMGConfigMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;VSCMGConfigMsgPayload.h&gt;</em></div>
+<p>Structure used to define the individual VSCMG configuration data message. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload10VSCMGModelE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload10VSCMGModelE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload10VSCMGModelE"></span><span id="VSCMGConfigMsgPayload::VSCMGModel__VSCMGModels"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1abeaa98256acdd6601762ca4912d98331"></span><a class="reference internal" href="#_CPPv411VSCMGModels" title="VSCMGModels"><span class="n"><span class="pre">VSCMGModels</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VSCMGModel</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload10VSCMGModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], type of imbalance model to use </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5rGB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5rGB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5rGB_BE"></span><span id="VSCMGConfigMsgPayload::rGB_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1abe12300c8238d00fb26a6c52a66ee62c"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rGB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5rGB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m], vector pointing from body frame B origin to VSCMG frame G origin in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload8gsHat0_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload8gsHat0_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload8gsHat0_BE"></span><span id="VSCMGConfigMsgPayload::gsHat0_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a2ed2e775e734d340578e79deb8eee885"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gsHat0_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload8gsHat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] first axis of the G frame in B frame components (G frame for gamma=0)] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7gsHat_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7gsHat_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7gsHat_BE"></span><span id="VSCMGConfigMsgPayload::gsHat_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0296bef0094b062f459db16237dd974f"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gsHat_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7gsHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] first axis of the G frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload8gtHat0_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload8gtHat0_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload8gtHat0_BE"></span><span id="VSCMGConfigMsgPayload::gtHat0_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ab048e3c1b64d9b0c5927a1dfaf625a08"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gtHat0_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload8gtHat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] second axis of the G frame in B frame components (G frame for gamma=0)] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7gtHat_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7gtHat_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7gtHat_BE"></span><span id="VSCMGConfigMsgPayload::gtHat_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a774167697e1f21c3a5e0203f10203f9f"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gtHat_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7gtHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] second axis of the G frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7ggHat_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7ggHat_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7ggHat_BE"></span><span id="VSCMGConfigMsgPayload::ggHat_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a73e1e77657af09dc72bdb455dfdfea08"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ggHat_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7ggHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] third axis of the G frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload8w2Hat0_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload8w2Hat0_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload8w2Hat0_BE"></span><span id="VSCMGConfigMsgPayload::w2Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a6158708f5632926de3f19171dea25729"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload8w2Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] second axis of the W frame in B frame components (W frame for theta=0) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7w2Hat_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7w2Hat_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7w2Hat_BE"></span><span id="VSCMGConfigMsgPayload::w2Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aa80ffe8da2a7adb4c8cb027f4f42e3e3"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7w2Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] second axis of the W frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload8w3Hat0_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload8w3Hat0_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload8w3Hat0_BE"></span><span id="VSCMGConfigMsgPayload::w3Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aec0d048792a6e6782f23fc9bbc93fb30"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload8w3Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] third axis of the W frame in B frame components (W frame for theta=0) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7w3Hat_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7w3Hat_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7w3Hat_BE"></span><span id="VSCMGConfigMsgPayload::w3Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a32dd4c7ec41ff4b0ea9205ded1e7e223"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7w3Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] third axis of the W frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5massVE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5massVE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5massVE"></span><span id="VSCMGConfigMsgPayload::massV__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a95b5ce4b63ac68937e41199cf6cef7a4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massV</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5massVE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of the VSCMG system </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5massGE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5massGE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5massGE"></span><span id="VSCMGConfigMsgPayload::massG__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a02fe7de0415d589ac533a7b4f9006d42"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massG</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5massGE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of the gimbal </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5massWE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5massWE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5massWE"></span><span id="VSCMGConfigMsgPayload::massW__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a443d61aca907fb9bc17837081781d1b6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massW</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5massWE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of the wheel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5thetaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5thetaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5thetaE"></span><span id="VSCMGConfigMsgPayload::theta__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1acc4ce7149f838f1bef040993e7815f9e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] wheel angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5OmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5OmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5OmegaE"></span><span id="VSCMGConfigMsgPayload::Omega__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a34b367f1f52ed19b3beaf041ec38cf3f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5OmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] wheel speed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5gammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5gammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5gammaE"></span><span id="VSCMGConfigMsgPayload::gamma__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a393afa2e50c537db2890dad0d4610dbf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5gammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] gimbal angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload8gammaDotE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload8gammaDotE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload8gammaDotE"></span><span id="VSCMGConfigMsgPayload::gammaDot__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a9cd5847655f2bbd1dc10e594d180b916"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gammaDot</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload8gammaDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] gimbal rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IW1E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IW1E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IW1E"></span><span id="VSCMGConfigMsgPayload::IW1__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a022eb9dd3cc71e0f2f6b38673c16217e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IW1</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IW1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the wheel about the wheel spin axis in W frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IW2E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IW2E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IW2E"></span><span id="VSCMGConfigMsgPayload::IW2__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1accf2957ba5f68063c70e779a0c386458"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IW2</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IW2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the wheel about the wheel second axis in W frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IW3E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IW3E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IW3E"></span><span id="VSCMGConfigMsgPayload::IW3__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a194041ca4190d5922d3a1d5f0bffc81f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IW3</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IW3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the wheel about the wheel third axis in W frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4IW13E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4IW13E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4IW13E"></span><span id="VSCMGConfigMsgPayload::IW13__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a171fdca8b466a1e499f37209ea1c1477"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IW13</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4IW13E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia coupling between wheel first and third axes in W frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IG1E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IG1E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IG1E"></span><span id="VSCMGConfigMsgPayload::IG1__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aa69fbb114209a7f57804083d8cc3a11d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG1</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IG1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the gimbal about the gimbal first axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IG2E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IG2E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IG2E"></span><span id="VSCMGConfigMsgPayload::IG2__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a89d5c3912d5d977a40e4629e963aba8f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG2</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IG2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the gimbal about the gimbal second axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IG3E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IG3E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IG3E"></span><span id="VSCMGConfigMsgPayload::IG3__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aab331a95470a9392abffab3c80b747cf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG3</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IG3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the gimbal about the gimbal third axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4IG12E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4IG12E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4IG12E"></span><span id="VSCMGConfigMsgPayload::IG12__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ad2be32fb0c7cc3f5de2cb68677d8b2fa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG12</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4IG12E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia coupling between gimbal first and second axes in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4IG13E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4IG13E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4IG13E"></span><span id="VSCMGConfigMsgPayload::IG13__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aa232d8f634fdde77977d27c3b1d7000e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG13</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4IG13E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia coupling between gimbal first and third axes in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4IG23E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4IG23E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4IG23E"></span><span id="VSCMGConfigMsgPayload::IG23__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ad0e772f08b57dbd346e4fa75c56e341c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IG23</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4IG23E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia coupling between gimbal second and third axes in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IV1E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IV1E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IV1E"></span><span id="VSCMGConfigMsgPayload::IV1__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ada6bc00c03295cdb6b0dae4139d042d2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IV1</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IV1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the VSCMG about the VSCMG first axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IV2E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IV2E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IV2E"></span><span id="VSCMGConfigMsgPayload::IV2__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a42f8556dd96b2575b873f91c3025ad6b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IV2</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IV2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the VSCMG about the VSCMG second axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3IV3E">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3IV3E"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3IV3E"></span><span id="VSCMGConfigMsgPayload::IV3__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a1f532954c8305096d4a6d59ddc53c4b8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IV3</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3IV3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the VSCMG about the VSCMG third axis in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4rhoGE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4rhoGE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4rhoGE"></span><span id="VSCMGConfigMsgPayload::rhoG__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1abeb980c4ef82b3d0ae78824a1efba77c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoG</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4rhoGE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ratio of the gimbal mass to the VSCMG mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload4rhoWE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload4rhoWE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload4rhoWE"></span><span id="VSCMGConfigMsgPayload::rhoW__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1af29806b816011f6ee6581f52cd950184"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoW</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload4rhoWE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ratio of the wheel mass to the VSCMG mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3U_sE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3U_sE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3U_sE"></span><span id="VSCMGConfigMsgPayload::U_s__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a618a3505a0ee855062bb50b423b7e8ca"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_s</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3U_sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m] static imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload3U_dE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload3U_dE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload3U_dE"></span><span id="VSCMGConfigMsgPayload::U_d__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1acd478cbb1ee6db1d6d7d9edeea5d36c1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_d</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload3U_dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] dynamic imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1dE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1dE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1dE"></span><span id="VSCMGConfigMsgPayload::d__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ad200074800a83aea94419460974e5a29"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] offset of point Wc (center of mass of the wheel) from wheel frame W origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1lE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1lE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1lE"></span><span id="VSCMGConfigMsgPayload::l__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0f76f63ccba9d6e3512814003acb991d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1lE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] offset of wheel third axis from gimbal third axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1LE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1LE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1LE"></span><span id="VSCMGConfigMsgPayload::L__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1afc94026baddf52c51aee7aa6c167347e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1LE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] offset of the wheel first axis from the gimbal first axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11u_s_currentE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11u_s_currentE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11u_s_currentE"></span><span id="VSCMGConfigMsgPayload::u_s_current__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a35719a0b299562fed226b9ff26649d9c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_s_current</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11u_s_currentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] current wheel motor torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7u_s_maxE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7u_s_maxE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7u_s_maxE"></span><span id="VSCMGConfigMsgPayload::u_s_max__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ae758fcd007100b357115e6f6cbaed007"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_s_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7u_s_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Max wheel torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7u_s_minE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7u_s_minE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7u_s_minE"></span><span id="VSCMGConfigMsgPayload::u_s_min__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aca94741106081765ed2179fdd85d06f7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_s_min</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7u_s_minE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Min wheel torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5u_s_fE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5u_s_fE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5u_s_fE"></span><span id="VSCMGConfigMsgPayload::u_s_f__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1abbf35c46ba1e1f64aea62835833d024f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_s_f</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5u_s_fE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Coulomb friction wheel torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload9Omega_maxE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload9Omega_maxE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload9Omega_maxE"></span><span id="VSCMGConfigMsgPayload::Omega_max__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a39e640e46bc30ee82f70d04023992db8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload9Omega_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] max wheel speed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload24wheelLinearFrictionRatioE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload24wheelLinearFrictionRatioE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload24wheelLinearFrictionRatioE"></span><span id="VSCMGConfigMsgPayload::wheelLinearFrictionRatio__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0f9dffb07e58586a5f2003f1ea15fe88"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wheelLinearFrictionRatio</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload24wheelLinearFrictionRatioE" title="Link to this definition"></a><br /></dt>
+<dd><p>[%] ratio relative to max wheel speed value up to which the friction behaves linearly </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11u_g_currentE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11u_g_currentE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11u_g_currentE"></span><span id="VSCMGConfigMsgPayload::u_g_current__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ab40f3f27f7e53738b48a73ae8cbc44e6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_g_current</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11u_g_currentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] current gimbal motor torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7u_g_maxE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7u_g_maxE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7u_g_maxE"></span><span id="VSCMGConfigMsgPayload::u_g_max__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a702b7f93fb49230850bdd23268310d56"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_g_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7u_g_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Max gimbal torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload7u_g_minE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload7u_g_minE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload7u_g_minE"></span><span id="VSCMGConfigMsgPayload::u_g_min__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a49acb1c01518c3c3a66988665064f789"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_g_min</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload7u_g_minE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Min gimbal torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload5u_g_fE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload5u_g_fE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload5u_g_fE"></span><span id="VSCMGConfigMsgPayload::u_g_f__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a3f334a640cb3dce47b2a3be3de6f4706"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_g_f</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload5u_g_fE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Coulomb friction gimbal torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload12gammaDot_maxE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload12gammaDot_maxE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload12gammaDot_maxE"></span><span id="VSCMGConfigMsgPayload::gammaDot_max__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a9bd848cace3f39ffc7bc7a5b9a17a2c1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gammaDot_max</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload12gammaDot_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] max gimbal rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload25gimbalLinearFrictionRatioE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload25gimbalLinearFrictionRatioE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload25gimbalLinearFrictionRatioE"></span><span id="VSCMGConfigMsgPayload::gimbalLinearFrictionRatio__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a4b0f673d07ca58472b1db9f711132a4f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gimbalLinearFrictionRatio</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload25gimbalLinearFrictionRatioE" title="Link to this definition"></a><br /></dt>
+<dd><p>[%] ratio relative to max gimbal rate value up to which the friction behaves linearly </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload9IGPntGc_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload9IGPntGc_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload9IGPntGc_BE"></span><span id="VSCMGConfigMsgPayload::IGPntGc_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a7aabe01bdd105b5dcc396c1834e85bd4"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IGPntGc_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload9IGPntGc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the gimbal about point Gc (center of mass of the gimbal) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload9IWPntWc_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload9IWPntWc_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload9IWPntWc_BE"></span><span id="VSCMGConfigMsgPayload::IWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ae5fe1f3d80104407c099405d74502ba3"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload9IWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of the wheel about point Wc (center of mass of the wheel) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload14IPrimeGPntGc_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload14IPrimeGPntGc_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload14IPrimeGPntGc_BE"></span><span id="VSCMGConfigMsgPayload::IPrimeGPntGc_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a5897d4a783bde41abcbe4cad52f684c8"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeGPntGc_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload14IPrimeGPntGc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] body frame time derivative of IGPntGc_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload14IPrimeWPntWc_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload14IPrimeWPntWc_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload14IPrimeWPntWc_BE"></span><span id="VSCMGConfigMsgPayload::IPrimeWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a768ddc4fe68012b6da8201496fe46d83"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload14IPrimeWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] body frame time derivative of IWPntWc_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6rGcG_GE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6rGcG_GE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6rGcG_GE"></span><span id="VSCMGConfigMsgPayload::rGcG_G__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a050f003281416c31e2617a8431f53b56"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rGcG_G</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6rGcG_GE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from VSCMG frame G origin to point Gc (center of mass of the gimbal) in G frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6rGcG_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6rGcG_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6rGcG_BE"></span><span id="VSCMGConfigMsgPayload::rGcG_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ac6e31db5ad8dd0ee8ca3e2908869586b"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rGcG_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6rGcG_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from VSCMG frame G origin to point Gc (center of mass of the gimbal) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6rGcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6rGcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6rGcB_BE"></span><span id="VSCMGConfigMsgPayload::rGcB_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1af2e56d89b9edd421a4751a7441fa6081"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rGcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6rGcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame B origin to point Gc (center of mass of the gimbal) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6rWcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6rWcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6rWcB_BE"></span><span id="VSCMGConfigMsgPayload::rWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0fb9e089bedcf07c788a7ce5da578c52"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6rWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame B origin to point Wc (center of mass of the wheel) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6rWcG_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6rWcG_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6rWcG_BE"></span><span id="VSCMGConfigMsgPayload::rWcG_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ae4fd8f9cba371946f3304ffea7824298"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWcG_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6rWcG_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from VSCMG frame G origin to point Wc (center of mass of the wheel) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11rTildeGcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11rTildeGcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11rTildeGcB_BE"></span><span id="VSCMGConfigMsgPayload::rTildeGcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a22c3aacf482e5232a29219c6eb9ce40f"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeGcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11rTildeGcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] tilde matrix of rGcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11rTildeWcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11rTildeWcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11rTildeWcB_BE"></span><span id="VSCMGConfigMsgPayload::rTildeWcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a9f36e2f1cbae2af8f4e7b7e1e88fff69"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11rTildeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] tilde matrix of rWcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11rPrimeGcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11rPrimeGcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11rPrimeGcB_BE"></span><span id="VSCMGConfigMsgPayload::rPrimeGcB_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a09690d968010def89401a3ad6619db47"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeGcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11rPrimeGcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of rGcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload11rPrimeWcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload11rPrimeWcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload11rPrimeWcB_BE"></span><span id="VSCMGConfigMsgPayload::rPrimeWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a5c5e3c796ee44a55a40a31d6ebc4ecb3"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload11rPrimeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of rWcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload16rPrimeTildeGcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload16rPrimeTildeGcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload16rPrimeTildeGcB_BE"></span><span id="VSCMGConfigMsgPayload::rPrimeTildeGcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1afd830727c13f04bcf5aee1790f09a7a0"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTildeGcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload16rPrimeTildeGcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] tilde matrix of body frame time derivative of rGcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload16rPrimeTildeWcB_BE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload16rPrimeTildeWcB_BE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload16rPrimeTildeWcB_BE"></span><span id="VSCMGConfigMsgPayload::rPrimeTildeWcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a45511544dfc991878662e1a23c83fbd9"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTildeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload16rPrimeTildeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] tilde matrix of body frame time derivative of rWcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6aOmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6aOmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6aOmegaE"></span><span id="VSCMGConfigMsgPayload::aOmega__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aa4e11e3395f3003edf18a19301ef8811"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aOmega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6aOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[1/m] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6bOmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6bOmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6bOmegaE"></span><span id="VSCMGConfigMsgPayload::bOmega__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1aaa7e0fc8696d12cb5557d5f496d88261"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bOmega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6bOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6cOmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6cOmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6cOmegaE"></span><span id="VSCMGConfigMsgPayload::cOmega__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a29fe7bf3d9df0e7c421b91129db1d6ee"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cOmega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6cOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6dOmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6dOmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6dOmegaE"></span><span id="VSCMGConfigMsgPayload::dOmega__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a72864a530d53c8c7b8b190854289efce"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dOmega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6dOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6eOmegaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6eOmegaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6eOmegaE"></span><span id="VSCMGConfigMsgPayload::eOmega__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a311df674c6c85f41f1ef31d86717372d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eOmega</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6eOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6agammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6agammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6agammaE"></span><span id="VSCMGConfigMsgPayload::agamma__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a11b93a3415a63ca159cce63018e66e10"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">agamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6agammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[1/m] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6bgammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6bgammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6bgammaE"></span><span id="VSCMGConfigMsgPayload::bgamma__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a559fec30a1e81bb3e886c42fb5de9998"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bgamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6bgammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6cgammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6cgammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6cgammaE"></span><span id="VSCMGConfigMsgPayload::cgamma__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a2d18c45f96e6a30ebaaa3de2215fddb9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cgamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6cgammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6dgammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6dgammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6dgammaE"></span><span id="VSCMGConfigMsgPayload::dgamma__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a54a281034fbd864c12539ea73ca63d5a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dgamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6dgammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload6egammaE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload6egammaE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload6egammaE"></span><span id="VSCMGConfigMsgPayload::egamma__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0f43c32588521eb3a27073c513d452c7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">egamma</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload6egammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1pE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1pE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1pE"></span><span id="VSCMGConfigMsgPayload::p__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0e76554630a89a50644d410158c010cf"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">p</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1pE" title="Link to this definition"></a><br /></dt>
+<dd><p>[1/m] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1qE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1qE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1qE"></span><span id="VSCMGConfigMsgPayload::q__Eigen::Vector3d"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1a0044e7ceab386c9312b617981d623bb8"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">q</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1qE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload1sE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload1sE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload1sE"></span><span id="VSCMGConfigMsgPayload::s__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1af128d6e8e443c39e9a0442371cd0fbcd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">s</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload1sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload20gravityTorqueWheel_sE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload20gravityTorqueWheel_sE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload20gravityTorqueWheel_sE"></span><span id="VSCMGConfigMsgPayload::gravityTorqueWheel_s__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1af68dee7b0b67aba6345dbe8acdcf9da9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravityTorqueWheel_s</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload20gravityTorqueWheel_sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] gravitational torque on the wheel about wheel spin axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VSCMGConfigMsgPayload21gravityTorqueGimbal_gE">
+<span id="_CPPv3N21VSCMGConfigMsgPayload21gravityTorqueGimbal_gE"></span><span id="_CPPv2N21VSCMGConfigMsgPayload21gravityTorqueGimbal_gE"></span><span id="VSCMGConfigMsgPayload::gravityTorqueGimbal_g__double"></span><span class="target" id="struct_v_s_c_m_g_config_msg_payload_1ab423b6e06dcec688e03899607a596475"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravityTorqueGimbal_g</span></span></span><a class="headerlink" href="#_CPPv4N21VSCMGConfigMsgPayload21gravityTorqueGimbal_gE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] gravitational torque on the gimbal about gimbal third axis </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="THROutputMsgPayload.html" class="btn btn-neutral float-left" title="THROutputMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VizUserInputMsgPayload.html" class="btn btn-neutral float-right" title="VizUserInputMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

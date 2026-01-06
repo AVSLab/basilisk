@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module Header File &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="C Message Object" href="cModules-2.html" />
+    <link rel="prev" title="Making C Modules" href="../cModules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../cModules.html">Making C Modules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Module Header File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cModules-2.html">C Message Object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cModules-3.html">Module Definition File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cModules-4.html">Swig Interface File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cModules-5.html">Deprecated SWIG Interface File</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+          <li class="breadcrumb-item"><a href="../cModules.html">Making C Modules</a></li>
+      <li class="breadcrumb-item active">Module Header File</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Learn/makingModules/cModules/cModules-1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-header-file">
+<span id="cmodules-1"></span><h1>Module Header File<a class="headerlink" href="#module-header-file" title="Link to this heading"></a></h1>
+<section id="basic-c-module-setup">
+<h2>Basic C Module Setup<a class="headerlink" href="#basic-c-module-setup" title="Link to this heading"></a></h2>
+<p>This page describes how to create the C module functions.  Because C is not an object oriented language it is necessary to recreate some concepts from C++ such as data encapsulation.  Thus, while a C++ module has its variables defined within the class, with a C module we need to create a module configuration structure which contains all the module variables.   The module config structure name should be the module name ending with <code class="docutils literal notranslate"><span class="pre">....Config</span></code>.</p>
+<p>When a C module is setup in python, the module data is created first by making an instance of the module configuration data structure, and then wrapping this with module specific code to make a functioning Basilisk module.  The module wrapped is a sub-class of <a class="reference internal" href="../../../Documentation/architecture/_GeneralModuleFiles/sys_model.html#sys-model"><span class="std std-ref">sys_model</span></a> and thus has the usual <code class="docutils literal notranslate"><span class="pre">ModelTag</span></code> and <code class="docutils literal notranslate"><span class="pre">moduleID</span></code> variables, as well as the ability to respond to <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> and <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> requests.</p>
+</section>
+<section id="sample-code">
+<h2>Sample Code<a class="headerlink" href="#sample-code" title="Link to this heading"></a></h2>
+<p>Let us assume the module is to be called <code class="docutils literal notranslate"><span class="pre">SomeModule</span></code>.  The input and output message type is <code class="docutils literal notranslate"><span class="pre">SomeMsg</span></code>.  The following example is analogous to how the sample C++ module is setup.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#ifndef SOME_MODULE_H</span>
+<span class="linenos"> 2</span><span class="cp">#define SOME_MODULE_H</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+<span class="linenos"> 5</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;architecture/utilities/bskLogging.h&quot;</span>
+<span class="linenos"> 6</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;cMsgCInterface/SomeMsg_C.h&quot;</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="cm">/*! @brief Top level structure for the sub-module routines. */</span>
+<span class="linenos"> 9</span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">    </span><span class="cm">/* declare module variables */</span>
+<span class="linenos">11</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">dummy</span><span class="p">;</span><span class="w">                                   </span><span class="c1">//!&lt; [units] sample module variable declaration</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">    </span><span class="cm">/* declare module IO interfaces */</span>
+<span class="linenos">14</span><span class="w">    </span><span class="n">SomeMsg_C</span><span class="w"> </span><span class="n">dataOutMsg</span><span class="p">;</span><span class="w">              </span><span class="c1">//!&lt; sample output message</span>
+<span class="linenos">15</span><span class="w">    </span><span class="n">SomeMsg_C</span><span class="w"> </span><span class="n">dataInMsg</span><span class="p">;</span><span class="w">               </span><span class="c1">//!&lt; sample input message</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="w">    </span><span class="n">BSKLogger</span><span class="w"> </span><span class="o">*</span><span class="n">bskLogger</span><span class="p">;</span><span class="w">              </span><span class="c1">//!&lt; BSK Logging</span>
+<span class="linenos">18</span><span class="p">}</span><span class="n">someModuleConfig</span><span class="p">;</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="cp">#ifdef __cplusplus</span>
+<span class="linenos">21</span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">22</span><span class="cp">#endif</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SelfInit_someModule</span><span class="p">(</span><span class="n">someModuleConfig</span><span class="w"> </span><span class="o">*</span><span class="n">configData</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">moduleID</span><span class="p">);</span>
+<span class="linenos">25</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Update_someModule</span><span class="p">(</span><span class="n">someModuleConfig</span><span class="w"> </span><span class="o">*</span><span class="n">configData</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">callTime</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">moduleID</span><span class="p">);</span>
+<span class="linenos">26</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Reset_someModule</span><span class="p">(</span><span class="n">someModuleConfig</span><span class="w"> </span><span class="o">*</span><span class="n">configData</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">callTime</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">moduleID</span><span class="p">);</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="cp">#ifdef __cplusplus</span>
+<span class="linenos">29</span><span class="p">}</span>
+<span class="linenos">30</span><span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>Let’s break down the above sample code.  The <code class="docutils literal notranslate"><span class="pre">#include</span></code> statements import all required support files, including <code class="docutils literal notranslate"><span class="pre">bskLogging.h</span></code> to log module status messages, as well as all input and output message definitions.  Note that while C++ uses template classes to take a message payload definition and create a message object, in C code the message object is create by wrapping the corresponding message behavior code about the message payload structure definition.  This step is done automatically when using <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">conanfile.py</span></code> and the result is stored in <code class="docutils literal notranslate"><span class="pre">basilisk/dist3/autoSource/cMsgCInterface/</span></code>.  The path to <code class="docutils literal notranslate"><span class="pre">autoSource</span></code> is automatically included in the <code class="docutils literal notranslate"><span class="pre">cmake</span></code> file, thus the shown shorter include can be used.</p>
+<p>The C message wrapper functions, for example for <code class="docutils literal notranslate"><span class="pre">SomeMsg</span></code> type, are stored in the <code class="docutils literal notranslate"><span class="pre">SomeMsg_C.h</span></code> file.  Importing the <code class="docutils literal notranslate"><span class="pre">..._C.h</span></code> file will automatically also include the corresponding <code class="docutils literal notranslate"><span class="pre">SomeMsgPayload.h</span></code> file.  Thus, this single include provides access essentially to the C message object methods as well as the message data definition.</p>
+<p>Next the module configure structure is defined.  In the above sample code this is the <code class="docutils literal notranslate"><span class="pre">someModuleConfig</span></code> definition.  Think of this module configuration file as the equivalent of class variables with a C++ module.  However, as this is a simple C structure, all config variables are public variables.  There is no concept of private module variables with C modules.</p>
+<p>Finally, the required module functions must be defined.  You can define additional support functions.  Note that this code must be wrapped so the C code will properly compile within this C++ project.</p>
+</section>
+<section id="required-module-methods">
+<h2>Required Module Methods<a class="headerlink" href="#required-module-methods" title="Link to this heading"></a></h2>
+<p>Each C module should define <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code>, <code class="docutils literal notranslate"><span class="pre">Reset</span></code> and <code class="docutils literal notranslate"><span class="pre">Update</span></code> functions.  To tie these functions to this module, the function name is expanded with the module name as shown above.  Note that C++ modules do not require the <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code> function as the message objects are automatically connected to their data copy in their constructor.  In C we have to do this with an extra step.</p>
+<p>Note that each of these required module functions receives a pointer to the module configuration data structure.  This structure is typically called <code class="docutils literal notranslate"><span class="pre">configData</span></code> in each C module.</p>
+</section>
+<section id="module-variables">
+<h2>Module Variables<a class="headerlink" href="#module-variables" title="Link to this heading"></a></h2>
+<p>The module configuration structure defines all module variables.  This includes variables and message buffers needed to implement the module, the <code class="docutils literal notranslate"><span class="pre">BSKLogger</span></code> variable for module status logging, as well as all input and output messages.</p>
+<p>Regarding C message objects, the sample <code class="docutils literal notranslate"><span class="pre">SomeMsg_C`</span> <span class="pre">type</span> <span class="pre">can</span> <span class="pre">acts</span> <span class="pre">as</span> <span class="pre">either</span> <span class="pre">an</span> <span class="pre">input</span> <span class="pre">or</span> <span class="pre">output</span> <span class="pre">message.</span>&#160; <span class="pre">Thus,</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">above</span> <span class="pre">example</span> <span class="pre">the</span> <span class="pre">input</span> <span class="pre">and</span> <span class="pre">output</span> <span class="pre">messages</span> <span class="pre">are</span> <span class="pre">both</span> <span class="pre">of</span> <span class="pre">type</span> <span class="pre">``SomeMsg_C</span></code>.</p>
+<p>In contrasts to C++ modules were some class variables are public and some private, in the C module all module variables are public.</p>
+</section>
+<section id="array-of-messages">
+<h2>Array of Messages<a class="headerlink" href="#array-of-messages" title="Link to this heading"></a></h2>
+<p>If the C module can receive a variable number of input messages, this is done by creating an array of of the desired message type.  As C modules can also be used in flight code, dynamic memory allocation should be avoided.  Thus, create the array with a size that is large enough to handle all cases.</p>
+<p>For example, assume the module needs an array of input messages of type <code class="docutils literal notranslate"><span class="pre">SomeMsg</span></code>.  In the module configuration structure define:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SomeMsg_C</span><span class="w"> </span><span class="n">moreInMsgs</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The module needs to implement separate logic to determine how many messages have been set.  For example, the reset function could loop over this array and up to what slot the associate message object has been linked.</p>
+<p>As the C wrapped message object can act as either input or output messages, the above example can readily be converted to an outpout message example by renaming the array variable <code class="docutils literal notranslate"><span class="pre">moreOutMsgs</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../cModules.html" class="btn btn-neutral float-left" title="Making C Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cModules-2.html" class="btn btn-neutral float-right" title="C Message Object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

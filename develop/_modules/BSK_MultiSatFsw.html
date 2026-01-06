@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_MultiSatFsw &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BSK_MultiSatFsw</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BSK_MultiSatFsw</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">attTrackingError</span><span class="p">,</span>
+    <span class="n">inertial3D</span><span class="p">,</span>
+    <span class="n">locationPointing</span><span class="p">,</span>
+    <span class="n">mrpFeedback</span><span class="p">,</span>
+    <span class="n">rwMotorTorque</span><span class="p">,</span>
+    <span class="n">spacecraftReconfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">fswSetupThrusters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+
+
+<div class="viewcode-block" id="BSKFswModels">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BSKFswModels</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the FSW class&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">,</span> <span class="n">fswRate</span><span class="p">,</span> <span class="n">spacecraftIndex</span><span class="p">):</span>
+        <span class="c1"># define empty class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span> <span class="o">=</span> <span class="n">spacecraftIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decayTime</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;standby&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">=</span> <span class="s2">&quot;OFF&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswThrusterConfigMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Define process name and default time-step for all FSW tasks defined later on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processName</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">FSWProcessName</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">fswRate</span><span class="p">)</span>
+
+        <span class="c1"># Create tasks</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;inertialPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;sunPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;locPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;spacecraftReconfigTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;trackingErrorTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># Create module data and module wraps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3DPoint</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3DPoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span> <span class="o">=</span> <span class="n">locationPointing</span><span class="o">.</span><span class="n">locationPointing</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;sunPoint&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span> <span class="o">=</span> <span class="n">locationPointing</span><span class="o">.</span><span class="n">locationPointing</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;locPoint&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span> <span class="o">=</span> <span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftReconfig&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;trackingError&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedbackRWs&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+
+        <span class="c1"># create the FSW module gateway messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupGatewayMsgs</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Initialize all modules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">InitAllFSWObjects</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Assign initialized modules to tasks</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;inertialPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">inertial3DPoint</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;sunPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;locPointTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;spacecraftReconfigTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;trackingErrorTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+        <span class="c1"># Create events to be called for triggering GN&amp;C maneuvers</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+
+        <span class="c1"># The standby event should not be active while the station keeping mode is also active. Standby mode disables</span>
+        <span class="c1"># attitude control and therefore the attitude cannot be corrected for orbital correction burns.</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateStandby_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;standby&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;initiateStandby_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useIndex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateInertialPointing_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;inertialPointing&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;inertialPointTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trackingErrorTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mrpFeedbackRWsTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;initiateInertialPointing_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useIndex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateSunPointing_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;sunPointing&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sunPointTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trackingErrorTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mrpFeedbackRWsTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;initiateSunPointing_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useIndex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateLocationPointing_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;locationPointing&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;locPointTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trackingErrorTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mrpFeedbackRWsTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;initiateLocationPointing_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useIndex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateStationKeeping_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">==</span> <span class="s2">&quot;ON&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;spacecraftReconfigTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stopStationKeeping_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;stopStationKeeping_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spacecraftIndex</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="p">[</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">stationKeeping</span> <span class="o">==</span> <span class="s2">&quot;OFF&quot;</span>
+            <span class="p">),</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disableTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;spacecraftReconfigTask</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;initiateStationKeeping_</span><span class="si">{</span><span class="n">spacecraftIndex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------------------------------- #</span>
+    <span class="c1"># These are module-initialization methods</span>
+<div class="viewcode-block" id="BSKFswModels.SetInertial3DPointGuidance">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetInertial3DPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetInertial3DPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the inertial pointing guidance module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3DPoint</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">]</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inertial3DPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetSunPointGuidance">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetSunPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetSunPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the Sun pointing guidance module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">solarPanelAxis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">scAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">scTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">ephemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="n">SimBase</span><span class="o">.</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">sun</span><span class="p">])</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sunPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLocationPointGuidance">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetLocationPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLocationPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the Earth location pointing guidance module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">scAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">scTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">locationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">groundStation</span><span class="o">.</span><span class="n">currentGroundStateOutMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetSpacecraftOrbitReconfig">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetSpacecraftOrbitReconfig">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetSpacecraftOrbitReconfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the station keeping module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">deputyTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">thrustConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswThrusterConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">vehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleMassPropsObject</span><span class="o">.</span><span class="n">vehicleConfigOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">EnvModel</span><span class="o">.</span><span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">attControlTime</span> <span class="o">=</span> <span class="mi">400</span>  <span class="c1"># [s]</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span>
+
+        <span class="c1"># connect a blank chief message</span>
+        <span class="n">chiefData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+        <span class="n">chiefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chiefData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">chiefTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetAttitudeTrackingError">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetAttitudeTrackingError">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetAttitudeTrackingError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the module that converts a reference message into a guidance message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetMRPFeedbackRWA">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetMRPFeedbackRWA">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetMRPFeedbackRWA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the control properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decayTime</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="mf">0.9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">I_sc</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">decayTime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">P</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span> <span class="o">*</span> \
+                                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">P</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">I_sc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">simpleMassPropsObject</span><span class="o">.</span><span class="n">vehicleConfigOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetRWConfigMsg">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetRWConfigMsg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetRWConfigMsg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Imports the RWs configuration information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)</span>
+        <span class="c1"># the same msg is used here for both spacecraft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">getConfigMessage</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetThrustersConfigMsg">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetThrustersConfigMsg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetThrustersConfigMsg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Imports the thrusters configuration information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">th</span> <span class="ow">in</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="o">.</span><span class="n">thrusterList</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">loc_B_tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">))</span>
+            <span class="n">dir_B_tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">))</span>
+            <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">loc_B_tmp</span><span class="p">,</span> <span class="n">dir_B_tmp</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">MaxThrust</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswThrusterConfigMsg</span> <span class="o">=</span> <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetRWMotorTorque">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.SetRWMotorTorque">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetRWMotorTorque</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the motor torque from the control law.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                         <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                         <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Global call to initialize every module</span>
+<div class="viewcode-block" id="BSKFswModels.InitAllFSWObjects">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.InitAllFSWObjects">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InitAllFSWObjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes all FSW objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetInertial3DPointGuidance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetSunPointGuidance</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLocationPointGuidance</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetAttitudeTrackingError</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRWConfigMsg</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetThrustersConfigMsg</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetMRPFeedbackRWA</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetSpacecraftOrbitReconfig</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRWMotorTorque</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.setupGatewayMsgs">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.setupGatewayMsgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupGatewayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;create C-wrapped gateway messages such that different modules can write to this message</span>
+<span class="sd">        and provide a common input msg for down-stream modules&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg_C</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">()</span>
+
+        <span class="c1"># connect gateway FSW effector command msgs with the dynamics</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spacecraftIndex</span><span class="p">]</span><span class="o">.</span><span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">onTimeOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.zeroGateWayMsgs">
+<a class="viewcode-back" href="../examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatFsw.html#BSK_MultiSatFsw.BSKFswModels.zeroGateWayMsgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zeroGateWayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zero all FSW gateway message payloads&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsgPayload</span><span class="p">())</span>
+
+        <span class="c1"># Zero all actuator commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacecraftReconfig</span><span class="o">.</span><span class="n">onTimeOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgPayload</span><span class="p">())</span></div>
+</div>
+
+
+        <span class="c1"># If CMGs are present in the configuration:</span>
+        <span class="c1"># self.cmgCmdMsg.write(messaging.CMGCmdMsgPayload())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioArmWithThrusters &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioArmWithThrusters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioArmWithThrusters</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">It&#39;s recommended to review the following scenario(s) first (and any</span>
+<span class="sd">recommended scenario(s) that they may have):</span>
+
+<span class="sd">#. ``examples/mujoco/scenarioReactionWheel.py``</span>
+
+<span class="sd">This scripts shows how to simulate a spacecraft that deploys two thrusters</span>
+<span class="sd">at the end of a 4-link branching deployable arm. This uses the MuJoCo-based</span>
+<span class="sd">:ref:`DynamicObject&lt;dynamicObject&gt;` :ref:`MJScene&lt;MJScene&gt;`.</span>
+
+<span class="sd">The multi-body system is defined in the XML file ``sat_w_deployable_thruster.xml``.</span>
+<span class="sd">This XML file defines a &#39;hub&#39; body and a branching deployable arm with 4 links.</span>
+<span class="sd">The first link (&#39;arm_1&#39;) is attached to the &#39;hub&#39; body, and the second link (&#39;arm_2&#39;)</span>
+<span class="sd">is attached to the first link. The third link (&#39;arm_3&#39;) AND the fourth link (&#39;arm_4&#39;)</span>
+<span class="sd">are both attached to the second link. Both of the last two links have a site attached</span>
+<span class="sd">to them (&#39;thruster_1&#39; and &#39;thruster_2&#39;, respectively), which defines the point at</span>
+<span class="sd">which the thrust vector is applied. The joints between the links are revolute joints.</span>
+
+<span class="sd">The thrusters are turned on and off at specific times. The thrust direction</span>
+<span class="sd">and application point on the link body (&#39;arm_3&#39; or &#39;arm_4&#39;) are fixed throughout</span>
+<span class="sd">the simulation. However, because the &#39;arm_3&#39; and &#39;arm_4&#39; will move with respect</span>
+<span class="sd">the inertial frame (the &#39;hub&#39; body is free-floating, the arm joints move), the effective</span>
+<span class="sd">thrust points and directions will change.</span>
+
+<span class="sd">Note that the only actuators defined are the ones used to model the thrusters (&#39;thruster_1&#39;</span>
+<span class="sd">and &#39;thruster_2&#39;). We could opt to define actuators for the joints of the arm, so that</span>
+<span class="sd">deploying the arm is modeled as an actuation. In this case, the script would have to</span>
+<span class="sd">define the torque to be applied at these joints to deploy the arm. This is complex, and</span>
+<span class="sd">generally requires a control system to be implemented (see ``mujoco/scenarioDeployPanels.py``).</span>
+<span class="sd">Instead, we opt for a simpler approach: we constrain the motion of the joints.</span>
+
+<span class="sd">Prescribing the motion of joints can be useful to model a system that we can</span>
+<span class="sd">assume is very accurately controlled by some unknown system. Essentially, we let</span>
+<span class="sd">the dynamic object know what the motion of the joint should be, and the dynamic</span>
+<span class="sd">engine will compute the forces necessary to achieve that motion. This implies that</span>
+<span class="sd">the joint will not have exactly the motion we constrain, since we are numerically</span>
+<span class="sd">solving the inverse dynamic problem (i.e., given the motion, what are the forces?).</span>
+<span class="sd">However, the motion will be very close to what we constrain. It should be noted that</span>
+<span class="sd">this comes at a considerable computational cost.</span>
+
+<span class="sd">To constrain the motion of the joints, we connect to the ``constrainedStateInMsg`` of</span>
+<span class="sd">the joint object.</span>
+
+<span class="sd">This script also showcases the use of the ``XXXInterpolator`` models, which</span>
+<span class="sd">are utility models that interpolate a set of points to generate a profile</span>
+<span class="sd">between them. In this script these are used in two occasions:</span>
+
+<span class="sd">#. To constrain the motion of the joints of the deployable arm.</span>
+<span class="sd">#. To define the thrust of the thrusters.</span>
+
+<span class="sd">For the first case, we use a linear interpolation, so that the joints move</span>
+<span class="sd">at a constant rate. For the second case, we use a piecewise interpolation,</span>
+<span class="sd">so that the thrusters are turned on and off at specific times.</span>
+
+<span class="sd">The datapoints for each interpolator are defined in the dictionaries</span>
+<span class="sd">``JOINT_INTERPOLATION_POINTS`` and ``ACTUATOR_INTERPOLATION_POINTS``. Each</span>
+<span class="sd">interpolator takes a numpy matrix with &gt;=2 columns, where the first column</span>
+<span class="sd">is the time at which the point is defined, and the rest of the columns</span>
+<span class="sd">are the values of the points. In this script we demonstrate the use</span>
+<span class="sd">of ``mujoco.SingleActuatorInterpolator`` and ``mujoco.ScalarJointStateInterpolator``,</span>
+<span class="sd">both of which need only 2 columns.</span>
+
+<span class="sd">Note that the interpolator models are added to the dynamics task, so that</span>
+<span class="sd">the interpolation happens at every integrator step. All models in the dynamics</span>
+<span class="sd">task are updated at every integrator step. If we had added the models to the</span>
+<span class="sd">regular task, the interpolation would only happen at the task rate, which means</span>
+<span class="sd">that the thrust/joint values would only be updated at the fixed rate of 1 Hz.</span>
+<span class="sd">Whether you add a model to the dynamics task or the regular task depends on</span>
+<span class="sd">the specific use case.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">CURRENT_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">XML_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CURRENT_FOLDER</span><span class="si">}</span><span class="s2">/sat_w_deployable_thruster.xml&quot;</span>
+
+<span class="c1"># These are the instant at which each action ends. For example,</span>
+<span class="c1"># ARM_3_DEPLOY ends at t=20s. FIRST_THRUST ends at t=52.5 s, etc.</span>
+<span class="n">START</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># s</span>
+<span class="n">ARM_1_DEPLOY</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># s</span>
+<span class="n">ARM_2_DEPLOY</span> <span class="o">=</span> <span class="n">ARM_1_DEPLOY</span> <span class="o">+</span> <span class="mi">10</span> <span class="c1"># s</span>
+<span class="n">ARM_3_DEPLOY</span> <span class="o">=</span> <span class="n">ARM_2_DEPLOY</span> <span class="o">+</span> <span class="mi">5</span> <span class="c1"># s</span>
+<span class="n">FIRST_THRUST</span> <span class="o">=</span> <span class="n">ARM_3_DEPLOY</span> <span class="o">+</span> <span class="mf">32.5</span> <span class="c1"># s</span>
+<span class="n">FIRST_ROLL</span> <span class="o">=</span> <span class="n">FIRST_THRUST</span> <span class="o">+</span> <span class="mi">10</span> <span class="c1"># s</span>
+<span class="n">SECOND_THRUST</span> <span class="o">=</span> <span class="n">FIRST_ROLL</span> <span class="o">+</span> <span class="mi">30</span> <span class="c1"># s</span>
+<span class="n">SECOND_ROLL</span> <span class="o">=</span> <span class="n">SECOND_THRUST</span> <span class="o">+</span> <span class="mi">5</span> <span class="c1"># s</span>
+<span class="n">ARM_4_DEPLOY</span> <span class="o">=</span> <span class="n">SECOND_ROLL</span> <span class="o">+</span> <span class="mi">5</span> <span class="c1"># s</span>
+<span class="n">THIRD_THRUST</span> <span class="o">=</span> <span class="n">ARM_4_DEPLOY</span> <span class="o">+</span> <span class="mi">30</span> <span class="c1"># s</span>
+<span class="n">END</span> <span class="o">=</span> <span class="n">THIRD_THRUST</span> <span class="c1"># s</span>
+
+<span class="c1"># This dictionary maps the joint name to the body it is attached to.</span>
+<span class="n">BODY_OF_JOINT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;arm_1_elev&quot;</span><span class="p">:</span> <span class="s2">&quot;arm_1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arm_2_elev&quot;</span><span class="p">:</span> <span class="s2">&quot;arm_2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arm_3_elev&quot;</span><span class="p">:</span> <span class="s2">&quot;arm_3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arm_4_elev&quot;</span><span class="p">:</span> <span class="s2">&quot;arm_4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arm_1_roll&quot;</span><span class="p">:</span> <span class="s2">&quot;arm_1&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># These are the points that define the interpolation for the thrusters.</span>
+<span class="n">ACTUATOR_INTERPOLATION_POINTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;thruster_1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_3_DEPLOY</span><span class="p">),</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">FIRST_THRUST</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">FIRST_ROLL</span><span class="p">),</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SECOND_THRUST</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SECOND_ROLL</span><span class="p">),</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;thruster_2&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_4_DEPLOY</span><span class="p">),</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1"># These are the points that define the interpolation for the joints.</span>
+<span class="n">JOINT_INTERPOLATION_POINTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;arm_1_elev&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">START</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_1_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">45</span><span class="p">)],</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;arm_2_elev&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_1_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">180</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_2_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">74.93</span><span class="p">)],</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;arm_3_elev&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_2_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">180</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_3_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">60.06941955</span><span class="p">)],</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;arm_1_roll&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">FIRST_THRUST</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">FIRST_ROLL</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">180</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SECOND_THRUST</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">180</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SECOND_ROLL</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">90</span><span class="p">)],</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;arm_4_elev&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SECOND_ROLL</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">180</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">ARM_4_DEPLOY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">90</span><span class="p">)],</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioArmWithThrusters.html#scenarioArmWithThrusters.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): If True, simulation results are plotted and show.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        visualize (bool, optional): If True, the ``MJScene`` visualization tool is</span>
+<span class="sd">            run on the simulation results. Defaults to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># s</span>
+
+    <span class="c1"># Create a simulation, process, and task as usual</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="c1"># Create the MJScene (MuJoCo DynamicObject)</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># Set the integrator of the DynamicObject to RK4(5)</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+
+    <span class="c1"># Creat the thrust interpolators to define the piecewise thrust profile</span>
+    <span class="n">modelsActuator</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">thrusterName</span><span class="p">,</span> <span class="n">interpPoint</span> <span class="ow">in</span> <span class="n">ACTUATOR_INTERPOLATION_POINTS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">act</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJSingleActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">thrusterName</span><span class="p">)</span>
+
+        <span class="c1"># mujoco.SingleActuatorInterpolator has a single output message,</span>
+        <span class="c1"># which is interpolatedOutMsg and is of type SingleActuatorMsg.</span>
+        <span class="c1"># The interpolated scalar is set on the &#39;input&#39; field of the message.</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">SingleActuatorInterpolator</span><span class="p">()</span>
+
+        <span class="c1"># We pass the data points to the interpolator model.</span>
+        <span class="c1"># The second argument sets the order for the interpolation.</span>
+        <span class="c1"># 0 indicates a piecewise interpolation.</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setDataPoints</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">interpPoint</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">act</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">interpolatedOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># Note that the model, which is a regular ``SysModel``, is</span>
+        <span class="c1"># added to the dynamics task of the dynamic object.</span>
+        <span class="c1"># The optional second argument of this function is the priority</span>
+        <span class="c1"># of the model in the task. This is similar to the behavior of the</span>
+        <span class="c1"># ``AddModelToTask`` function of the simulation.</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">modelsActuator</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># Create the joint interpolators to define the motion of the joints</span>
+    <span class="n">modelsJoint</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">jointName</span><span class="p">,</span> <span class="n">interpPoint</span> <span class="ow">in</span> <span class="n">JOINT_INTERPOLATION_POINTS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="c1"># We can access the joint object by getting the body that</span>
+        <span class="c1"># the joint is attached to, and then getting the joint object</span>
+        <span class="n">joint</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span>
+            <span class="n">BODY_OF_JOINT</span><span class="p">[</span><span class="n">jointName</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+
+        <span class="c1"># mujoco.ScalarJointStateInterpolator has a single output message,</span>
+        <span class="c1"># which is interpolatedOutMsg and is of type ScalarJointStateMsg.</span>
+        <span class="c1"># The interpolated scalar is set on the &#39;state&#39; field of the message.</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">ScalarJointStateInterpolator</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setDataPoints</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">interpPoint</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">joint</span><span class="o">.</span><span class="n">constrainedStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">interpolatedOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># Note that the model, which is a regular ``SysModel``, is</span>
+        <span class="c1"># added to the dynamics task of the dynamic object.</span>
+        <span class="c1"># The optional second argument of this function is the priority</span>
+        <span class="c1"># of the model in the task. This is similar to the behavior of the</span>
+        <span class="c1"># ``AddModelToTask`` function of the simulation.</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">modelsJoint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># Record the state of the &#39;hub&#39; body through</span>
+    <span class="c1"># the ``stateOutMsg`` of its &#39;origin&#39; site (i.e. frame).</span>
+    <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;hub&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># Record the minimal coordinates of the entire scene for visualization</span>
+    <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">stateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation and set the initial angles of the joints.</span>
+    <span class="c1"># NOTE: the simulation MUST be initialized before setting the initial</span>
+    <span class="c1"># state of the joints. This includes the initial position, attitude,</span>
+    <span class="c1"># velocity, or angular velocity of the freefloating bodies.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">jointName</span><span class="p">,</span> <span class="n">interpPoint</span> <span class="ow">in</span> <span class="n">JOINT_INTERPOLATION_POINTS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">initialAngle</span> <span class="o">=</span> <span class="n">interpPoint</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">joint</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span>
+            <span class="n">BODY_OF_JOINT</span><span class="p">[</span><span class="n">jointName</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+        <span class="n">joint</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">initialAngle</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">END</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+
+        <span class="c1"># Plot the attitude of the &#39;hub&#39; body</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+                <span class="n">att</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span>
+                <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hub sigma [</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\sigma_</span><span class="si">{BN}</span><span class="s2">$ [rad]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Visualize the simulation</span>
+    <span class="k">if</span> <span class="n">visualize</span><span class="p">:</span>
+        <span class="n">speedUp</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Run the visualization at 3x speed</span>
+        <span class="n">mujoco</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span>
+            <span class="n">stateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">stateRecorder</span><span class="o">.</span><span class="n">qpos</span><span class="p">),</span> <span class="n">scene</span><span class="p">,</span> <span class="n">speedUp</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

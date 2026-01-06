@@ -1,0 +1,13 @@
+.. _test_PrescribedMotionStateEffectorBranching:
+
+test_PrescribedMotionStateEffectorBranching
+===========================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_PrescribedMotionStateEffectorBranching
+   :members:
+   :show-inheritance:
+

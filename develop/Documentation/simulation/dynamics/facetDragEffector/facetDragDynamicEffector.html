@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: facetDragDynamicEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="facetDragEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">facetDragEffector</a></li>
+      <li class="breadcrumb-item active">Module: facetDragDynamicEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/facetDragEffector/facetDragDynamicEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-facetdragdynamiceffector">
+<span id="facetdragdynamiceffector"></span><h1>Module: facetDragDynamicEffector<a class="headerlink" href="#module-facetdragdynamiceffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Drag dynamics class used to compute drag effects on spacecraft bodies</p>
+<p>This class is used to implement drag dynamic effects on spacecraft using a variety of simple or complex models, which will include
+cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
+drag models.
+For more information see the
+<a class="reference download internal" download="" href="../../../../_downloads/65bc6c0ade13d0cc1277b5c03d926fc3/Basilisk-facet_drag-20190515.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>atmoDensInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#atmopropsmsgpayload"><span class="std std-ref">AtmoPropsMsgPayload</span></a></p></td>
+<td><p>input message for atmospheric density information</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422SpacecraftGeometryData">
+<span id="_CPPv322SpacecraftGeometryData"></span><span id="_CPPv222SpacecraftGeometryData"></span><span id="SpacecraftGeometryData"></span><span class="target" id="struct_spacecraft_geometry_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftGeometryData</span></span></span><a class="headerlink" href="#_CPPv422SpacecraftGeometryData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;facetDragDynamicEffector.h&gt;</em></div>
+<p>spacecraft geometry data </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22SpacecraftGeometryData10facetAreasE">
+<span id="_CPPv3N22SpacecraftGeometryData10facetAreasE"></span><span id="_CPPv2N22SpacecraftGeometryData10facetAreasE"></span><span id="SpacecraftGeometryData::facetAreas__std::vector:double:"></span><span class="target" id="struct_spacecraft_geometry_data_1a4001937f00c282a5a995478152190cca"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetAreas</span></span></span><a class="headerlink" href="#_CPPv4N22SpacecraftGeometryData10facetAreasE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of facet areas </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22SpacecraftGeometryData11facetCoeffsE">
+<span id="_CPPv3N22SpacecraftGeometryData11facetCoeffsE"></span><span id="_CPPv2N22SpacecraftGeometryData11facetCoeffsE"></span><span id="SpacecraftGeometryData::facetCoeffs__std::vector:double:"></span><span class="target" id="struct_spacecraft_geometry_data_1ae7dc7985d91c90d54e2c05c187bd0ac0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetCoeffs</span></span></span><a class="headerlink" href="#_CPPv4N22SpacecraftGeometryData11facetCoeffsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of facet coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22SpacecraftGeometryData14facetNormals_BE">
+<span id="_CPPv3N22SpacecraftGeometryData14facetNormals_BE"></span><span id="_CPPv2N22SpacecraftGeometryData14facetNormals_BE"></span><span id="SpacecraftGeometryData::facetNormals_B__std::vector:Eigen::Vector3d:"></span><span class="target" id="struct_spacecraft_geometry_data_1ab33d1cbe1a8cd6de283404a2a83aeeb0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetNormals_B</span></span></span><a class="headerlink" href="#_CPPv4N22SpacecraftGeometryData14facetNormals_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of facet normals </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22SpacecraftGeometryData16facetLocations_BE">
+<span id="_CPPv3N22SpacecraftGeometryData16facetLocations_BE"></span><span id="_CPPv2N22SpacecraftGeometryData16facetLocations_BE"></span><span id="SpacecraftGeometryData::facetLocations_B__std::vector:Eigen::Vector3d:"></span><span class="target" id="struct_spacecraft_geometry_data_1a9d0ef66712d7b53a072d06f94c46e967"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetLocations_B</span></span></span><a class="headerlink" href="#_CPPv4N22SpacecraftGeometryData16facetLocations_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of facet locations </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv424FacetDragDynamicEffector">
+<span id="_CPPv324FacetDragDynamicEffector"></span><span id="_CPPv224FacetDragDynamicEffector"></span><span id="FacetDragDynamicEffector"></span><span class="target" id="class_facet_drag_dynamic_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FacetDragDynamicEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><a class="headerlink" href="#_CPPv424FacetDragDynamicEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;facetDragDynamicEffector.h&gt;</em></div>
+<p>faceted atmospheric drag dynamic effector </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector24FacetDragDynamicEffectorEv">
+<span id="_CPPv3N24FacetDragDynamicEffector24FacetDragDynamicEffectorEv"></span><span id="_CPPv2N24FacetDragDynamicEffector24FacetDragDynamicEffectorEv"></span><span id="FacetDragDynamicEffector::FacetDragDynamicEffector"></span><span class="target" id="class_facet_drag_dynamic_effector_1aabc2d94706ea2adcefd1b1f7f2eeca94"></span><span class="sig-name descname"><span class="n"><span class="pre">FacetDragDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector24FacetDragDynamicEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffectorD0Ev">
+<span id="_CPPv3N24FacetDragDynamicEffectorD0Ev"></span><span id="_CPPv2N24FacetDragDynamicEffectorD0Ev"></span><span id="FacetDragDynamicEffector::~FacetDragDynamicEffector"></span><span class="target" id="class_facet_drag_dynamic_effector_1abb2b3ddce850e48b02e1d2ee0ba96014"></span><span class="sig-name descname"><span class="n"><span class="pre">~FacetDragDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>The destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N24FacetDragDynamicEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N24FacetDragDynamicEffector12linkInStatesER15DynParamManager"></span><span id="FacetDragDynamicEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_facet_drag_dynamic_effector_1a96d2eb608259026d6522c6d3fced2ad8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to link the dragEffector to the hub attitude and velocity, which are required for calculating drag forces and torques.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – dynamic parameter states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector18computeForceTorqueEdd">
+<span id="_CPPv3N24FacetDragDynamicEffector18computeForceTorqueEdd"></span><span id="_CPPv2N24FacetDragDynamicEffector18computeForceTorqueEdd"></span><span id="FacetDragDynamicEffector::computeForceTorque__double.double"></span><span class="target" id="class_facet_drag_dynamic_effector_1ae2777664cd3a22ff084b374401468db9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeForceTorque</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector18computeForceTorqueEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the body forces and torques for the dragEffector in a simulation loop, selecting the model type based on the settable attribute “modelType.” </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector5ResetE8uint64_t">
+<span id="_CPPv3N24FacetDragDynamicEffector5ResetE8uint64_t"></span><span id="_CPPv2N24FacetDragDynamicEffector5ResetE8uint64_t"></span><span id="FacetDragDynamicEffector::Reset__uint64_t"></span><span class="target" id="class_facet_drag_dynamic_effector_1ad0de4fabcf83d9d49bbe17929ef0b9b5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N24FacetDragDynamicEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N24FacetDragDynamicEffector11UpdateStateE8uint64_t"></span><span id="FacetDragDynamicEffector::UpdateState__uint64_t"></span><span class="target" id="class_facet_drag_dynamic_effector_1ae0b019af4ef6f70bb827e4ab38785249"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is called to update the local atmospheric conditions at each timestep. Naturally, this means that conditions are held piecewise-constant over an integration step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector19WriteOutputMessagesE8uint64_t">
+<span id="_CPPv3N24FacetDragDynamicEffector19WriteOutputMessagesE8uint64_t"></span><span id="_CPPv2N24FacetDragDynamicEffector19WriteOutputMessagesE8uint64_t"></span><span id="FacetDragDynamicEffector::WriteOutputMessages__uint64_t"></span><span class="target" id="class_facet_drag_dynamic_effector_1aff13d687b58da9e41cbfae5987a6f3c0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector19WriteOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>The DragEffector does not write output messages to the rest of the sim. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector10ReadInputsEv">
+<span id="_CPPv3N24FacetDragDynamicEffector10ReadInputsEv"></span><span id="_CPPv2N24FacetDragDynamicEffector10ReadInputsEv"></span><span id="FacetDragDynamicEffector::ReadInputs"></span><span class="target" id="class_facet_drag_dynamic_effector_1a30f8686ae99818838dfdc7697b3a4264"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector10ReadInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming density message and update the internal density/ atmospheric data. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector8addFacetEddN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N24FacetDragDynamicEffector8addFacetEddN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N24FacetDragDynamicEffector8addFacetEddN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="FacetDragDynamicEffector::addFacet__double.double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_facet_drag_dynamic_effector_1aeabcf39fec8df56ca930a1daa55c615b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addFacet</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">area</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dragCoeff</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">B_normal_hat</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">B_location</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector8addFacetEddN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>add a facet </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>area</strong> – </p></li>
+<li><p><strong>dragCoeff</strong> – </p></li>
+<li><p><strong>B_normal_hat</strong> – </p></li>
+<li><p><strong>B_location</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector9numFacetsE">
+<span id="_CPPv3N24FacetDragDynamicEffector9numFacetsE"></span><span id="_CPPv2N24FacetDragDynamicEffector9numFacetsE"></span><span id="FacetDragDynamicEffector::numFacets__uint64_t"></span><span class="target" id="class_facet_drag_dynamic_effector_1a43eec41df86819f89520398d00d8f29b"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numFacets</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector9numFacetsE" title="Link to this definition"></a><br /></dt>
+<dd><p>number of facets </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector13atmoDensInMsgE">
+<span id="_CPPv3N24FacetDragDynamicEffector13atmoDensInMsgE"></span><span id="_CPPv2N24FacetDragDynamicEffector13atmoDensInMsgE"></span><span id="FacetDragDynamicEffector::atmoDensInMsg__ReadFunctor:AtmoPropsMsgPayload:"></span><span class="target" id="class_facet_drag_dynamic_effector_1a4f9586f72bf81a5c60d3c1b6d8ccf3d8"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmoDensInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector13atmoDensInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>atmospheric density input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector8hubSigmaE">
+<span id="_CPPv3N24FacetDragDynamicEffector8hubSigmaE"></span><span id="_CPPv2N24FacetDragDynamicEffector8hubSigmaE"></span><span id="FacetDragDynamicEffector::hubSigma__StateDataP"></span><span class="target" id="class_facet_drag_dynamic_effector_1ad19d0e758dfebb2a8effd71103e48a16"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubSigma</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector8hubSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Hub/Inertial attitude represented by MRP </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector11hubVelocityE">
+<span id="_CPPv3N24FacetDragDynamicEffector11hubVelocityE"></span><span id="_CPPv2N24FacetDragDynamicEffector11hubVelocityE"></span><span id="FacetDragDynamicEffector::hubVelocity__StateDataP"></span><span class="target" id="class_facet_drag_dynamic_effector_1ac0158de5eb00b46e259530cce185a221"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubVelocity</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector11hubVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>m/s Hub inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector3v_BE">
+<span id="_CPPv3N24FacetDragDynamicEffector3v_BE"></span><span id="_CPPv2N24FacetDragDynamicEffector3v_BE"></span><span id="FacetDragDynamicEffector::v_B__Eigen::Vector3d"></span><span class="target" id="class_facet_drag_dynamic_effector_1a38790d4da0593fc3988a8e25348d7c2f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_B</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector3v_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>m/s local variable to hold the inertial velocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector7v_hat_BE">
+<span id="_CPPv3N24FacetDragDynamicEffector7v_hat_BE"></span><span id="_CPPv2N24FacetDragDynamicEffector7v_hat_BE"></span><span id="FacetDragDynamicEffector::v_hat_B__Eigen::Vector3d"></span><span class="target" id="class_facet_drag_dynamic_effector_1aa7caa4dab737080b3f914aae9ab6e3c5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_hat_B</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector7v_hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector9bskLoggerE">
+<span id="_CPPv3N24FacetDragDynamicEffector9bskLoggerE"></span><span id="_CPPv2N24FacetDragDynamicEffector9bskLoggerE"></span><span id="FacetDragDynamicEffector::bskLogger__BSKLogger"></span><span class="target" id="class_facet_drag_dynamic_effector_1a90a18b0072acca3cfb8ef1d1662ea22e"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector9plateDragEv">
+<span id="_CPPv3N24FacetDragDynamicEffector9plateDragEv"></span><span id="_CPPv2N24FacetDragDynamicEffector9plateDragEv"></span><span id="FacetDragDynamicEffector::plateDrag"></span><span class="target" id="class_facet_drag_dynamic_effector_1abea88857ad4d7e0f5ccebfae528843f8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">plateDrag</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector9plateDragEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method WILL implement a more complex flat-plate aerodynamics model with attitude dependence and lift forces. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector13updateDragDirEv">
+<span id="_CPPv3N24FacetDragDynamicEffector13updateDragDirEv"></span><span id="_CPPv2N24FacetDragDynamicEffector13updateDragDirEv"></span><span id="FacetDragDynamicEffector::updateDragDir"></span><span class="target" id="class_facet_drag_dynamic_effector_1a73228214449d7a90f4fffebd37016f1e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateDragDir</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector13updateDragDirEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method updates the internal drag direction based on the spacecraft velocity vector. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector10atmoInDataE">
+<span id="_CPPv3N24FacetDragDynamicEffector10atmoInDataE"></span><span id="_CPPv2N24FacetDragDynamicEffector10atmoInDataE"></span><span id="FacetDragDynamicEffector::atmoInData__AtmoPropsMsgPayload"></span><span class="target" id="class_facet_drag_dynamic_effector_1af807901199435ace47e441a1541b412e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmoInData</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector10atmoInDataE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FacetDragDynamicEffector10scGeometryE">
+<span id="_CPPv3N24FacetDragDynamicEffector10scGeometryE"></span><span id="_CPPv2N24FacetDragDynamicEffector10scGeometryE"></span><span id="FacetDragDynamicEffector::scGeometry__SpacecraftGeometryData"></span><span class="target" id="class_facet_drag_dynamic_effector_1a83b8a53f0d20d75cd1cf6282cbdc84b2"></span><a class="reference internal" href="#_CPPv422SpacecraftGeometryData" title="SpacecraftGeometryData"><span class="n"><span class="pre">SpacecraftGeometryData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scGeometry</span></span></span><a class="headerlink" href="#_CPPv4N24FacetDragDynamicEffector10scGeometryE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Struct to hold spacecraft facet data </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="facetDragEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

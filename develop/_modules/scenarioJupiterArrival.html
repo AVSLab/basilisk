@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioJupiterArrival &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioJupiterArrival</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioJupiterArrival</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This tutorial considers a hyperbolic arrival orbit to Jupiter followed by a transfer into</span>
+<span class="sd">a circular parking orbit around the planet. This is achieved through a single impulsive</span>
+<span class="sd">maneuver at periapsis of the hyperbolic orbit.</span>
+
+<span class="sd">The detail of the simulation script is as follows.</span>
+
+<span class="sd">This script sets up a basic spacecraft which starts on a hyperbolic approach orbit to Jupiter. The simulation is</span>
+<span class="sd">split into two chunks. The first chunk runs until the spacecraft reaches periapsis of the hyperbolic orbit. The</span>
+<span class="sd">second chunk starts after the spacecraft performs the required maneuver and runs until the spacecraft has completed</span>
+<span class="sd">nearly one circular revolution around Jupiter.</span>
+
+<span class="sd">The desired parking orbit radius is first specified and the resulting hyperbolic arrival orbit and required delta V</span>
+<span class="sd">is calculated. The hyperbolic time equation is used to calculate the simulation time for the first chunk</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    N = \sqrt{\frac{\mu}{(-a)^{3}}}(t-t_p) = e \tan(\zeta)-\ln \left[ \tan \left( \frac{\zeta}{2} + \frac{\pi}{4} \right) \right]</span>
+
+<span class="sd">where the orbit equation in terms of :math:`\zeta` is :math:`r = a(1-e \sec(\zeta))` and :math:`\zeta =</span>
+<span class="sd">\cos^{-1}\left( \frac{ea}{a-r}\right)`.</span>
+
+<span class="sd">The delta V is then added to the current spacecraft velocity at the end of the second chunk.</span>
+
+<span class="sd">How to setup a basic spacecraft simulation is shown in the earlier tutorial :ref:`scenarioBasicOrbit`.</span>
+<span class="sd">Simulating a Hohmann transfer is illustrated in :ref:`scenarioOrbitManeuver`.</span>
+<span class="sd">Setting up multiple gravitational bodies is shown in :ref:`scenarioOrbitMultiBody`</span>
+<span class="sd">while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.</span>
+
+<span class="sd">This simulation combines all these techniques as well as implementing custom gravitational bodies (Leah future work).</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioJupiterArrival.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The following images illustrate the expected simulation run returns for a range of script configurations.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True</span>
+
+<span class="sd">Plots below illustrate the scenario results for the inertial position states and Jupiter-centered arrival for the entire manueuver.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioJupiterArrival1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioJupiterArrival2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose: Hyperbolic Jupiter arrival to a circular final orbit</span>
+<span class="c1"># Author:   Leah Kiner</span>
+<span class="c1"># Creation Date: September 4 2021</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simIncludeGravBody</span><span class="p">,</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioJupiterArrival.html#scenarioJupiterArrival.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># Create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Create Jupiter as central body</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">jupiter</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createJupiter</span><span class="p">()</span>
+    <span class="n">jupiter</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Set up A hyperbolic arrival orbit to Jupiter using the classical orbit elements</span>
+    <span class="c1">#</span>
+    <span class="c1"># Method:</span>
+    <span class="c1">#</span>
+    <span class="c1"># A circular parking orbit is desired upon arrival to Jupiter at periapsis. The parking orbit radius is chosen and</span>
+    <span class="c1"># is used to calculate the required orbital elements for the hyperbolic orbit and delta V needed to perform at</span>
+    <span class="c1"># periapsis.</span>
+    <span class="c1">#</span>
+    <span class="c1"># The circular speed of Jupiter relative to the sun (1), spacecraft circular parking speed relative to Jupiter (2),</span>
+    <span class="c1"># spacecraft speed relative to the sun at apoapsis of the Hohmann transfer ellipse (3), spacecraft speed relative</span>
+    <span class="c1"># to Jupiter at apoapsis of the Hohmann transfer ellipse (4), and spacecraft speed at periapsis</span>
+    <span class="c1"># on the hyperbola before the delta V is performed are all claculated (5).</span>
+    <span class="c1">#</span>
+    <span class="c1"># The semimajor axis (-) of the hyperbolic orbit is calculated using the specific energy integral equation.</span>
+    <span class="c1"># The eccentricity of the hyperbola (&gt;1) is calculated using the combining the conic section equation at periapsis</span>
+    <span class="c1"># with the specific energy equation and eliminating semimajor axis.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Finally, the required delta V is calculated by subtracting the (final) desired parking orbit speed relative to Jupiter</span>
+    <span class="c1"># from the (initial) spacecraft speed at periapsis of the hyperbola before the delta V is performed (5).</span>
+    <span class="c1">#</span>
+
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">sunmu</span> <span class="o">=</span> <span class="mi">132600000000000000000</span>                                               <span class="c1"># [m^3/s^3]</span>
+    <span class="n">r_J_2_S</span> <span class="o">=</span> <span class="mf">778298361.</span> <span class="o">*</span> <span class="mi">1000</span>                                                 <span class="c1"># [m] Distance from Jupiter to Sun</span>
+    <span class="n">r_E_2_S</span> <span class="o">=</span> <span class="mf">149598023.</span> <span class="o">*</span> <span class="mi">1000</span>                                                 <span class="c1"># [m] Distance from Earth to Sun</span>
+    <span class="n">r_SC_J_park</span> <span class="o">=</span> <span class="mf">800000.</span> <span class="o">*</span> <span class="mi">1000</span>                                                 <span class="c1"># [m] Desired circular parking orbit radius</span>
+
+    <span class="n">V_J_C_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sunmu</span><span class="o">/</span><span class="n">r_J_2_S</span><span class="p">)</span>                                            <span class="c1"># [m/s] (1) &quot;J&quot;upiter &quot;C&quot;ircular speed relative to the &quot;S&quot;un</span>
+    <span class="n">V_SC_C_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span><span class="o">/</span><span class="n">r_SC_J_park</span><span class="p">)</span>                                   <span class="c1"># [m/s] (2) &quot;S&quot;pace&quot;C&quot;raft &quot;C&quot;ircular parking speed relative to &quot;J&quot;upiter.</span>
+    <span class="n">V_SC_A_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">sunmu</span><span class="o">*</span><span class="n">r_E_2_S</span> <span class="o">/</span> <span class="p">((</span><span class="n">r_J_2_S</span> <span class="o">+</span> <span class="n">r_E_2_S</span><span class="p">)</span><span class="o">*</span><span class="n">r_J_2_S</span><span class="p">)</span> <span class="p">)</span>         <span class="c1"># [m/s] (3) &quot;S&quot;pace&quot;C&quot;raft speed at &quot;A&quot;poapsis of Hohmann transfer ellipse relative to the &quot;S&quot;un</span>
+    <span class="n">V_SC_A_J</span> <span class="o">=</span> <span class="n">V_SC_A_S</span> <span class="o">-</span> <span class="n">V_J_C_S</span>                                               <span class="c1"># [m/s] (4) &quot;S&quot;pace&quot;C&quot;raft speed at &quot;A&quot;poapsis of Hohmann transfer ellipse relative to &quot;J&quot;upiter</span>
+
+    <span class="n">a_H</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="p">(</span> <span class="n">V_SC_A_J</span><span class="o">*</span><span class="n">V_SC_A_J</span><span class="p">)</span> <span class="p">)</span>                               <span class="c1"># [m] Semimajor axis (-) of arrival hyperbola.</span>
+
+    <span class="n">V_SC_P_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">V_SC_A_J</span><span class="o">*</span><span class="n">V_SC_A_J</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">r_SC_J_park</span><span class="p">)</span> <span class="p">)</span>     <span class="c1"># [m/s] (5) &quot;S&quot;pace&quot;C&quot;raft speed at &quot;P&quot;eriapsis of &quot;H&quot;ohmann transfer ellipse (Before delta V performed)</span>
+    <span class="n">Delta_V_Parking_Orbit</span> <span class="o">=</span> <span class="n">V_SC_C_J</span> <span class="o">-</span> <span class="n">V_SC_P_H</span>
+    <span class="n">e_H</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="n">r_SC_J_park</span><span class="o">*</span><span class="n">V_SC_A_J</span><span class="o">*</span><span class="n">V_SC_A_J</span><span class="p">)</span> <span class="o">/</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a_H</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">e_H</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">280.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="c1"># Determine required simulation time (time of flight) from SC initial position on hyperbola to periapsis. (Time until delta V must be performed)</span>
+    <span class="c1"># Method: Use hyperbolic time equation to find TOF: (t-tp)</span>
+    <span class="n">zeta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">t_tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">((</span><span class="n">zeta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">))</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="c1"># Setting initial position and velocity vectors using orbital elements</span>
+    <span class="n">r_N</span><span class="p">,</span> <span class="n">v_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">jupiter</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="c1"># Define other parking orbit parameters</span>
+    <span class="n">a_park</span> <span class="o">=</span> <span class="n">r_SC_J_park</span>
+    <span class="n">e_park</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Initialize Spacecraft States with the initialization variables</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_N</span>                   <span class="c1"># [m]   = r_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">v_N</span>                   <span class="c1"># [m/s] = v_BN_N</span>
+
+    <span class="c1"># Set the simulation time</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">t_tp</span><span class="p">)</span>  <span class="c1"># Simulation Stops At Periapsis</span>
+
+    <span class="c1"># Setup data logging before the simulation is initialized</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+
+    <span class="c1"># Vizard Visualization Option</span>
+    <span class="c1"># ---------------------------</span>
+    <span class="c1"># If you wish to transmit the simulation data to the United based Vizard Visualization application,</span>
+    <span class="c1"># then uncomment the following</span>
+    <span class="c1"># line from the python scenario script.  This will cause the BSK simulation data to</span>
+    <span class="c1"># be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by</span>
+    <span class="c1"># Vizard and played back after running the BSK simulation.</span>
+    <span class="c1"># To enable this, uncomment this line:</span>
+
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span>
+                                              <span class="c1"># saveFile=__file__</span>
+                                              <span class="p">)</span>
+
+    <span class="c1"># Initialize and execute simulation for the first section (stops at periapsis of hyperbola before delta V)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1"># Get current spacecraft states</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Apply delta V and set new velocity state</span>
+    <span class="n">vHat</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">+</span> <span class="n">Delta_V_Parking_Orbit</span><span class="o">*</span><span class="n">vHat</span>
+    <span class="n">velRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation for 2nd chunk</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span> <span class="o">+</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">300000</span><span class="p">))</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Pull recorded data for the entire simulation</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+
+    <span class="c1"># Call plotting function: plotOrbits</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotOrbits</span><span class="p">(</span><span class="n">dataRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">posData</span><span class="p">,</span> <span class="n">jupiter</span><span class="p">,</span> <span class="n">a_park</span><span class="p">,</span> <span class="n">e_park</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotOrbits</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">posData</span><span class="p">,</span> <span class="n">jupiter</span><span class="p">,</span> <span class="n">a_park</span><span class="p">,</span> <span class="n">e_park</span><span class="p">):</span>
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Figure 1: Draw the inertial position vector components</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># Clears out plots from earlier test runs</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">posData</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$r_{BN,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [orbits]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Inertial Position [km]&#39;</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Figure 2: Plot arrival to Jupiter</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">])</span>
+    <span class="c1"># Draw the planet</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+
+    <span class="c1"># Draw the actual orbit from pulled data (DataRec)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">posData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">radEquator</span><span class="p">,</span> <span class="n">posData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">radEquator</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated Flight&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Jupiter Velocity Direction [DU]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Anti-Sunward Direction [DU]&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Draw desired parking orbit</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">indx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span> <span class="n">a_park</span><span class="o">/</span><span class="n">jupiter</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e_park</span> <span class="o">*</span> <span class="n">e_park</span><span class="p">)</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">e_park</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">indx</span><span class="p">]))</span> <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">),</span> <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">),</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#555555&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Desired Circ. Parking Orbit&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span>  <span class="c1"># show_plots</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>avsEigenSupport &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="bilinearInterpolation" href="bilinearInterpolation.html" />
+    <link rel="prev" title="avsEigenMRP" href="avsEigenMRP.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">avsEigenSupport</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/avsEigenSupport.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="avseigensupport">
+<span id="id1"></span><h1>avsEigenSupport<a class="headerlink" href="#avseigensupport" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420eigenMatrixXd2CArrayN5Eigen8MatrixXdEPd">
+<span id="_CPPv320eigenMatrixXd2CArrayN5Eigen8MatrixXdEPd"></span><span id="_CPPv220eigenMatrixXd2CArrayN5Eigen8MatrixXdEPd"></span><span id="eigenMatrixXd2CArray__Eigen::MatrixXd.doubleP"></span><span class="target" id="avs_eigen_support_8h_1a5b0bfa223918c75d0d39346e5e08d1e8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenMatrixXd2CArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">inMat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">outArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420eigenMatrixXd2CArrayN5Eigen8MatrixXdEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>General conversion between any Eigen matrix and output array. </p>
+<p>This function provides a general conversion between an Eigen matrix and an output C array. Note that this routine would convert an inbound type to a MatrixXd and then transpose the matrix which would be inefficient in a lot of cases. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inMat</strong> – The source Eigen matrix that we are converting </p></li>
+<li><p><strong>outArray</strong> – The destination array (sized by the user!) we copy into </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420eigenMatrixXi2CArrayN5Eigen8MatrixXiEPi">
+<span id="_CPPv320eigenMatrixXi2CArrayN5Eigen8MatrixXiEPi"></span><span id="_CPPv220eigenMatrixXi2CArrayN5Eigen8MatrixXiEPi"></span><span id="eigenMatrixXi2CArray__Eigen::MatrixXi.iP"></span><span class="target" id="avs_eigen_support_8h_1a8f49e5b32d703df9e644b53884be532a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenMatrixXi2CArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXi</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">inMat</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">outArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420eigenMatrixXi2CArrayN5Eigen8MatrixXiEPi" title="Link to this definition"></a><br /></dt>
+<dd><p>General conversion between any Eigen matrix and output array. </p>
+<p>This function provides a general conversion between an Eigen matrix and an output C array. Note that this routine would convert an inbound type to a MatrixXd and then transpose the matrix which would be inefficient in a lot of cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inMat</strong> – The source Eigen matrix that we are converting </p></li>
+<li><p><strong>outArray</strong> – The destination array (sized by the user!) we copy into </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420eigenVector3d2CArrayRN5Eigen8Vector3dEPd">
+<span id="_CPPv320eigenVector3d2CArrayRN5Eigen8Vector3dEPd"></span><span id="_CPPv220eigenVector3d2CArrayRN5Eigen8Vector3dEPd"></span><span id="eigenVector3d2CArray__Eigen::Vector3dR.doubleP"></span><span class="target" id="avs_eigen_support_8h_1a794c4abb778e3a203ca08dfb3f707050"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenVector3d2CArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inMat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">outArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420eigenVector3d2CArrayRN5Eigen8Vector3dEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Rapid conversion between 3-vector and output array. </p>
+<p>This function provides a direct conversion between a 3-vector and an output C array. We are providing this function to save on the inline conversion and the transpose that would have been performed by the general case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inMat</strong> – The source Eigen matrix that we are converting </p></li>
+<li><p><strong>outArray</strong> – The destination array we copy into </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416eigenMRPd2CArrayRN5Eigen8Vector3dEPd">
+<span id="_CPPv316eigenMRPd2CArrayRN5Eigen8Vector3dEPd"></span><span id="_CPPv216eigenMRPd2CArrayRN5Eigen8Vector3dEPd"></span><span id="eigenMRPd2CArray__Eigen::Vector3dR.doubleP"></span><span class="target" id="avs_eigen_support_8h_1a1f1b705018c04b0a2e22d7b92453bff0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenMRPd2CArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inMat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">outArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416eigenMRPd2CArrayRN5Eigen8Vector3dEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Rapid conversion between MRP and output array. </p>
+<p>This function provides a direct conversion between an MRP and an output C array. We are providing this function to save on the inline conversion and the transpose that would have been performed by the general case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inMat</strong> – The source Eigen MRP that we are converting </p></li>
+<li><p><strong>outArray</strong> – The destination array we copy into </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420eigenMatrix3d2CArrayRN5Eigen8Matrix3dEPd">
+<span id="_CPPv320eigenMatrix3d2CArrayRN5Eigen8Matrix3dEPd"></span><span id="_CPPv220eigenMatrix3d2CArrayRN5Eigen8Matrix3dEPd"></span><span id="eigenMatrix3d2CArray__Eigen::Matrix3dR.doubleP"></span><span class="target" id="avs_eigen_support_8h_1a1d53f0520c190b8992c5a6f51d70dc48"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenMatrix3d2CArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inMat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">outArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420eigenMatrix3d2CArrayRN5Eigen8Matrix3dEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Rapid conversion between 3x3 matrix and output array. </p>
+<p>This function provides a direct conversion between a 3x3 matrix and an output C array. We are providing this function to save on the inline conversion that would have been performed by the general case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inMat</strong> – The source Eigen matrix that we are converting </p></li>
+<li><p><strong>outArray</strong> – The destination array we copy into </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420cArray2EigenMatrixXdPdii">
+<span id="_CPPv320cArray2EigenMatrixXdPdii"></span><span id="_CPPv220cArray2EigenMatrixXdPdii"></span><span id="cArray2EigenMatrixXd__doubleP.i.i"></span><span class="target" id="avs_eigen_support_8h_1ad581c3de327ceeec7e335d2b533d9924"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cArray2EigenMatrixXd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">inArray</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nRows</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nCols</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420cArray2EigenMatrixXdPdii" title="Link to this definition"></a><br /></dt>
+<dd><p>General conversion between a C array and an Eigen matrix. </p>
+<p>This function performs the general conversion between an input C array and an Eigen matrix. Note that to use this function the user MUST size the Eigen matrix ahead of time so that the internal map call has enough information to ingest the C array. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inArray</strong> – The input array (row-major) </p></li>
+<li><p><strong>nRows</strong> – </p></li>
+<li><p><strong>nCols</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::MatrixXd </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420cArray2EigenVector3dPd">
+<span id="_CPPv320cArray2EigenVector3dPd"></span><span id="_CPPv220cArray2EigenVector3dPd"></span><span id="cArray2EigenVector3d__doubleP"></span><span class="target" id="avs_eigen_support_8h_1ab52f82916ad902d15fa21d91075e0529"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cArray2EigenVector3d</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">inArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420cArray2EigenVector3dPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Specific conversion between a C array and an Eigen 3-vector. </p>
+<p>This function performs the conversion between an input C array 3-vector and an output Eigen vector3d. This function is provided in order to save an unnecessary conversion between types. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inArray</strong> – The input array (row-major) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416cArray2EigenMRPdPd">
+<span id="_CPPv316cArray2EigenMRPdPd"></span><span id="_CPPv216cArray2EigenMRPdPd"></span><span id="cArray2EigenMRPd__doubleP"></span><span class="target" id="avs_eigen_support_8h_1ac416faaf51adbb7f60a9ec0472d413c6"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cArray2EigenMRPd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">inArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416cArray2EigenMRPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Specific conversion between a C array and an Eigen MRPs. </p>
+<p>This function performs the conversion between an input C array 3-vector and an output Eigen MRPd. This function is provided in order to save an unnecessary conversion between types. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inArray</strong> – The input array (row-major) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::MRPd </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420cArray2EigenMatrix3dPd">
+<span id="_CPPv320cArray2EigenMatrix3dPd"></span><span id="_CPPv220cArray2EigenMatrix3dPd"></span><span id="cArray2EigenMatrix3d__doubleP"></span><span class="target" id="avs_eigen_support_8h_1a1355ee7d1ee3da4daa7d40a8ff051335"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cArray2EigenMatrix3d</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">inArray</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420cArray2EigenMatrix3dPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Specfici conversion between a C array and an Eigen 3x3 matrix. </p>
+<p>This function performs the conversion between an input C array 3x3-matrix and an output Eigen vector3d. This function is provided in order to save an unnecessary conversion between types. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inArray</strong> – The input array (row-major) </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422c2DArray2EigenMatrix3dAL3E_AL3E_d">
+<span id="_CPPv322c2DArray2EigenMatrix3dAL3E_AL3E_d"></span><span id="_CPPv222c2DArray2EigenMatrix3dA3_A3_d"></span><span id="c2DArray2EigenMatrix3d__doubleAA"></span><span class="target" id="avs_eigen_support_8h_1ad9561e31f68baf51c2fef3a5d3f45dbf"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c2DArray2EigenMatrix3d</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">in2DArray</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422c2DArray2EigenMatrix3dAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Specfici conversion between a C 2D array and an Eigen 3x3 matrix. </p>
+<p>This function performs the conversion between an input C 3x3 2D-array and an output Eigen vector3d. This function is provided in order to save an unnecessary conversion between types </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>in2DArray</strong> – The input 2D-array </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47eigenM1d">
+<span id="_CPPv37eigenM1d"></span><span id="_CPPv27eigenM1d"></span><span id="eigenM1__double"></span><span class="target" id="avs_eigen_support_8h_1adecdac8430ea564b6ce195ddf6a92461"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenM1</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">angle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47eigenM1d" title="Link to this definition"></a><br /></dt>
+<dd><p>returns the first axis DCM with the input angle </p>
+<p>This function returns the Eigen DCM that corresponds to a 1-axis rotation by the angle theta. The DCM is the positive theta rotation from the original frame to the final frame. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> – The input rotation angle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47eigenM2d">
+<span id="_CPPv37eigenM2d"></span><span id="_CPPv27eigenM2d"></span><span id="eigenM2__double"></span><span class="target" id="avs_eigen_support_8h_1a6d9818b693306dae8037c1b25340a68b"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenM2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">angle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47eigenM2d" title="Link to this definition"></a><br /></dt>
+<dd><p>returns the second axis DCM with the input angle </p>
+<p>This function returns the Eigen DCM that corresponds to a 2-axis rotation by the angle theta. The DCM is the positive theta rotation from the original frame to the final frame. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> – The input rotation angle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47eigenM3d">
+<span id="_CPPv37eigenM3d"></span><span id="_CPPv27eigenM3d"></span><span id="eigenM3__double"></span><span class="target" id="avs_eigen_support_8h_1acad044291638543549211465aca44769"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenM3</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">angle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47eigenM3d" title="Link to this definition"></a><br /></dt>
+<dd><p>returns the third axis DCM with the input angle </p>
+<p>This function returns the Eigen DCM that corresponds to a 3-axis rotation by the angle theta. The DCM is the positive theta rotation from the original frame to the final frame. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> – The input rotation angle </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv410eigenTildeN5Eigen8Vector3dE">
+<span id="_CPPv310eigenTildeN5Eigen8Vector3dE"></span><span id="_CPPv210eigenTildeN5Eigen8Vector3dE"></span><span id="eigenTilde__Eigen::Vector3d"></span><span class="target" id="avs_eigen_support_8h_1a1f80626a84c9644a9053ac510167e275"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenTilde</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">vec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410eigenTildeN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>returns the tilde matrix representation of a vector (equivalent to a vector cross product) </p>
+<p>This function returns the tilde matrix version of a vector. The tilde matrix is the matrixi equivalent of a vector cross product, where [tilde_a] b == a x b </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vec</strong> – The input vector </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418eigenMRPd2Vector3dN5Eigen4MRPdE">
+<span id="_CPPv318eigenMRPd2Vector3dN5Eigen4MRPdE"></span><span id="_CPPv218eigenMRPd2Vector3dN5Eigen4MRPdE"></span><span id="eigenMRPd2Vector3d__Eigen::MRPd"></span><span class="target" id="avs_eigen_support_8h_1a605a34646c6ffd1b6cb657bea4dde6b2"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenMRPd2Vector3d</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">vec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418eigenMRPd2Vector3dN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>converts MRPd to an Vector3d variable </p>
+<p>This function converts the Eigen MRPd to Vector3d </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mrp</strong> – The input Vector3d variable </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv410eigenC2MRPN5Eigen8Matrix3dE">
+<span id="_CPPv310eigenC2MRPN5Eigen8Matrix3dE"></span><span id="_CPPv210eigenC2MRPN5Eigen8Matrix3dE"></span><span id="eigenC2MRP__Eigen::Matrix3d"></span><span class="target" id="avs_eigen_support_8h_1a341d122a7fa1f2f7d625b655f9284321"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eigenC2MRP</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410eigenC2MRPN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>maps the DCM to MRPs using Eigen variables </p>
+<p>This function converts the Eigen DCM to an Eigen MRPd </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dcm_Eigen</strong> – The input DCM </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::MRPd </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418newtonRaphsonSolveRKdRKdRKNSt8functionIFddEEERKNSt8functionIFddEEE">
+<span id="_CPPv318newtonRaphsonSolveRKdRKdRKNSt8functionIFddEEERKNSt8functionIFddEEE"></span><span id="_CPPv218newtonRaphsonSolveRKdRKdRKNSt8functionIFddEEERKNSt8functionIFddEEE"></span><span class="target" id="avs_eigen_support_8h_1a1a03d3252025c2467082101aab67eedb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">newtonRaphsonSolve</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">initialEstimate</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">accuracy</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">f</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fPrime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418newtonRaphsonSolveRKdRKdRKNSt8functionIFddEEERKNSt8functionIFddEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>solves for the zero of the provided function </p>
+<p>This function solves for the zero of the passed function using the Newton Raphson Method </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initialEstimate</strong> – The initial value to use for newton-raphson </p></li>
+<li><p><strong>accuracy</strong> – The desired upper bound for the error </p></li>
+<li><p><strong>f</strong> – Function to find the zero of </p></li>
+<li><p><strong>fPrime</strong> – First derivative of the function </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="avsEigenMRP.html" class="btn btn-neutral float-left" title="avsEigenMRP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bilinearInterpolation.html" class="btn btn-neutral float-right" title="bilinearInterpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

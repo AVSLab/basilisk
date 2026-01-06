@@ -1,0 +1,850 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>astroFunctions &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">astroFunctions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for astroFunctions</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">la</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">astroConstants</span>
+
+<span class="c1"># Reference solar flux at Earth [W/m^2]</span>
+<span class="n">solarFluxEarth</span> <span class="o">=</span> <span class="mf">1372.5398</span>
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           Normalize vector</span>
+<span class="c1">#</span>
+
+
+<div class="viewcode-block" id="normalize">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.normalize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;normalize a vector&quot;&quot;&quot;</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">v</span><span class="o">/</span><span class="n">norm</span></div>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           Orbital Period</span>
+<span class="c1">#</span>
+
+
+<div class="viewcode-block" id="orbitalPeriod">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.orbitalPeriod">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">orbitalPeriod</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the orbit period&quot;&quot;&quot;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">P</span></div>
+
+
+
+<div class="viewcode-block" id="orbitalSMA">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.orbitalSMA">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">orbitalSMA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the semi-major axis&quot;&quot;&quot;</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">P</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mi">3</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span></div>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           FROM OE 2 RV</span>
+<span class="c1">#</span>
+
+
+<div class="viewcode-block" id="Earth_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Earth_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Earth_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Earth (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;EARTH&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Mars_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Mars_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Mars_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Mars (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;MARS&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Jupiter_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Jupiter_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Jupiter_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Jupiter (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;JUPITER&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Venus_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Venus_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Venus_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Venus (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;VENUS&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Pluto_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Pluto_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Pluto_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Pluto (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;PLUTO&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Uranus_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Uranus_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Uranus_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Uranus (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;URANUS&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Neptune_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Neptune_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Neptune_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Neptune (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;NEPTUNE&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Saturn_RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.Saturn_RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Saturn_RV</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return Saturn (r,v)&quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="s1">&#39;SATURN&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OE2RV">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.OE2RV">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">OE2RV</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;OE to (r,v) conversion&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">e</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">e</span><span class="o">*</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: parabolic case&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span>
+    <span class="n">r_PQW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">*</span><span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">c</span><span class="p">),</span> <span class="n">p</span><span class="o">*</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">c</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">v_PQW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span><span class="o">/</span><span class="n">p</span><span class="p">),</span> <span class="p">(</span><span class="n">e</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span><span class="o">/</span><span class="n">p</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">PQW2IJK</span><span class="p">(</span><span class="n">Omega</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">r_PQW</span><span class="p">,</span> <span class="n">v_PQW</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">quadrant4</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span> <span class="o">-</span> <span class="n">x</span>
+
+
+<div class="viewcode-block" id="RV2OE">
+<a class="viewcode-back" href="../Documentation/utilities/astroFunctions.html#astroFunctions.RV2OE">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">RV2OE</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">r_IJK</span><span class="p">,</span> <span class="n">v_IJK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;(r,v) to OE conversion&quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r_IJK</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v_IJK</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="n">hm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">nm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">rm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="n">e_vec</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">mu</span> <span class="o">*</span> <span class="p">((</span><span class="n">vm</span><span class="o">*</span><span class="n">vm</span> <span class="o">-</span> <span class="n">mu</span><span class="o">/</span><span class="n">rm</span><span class="p">)</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">e_vec</span><span class="p">)</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">vm</span><span class="o">*</span><span class="n">vm</span> <span class="o">-</span> <span class="n">mu</span><span class="o">/</span><span class="n">rm</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">mu</span><span class="o">/</span><span class="n">eta</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">e</span><span class="o">*</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">h</span><span class="o">*</span><span class="n">h</span><span class="o">/</span><span class="n">mu</span>
+
+    <span class="k">if</span> <span class="n">h</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">hm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">nm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">quadrant4</span><span class="p">(</span><span class="n">Omega</span><span class="p">)</span>
+
+    <span class="n">dotProd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">e_vec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dotProd</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">e_vec</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nm</span> <span class="o">*</span> <span class="n">e</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">e_vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">quadrant4</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+    <span class="n">dotProd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e_vec</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dotProd</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e_vec</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">e</span><span class="o">*</span><span class="n">rm</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="n">quadrant4</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">PQW2IJK</span><span class="p">(</span><span class="n">Omega</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">r_PQW</span><span class="p">,</span> <span class="n">v_PQW</span><span class="p">):</span>
+    <span class="n">sO</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Omega</span><span class="p">)</span>
+    <span class="n">cO</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Omega</span><span class="p">)</span>
+    <span class="n">si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">ci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">sw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+    <span class="n">C11</span> <span class="o">=</span> <span class="n">cO</span><span class="o">*</span><span class="n">cw</span> <span class="o">-</span> <span class="n">sO</span><span class="o">*</span><span class="n">sw</span><span class="o">*</span><span class="n">ci</span>
+    <span class="n">C12</span> <span class="o">=</span> <span class="o">-</span><span class="n">cO</span><span class="o">*</span><span class="n">sw</span> <span class="o">-</span> <span class="n">sO</span><span class="o">*</span><span class="n">cw</span><span class="o">*</span><span class="n">ci</span>
+    <span class="n">C13</span> <span class="o">=</span> <span class="n">sO</span><span class="o">*</span><span class="n">si</span>
+    <span class="n">C21</span> <span class="o">=</span> <span class="n">sO</span><span class="o">*</span><span class="n">cw</span> <span class="o">+</span> <span class="n">cO</span><span class="o">*</span><span class="n">sw</span><span class="o">*</span><span class="n">ci</span>
+    <span class="n">C22</span> <span class="o">=</span> <span class="o">-</span><span class="n">sO</span><span class="o">*</span><span class="n">sw</span> <span class="o">+</span> <span class="n">cO</span><span class="o">*</span><span class="n">cw</span><span class="o">*</span><span class="n">ci</span>
+    <span class="n">C23</span> <span class="o">=</span> <span class="o">-</span><span class="n">cO</span><span class="o">*</span><span class="n">si</span>
+    <span class="n">C31</span> <span class="o">=</span> <span class="n">sw</span><span class="o">*</span><span class="n">si</span>
+    <span class="n">C32</span> <span class="o">=</span> <span class="n">cw</span><span class="o">*</span><span class="n">si</span>
+    <span class="n">C33</span> <span class="o">=</span> <span class="n">ci</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">C11</span><span class="p">,</span> <span class="n">C12</span><span class="p">,</span> <span class="n">C13</span><span class="p">],</span> <span class="p">[</span><span class="n">C21</span><span class="p">,</span> <span class="n">C22</span><span class="p">,</span> <span class="n">C23</span><span class="p">],</span> <span class="p">[</span><span class="n">C31</span><span class="p">,</span> <span class="n">C32</span><span class="p">,</span> <span class="n">C33</span><span class="p">]])</span>
+
+    <span class="n">r_IJK</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r_PQW</span><span class="p">)</span>
+    <span class="n">v_IJK</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_PQW</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">r_IJK</span><span class="p">,</span> <span class="n">v_IJK</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           MEEUS ALGORITHM</span>
+<span class="c1">#</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ephemeridesMeeus</span><span class="p">(</span><span class="n">JDE</span><span class="p">,</span> <span class="n">celestialBody</span><span class="p">):</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">JDE</span> <span class="o">-</span> <span class="mf">2451545.0</span><span class="p">)</span><span class="o">/</span><span class="mi">36525</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ephem</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="n">vec</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">if</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;EARTH&#39;</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">100.466449</span> <span class="o">+</span> <span class="mf">35999.3728519</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00000568</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mi">0</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.000001018</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.01670862</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000042037</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0000001236</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00000000004</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="mf">0.0130546</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00000931</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000000034</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">174.873174</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2410908</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00004067</span> <span class="o">*</span> \
+            <span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000001327</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">102.937348</span> <span class="o">+</span> <span class="mf">0.3225557</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00015026</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.000000478</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;MARS&#39;</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">355.433275</span> <span class="o">+</span> <span class="mf">19140.2993313</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> \
+            <span class="mf">0.00000261</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000000003</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.523679342</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.09340062</span> <span class="o">+</span> <span class="mf">0.000090483</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="o">-</span><span class="mf">0.0000000806</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00000000035</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">1.849726</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0081479</span><span class="p">)</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00002255</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000000027</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">49.558093</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2949846</span><span class="p">)</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="o">-</span><span class="mf">0.00063993</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000002143</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">336.060234</span> <span class="o">+</span> <span class="mf">0.4438898</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="o">-</span> <span class="mf">0.00017321</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.000000300</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;JUPITER&#39;</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">34.351484</span> <span class="o">+</span> <span class="mf">3034.9056746</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00008501</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.000000004</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">5.202603191</span> <span class="o">+</span> <span class="mf">0.0000001913</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.04849485</span> <span class="o">+</span> <span class="mf">0.000163244</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="o">-</span> \
+            <span class="mf">0.0000004719</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00000000197</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">1.303270</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0019872</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00003318</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.000000092</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">100.464441</span> <span class="o">+</span> <span class="mf">0.1766828</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> \
+            <span class="mf">0.00090387</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000007032</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">14.331309</span> <span class="o">+</span> <span class="mf">0.2155525</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00072252</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000004590</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;VENUS&#39;</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">181.979801</span> <span class="o">+</span> <span class="mf">58517.8156760</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> \
+            <span class="mf">0.00000165</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000000002</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.72332982</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.00677188</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000047766</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.0000000975</span> <span class="o">*</span> \
+            <span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00000000044</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">3.394662</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0008568</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00003244</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.000000010</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">76.679920</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2780080</span><span class="p">)</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00014256</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000000198</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">131.563707</span> <span class="o">+</span> <span class="mf">0.0048646</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="o">-</span><span class="mf">0.00138232</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.000005332</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;PLUTO&#39;</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">238.92903833</span> <span class="o">+</span> <span class="mf">145.20780515</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">39.48211675</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00031596</span><span class="p">)</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.24882730</span> <span class="o">+</span> <span class="mf">0.00005170</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">17.14001206</span> <span class="o">+</span> <span class="mf">0.00004818</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">110.30393684</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.01183482</span><span class="p">)</span><span class="o">*</span><span class="n">T</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">224.06891629</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.04062942</span><span class="p">)</span><span class="o">*</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;SATURN&#39;</span><span class="p">:</span>
+        <span class="n">L_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">50.077471</span><span class="p">,</span> <span class="mf">1222.1137943</span><span class="p">,</span> <span class="mf">0.00021004</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000019</span><span class="p">])</span>
+        <span class="n">a_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">9.554909596</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0000021389</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">e_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.05550862</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000346818</span><span class="p">,</span> <span class="o">-</span>
+                         <span class="mf">0.0000006456</span><span class="p">,</span> <span class="mf">0.00000000338</span><span class="p">])</span>
+        <span class="n">i_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.488878</span><span class="p">,</span>	<span class="mf">0.0025515</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00004903</span><span class="p">,</span> <span class="mf">0.000000018</span><span class="p">])</span>
+        <span class="n">Omega_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="mf">113.665524</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2566649</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00018345</span><span class="p">,</span> <span class="mf">0.000000357</span><span class="p">])</span>
+        <span class="n">Pi_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">93.056787</span><span class="p">,</span> <span class="mf">0.5665496</span><span class="p">,</span> <span class="mf">0.00052809</span><span class="p">,</span> <span class="mf">0.000004882</span><span class="p">])</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">L_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">a_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">e_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">i_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Omega_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Pi_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;URANUS&#39;</span><span class="p">:</span>
+        <span class="n">L_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">314.055005</span><span class="p">,</span> <span class="mf">429.8640561</span><span class="p">,</span> <span class="mf">0.00030434</span><span class="p">,</span> <span class="mf">0.000000026</span><span class="p">])</span>
+        <span class="n">a_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">19.218446062</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0000000372</span><span class="p">,</span> <span class="mf">0.00000000098</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">e_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="mf">0.04629590</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000027337</span><span class="p">,</span> <span class="mf">0.0000000790</span><span class="p">,</span> <span class="mf">0.00000000025</span><span class="p">])</span>
+        <span class="n">i_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.773196</span><span class="p">,</span>	<span class="mf">0.0007744</span><span class="p">,</span> <span class="mf">0.00003749</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000092</span><span class="p">])</span>
+        <span class="n">Omega_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">74.005947</span><span class="p">,</span> <span class="mf">0.5211258</span><span class="p">,</span>	<span class="mf">0.00133982</span><span class="p">,</span>	<span class="mf">0.000018516</span><span class="p">])</span>
+        <span class="n">Pi_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">173.005159</span><span class="p">,</span> <span class="mf">1.4863784</span><span class="p">,</span> <span class="mf">0.0021450</span><span class="p">,</span> <span class="mf">0.000000433</span><span class="p">])</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">L_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">a_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">e_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">i_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Omega_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Pi_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">celestialBody</span> <span class="o">==</span> <span class="s1">&#39;NEPTUNE&#39;</span><span class="p">:</span>
+        <span class="n">L_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">304.348665</span><span class="p">,</span> <span class="mf">219.8833092</span><span class="p">,</span> <span class="mf">0.00030926</span><span class="p">,</span> <span class="mf">0.000000018</span><span class="p">])</span>
+        <span class="n">a_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">30.110386869</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.0000001663</span><span class="p">,</span> <span class="mf">0.00000000069</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">e_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.00898809</span><span class="p">,</span> <span class="mf">0.000006408</span><span class="p">,</span> <span class="o">-</span>
+                         <span class="mf">0.0000000008</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00000000005</span><span class="p">])</span>
+        <span class="n">i_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.769952</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0093082</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00000708</span><span class="p">,</span> <span class="mf">0.000000028</span><span class="p">])</span>
+        <span class="n">Omega_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">131.784057</span><span class="p">,</span> <span class="mf">1.1022057</span><span class="p">,</span> <span class="mf">0.00026006</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000636</span><span class="p">])</span>
+        <span class="n">Pi_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">48.123691</span><span class="p">,</span> <span class="mf">1.4262677</span><span class="p">,</span> <span class="mf">0.00037918</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000003</span><span class="p">])</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">L_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">a_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">e_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">i_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Omega_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="n">ephem</span><span class="p">(</span><span class="n">Pi_vec</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Meeus coefficients for &quot;</span> <span class="o">+</span> <span class="n">celestialBody</span> <span class="o">+</span> <span class="s2">&quot; not defined&quot;</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">Pi</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="k">return</span> <span class="n">computeCOE</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">Pi</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">computeCOE</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">Pi</span><span class="p">):</span>
+    <span class="c1"># Units:</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">L</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">Omega</span> <span class="o">=</span> <span class="n">Omega</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">Pi</span> <span class="o">=</span> <span class="n">Pi</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Pi</span> <span class="o">-</span> <span class="n">Omega</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">L</span> <span class="o">-</span> <span class="n">Pi</span>
+    <span class="n">C_cen</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">e</span> <span class="o">-</span> <span class="mi">1</span><span class="o">//</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="o">//</span><span class="mi">96</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">+</span>\
+            <span class="p">(</span><span class="mi">5</span><span class="o">//</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">11</span><span class="o">//</span><span class="mi">24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">M</span><span class="p">)</span> <span class="o">+</span>\
+            <span class="p">(</span><span class="mi">13</span><span class="o">//</span><span class="mi">12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">43</span><span class="o">//</span><span class="mi">64</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">M</span><span class="p">)</span> <span class="o">+</span>\
+        <span class="mi">103</span><span class="o">//</span><span class="mi">96</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">M</span><span class="p">)</span> <span class="o">+</span>\
+        <span class="mi">1097</span><span class="o">//</span><span class="mi">960</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">M</span><span class="p">)</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">M</span> <span class="o">+</span> <span class="n">C_cen</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                             DATES CONVERSION</span>
+<span class="c1"># From GD to JD</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">JulianDate</span><span class="p">(</span><span class="n">GDE</span><span class="p">):</span>
+    <span class="n">yr</span> <span class="o">=</span> <span class="n">GDE</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mo</span> <span class="o">=</span> <span class="n">GDE</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">GDE</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">JD</span> <span class="o">=</span> <span class="mi">367</span><span class="o">*</span><span class="n">yr</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="mi">7</span><span class="o">*</span><span class="p">(</span><span class="n">yr</span> <span class="o">+</span> <span class="nb">int</span><span class="p">((</span><span class="n">mo</span><span class="o">+</span><span class="mi">9</span><span class="p">)</span><span class="o">/</span><span class="mi">12</span><span class="p">))</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="nb">int</span><span class="p">(</span><span class="mi">275</span><span class="o">*</span><span class="n">mo</span><span class="o">/</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="mf">1721013.5</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">JD</span><span class="p">)</span>
+
+
+<span class="c1"># From JD to GD</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">GregorianDate</span><span class="p">(</span><span class="n">JDE</span><span class="p">):</span>
+    <span class="n">LMonth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">])</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">JDE</span> <span class="o">-</span> <span class="mf">2415019.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">365.25</span>
+    <span class="n">Yr</span> <span class="o">=</span> <span class="mi">1900</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">LeapYrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">((</span><span class="n">Yr</span> <span class="o">-</span> <span class="mi">1900</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">Days</span> <span class="o">=</span> <span class="n">JDE</span> <span class="o">-</span> <span class="mf">2415019.5</span> <span class="o">-</span> <span class="p">((</span><span class="n">Yr</span><span class="o">-</span><span class="mi">1900</span><span class="p">)</span><span class="o">*</span><span class="mf">365.0</span> <span class="o">+</span> <span class="n">LeapYrs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Days</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">Yr</span> <span class="o">=</span> <span class="n">Yr</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">LeapYrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">((</span><span class="n">Yr</span> <span class="o">-</span> <span class="mi">1900</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="n">Days</span> <span class="o">=</span> <span class="n">JDE</span> <span class="o">-</span> <span class="mf">2415019.5</span> <span class="o">-</span> <span class="p">((</span><span class="n">Yr</span><span class="o">-</span><span class="mi">1900</span><span class="p">)</span><span class="o">*</span><span class="mf">365.0</span> <span class="o">+</span> <span class="n">LeapYrs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Yr</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LMonth</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">29</span>
+    <span class="n">DayOfYr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">Days</span><span class="p">)</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">LMonth</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">sum</span> <span class="o">+</span> <span class="n">month</span> <span class="o">&lt;=</span> <span class="n">DayOfYr</span><span class="p">):</span>
+            <span class="nb">sum</span> <span class="o">+=</span> <span class="n">month</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">Mo</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">Day</span> <span class="o">=</span> <span class="n">DayOfYr</span> <span class="o">-</span> <span class="nb">sum</span>
+    <span class="n">GD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">Yr</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Mo</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Day</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">GD</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">exactGregorianDate</span><span class="p">(</span><span class="n">JD</span><span class="p">):</span>
+    <span class="n">L_month</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">31</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">])</span>
+    <span class="n">T_1900</span> <span class="o">=</span> <span class="p">(</span><span class="n">JD</span> <span class="o">-</span> <span class="mf">2415019.5</span><span class="p">)</span><span class="o">/</span><span class="mf">365.25</span>
+    <span class="n">Year</span> <span class="o">=</span> <span class="mi">1900</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">T_1900</span><span class="p">)</span>
+    <span class="n">LeapYrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="mf">0.25</span><span class="o">*</span><span class="p">(</span><span class="n">Year</span> <span class="o">-</span> <span class="mi">1900</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Days</span> <span class="o">=</span> <span class="p">(</span><span class="n">JD</span> <span class="o">-</span> <span class="mf">2415019.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">365.0</span><span class="o">*</span><span class="p">(</span><span class="n">Year</span> <span class="o">-</span> <span class="mi">1900</span><span class="p">)</span> <span class="o">+</span> <span class="n">LeapYrs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Days</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">Year</span> <span class="o">=</span> <span class="n">Year</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">LeapYrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="mf">0.25</span><span class="o">*</span><span class="p">(</span><span class="n">Year</span> <span class="o">-</span> <span class="mi">1900</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">Days</span> <span class="o">=</span> <span class="p">(</span><span class="n">JD</span> <span class="o">-</span> <span class="mf">2415019.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">365.0</span><span class="o">*</span><span class="p">(</span><span class="n">Year</span> <span class="o">-</span> <span class="mi">1900</span><span class="p">)</span> <span class="o">+</span> <span class="n">LeapYrs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Year</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">L_month</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">29</span>
+    <span class="n">DOY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">Days</span><span class="p">)</span>  <span class="c1"># Day of the year</span>
+    <span class="n">monthDays</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># summation of days in months</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># months counter</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">monthDays</span> <span class="o">+</span> <span class="n">L_month</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">DOY</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monthDays</span> <span class="o">+=</span> <span class="n">L_month</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+            <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">Month</span> <span class="o">=</span> <span class="n">m</span>
+    <span class="n">Day</span> <span class="o">=</span> <span class="n">DOY</span> <span class="o">-</span> <span class="n">monthDays</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="p">(</span><span class="n">Days</span> <span class="o">-</span> <span class="n">DOY</span><span class="p">)</span><span class="o">*</span><span class="mi">24</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="nb">min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="mi">60</span><span class="o">*</span><span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">h</span><span class="p">))</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">3600</span> <span class="o">*</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">h</span> <span class="o">-</span> <span class="nb">min</span><span class="o">/</span><span class="mf">60.0</span><span class="p">)</span>
+
+    <span class="n">GD</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Year</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Month</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Day</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> \
+         <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+
+    <span class="k">return</span> <span class="n">GD</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">optimalDate</span><span class="p">(</span><span class="n">GD0</span><span class="p">,</span> <span class="n">DaysPastDeparture</span><span class="p">,</span> <span class="n">TOF</span><span class="p">):</span>
+    <span class="n">JD0</span> <span class="o">=</span> <span class="n">JulianDate</span><span class="p">(</span><span class="n">GD0</span><span class="p">)</span> <span class="o">+</span> <span class="n">DaysPastDeparture</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Departure Date: &#39;</span><span class="p">,</span> <span class="n">GregorianDate</span><span class="p">(</span><span class="n">JD0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Arrival Date: &#39;</span><span class="p">,</span> <span class="n">GregorianDate</span><span class="p">(</span><span class="n">JD0</span> <span class="o">+</span> <span class="n">TOF</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">JD0</span><span class="p">,</span> <span class="n">JD0</span><span class="o">+</span><span class="n">TOF</span><span class="p">)</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                             B PARAMETERS</span>
+<span class="c1">#</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">B_params_1</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="n">rm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="n">h_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">e_vec</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">mu</span> <span class="o">*</span> <span class="p">((</span><span class="n">vm</span> <span class="o">*</span> <span class="n">vm</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">rm</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">e_vec</span><span class="p">)</span>
+    <span class="n">Betta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">rm</span> <span class="o">-</span> <span class="n">vm</span> <span class="o">*</span> <span class="n">vm</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="n">e</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">k_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">S_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Betta</span><span class="p">)</span><span class="o">/</span><span class="n">e</span> <span class="o">*</span> <span class="n">e_vec</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Betta</span><span class="p">)</span> <span class="o">*</span> \
+        <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">h_hat</span><span class="p">,</span> <span class="n">e_vec</span><span class="p">))</span>
+    <span class="n">T_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S_hat</span><span class="p">,</span> <span class="n">k_hat</span><span class="p">))</span>
+    <span class="n">R_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S_hat</span><span class="p">,</span> <span class="n">T_hat</span><span class="p">)</span>
+    <span class="n">B_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S_hat</span><span class="p">,</span> <span class="n">h_hat</span><span class="p">)</span>
+
+    <span class="n">B</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="n">B_hat</span>
+    <span class="n">BT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T_hat</span><span class="p">)</span>
+    <span class="n">BR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">R_hat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">BT</span><span class="p">,</span> <span class="n">BR</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">B_params_2</span><span class="p">(</span><span class="n">v_in</span><span class="p">,</span> <span class="n">v_out</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="n">vm_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_in</span><span class="p">)</span>
+    <span class="n">vm_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_out</span><span class="p">)</span>
+
+    <span class="n">S</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">v_in</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v_in</span><span class="p">,</span> <span class="n">v_out</span><span class="p">))</span>
+    <span class="n">B_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_in</span><span class="p">,</span> <span class="n">v_out</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">vm_in</span><span class="o">*</span><span class="n">vm_out</span><span class="p">))</span>
+    <span class="n">rp</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="n">vm_in</span> <span class="o">*</span> <span class="n">vm_in</span><span class="p">)</span> <span class="o">*</span> \
+        <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span> <span class="o">-</span> <span class="n">psi</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">vm_in</span> <span class="o">*</span> <span class="n">vm_in</span> <span class="o">*</span> <span class="n">rp</span> <span class="o">/</span> <span class="n">mu</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="n">vm_in</span> <span class="o">*</span> <span class="n">vm_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">temp</span><span class="o">*</span><span class="n">temp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">BT</span> <span class="o">=</span> <span class="n">B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B_hat</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">BR</span> <span class="o">=</span> <span class="n">B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B_hat</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">BR</span><span class="p">,</span> <span class="n">BT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">psi</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">theta</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span> <span class="n">BT</span><span class="p">,</span> <span class="n">BR</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                             RESONANT ORBITS</span>
+<span class="c1">#</span>
+
+<span class="c1"># v_inf_in: sc hyperbolic velocity</span>
+<span class="c1"># V1: Earth velocity at arrival (EGA1)</span>
+<span class="c1"># R1: Earth position at arrival (EGA1)</span>
+<span class="c1"># V2: Earth velocity at departure (EGA2)</span>
+<span class="c1"># N: Number of resonances</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">EarthResonantOrbit</span><span class="p">(</span><span class="n">v_inf_in</span><span class="p">,</span> <span class="n">V1</span><span class="p">,</span> <span class="n">R1</span><span class="p">,</span> <span class="n">v_inf_out</span><span class="p">,</span> <span class="n">V2</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="c1"># compute P, a, v_scSun</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="mf">365.242189</span> <span class="o">*</span> <span class="mi">86400</span>                      <span class="c1"># Earth orbital period</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">P</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span><span class="p">)</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mi">3</span>
+    <span class="c1"># Earth heliocentric orbit SMA</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+    <span class="n">rm_1</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span>
+    <span class="n">vm_sc_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="n">rm_1</span> <span class="o">-</span> <span class="mf">1.</span><span class="o">/</span><span class="n">a</span><span class="p">)</span>
+                      <span class="p">)</span>      <span class="c1"># s/c heliocentric velocity</span>
+
+    <span class="c1"># compute theta</span>
+    <span class="n">vm_inf_in</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_inf_in</span><span class="p">)</span>
+    <span class="n">vm_P</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">V1</span><span class="p">)</span>
+    <span class="n">cosTheta</span> <span class="o">=</span> <span class="p">(</span><span class="n">vm_inf_in</span> <span class="o">*</span> <span class="n">vm_inf_in</span> <span class="o">+</span> <span class="n">vm_P</span> <span class="o">*</span> <span class="n">vm_P</span> <span class="o">-</span>
+                <span class="n">vm_sc_h</span> <span class="o">*</span> <span class="n">vm_sc_h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">vm_inf_in</span> <span class="o">*</span> <span class="n">vm_P</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">cosTheta</span><span class="p">)</span>
+
+    <span class="c1"># Compute T_vnc: DCM from VNC to ecliptic</span>
+    <span class="n">V_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">V1</span><span class="p">)</span>
+    <span class="n">N_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">R1</span><span class="p">,</span> <span class="n">V1</span><span class="p">))</span>
+    <span class="n">C_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">V_hat</span><span class="p">,</span> <span class="n">N_hat</span><span class="p">)</span>
+    <span class="n">T_vnc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">V_hat</span><span class="p">,</span> <span class="n">N_hat</span><span class="p">,</span> <span class="n">C_hat</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Arrays to stack successful resonances that don&#39;t impact w/ the planet</span>
+    <span class="n">rp_GA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">PHI_GA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">rp_GA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">PHI_GA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="c1"># Loop</span>
+    <span class="n">vm_inf_out</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_inf_out</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">360</span>     <span class="c1"># number of points</span>
+    <span class="n">phi_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">phi</span> <span class="ow">in</span> <span class="n">phi_vec</span><span class="p">:</span>
+        <span class="n">vGA_out_VNC</span> <span class="o">=</span> <span class="n">vm_inf_out</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)])</span>
+        <span class="n">v_GA1_out_ecl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_vnc</span><span class="p">,</span> <span class="n">vGA_out_VNC</span><span class="p">)</span>
+        <span class="n">vm_GA1_out</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_GA1_out_ecl</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">BT</span><span class="p">,</span> <span class="n">BR</span><span class="p">)</span> <span class="o">=</span> <span class="n">B_params_2</span><span class="p">(</span>
+            <span class="n">v_inf_in</span><span class="p">,</span> <span class="n">v_GA1_out_ecl</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_EARTH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rp</span> <span class="o">&gt;</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="ow">or</span> <span class="n">rp</span> <span class="o">&lt;</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="p">:</span>
+            <span class="n">rp_GA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp_GA1</span><span class="p">,</span> <span class="n">rp</span><span class="p">)</span>
+            <span class="n">PHI_GA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PHI_GA1</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">v_GA2_in_ecl</span> <span class="o">=</span> <span class="n">v_GA1_out_ecl</span> <span class="o">+</span> <span class="n">V1</span> <span class="o">-</span> <span class="n">V2</span>
+        <span class="n">vm_GA2_in</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_GA2_in_ecl</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">BT</span><span class="p">,</span> <span class="n">BR</span><span class="p">)</span> <span class="o">=</span> <span class="n">B_params_2</span><span class="p">(</span>
+            <span class="n">v_GA2_in_ecl</span><span class="p">,</span> <span class="n">v_inf_out</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_EARTH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rp</span> <span class="o">&gt;</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="ow">or</span> <span class="n">rp</span> <span class="o">&lt;</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="p">:</span>
+            <span class="n">rp_GA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp_GA2</span><span class="p">,</span> <span class="n">rp</span><span class="p">)</span>
+            <span class="n">PHI_GA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PHI_GA2</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PHI_GA1</span><span class="p">,</span> <span class="n">rp_GA1</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="n">PHI_GA2</span><span class="p">,</span> <span class="n">rp_GA2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;EGA 1&#39;</span><span class="p">,</span> <span class="s1">&#39;EGA 2&#39;</span><span class="p">,</span> <span class="s1">&#39;r$_{P, min}$&#39;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\phi$ [rad]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Perigee Radius [km]&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.show()</span>
+    <span class="k">return</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">testResonance</span><span class="p">():</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">31161153575.0634</span><span class="p">,</span> <span class="mf">143995536213.184</span><span class="p">,</span> <span class="mf">3018421.6823707</span><span class="p">])</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">31194146713.798</span><span class="p">,</span>
+                   <span class="mf">143988869052.709</span><span class="p">,</span>
+                   <span class="mf">2352102.45497072</span><span class="p">])</span>
+    <span class="n">V1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="o">-</span><span class="mf">29599.9908905588</span><span class="p">,</span>
+        <span class="mf">6189.32095554111</span><span class="p">,</span>
+        <span class="mf">0.0729005972949417</span><span class="p">])</span>
+    <span class="n">V2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">29598.5134550237</span><span class="p">,</span>
+                   <span class="mf">6195.92283490717</span><span class="p">,</span>
+                   <span class="mf">0.0568758149973483</span><span class="p">])</span>
+
+    <span class="n">v_inf_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.320955575422136</span><span class="p">,</span>
+                         <span class="o">-</span><span class="mf">8.79065711515436</span><span class="p">,</span>
+                         <span class="mf">1.70894261814904</span><span class="p">])</span>
+    <span class="n">v_inf_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">8.95399388012787</span><span class="p">,</span>
+                          <span class="o">-</span><span class="mf">0.346120703226863</span><span class="p">,</span>
+                          <span class="o">-</span><span class="mf">0.350867778719334</span><span class="p">])</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">EarthResonantOrbit</span><span class="p">(</span><span class="n">v_inf_in</span><span class="p">,</span> <span class="n">V1</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">R1</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">v_inf_out</span><span class="p">,</span> <span class="n">V2</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           HELIOCENTRIC ORBIT PLOT</span>
+<span class="c1">#</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotPlanetOrbit</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="n">planet</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+    <span class="n">rx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">ry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">rz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu0</span><span class="p">)</span> <span class="o">=</span> <span class="n">ephemeridesMeeus</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="n">planet</span><span class="p">)</span>
+    <span class="n">nu_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">nu0</span><span class="p">,</span> <span class="n">nu0</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">nu</span> <span class="ow">in</span> <span class="n">nu_vec</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">OE2RV</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
+        <span class="n">rx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ry</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">rz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rz</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">rx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rz</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+
+    <span class="n">max_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">rx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">ry</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span>
+                         <span class="n">ry</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">rz</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">rz</span><span class="o">.</span><span class="n">min</span><span class="p">()])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">Xb</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">max_range</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span>
+                                <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">rx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="n">rx</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="n">Yb</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">max_range</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span>
+                                <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">ry</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="n">ry</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="n">Zb</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">max_range</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span>
+                                <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">rz</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="n">rz</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="c1"># Comment or uncomment following both lines to test the fake bounding box:</span>
+    <span class="k">for</span> <span class="n">xb</span><span class="p">,</span> <span class="n">yb</span><span class="p">,</span> <span class="n">zb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xb</span><span class="p">,</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Zb</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xb</span><span class="p">],</span> <span class="p">[</span><span class="n">yb</span><span class="p">],</span> <span class="p">[</span><span class="n">zb</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotSolarSystem</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="n">JD_ref</span><span class="p">):</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">plotPlanetOrbit</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="s1">&#39;EARTH&#39;</span><span class="p">,</span> <span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">plotPlanetOrbit</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="s1">&#39;SATURN&#39;</span><span class="p">,</span> <span class="s1">&#39;orchid&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">plotPlanetOrbit</span><span class="p">(</span><span class="n">JD</span><span class="p">,</span> <span class="s1">&#39;URANUS&#39;</span><span class="p">,</span> <span class="s1">&#39;lightgreen&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Days Past JD_ref = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">JD</span> <span class="o">-</span> <span class="n">JD_ref</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1">#                                           TISSERAND PLOT</span>
+<span class="c1">#</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">V_circular</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rotationMatrix</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">M</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">TisserandPlot</span><span class="p">(</span><span class="n">R_P</span><span class="p">,</span> <span class="n">v_inf</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="n">RP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">RA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">R_P_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span> <span class="n">R_P</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">V_P</span> <span class="o">=</span> <span class="n">V_circular</span><span class="p">(</span><span class="n">R_P</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">)</span>
+    <span class="n">V_P_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">V_P</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="mi">360</span>
+    <span class="n">alpha_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">MPI</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alpha_vec</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">rotationMatrix</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">V_P_hat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">V_P_vec</span><span class="p">)</span>
+        <span class="n">v_inf_vec</span> <span class="o">=</span> <span class="n">v_inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">V_P_hat</span><span class="p">)</span>
+        <span class="n">V_inf_vec</span> <span class="o">=</span> <span class="n">V_P_vec</span> <span class="o">+</span> <span class="n">v_inf_vec</span>
+        <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span> <span class="o">=</span> <span class="n">RV2OE</span><span class="p">(</span>
+            <span class="n">astroConstants</span><span class="o">.</span><span class="n">MU_SUN</span><span class="p">,</span> <span class="n">R_P_vec</span><span class="p">,</span> <span class="n">V_inf_vec</span><span class="p">)</span>
+        <span class="n">rp</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">RP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RP</span><span class="p">,</span> <span class="n">rp</span><span class="o">/</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span><span class="p">)</span>
+        <span class="n">RA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RA</span><span class="p">,</span> <span class="n">ra</span><span class="o">/</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">RP</span><span class="p">,</span> <span class="n">RA</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">Tisserand_P1_2_P2</span><span class="p">(</span><span class="n">r_planet_vec</span><span class="p">,</span> <span class="n">v_inf_P1_vec</span><span class="p">,</span> <span class="n">v_inf_P2_vec</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">r_planet</span> <span class="ow">in</span> <span class="n">r_planet_vec</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">r_planet</span><span class="o">/</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span><span class="p">,</span>
+                   <span class="n">r_planet</span><span class="o">/</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+
+    <span class="n">color_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;lightgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="s1">&#39;lightsalmon&#39;</span><span class="p">,</span> <span class="s1">&#39;indigo&#39;</span><span class="p">])</span>
+    <span class="n">color_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">])</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">v_inf</span> <span class="ow">in</span> <span class="n">v_inf_P1_vec</span><span class="p">:</span>
+        <span class="n">TisserandPlot</span><span class="p">(</span><span class="n">r_planet_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v_inf</span><span class="p">,</span> <span class="n">color_vec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">v_inf</span> <span class="ow">in</span> <span class="n">v_inf_P2_vec</span><span class="p">:</span>
+        <span class="n">TisserandPlot</span><span class="p">(</span><span class="n">r_planet_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v_inf</span><span class="p">,</span> <span class="n">color_vec</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># x-axis plot limits</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r_planet_vec</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">rp_min</span> <span class="o">=</span> <span class="n">r_planet_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">0.2</span>
+    <span class="n">rp_max</span> <span class="o">=</span> <span class="n">r_planet_vec</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">/</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1.8</span>
+    <span class="c1"># y-axis plot limits</span>
+    <span class="n">ra_min</span> <span class="o">=</span> <span class="n">r_planet_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">0.2</span>
+    <span class="n">ra_max</span> <span class="o">=</span> <span class="n">r_planet_vec</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">/</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1.8</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="n">rp_min</span><span class="p">,</span> <span class="n">rp_max</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="n">ra_min</span><span class="p">,</span> <span class="n">ra_max</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Radius of Periapse [AU]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Radius of Apoapse [AU]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$v_{\infty}^</span><span class="si">{Earth}</span><span class="s1"> $ = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v_inf_P1_vec</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; km/s \n&#39;</span>
+              <span class="sa">r</span><span class="s1">&#39;$v_{\infty}^</span><span class="si">{Saturn}</span><span class="s1"> $ = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v_inf_P2_vec</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; km/s&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">Tisserand_ESU</span><span class="p">():</span>
+    <span class="n">r_planet_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">SMA_EARTH</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">SMA_SATURN</span><span class="p">,</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">SMA_URANUS</span><span class="p">])</span>
+    <span class="n">v_inf_E_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">])</span>
+    <span class="n">v_inf_S_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="n">Tisserand_P1_2_P2</span><span class="p">(</span><span class="n">r_planet_vec</span><span class="p">,</span> <span class="n">v_inf_E_vec</span><span class="p">,</span> <span class="n">v_inf_S_vec</span><span class="p">)</span>
+    <span class="n">TisserandPlot</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">SMA_EARTH</span><span class="p">,</span> <span class="n">v_inf_E_vec</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;cyan&#39;</span><span class="p">)</span>
+    <span class="n">TisserandPlot</span><span class="p">(</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">SMA_SATURN</span><span class="p">,</span> <span class="n">v_inf_S_vec</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;cyan&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">Mars_RV</span><span class="p">(</span><span class="n">JulianDate</span><span class="p">([</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">]))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

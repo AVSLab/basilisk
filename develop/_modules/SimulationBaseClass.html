@@ -1,0 +1,953 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SimulationBaseClass &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">SimulationBaseClass</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for SimulationBaseClass</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1"># Import some architectural stuff that we will probably always use</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">alg_contain</span><span class="p">,</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">sim_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">simulationArchTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pythonVariableLogger</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonVariableLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.simulationProgessBar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProgressBar</span>
+
+<span class="c1"># Point the path to the module storage area</span>
+
+
+<span class="c1"># define ASCI color codes</span>
+<span class="n">processColor</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u001b</span><span class="s2">[32m&quot;</span>
+<span class="n">taskColor</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u001b</span><span class="s2">[33m&quot;</span>
+<span class="n">moduleColor</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u001b</span><span class="s2">[36m&quot;</span>
+<span class="n">endColor</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u001b</span><span class="s2">[0m&quot;</span>
+
+
+<div class="viewcode-block" id="methodizeCondition">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.methodizeCondition">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">methodizeCondition</span><span class="p">(</span><span class="n">conditionList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methodize a condition list to a function&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">conditionList</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditionList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">False</span>
+
+    <span class="n">funcString</span> <span class="o">=</span> <span class="s2">&quot;def EVENT_check_condition(self):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot;    if(&quot;</span>
+    <span class="k">for</span> <span class="n">condValue</span> <span class="ow">in</span> <span class="n">conditionList</span><span class="p">:</span>
+        <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">condValue</span> <span class="o">+</span> <span class="s2">&quot; and&quot;</span>
+    <span class="n">funcString</span> <span class="o">=</span> <span class="n">funcString</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot;        return True</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot;    return False&quot;</span>
+
+    <span class="n">local_namespace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">funcString</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="n">local_namespace</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">local_namespace</span><span class="p">[</span><span class="s2">&quot;EVENT_check_condition&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="methodizeAction">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.methodizeAction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">methodizeAction</span><span class="p">(</span><span class="n">actionList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methodize an action list to a function&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">actionList</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">actionList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span>
+
+    <span class="n">funcString</span> <span class="o">=</span> <span class="s2">&quot;def EVENT_operate_action(self):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">actionValue</span> <span class="ow">in</span> <span class="n">actionList</span><span class="p">:</span>
+        <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">actionValue</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">funcString</span> <span class="o">+=</span> <span class="s2">&quot;    return None&quot;</span>
+
+    <span class="n">local_namespace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">funcString</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="n">local_namespace</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">local_namespace</span><span class="p">[</span><span class="s2">&quot;EVENT_operate_action&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="EventHandlerClass">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.EventHandlerClass">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventHandlerClass</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for defining event checking behavior, conditions, and actions.</span>
+
+<span class="sd">    Three checking strategies are supported:</span>
+
+<span class="sd">        1. **Exact Interval Checking**: (default) The event is checked only when the</span>
+<span class="sd">           current time is an exact multiple of the ``eventRate``. This behavior is similar</span>
+<span class="sd">           to how tasks are scheduled in Basilisk. Note that if no task leads to a timestep</span>
+<span class="sd">           at a checking time, the event will not be checked.</span>
+<span class="sd">        2. **Elapsed Interval Checking**: The event is checked whenever the ``eventRate``</span>
+<span class="sd">           has elapsed since the last check. This is enabled by setting ``exactRateMatch``</span>
+<span class="sd">           to ``False``. This behavior is similar to how Basilisk loggers operate.</span>
+<span class="sd">        3. **Condition Time Checking**: An alternative to interval-based checking when</span>
+<span class="sd">           an event should occur at a specific time. This is enabled by setting</span>
+<span class="sd">           ``conditionTime``, and will lead to the event being triggered at the first</span>
+<span class="sd">           timestep at or after the specified time.</span>
+
+<span class="sd">    When an event is checked, the ``conditionFunction`` is called to determine if the</span>
+<span class="sd">    event should occur. If the condition returns ``True``, the ``actionFunction`` is executed.</span>
+<span class="sd">    and the event is deactivated. To continue checking the event, it must be reactivated.</span>
+<span class="sd">    If the event is marked as ``terminal``, the simulation will be instructed to terminate</span>
+<span class="sd">    when the event condition occurs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        eventName (str): Name of the event</span>
+<span class="sd">        eventRate (int): Rate at which the event is checked in nanoseconds</span>
+<span class="sd">        eventActive (bool): Whether the event is active or not</span>
+<span class="sd">        terminal (bool): Whether this event should terminate the simulation when it occurs</span>
+<span class="sd">        conditionFunction (function): Function to check if the event should occur. The</span>
+<span class="sd">            function should take the simulation object as an argument and return a boolean.</span>
+<span class="sd">            This is the preferred manner to set conditions as it enables the use of arbitrary</span>
+<span class="sd">            packages and objects in events and allows for event code to be parsed by IDE tools.</span>
+<span class="sd">        conditionTime (int): Alternative to conditionFunction, a time in nanoseconds to trigger</span>
+<span class="sd">            the event. Does not depend on eventRate for checking.</span>
+<span class="sd">        actionFunction (function): Function to execute when the event occurs. The</span>
+<span class="sd">            function should take the simulation object as an argument.</span>
+<span class="sd">            This is the preferred manner to set conditions as it enables the use of arbitrary</span>
+<span class="sd">            packages and objects in events and allows for event code to be parsed by IDE tools.</span>
+<span class="sd">        exactRateMatch (bool): If True, the event is checked only when the current time is an</span>
+<span class="sd">            exact multiple of the eventRate. If False, the event is checked whenever the</span>
+<span class="sd">            ``eventRate`` has elapsed since the last check.</span>
+<span class="sd">        conditionList (list): (deprecated) List of conditions to check for the event,</span>
+<span class="sd">            expressed as strings of code to execute within the class.</span>
+<span class="sd">        actionList (list): (deprecated) List of actions to perform when the event occurs,</span>
+<span class="sd">            expressed as strings of code to execute within the class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">eventName</span><span class="p">,</span>
+        <span class="n">eventRate</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e9</span><span class="p">),</span>
+        <span class="n">eventActive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">conditionList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">actionList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">conditionFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">actionFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">conditionTime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exactRateMatch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventName</span> <span class="o">=</span> <span class="n">eventName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventActive</span> <span class="o">=</span> <span class="n">eventActive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span> <span class="o">=</span> <span class="n">eventRate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occurCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exactRateMatch</span> <span class="o">=</span> <span class="n">exactRateMatch</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span> <span class="o">=</span> <span class="n">conditionTime</span>
+        <span class="k">if</span> <span class="n">conditionTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conditionFunction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Only specify a conditionFunction or a conditionTime, not both&quot;</span>
+                <span class="p">)</span>
+            <span class="n">conditionFunction</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">sim</span><span class="p">:</span> <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conditionFunction</span> <span class="o">=</span> <span class="n">conditionFunction</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionFunction</span> <span class="o">=</span> <span class="n">actionFunction</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">conditionList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conditionFunction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Only specify a conditionFunction or a conditionList, not both&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conditionFunction</span> <span class="o">=</span> <span class="n">methodizeCondition</span><span class="p">(</span><span class="n">conditionList</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">actionList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">actionFunction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Only specify an actionFunction or am actionList, not both.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionFunction</span> <span class="o">=</span> <span class="n">methodizeAction</span><span class="p">(</span><span class="n">actionList</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EventHandlerClass.shouldBeChecked">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.EventHandlerClass.shouldBeChecked">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shouldBeChecked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentTime</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;See if the event should be checked at the current time.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventActive</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">currentTime</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exactRateMatch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">currentTime</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">currentTime</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EventHandlerClass.checkEvent">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.EventHandlerClass.checkEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parentSim</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the condition and execute the action if condition is met.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionFunction</span><span class="p">(</span><span class="n">parentSim</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventActive</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionFunction</span><span class="p">(</span><span class="n">parentSim</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">occurCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">:</span>
+                <span class="n">parentSim</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="o">=</span> <span class="n">parentSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span></div>
+
+
+<div class="viewcode-block" id="EventHandlerClass.nextCheckTime">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.EventHandlerClass.nextCheckTime">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nextCheckTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentTime</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the earliest upcoming time this event should be checked.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditionTime</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exactRateMatch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">currentTime</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventRate</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prevCheckTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="n">currentTime</span>
+            <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StructDocData">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.StructDocData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StructDocData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Structure data documentation class&quot;&quot;&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">StructElementDef</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">argstring</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">argstring</span> <span class="o">=</span> <span class="n">argstring</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="n">desc</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strName</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strName</span> <span class="o">=</span> <span class="n">strName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structPopulated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structElements</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clearItem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structPopulated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structElements</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">populateElem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmlSearchPath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">structPopulated</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">xmlFileUse</span> <span class="o">=</span> <span class="n">xmlSearchPath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strName</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">xmlData</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">xmlFileUse</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to parse the XML structure for: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strName</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This file does not exist most likely: &quot;</span> <span class="o">+</span> <span class="n">xmlFileUse</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">xmlData</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="n">validElement</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./compounddef[@id=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strName</span> <span class="o">+</span> <span class="s2">&quot;&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">newVariable</span> <span class="ow">in</span> <span class="n">validElement</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//memberdef[@kind=&#39;variable&#39;]&quot;</span><span class="p">):</span>
+            <span class="n">typeUse</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">nameUse</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">argstringUse</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;argsstring&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;argsstring&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">descUse</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./detaileddescription/para&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./detaileddescription/para&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">descUse</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">descUse</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./briefdescription/para&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                    <span class="k">if</span> <span class="n">newVariable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./briefdescription/para&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+            <span class="n">newElement</span> <span class="o">=</span> <span class="n">StructDocData</span><span class="o">.</span><span class="n">StructElementDef</span><span class="p">(</span>
+                <span class="n">typeUse</span><span class="p">,</span> <span class="n">nameUse</span><span class="p">,</span> <span class="n">argstringUse</span><span class="p">,</span> <span class="n">descUse</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">structElements</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">nameUse</span><span class="p">:</span> <span class="n">newElement</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">structPopulated</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">printElem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strName</span> <span class="o">+</span> <span class="s2">&quot; Structure Elements:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">structElements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">outputString</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">outputString</span> <span class="o">+=</span> <span class="n">value</span><span class="o">.</span><span class="n">type</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">outputString</span> <span class="o">+=</span> <span class="n">value</span><span class="o">.</span><span class="n">argstring</span> <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">argstring</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">outputString</span> <span class="o">+=</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">desc</span> <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">desc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;      &quot;</span> <span class="o">+</span> <span class="n">outputString</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DataPairClass</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputMessages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputMessages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputDict</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="SimBaseClass">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimBaseClass</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulation Base Class&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span> <span class="o">=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">SimModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">procList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nextEventTime</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simBasePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/../&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataStructIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simBasePath</span> <span class="o">+</span> <span class="s2">&quot;/xml/index.xml&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indexParsed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulationInitialized</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulationFinished</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showProgressBar</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allModules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SimBaseClass.SetProgressBar">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.SetProgressBar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetProgressBar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shows a dynamic progress in the terminal while the simulation is executing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showProgressBar</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.ShowExecutionOrder">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.ShowExecutionOrder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ShowExecutionOrder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shows in what order the Basilisk processes, task lists and modules are executed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">processData</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">processList</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">processColor</span><span class="si">}</span><span class="s2">Process Name: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">processData</span><span class="o">.</span><span class="n">processName</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">processColor</span><span class="si">}</span><span class="s2">priority: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">processData</span><span class="o">.</span><span class="n">processPriority</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">processData</span><span class="o">.</span><span class="n">processTasks</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">taskColor</span><span class="si">}</span><span class="s2">Task Name: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskName</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">taskColor</span><span class="si">}</span><span class="s2">priority: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">task</span><span class="o">.</span><span class="n">taskPriority</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">taskColor</span><span class="si">}</span><span class="s2">TaskPeriod: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskPeriod</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.0e9</span><span class="si">}</span><span class="s2">s&quot;</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">moduleColor</span><span class="si">}</span><span class="s2">ModuleTag: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">module</span><span class="o">.</span><span class="n">ModelPtr</span><span class="o">.</span><span class="n">ModelTag</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">moduleColor</span><span class="si">}</span><span class="s2">priority: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="n">module</span><span class="o">.</span><span class="n">CurrentModelPriority</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.ShowExecutionFigure">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.ShowExecutionFigure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ShowExecutionFigure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shows in what order the Basilisk processes, task lists and modules are executed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">processList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">processData</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">processList</span><span class="p">:</span>
+            <span class="n">taskList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">processData</span><span class="o">.</span><span class="n">processTasks</span><span class="p">:</span>
+                <span class="n">moduleList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">:</span>
+                    <span class="n">moduleList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">ModelPtr</span><span class="o">.</span><span class="n">ModelTag</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">CurrentModelPriority</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">taskList</span><span class="p">[</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskName</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">taskPriority</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">TaskPtr</span><span class="o">.</span><span class="n">TaskPeriod</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.0e9</span><span class="si">}</span><span class="s2">s)&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">moduleList</span>
+            <span class="n">processList</span><span class="p">[</span>
+                <span class="n">processData</span><span class="o">.</span><span class="n">processName</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">processData</span><span class="o">.</span><span class="n">processPriority</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">taskList</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+        <span class="n">processNo</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">processWidth</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">lineHeight</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">textBuffer</span> <span class="o">=</span> <span class="n">lineHeight</span> <span class="o">*</span> <span class="mf">0.75</span>
+        <span class="n">textIndent</span> <span class="o">=</span> <span class="n">lineHeight</span> <span class="o">*</span> <span class="mf">0.25</span>
+        <span class="n">processGap</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">processList</span><span class="p">:</span>
+            <span class="c1"># Draw process box + priority</span>
+            <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                <span class="p">((</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">processWidth</span><span class="p">,</span>
+                <span class="o">-</span><span class="n">lineHeight</span><span class="p">,</span>
+                <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+                <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="n">textIndent</span><span class="p">,</span>
+                <span class="o">-</span><span class="n">textBuffer</span><span class="p">,</span>
+                <span class="n">process</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">taskNo</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">currentLine</span> <span class="o">=</span> <span class="o">-</span><span class="n">lineHeight</span> <span class="o">-</span> <span class="n">textIndent</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">processList</span><span class="p">[</span><span class="n">process</span><span class="p">]:</span>
+                <span class="c1"># Draw task box + priority + task rate</span>
+                <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                    <span class="p">((</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="n">textIndent</span><span class="p">,</span> <span class="n">currentLine</span><span class="p">),</span>
+                    <span class="n">processWidth</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                    <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">processList</span><span class="p">[</span><span class="n">process</span><span class="p">][</span><span class="n">task</span><span class="p">]))</span> <span class="o">*</span> <span class="p">(</span><span class="n">lineHeight</span> <span class="o">+</span> <span class="n">textIndent</span><span class="p">),</span>
+                    <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+                    <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+                <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                    <span class="p">((</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="n">textIndent</span><span class="p">,</span> <span class="n">currentLine</span><span class="p">),</span>
+                    <span class="n">processWidth</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                    <span class="o">-</span><span class="n">lineHeight</span><span class="p">,</span>
+                    <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+                    <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                    <span class="n">currentLine</span> <span class="o">-</span> <span class="n">textBuffer</span><span class="p">,</span>
+                    <span class="n">task</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">processList</span><span class="p">[</span><span class="n">process</span><span class="p">][</span><span class="n">task</span><span class="p">]:</span>
+                    <span class="c1"># Draw modules + priority</span>
+                    <span class="n">currentLine</span> <span class="o">-=</span> <span class="n">lineHeight</span> <span class="o">+</span> <span class="n">textIndent</span>
+                    <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="p">(</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                            <span class="n">currentLine</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="n">processWidth</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                        <span class="o">-</span><span class="n">lineHeight</span><span class="p">,</span>
+                        <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>
+                        <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">textIndent</span><span class="p">,</span>
+                        <span class="n">currentLine</span> <span class="o">-</span> <span class="n">textBuffer</span><span class="p">,</span>
+                        <span class="n">module</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">taskNo</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">currentLine</span> <span class="o">-=</span> <span class="n">lineHeight</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">textIndent</span>
+
+            <span class="n">rectangle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                <span class="p">((</span><span class="n">processWidth</span> <span class="o">+</span> <span class="n">processGap</span><span class="p">)</span> <span class="o">*</span> <span class="n">processNo</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">processWidth</span><span class="p">,</span>
+                <span class="n">currentLine</span><span class="p">,</span>
+                <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+                <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)</span>
+            <span class="n">processNo</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;scaled&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.AddModelToTask">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.AddModelToTask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TaskName</span><span class="p">,</span> <span class="n">NewModel</span><span class="p">,</span> <span class="n">ModelData</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is responsible for passing on the logger to a module instance (model), adding the</span>
+<span class="sd">        model to a particular task, and defining</span>
+<span class="sd">        the order/priority that the model gets updated within the task.</span>
+
+<span class="sd">        :param TaskName (str): Name of the task</span>
+<span class="sd">        :param NewModel (obj): Model to add to the task</span>
+<span class="sd">        :param ModelData: None or struct containing, only used for C BSK modules</span>
+<span class="sd">        :param ModelPriority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Supports calling AddModelToTask(TaskName, NewModel, ModelPriority)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ModelData</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">ModelPriority</span> <span class="o">=</span> <span class="n">ModelData</span>
+            <span class="n">ModelData</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">Task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Task</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">TaskName</span><span class="p">:</span>
+                <span class="n">Task</span><span class="o">.</span><span class="n">TaskData</span><span class="o">.</span><span class="n">AddNewObject</span><span class="p">(</span><span class="n">NewModel</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ModelData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">ModelData</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="n">Task</span><span class="o">.</span><span class="n">TaskModels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ModelData</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">NewModel</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bskLogger</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="n">Task</span><span class="o">.</span><span class="n">TaskModels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NewModel</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find a Task with name: </span><span class="si">{</span><span class="n">TaskName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.CreateNewProcess">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.CreateNewProcess">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CreateNewProcess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">procName</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a process and adds it to the sim</span>
+
+<span class="sd">        :param procName (str): Name of process</span>
+<span class="sd">        :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)</span>
+<span class="sd">        :return: simulationArchTypes.ProcessBaseClass object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">simulationArchTypes</span><span class="o">.</span><span class="n">ProcessBaseClass</span><span class="p">(</span><span class="n">procName</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">procList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">addNewProcess</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">processData</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proc</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.CreateNewTask">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.CreateNewTask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CreateNewTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TaskName</span><span class="p">,</span> <span class="n">TaskRate</span><span class="p">,</span> <span class="n">InputDelay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">FirstStart</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a simulation task on the C-level with a specific update-frequency (TaskRate), an optional delay, and</span>
+<span class="sd">        an optional start time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            TaskName (str): Name of Task</span>
+<span class="sd">            TaskRate (int): Number of nanoseconds to elapse before update() is called</span>
+<span class="sd">            InputDelay (int): (depreciated, unimplemented) Number of nanoseconds simulating a lag of the particular task</span>
+<span class="sd">            FirstStart (int): Number of nanoseconds to elapse before task is officially enabled</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            simulationArchTypes.TaskBaseClass object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">InputDelay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">deprecated</span><span class="o">.</span><span class="n">deprecationWarn</span><span class="p">(</span>
+                <span class="s2">&quot;InputDelay&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;2024/12/13&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;This input variable is non-functional and now depreciated.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">Task</span> <span class="o">=</span> <span class="n">simulationArchTypes</span><span class="o">.</span><span class="n">TaskBaseClass</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">TaskRate</span><span class="p">,</span> <span class="n">FirstStart</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Task</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ResetTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">Task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Task</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">taskName</span><span class="p">:</span>
+                <span class="n">Task</span><span class="o">.</span><span class="n">resetTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SimBaseClass.InitializeSimulation">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.InitializeSimulation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InitializeSimulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulationInitialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">resetThreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">getThreadCount</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">assignRemainingProcs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">ResetSimulation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">selfInitSimulation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">resetInitSimulation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulationInitialized</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.ConfigureStopTime">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.ConfigureStopTime">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ConfigureStopTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TimeStop</span><span class="p">,</span> <span class="n">StopCondition</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the simulation stop time in nano-seconds.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            TimeStop (int): Time to stop the simulation in nanoseconds</span>
+<span class="sd">            StopCondition (str): Condition for meeting the stop time. Two behaviors</span>
+<span class="sd">                are supported:</span>
+
+<span class="sd">                * ``&lt;=``: (default) The simulation will run as far as it can such that the</span>
+<span class="sd">                  ``StopTime`` is met if possible, but not exceeded.</span>
+<span class="sd">                * ``&gt;=``: The simulation will run as far as it can such that the</span>
+<span class="sd">                  ``StopTime`` is minimally exceeded, but met if possible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span> <span class="o">=</span> <span class="n">TimeStop</span>
+        <span class="k">assert</span> <span class="n">StopCondition</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">),</span> <span class="s2">&quot;StopCondition must be &#39;&lt;=&#39; or &#39;&gt;=&#39;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">StopCondition</span> <span class="o">=</span> <span class="n">StopCondition</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">CheckStopCondition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopCondition</span> <span class="o">==</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">NextTaskTime</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopCondition</span> <span class="o">==</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">NextTaskTime</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="SimBaseClass.ExecuteSimulation">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.ExecuteSimulation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ExecuteSimulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        run the simulation until the prescribed stop time or termination.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">progressBar</span> <span class="o">=</span> <span class="n">SimulationProgressBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">showProgressBar</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">CheckStopCondition</span><span class="p">():</span>
+            <span class="c1"># Check events</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">activeEvents</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">shouldBeChecked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">):</span>
+                    <span class="n">event</span><span class="o">.</span><span class="n">checkEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Find the next time to stop the sim</span>
+            <span class="n">eventCheckTimes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">nextCheckTime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">activeEvents</span><span class="p">()</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eventCheckTimes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Stop at next event, if any</span>
+                <span class="n">nextStopTime</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">eventCheckTimes</span><span class="p">)</span>
+                <span class="c1"># But must at least reach the next task</span>
+                <span class="n">nextStopTime</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nextStopTime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">NextTaskTime</span><span class="p">)</span>
+                <span class="c1"># But don&#39;t pass stop</span>
+                <span class="n">nextStopTime</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nextStopTime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nextStopTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopTime</span>  <span class="c1"># Otherwise stop at the stop time</span>
+
+            <span class="c1"># Must at least step to the next task time if StopCondition is &quot;&gt;=&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">StopCondition</span> <span class="o">==</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">:</span>
+                <span class="n">nextStopTime</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nextStopTime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">NextTaskTime</span><span class="p">)</span>
+
+            <span class="c1"># Execute the sim</span>
+            <span class="n">nextPriority</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">StepUntilStop</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">nextStopTime</span><span class="p">),</span> <span class="n">nextPriority</span><span class="p">)</span>
+            <span class="n">progressBar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">NextTaskTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">markComplete</span><span class="p">()</span>
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.disableTask">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.disableTask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disableTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TaskName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable this particular task from being executed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">Task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Task</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">TaskName</span><span class="p">:</span>
+                <span class="n">Task</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SimBaseClass.enableTask">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.enableTask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TaskName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable this particular task to be executed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">Task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Task</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">TaskName</span><span class="p">:</span>
+                <span class="n">Task</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">parseDataIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataStructureDictionary</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">xmlData</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataStructIndex</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to parse the XML index.  Likely that it isn&#39;t present&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">xmlData</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+            <span class="n">newStruct</span> <span class="o">=</span> <span class="n">StructDocData</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;refid&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataStructureDictionary</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">:</span> <span class="n">newStruct</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indexParsed</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="SimBaseClass.createNewEvent">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.createNewEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createNewEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eventName</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an event sequence that contains a series of tasks to be executed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            eventName (str): Name of the event</span>
+<span class="sd">            *args: Arguments to pass to the :class:`EventHandlerClass` constructor</span>
+<span class="sd">            **kwargs: Keyword arguments to pass to the :class:`EventHandlerClass` constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">eventName</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping event creation since </span><span class="si">{</span><span class="n">eventName</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">newEvent</span> <span class="o">=</span> <span class="n">EventHandlerClass</span><span class="p">(</span><span class="n">eventName</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="p">[</span><span class="n">eventName</span><span class="p">]</span> <span class="o">=</span> <span class="n">newEvent</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">activeEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">event</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">eventActive</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEventActivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eventName</span><span class="p">,</span> <span class="n">activityCommand</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">eventName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You asked me to set the status of an event that I don&#39;t have.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="p">[</span><span class="n">eventName</span><span class="p">]</span><span class="o">.</span><span class="n">eventActive</span> <span class="o">=</span> <span class="n">activityCommand</span>
+
+<div class="viewcode-block" id="SimBaseClass.setAllButCurrentEventActivity">
+<a class="viewcode-back" href="../Documentation/utilities/SimulationBaseClass.html#SimulationBaseClass.SimBaseClass.setAllButCurrentEventActivity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setAllButCurrentEventActivity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">currentEventName</span><span class="p">,</span> <span class="n">activityCommand</span><span class="p">,</span> <span class="n">useIndex</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all event activity variables except for the currentEventName event. The ``useIndex`` flag can be used to</span>
+<span class="sd">        prevent enabling or disabling every task, and instead only alter the ones that belong to the same group (for</span>
+<span class="sd">        example, the same spacecraft). The distinction is made through an index set after the ``_`` symbol in the event</span>
+<span class="sd">        name. All events of the same group must have the same index.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">useIndex</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">currentEventName</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># save the current event&#39;s index</span>
+
+        <span class="k">for</span> <span class="n">eventName</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">currentEventName</span> <span class="o">!=</span> <span class="n">eventName</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">useIndex</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">eventName</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="p">[</span><span class="n">eventName</span><span class="p">]</span><span class="o">.</span><span class="n">eventActive</span> <span class="o">=</span> <span class="n">activityCommand</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">eventMap</span><span class="p">[</span><span class="n">eventName</span><span class="p">]</span><span class="o">.</span><span class="n">eventActive</span> <span class="o">=</span> <span class="n">activityCommand</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">SetCArray</span><span class="p">(</span><span class="n">InputList</span><span class="p">,</span> <span class="n">VarType</span><span class="p">,</span> <span class="n">ArrayPointer</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ArrayPointer</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">CmdString</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;sim_model.&quot;</span> <span class="o">+</span> <span class="n">VarType</span> <span class="o">+</span> <span class="s2">&quot;Array_setitem(ArrayPointer, CurrIndex, CurrElem)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">CurrIndex</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">CurrElem</span> <span class="ow">in</span> <span class="n">InputList</span><span class="p">:</span>
+        <span class="n">exec</span><span class="p">(</span><span class="n">CmdString</span><span class="p">)</span>
+        <span class="n">CurrIndex</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getCArray</span><span class="p">(</span><span class="n">varType</span><span class="p">,</span> <span class="n">arrayPointer</span><span class="p">,</span> <span class="n">arraySize</span><span class="p">):</span>
+    <span class="n">CmdString</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;outputList.append(sim_model.&quot;</span>
+        <span class="o">+</span> <span class="n">varType</span>
+        <span class="o">+</span> <span class="s2">&quot;Array_getitem(arrayPointer, currIndex))&quot;</span>
+    <span class="p">)</span>
+    <span class="n">outputList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">currIndex</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">currIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arraySize</span><span class="p">):</span>
+        <span class="n">exec</span><span class="p">(</span><span class="n">CmdString</span><span class="p">)</span>
+        <span class="n">currIndex</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">outputList</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">synchronizeTimeHistories</span><span class="p">(</span><span class="n">arrayList</span><span class="p">):</span>
+    <span class="n">returnArrayList</span> <span class="o">=</span> <span class="n">arrayList</span>
+    <span class="n">timeCounter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+        <span class="k">while</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">timeCounter</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="n">timeCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+        <span class="k">while</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">timeCounter</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">timeCounter</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+        <span class="k">while</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">timeCounter</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="n">timeCounter</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+        <span class="k">while</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">timeCounter</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">timeNow</span> <span class="o">=</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="p">]</span>  <span class="c1"># Desirement is to have synched arrays match primary time</span>
+    <span class="n">outputArrayList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">indexPrev</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)</span>
+    <span class="n">outputArrayList</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)</span>
+    <span class="n">timeNow</span> <span class="o">=</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">outputArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+            <span class="k">while</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+                <span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">dataProp</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+                <span class="o">-</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="p">)</span>
+            <span class="n">dataProp</span> <span class="o">*=</span> <span class="p">(</span><span class="n">timeNow</span> <span class="o">-</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">dataProp</span> <span class="o">+=</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">indexPrev</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">dataRow</span> <span class="o">=</span> <span class="p">[</span><span class="n">timeNow</span><span class="p">]</span>
+            <span class="n">dataRow</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dataProp</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="n">outputArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataRow</span><span class="p">)</span>
+        <span class="n">timePrevious</span> <span class="o">=</span> <span class="n">timeNow</span>
+        <span class="n">timeNow</span> <span class="o">=</span> <span class="n">returnArrayList</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">returnArrayList</span><span class="p">)):</span>
+        <span class="n">outputArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outputArrayList</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">outputArrayList</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

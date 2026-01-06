@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSpline &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="astroConstants" href="astroConstants.html" />
+    <link rel="prev" title="utilities" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">BSpline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">BSpline</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/BSpline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bspline">
+<span id="id1"></span><h1>BSpline<a class="headerlink" href="#bspline" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411interpolate12InputDataSetiiP13OutputDataSet">
+<span id="_CPPv311interpolate12InputDataSetiiP13OutputDataSet"></span><span id="_CPPv211interpolate12InputDataSetiiP13OutputDataSet"></span><span id="interpolate__InputDataSet.i.i.OutputDataSetP"></span><span class="target" id="_b_spline_8h_1a3e6ba2e915968c21a87009dba62d0862"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interpolate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv412InputDataSet" title="InputDataSet"><span class="n"><span class="pre">InputDataSet</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">Input</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Num</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">P</span></span>, <a class="reference internal" href="#_CPPv413OutputDataSet" title="OutputDataSet"><span class="n"><span class="pre">OutputDataSet</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">Output</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411interpolate12InputDataSetiiP13OutputDataSet" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output structure </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411approximate12InputDataSetiiiP13OutputDataSet">
+<span id="_CPPv311approximate12InputDataSetiiiP13OutputDataSet"></span><span id="_CPPv211approximate12InputDataSetiiiP13OutputDataSet"></span><span id="approximate__InputDataSet.i.i.i.OutputDataSetP"></span><span class="target" id="_b_spline_8h_1aaf24fdd3759fc695fb19570f5522d9aa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">approximate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv412InputDataSet" title="InputDataSet"><span class="n"><span class="pre">InputDataSet</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">Input</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Num</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Q</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">P</span></span>, <a class="reference internal" href="#_CPPv413OutputDataSet" title="OutputDataSet"><span class="n"><span class="pre">OutputDataSet</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">Output</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411approximate12InputDataSetiiiP13OutputDataSet" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes the Input structure, performs the BSpline LS approximation and outputs the result into Output structure </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413basisFunctiondN5Eigen8VectorXdEiiPdPdPd">
+<span id="_CPPv313basisFunctiondN5Eigen8VectorXdEiiPdPdPd"></span><span id="_CPPv213basisFunctiondN5Eigen8VectorXdEiiPdPdPd"></span><span id="basisFunction__double.Eigen::VectorXd.i.i.doubleP.doubleP.doubleP"></span><span class="target" id="_b_spline_8h_1a599bbc806739fd317db9e8a68b56330e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">basisFunction</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">U</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">I</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">P</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">NN</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">NN1</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">NN2</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413basisFunctiondN5Eigen8VectorXdEiiPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function calculates the basis functions NN of order P, and derivatives NN1, NN2, for a given time t and knot vector U </p>
+</dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412InputDataSet">
+<span id="_CPPv312InputDataSet"></span><span id="_CPPv212InputDataSet"></span><span id="InputDataSet"></span><span class="target" id="class_input_data_set"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InputDataSet</span></span></span><a class="headerlink" href="#_CPPv412InputDataSet" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;BSpline.h&gt;</em></div>
+<p>The <a class="reference internal" href="#class_input_data_set"><span class="std std-ref">InputDataSet</span></a> class contains the information about the points that must be interpolated. It is used as a data structure to intialize the inputs that are passed to the interpolating function. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet12InputDataSetEv">
+<span id="_CPPv3N12InputDataSet12InputDataSetEv"></span><span id="_CPPv2N12InputDataSet12InputDataSetEv"></span><span id="InputDataSet::InputDataSet"></span><span class="target" id="class_input_data_set_1a7cce7bd58320bbd3903f9fc0bf77624c"></span><span class="sig-name descname"><span class="n"><span class="pre">InputDataSet</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet12InputDataSetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This constructor initializes an Input structure for BSpline interpolation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet12InputDataSetEN5Eigen8VectorXdEN5Eigen8VectorXdEN5Eigen8VectorXdE">
+<span id="_CPPv3N12InputDataSet12InputDataSetEN5Eigen8VectorXdEN5Eigen8VectorXdEN5Eigen8VectorXdE"></span><span id="_CPPv2N12InputDataSet12InputDataSetEN5Eigen8VectorXdEN5Eigen8VectorXdEN5Eigen8VectorXdE"></span><span id="InputDataSet::InputDataSet__Eigen::VectorXd.Eigen::VectorXd.Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1af37f34b39b30c0ce7c6dcfcf1f33a2b3"></span><span class="sig-name descname"><span class="n"><span class="pre">InputDataSet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">X1</span></span>, <a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">X2</span></span>, <a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">X3</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet12InputDataSetEN5Eigen8VectorXdEN5Eigen8VectorXdEN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor requires 3 N-dimensional vectors containing the coordinates of the waypoints </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSetD0Ev">
+<span id="_CPPv3N12InputDataSetD0Ev"></span><span id="_CPPv2N12InputDataSetD0Ev"></span><span id="InputDataSet::~InputDataSet"></span><span class="target" id="class_input_data_set_1a90db8ce2493263f9b5783b2405ac32a6"></span><span class="sig-name descname"><span class="n"><span class="pre">~InputDataSet</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSetD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Generic destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet9setXDot_0EN5Eigen8Vector3dE">
+<span id="_CPPv3N12InputDataSet9setXDot_0EN5Eigen8Vector3dE"></span><span id="_CPPv2N12InputDataSet9setXDot_0EN5Eigen8Vector3dE"></span><span id="InputDataSet::setXDot_0__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a8ed341048a0eecee98b050ef3fb2dcb7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setXDot_0</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">XDot_0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet9setXDot_0EN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the first derivative of the starting point (optional) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet9setXDot_NEN5Eigen8Vector3dE">
+<span id="_CPPv3N12InputDataSet9setXDot_NEN5Eigen8Vector3dE"></span><span id="_CPPv2N12InputDataSet9setXDot_NEN5Eigen8Vector3dE"></span><span id="InputDataSet::setXDot_N__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a74032ca84e7c90337421b205d61866a2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setXDot_N</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">XDot_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet9setXDot_NEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the first derivative of the last point (optional) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet10setXDDot_0EN5Eigen8Vector3dE">
+<span id="_CPPv3N12InputDataSet10setXDDot_0EN5Eigen8Vector3dE"></span><span id="_CPPv2N12InputDataSet10setXDDot_0EN5Eigen8Vector3dE"></span><span id="InputDataSet::setXDDot_0__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1abbe628dd9f7aab7a1bc9cd3eaf684f86"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setXDDot_0</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">XDDot_0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet10setXDDot_0EN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the second derivative of the starting point (optional) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet10setXDDot_NEN5Eigen8Vector3dE">
+<span id="_CPPv3N12InputDataSet10setXDDot_NEN5Eigen8Vector3dE"></span><span id="_CPPv2N12InputDataSet10setXDDot_NEN5Eigen8Vector3dE"></span><span id="InputDataSet::setXDDot_N__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a0dc21c537697e48ecc7733c094267031"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setXDDot_N</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">XDDot_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet10setXDDot_NEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the second derivative of the last point (optional) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet4setTEN5Eigen8VectorXdE">
+<span id="_CPPv3N12InputDataSet4setTEN5Eigen8VectorXdE"></span><span id="_CPPv2N12InputDataSet4setTEN5Eigen8VectorXdE"></span><span id="InputDataSet::setT__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1af803093747642ef2b05958f9ff132c64"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setT</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">T</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet4setTEN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the time tags for each waypoint (optional). Cannot be imposed together with avg velocity norm below </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet4setWEN5Eigen8VectorXdE">
+<span id="_CPPv3N12InputDataSet4setWEN5Eigen8VectorXdE"></span><span id="_CPPv2N12InputDataSet4setWEN5Eigen8VectorXdE"></span><span id="InputDataSet::setW__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1ad2f6ea829788aba4b14f496b9363922a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setW</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">W</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet4setWEN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the weights for each waypoint. Weights are used in the LS approximation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet10setAvgXDotEd">
+<span id="_CPPv3N12InputDataSet10setAvgXDotEd"></span><span id="_CPPv2N12InputDataSet10setAvgXDotEd"></span><span id="InputDataSet::setAvgXDot__double"></span><span class="target" id="class_input_data_set_1a2ceb25a146564b0b3c7fb22a75c5fa79"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAvgXDot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">AvgXDot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12InputDataSet10setAvgXDotEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the average velocity norm (optional). Cannot be imposed together with time tag vector above </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet7AvgXDotE">
+<span id="_CPPv3N12InputDataSet7AvgXDotE"></span><span id="_CPPv2N12InputDataSet7AvgXDotE"></span><span id="InputDataSet::AvgXDot__double"></span><span class="target" id="class_input_data_set_1a47137d505416ac0eae6fe77382a25fa0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AvgXDot</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet7AvgXDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>desired average velocity norm </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet1TE">
+<span id="_CPPv3N12InputDataSet1TE"></span><span id="_CPPv2N12InputDataSet1TE"></span><span id="InputDataSet::T__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1a157e580a8e57758039a2b7bbae197781"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>time tags: specifies at what time each waypoint is hit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet1WE">
+<span id="_CPPv3N12InputDataSet1WE"></span><span id="_CPPv2N12InputDataSet1WE"></span><span id="InputDataSet::W__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1ab71bb9e822cee2eaae63f3018b545943"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet1WE" title="Link to this definition"></a><br /></dt>
+<dd><p>weight vector for the LS approximation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet2X1E">
+<span id="_CPPv3N12InputDataSet2X1E"></span><span id="_CPPv2N12InputDataSet2X1E"></span><span id="InputDataSet::X1__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1a68a08b437ff9c167a9bc26483e16a71e"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X1</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet2X1E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #1 of the waypoints </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet2X2E">
+<span id="_CPPv3N12InputDataSet2X2E"></span><span id="_CPPv2N12InputDataSet2X2E"></span><span id="InputDataSet::X2__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1aa86e42afe1ed110fdfcd43cbd5ecef1a"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X2</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet2X2E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #2 of the waypoints </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet2X3E">
+<span id="_CPPv3N12InputDataSet2X3E"></span><span id="_CPPv2N12InputDataSet2X3E"></span><span id="InputDataSet::X3__Eigen::VectorXd"></span><span class="target" id="class_input_data_set_1a7eb2ede32b894d95ee2436e19f1de9ea"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X3</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet2X3E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #3 of the waypoints </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet6XDot_0E">
+<span id="_CPPv3N12InputDataSet6XDot_0E"></span><span id="_CPPv2N12InputDataSet6XDot_0E"></span><span id="InputDataSet::XDot_0__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a695885bbd8ccdea0371a263ec14d8ef6"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDot_0</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet6XDot_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>3D vector containing the first derivative at starting point </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet6XDot_NE">
+<span id="_CPPv3N12InputDataSet6XDot_NE"></span><span id="_CPPv2N12InputDataSet6XDot_NE"></span><span id="InputDataSet::XDot_N__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1aaf7e83045a5909cf6f52374c03d8eb57"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDot_N</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet6XDot_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>3D vector containing the first derivative at final point </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet7XDDot_0E">
+<span id="_CPPv3N12InputDataSet7XDDot_0E"></span><span id="_CPPv2N12InputDataSet7XDDot_0E"></span><span id="InputDataSet::XDDot_0__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a9fc4f9bf7edd4e8fa39bba7e697100d1"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDDot_0</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet7XDDot_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>3D vector containing the second derivative at starting point </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet7XDDot_NE">
+<span id="_CPPv3N12InputDataSet7XDDot_NE"></span><span id="_CPPv2N12InputDataSet7XDDot_NE"></span><span id="InputDataSet::XDDot_N__Eigen::Vector3d"></span><span class="target" id="class_input_data_set_1a94faa8a9f547eb9ad655074fa7925389"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDDot_N</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet7XDDot_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>3D vector containing the second derivative at final point </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet6T_flagE">
+<span id="_CPPv3N12InputDataSet6T_flagE"></span><span id="_CPPv2N12InputDataSet6T_flagE"></span><span id="InputDataSet::T_flag__b"></span><span class="target" id="class_input_data_set_1abfdcc7d55a467663d8f9d765d0b927b6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet6T_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that time tags have been specified; if true, AvgXDot_flag is false </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet12AvgXDot_flagE">
+<span id="_CPPv3N12InputDataSet12AvgXDot_flagE"></span><span id="_CPPv2N12InputDataSet12AvgXDot_flagE"></span><span id="InputDataSet::AvgXDot_flag__b"></span><span class="target" id="class_input_data_set_1acfcdc9f11d751c7ded3f3a65d1ad4d93"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AvgXDot_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet12AvgXDot_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that avg velocity norm has been specified; if true, T_flag is false </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet6W_flagE">
+<span id="_CPPv3N12InputDataSet6W_flagE"></span><span id="_CPPv2N12InputDataSet6W_flagE"></span><span id="InputDataSet::W_flag__b"></span><span class="target" id="class_input_data_set_1a015d8ef4da6e2be9ce983efce1970e73"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet6W_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that weight vector has been specified </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet11XDot_0_flagE">
+<span id="_CPPv3N12InputDataSet11XDot_0_flagE"></span><span id="_CPPv2N12InputDataSet11XDot_0_flagE"></span><span id="InputDataSet::XDot_0_flag__b"></span><span class="target" id="class_input_data_set_1ab82f0e7ec917f53d15db2375ec37f350"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDot_0_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet11XDot_0_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that first derivative at starting point has been specified </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet11XDot_N_flagE">
+<span id="_CPPv3N12InputDataSet11XDot_N_flagE"></span><span id="_CPPv2N12InputDataSet11XDot_N_flagE"></span><span id="InputDataSet::XDot_N_flag__b"></span><span class="target" id="class_input_data_set_1ada8fc1785d2bf27fb13cfe04b98a1d55"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDot_N_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet11XDot_N_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that first derivative at final point has been specified </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet12XDDot_0_flagE">
+<span id="_CPPv3N12InputDataSet12XDDot_0_flagE"></span><span id="_CPPv2N12InputDataSet12XDDot_0_flagE"></span><span id="InputDataSet::XDDot_0_flag__b"></span><span class="target" id="class_input_data_set_1a0081dc8298440c6a322284b56071c267"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDDot_0_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet12XDDot_0_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that second derivative at starting point has been specified </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12InputDataSet12XDDot_N_flagE">
+<span id="_CPPv3N12InputDataSet12XDDot_N_flagE"></span><span id="_CPPv2N12InputDataSet12XDDot_N_flagE"></span><span id="InputDataSet::XDDot_N_flag__b"></span><span class="target" id="class_input_data_set_1aed3aaf6dfb556ef834221ef28b1615fc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDDot_N_flag</span></span></span><a class="headerlink" href="#_CPPv4N12InputDataSet12XDDot_N_flagE" title="Link to this definition"></a><br /></dt>
+<dd><p>indicates that second derivative at final point has been specified </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413OutputDataSet">
+<span id="_CPPv313OutputDataSet"></span><span id="_CPPv213OutputDataSet"></span><span id="OutputDataSet"></span><span class="target" id="class_output_data_set"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OutputDataSet</span></span></span><a class="headerlink" href="#_CPPv413OutputDataSet" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;BSpline.h&gt;</em></div>
+<p>The <a class="reference internal" href="#class_output_data_set"><span class="std std-ref">OutputDataSet</span></a> class is used as a data structure to contain the interpolated function and its first- and second-order derivatives, together with the time-tag vector T. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet13OutputDataSetEv">
+<span id="_CPPv3N13OutputDataSet13OutputDataSetEv"></span><span id="_CPPv2N13OutputDataSet13OutputDataSetEv"></span><span id="OutputDataSet::OutputDataSet"></span><span class="target" id="class_output_data_set_1ac04dd68c76079e2d9ff418074edc4031"></span><span class="sig-name descname"><span class="n"><span class="pre">OutputDataSet</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13OutputDataSet13OutputDataSetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This constructor initializes an Output structure for BSpline interpolation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSetD0Ev">
+<span id="_CPPv3N13OutputDataSetD0Ev"></span><span id="_CPPv2N13OutputDataSetD0Ev"></span><span id="OutputDataSet::~OutputDataSet"></span><span class="target" id="class_output_data_set_1a092f208dba4a4adf354d9ecbf948aee4"></span><span class="sig-name descname"><span class="n"><span class="pre">~OutputDataSet</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13OutputDataSetD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Generic destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet7getDataEdAL3E_dAL3E_dAL3E_d">
+<span id="_CPPv3N13OutputDataSet7getDataEdAL3E_dAL3E_dAL3E_d"></span><span id="_CPPv2N13OutputDataSet7getDataEdA3_dA3_dA3_d"></span><span id="OutputDataSet::getData__double.doubleA.doubleA.doubleA"></span><span class="target" id="class_output_data_set_1a72c1d9cf47e27dcb71e0af7ff60b7bbc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getData</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">xDot</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">xDDot</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13OutputDataSet7getDataEdAL3E_dAL3E_dAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>This method returns x, xDot and xDDot at the desired input time T </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet9getStatesEdii">
+<span id="_CPPv3N13OutputDataSet9getStatesEdii"></span><span id="_CPPv2N13OutputDataSet9getStatesEdii"></span><span id="OutputDataSet::getStates__double.i.i"></span><span class="target" id="class_output_data_set_1af21858c3f4b68793e9256c09e247c9b0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStates</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">derivative</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13OutputDataSet9getStatesEdii" title="Link to this definition"></a><br /></dt>
+<dd><p>This method returns single coordinates of x, xDot and xDDot at the desired input time T.</p>
+<p>It is designed to be accessible from Python </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet1TE">
+<span id="_CPPv3N13OutputDataSet1TE"></span><span id="_CPPv2N13OutputDataSet1TE"></span><span id="OutputDataSet::T__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a8dd09645367e6d9bedc90b41a7b1f5c5"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>time tags for each point of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2X1E">
+<span id="_CPPv3N13OutputDataSet2X1E"></span><span id="_CPPv2N13OutputDataSet2X1E"></span><span id="OutputDataSet::X1__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1ad10a7f4b13248f98858388b411318941"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X1</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2X1E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #1 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2X2E">
+<span id="_CPPv3N13OutputDataSet2X2E"></span><span id="_CPPv2N13OutputDataSet2X2E"></span><span id="OutputDataSet::X2__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a8698f0f0eca6b82bb43e7b1959bbf3f5"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X2</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2X2E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #2 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2X3E">
+<span id="_CPPv3N13OutputDataSet2X3E"></span><span id="_CPPv2N13OutputDataSet2X3E"></span><span id="OutputDataSet::X3__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a7caf71a10e7bed429c961fd2e3248d0d"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">X3</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2X3E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #3 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet3XD1E">
+<span id="_CPPv3N13OutputDataSet3XD1E"></span><span id="_CPPv2N13OutputDataSet3XD1E"></span><span id="OutputDataSet::XD1__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a82a319835f63a62bc5493a82c7d864fd"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XD1</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet3XD1E" title="Link to this definition"></a><br /></dt>
+<dd><p>first derivative of coordinate #1 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet3XD2E">
+<span id="_CPPv3N13OutputDataSet3XD2E"></span><span id="_CPPv2N13OutputDataSet3XD2E"></span><span id="OutputDataSet::XD2__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1aa95bc5ec1ed1157f5266a2b2188485ab"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XD2</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet3XD2E" title="Link to this definition"></a><br /></dt>
+<dd><p>first derivative of coordinate #2 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet3XD3E">
+<span id="_CPPv3N13OutputDataSet3XD3E"></span><span id="_CPPv2N13OutputDataSet3XD3E"></span><span id="OutputDataSet::XD3__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a461cfb2ab6b59aae3f22acc9a5ff4a26"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XD3</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet3XD3E" title="Link to this definition"></a><br /></dt>
+<dd><p>first derivative of coordinate #3 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet4XDD1E">
+<span id="_CPPv3N13OutputDataSet4XDD1E"></span><span id="_CPPv2N13OutputDataSet4XDD1E"></span><span id="OutputDataSet::XDD1__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a42deb08495a0753dd30a2215d70669f7"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDD1</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet4XDD1E" title="Link to this definition"></a><br /></dt>
+<dd><p>second derivative of coordinate #1 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet4XDD2E">
+<span id="_CPPv3N13OutputDataSet4XDD2E"></span><span id="_CPPv2N13OutputDataSet4XDD2E"></span><span id="OutputDataSet::XDD2__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a66825a0696f3d719a67d7253dbcc7225"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDD2</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet4XDD2E" title="Link to this definition"></a><br /></dt>
+<dd><p>second derivative of coordinate #2 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet4XDD3E">
+<span id="_CPPv3N13OutputDataSet4XDD3E"></span><span id="_CPPv2N13OutputDataSet4XDD3E"></span><span id="OutputDataSet::XDD3__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a39e39e4facb3b4b43cd1ad0f3ebea9b4"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">XDD3</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet4XDD3E" title="Link to this definition"></a><br /></dt>
+<dd><p>second derivative of coordinate #3 of the interpolated trajectory </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet1PE">
+<span id="_CPPv3N13OutputDataSet1PE"></span><span id="_CPPv2N13OutputDataSet1PE"></span><span id="OutputDataSet::P__i"></span><span class="target" id="class_output_data_set_1a5eaacdbeced65038db0b9b398ed7b9eb"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>polynomial degree of the BSpline </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet1UE">
+<span id="_CPPv3N13OutputDataSet1UE"></span><span id="_CPPv2N13OutputDataSet1UE"></span><span id="OutputDataSet::U__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a3b2764a644e3b29ce548af66138f7da3"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet1UE" title="Link to this definition"></a><br /></dt>
+<dd><p>knot vector of the BSpline </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2C1E">
+<span id="_CPPv3N13OutputDataSet2C1E"></span><span id="_CPPv2N13OutputDataSet2C1E"></span><span id="OutputDataSet::C1__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a9f7c1c840ccb16e242d2c47ade6176fd"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C1</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2C1E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #1 of the control points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2C2E">
+<span id="_CPPv3N13OutputDataSet2C2E"></span><span id="_CPPv2N13OutputDataSet2C2E"></span><span id="OutputDataSet::C2__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1a9076a7ae5a8d6c88293b26ece54e3993"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C2</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2C2E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #2 of the control points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13OutputDataSet2C3E">
+<span id="_CPPv3N13OutputDataSet2C3E"></span><span id="_CPPv2N13OutputDataSet2C3E"></span><span id="OutputDataSet::C3__Eigen::VectorXd"></span><span class="target" id="class_output_data_set_1ad697d14e89b488cefa1de3260f8bbcf5"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C3</span></span></span><a class="headerlink" href="#_CPPv4N13OutputDataSet2C3E" title="Link to this definition"></a><br /></dt>
+<dd><p>coordinate #3 of the control points </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="astroConstants.html" class="btn btn-neutral float-right" title="astroConstants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: tabularAtmosphere &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="TabularAtmosphere" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">TabularAtmosphere</a></li>
+      <li class="breadcrumb-item active">Module: tabularAtmosphere</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/TabularAtmosphere/tabularAtmosphere.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tabularatmosphere">
+<span id="tabularatmosphere"></span><h1>Module: tabularAtmosphere<a class="headerlink" href="#module-tabularatmosphere" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The purpose of this module is to implement a tabular atmospheric model that returns density and
+temperature values at a specified altitude and planet. The module linearly interpolates tables
+and is a child of the base class Atmosphere.</p>
+<p>The module is a sub-class of the <a class="reference internal" href="../_GeneralModuleFiles/atmosphereBase.html#atmospherebase"><span class="std std-ref">Module: atmosphereBase</span></a> base class.  See that class for the
+nominal messages used and general instructions.</p>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">tabularAtmosphere</span></code> module handles the following behavior:</p>
+<ol class="arabic simple">
+<li><p>Linear interpolation when requested altitude lies within the range of values on the atmosphere
+table but is not already included in the list.</p></li>
+<li><p>Iterates through the list until the requested altitude is greater than the previous value in
+the list and less than the next value.</p></li>
+<li><p>Will interpolate between the altitude and return the interpolated density and temperature.</p></li>
+</ol>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>Returns density = 0 kg/m^3 and temperature = 0 K when altitude is outside range of provided data
+OR if outside range set by (envMinReach, envMaxReach) if those module parameters are defined.
+This module uses a python helper function as access to different atmospheric tables for various planets.
+See <code class="docutils literal notranslate"><span class="pre">Basilisk\supportData\AtmosphereData\support\README.txt</span></code> for more detail on python
+helper function and currently provided data tables.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>Required variables are <code class="docutils literal notranslate"><span class="pre">altList</span></code>, <code class="docutils literal notranslate"><span class="pre">rhoList</span></code>, and <code class="docutils literal notranslate"><span class="pre">tempList</span></code>, each a standard vector of doubles.
+The lists must be sorted corresponding to ascending altitude, and be of the same nonzero length.
+Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvin.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv417TabularAtmosphere">
+<span id="_CPPv317TabularAtmosphere"></span><span id="_CPPv217TabularAtmosphere"></span><span id="TabularAtmosphere"></span><span class="target" id="class_tabular_atmosphere"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TabularAtmosphere</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/atmosphereBase.html#_CPPv414AtmosphereBase" title="AtmosphereBase"><span class="n"><span class="pre">AtmosphereBase</span></span></a><a class="headerlink" href="#_CPPv417TabularAtmosphere" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;tabularAtmosphere.h&gt;</em></div>
+<p>tabular atmosphere model </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere17TabularAtmosphereEv">
+<span id="_CPPv3N17TabularAtmosphere17TabularAtmosphereEv"></span><span id="_CPPv2N17TabularAtmosphere17TabularAtmosphereEv"></span><span id="TabularAtmosphere::TabularAtmosphere"></span><span class="target" id="class_tabular_atmosphere_1aacb70d9ad5a411b98ccadd664e7bb65a"></span><span class="sig-name descname"><span class="n"><span class="pre">TabularAtmosphere</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere17TabularAtmosphereEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor method initializes data list lengths to zero. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphereD0Ev">
+<span id="_CPPv3N17TabularAtmosphereD0Ev"></span><span id="_CPPv2N17TabularAtmosphereD0Ev"></span><span id="TabularAtmosphere::~TabularAtmosphere"></span><span class="target" id="class_tabular_atmosphere_1a0b2479c2799e71f5609b3ba6cae067ff"></span><span class="sig-name descname"><span class="n"><span class="pre">~TabularAtmosphere</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17TabularAtmosphereD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Empty destructor method. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere7altListE">
+<span id="_CPPv3N17TabularAtmosphere7altListE"></span><span id="_CPPv2N17TabularAtmosphere7altListE"></span><span id="TabularAtmosphere::altList__std::vector:double:"></span><span class="target" id="class_tabular_atmosphere_1a6d88f96fe4895a71e921f7f027b4f5af"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">altList</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere7altListE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of doubles of altitude values extracted from the atmosphere table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere7rhoListE">
+<span id="_CPPv3N17TabularAtmosphere7rhoListE"></span><span id="_CPPv2N17TabularAtmosphere7rhoListE"></span><span id="TabularAtmosphere::rhoList__std::vector:double:"></span><span class="target" id="class_tabular_atmosphere_1aa20b41ee5ef9e5982907baffc1bed4c5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoList</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere7rhoListE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of doubles of density values extracted from the atmosphere table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere8tempListE">
+<span id="_CPPv3N17TabularAtmosphere8tempListE"></span><span id="_CPPv2N17TabularAtmosphere8tempListE"></span><span id="TabularAtmosphere::tempList__std::vector:double:"></span><span class="target" id="class_tabular_atmosphere_1a916c0fd3383f4b23499bae408bd9e05f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tempList</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere8tempListE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of doubles of temperature values extracted from the atmosphere table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere9bskLoggerE">
+<span id="_CPPv3N17TabularAtmosphere9bskLoggerE"></span><span id="_CPPv2N17TabularAtmosphere9bskLoggerE"></span><span id="TabularAtmosphere::bskLogger__BSKLogger"></span><span class="target" id="class_tabular_atmosphere_1a4f696dc43e20e020b88d8fe50c4d923a"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd">
+<span id="_CPPv3N17TabularAtmosphere23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd"></span><span id="_CPPv2N17TabularAtmosphere23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd"></span><span id="TabularAtmosphere::evaluateAtmosphereModel__AtmoPropsMsgPayloadP.double"></span><span class="target" id="class_tabular_atmosphere_1ae375139e2423f6a377b046c6fc214d06"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateAtmosphereModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd" title="Link to this definition"></a><br /></dt>
+<dd><p>evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input lists OR if outside bounds of envMinReach and envMaxReach. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere11customResetE8uint64_t">
+<span id="_CPPv3N17TabularAtmosphere11customResetE8uint64_t"></span><span id="_CPPv2N17TabularAtmosphere11customResetE8uint64_t"></span><span id="TabularAtmosphere::customReset__uint64_t"></span><span class="target" id="class_tabular_atmosphere_1a76e23ddd0277e6c0b6d729d8f951a29f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere14altList_lengthE">
+<span id="_CPPv3N17TabularAtmosphere14altList_lengthE"></span><span id="_CPPv2N17TabularAtmosphere14altList_lengthE"></span><span id="TabularAtmosphere::altList_length__i"></span><span class="target" id="class_tabular_atmosphere_1a74e389e3b45f27883e1e4b4bb85a5846"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">altList_length</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere14altList_lengthE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere14rhoList_lengthE">
+<span id="_CPPv3N17TabularAtmosphere14rhoList_lengthE"></span><span id="_CPPv2N17TabularAtmosphere14rhoList_lengthE"></span><span id="TabularAtmosphere::rhoList_length__i"></span><span class="target" id="class_tabular_atmosphere_1ac9d0792fc6343c1ebc45ae89677b1fad"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoList_length</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere14rhoList_lengthE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17TabularAtmosphere15tempList_lengthE">
+<span id="_CPPv3N17TabularAtmosphere15tempList_lengthE"></span><span id="_CPPv2N17TabularAtmosphere15tempList_lengthE"></span><span id="TabularAtmosphere::tempList_length__i"></span><span class="target" id="class_tabular_atmosphere_1ab243ad15114670c620465b6ef9c16cf8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tempList_length</span></span></span><a class="headerlink" href="#_CPPv4N17TabularAtmosphere15tempList_lengthE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="TabularAtmosphere" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,998 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMonteCarloAttRW &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioMonteCarloAttRW</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioMonteCarloAttRW</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.</span>
+<span class="sd">This script duplicates the scenario in :ref:`scenarioAttitudeFeedbackRW` where a</span>
+<span class="sd">6-DOF spacecraft is orbiting the Earth. Here some simulation parameters are dispersed randomly</span>
+<span class="sd">using a multi-threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added</span>
+<span class="sd">to the rigid spacecraft() hub, and what flight algorithm module is used to control these RWs.</span>
+<span class="sd">The scenario is run in a single configuration: by not using the Jitter model and by using the RW Voltage IO.</span>
+<span class="sd">Given this scenario we can add dispersions to the variables in between each MC run.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioMonteCarloAttRW.py</span>
+
+<span class="sd">For more information on the Attitude Feedback Simulation with RW, please see the documentation</span>
+<span class="sd">on the :ref:`scenarioAttitudeFeedbackRW` file.</span>
+
+<span class="sd">Bokeh Visualization and Data Management</span>
+<span class="sd">---------------------------------------</span>
+
+<span class="sd">This script includes options for interactive visualization using Bokeh and data management:</span>
+
+<span class="sd">1. To use the Bokeh server for interactive visualization, run the script with::</span>
+
+<span class="sd">        python scenarioMonteCarloAttRW.py --bokeh-server</span>
+
+<span class="sd">   IMPORTANT: When using Bokeh visualization, delete_data MUST be set to False in the run() function call.</span>
+<span class="sd">   The --delete-data flag must not be used, as Bokeh requires the data files to remain available for</span>
+<span class="sd">   interactive plotting. The run() function should be called with::</span>
+
+<span class="sd">      dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=False, useBokeh=True)</span>
+
+<span class="sd">2. For matplotlib visualization, you can automatically delete Monte Carlo data after generating plots</span>
+<span class="sd">   by adding the --delete-data flag::</span>
+
+<span class="sd">      python scenarioMonteCarloAttRW.py --delete-data</span>
+
+<span class="sd">The --delete-data option will remove the Monte Carlo data directory after the plots are generated,</span>
+<span class="sd">helping to manage disk space when running multiple simulations. However, this option is incompatible</span>
+<span class="sd">with Bokeh visualization since Bokeh requires the data files to remain available for interactive plotting.</span>
+<span class="sd">When using Bokeh, delete_data must be explicitly set to False to ensure the data remains available for</span>
+<span class="sd">the interactive visualization.</span>
+
+<span class="sd">Enable Terminal Bar to Show Simulation Progress</span>
+<span class="sd">-----------------------------------------------</span>
+
+<span class="sd">To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationParameters to true::</span>
+
+<span class="sd">     monteCarlo = Controller()</span>
+<span class="sd">     monteCarlo.setShowProgressBar(True)</span>
+
+<span class="sd">Method ``setShowProgressBar`` should be used to set variable ``showProgressBar`` as True with the above statement. After</span>
+<span class="sd">enabling the progress bar, all the simulation run by ``monteCarlo.ExecuteSimulation()`` and</span>
+<span class="sd">montoCarlo.runInitialConditions will show the progress bar in the terminal.</span>
+
+<span class="sd">Setup Changes for Monte-Carlo Runs</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">In order to set up the multi-threaded MC simulation, the user must first instantiate the Controller class.</span>
+<span class="sd">The function that is being simulated is the set in this class (in this case, it&#39;s defined in the same file as the</span>
+<span class="sd">MC scenario). The user can then set other variables such as the number of runs, the dispersion seeds, and number of</span>
+<span class="sd">cores.</span>
+
+
+<span class="sd">The next important step to setting up the MC runs is to disperse the necessary variables.</span>
+<span class="sd">The dispersions that are set are listed in the following table:</span>
+
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Input          | Description of Element    | Distribution                                     |</span>
+<span class="sd">+================+===========================+==================================================+</span>
+<span class="sd">| Inertial       | Using Modified            | Uniform for all 3 rotations between [0, 2 pi]    |</span>
+<span class="sd">| attitude       | Rodrigues Parameters      |                                                  |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Inertial       | Using omega vector        | Normal dispersions for each of the rotation      |</span>
+<span class="sd">| rotation rate  |                           | components, each of mean 0 and standard          |</span>
+<span class="sd">|                |                           | deviation 0.25 deg/s                             |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Mass of the    | Total Mass of the         | Uniform around +/-5% of expected values.         |</span>
+<span class="sd">| hub            | spacecraft                | Bounds are [712.5, 787.5]                        |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Center of Mass | Position vector offset on | Normally around a mean [0, 0, 1], with standard  |</span>
+<span class="sd">| Offset         | the actual center of mass,| deviations of [0.05/3, 0.05/3, 0.1/3]            |</span>
+<span class="sd">|                | and its theoretical       |                                                  |</span>
+<span class="sd">|                | position                  |                                                  |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Inertia Tensor | 3x3 inertia tensor.       | Normally about mean value of diag(900, 800, 600).|</span>
+<span class="sd">|                | Dispersed by 3 rotations  | Each of the 3 rotations are normally distributed |</span>
+<span class="sd">|                |                           | with angles of mean 0 and standard deviation     |</span>
+<span class="sd">|                |                           | 0.1 deg.                                         |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| RW axes        | The rotation axis for     | Normally around a respective means [1,0,0],      |</span>
+<span class="sd">|                | each of the 3 wheels      | [0,1,0], and [0,0,1] with respective standard    |</span>
+<span class="sd">|                |                           | deviations [0.01/3, 0.005/3, 0.005/3],           |</span>
+<span class="sd">|                |                           | [0.005/3, 0.01/3, 0.005/3], and                  |</span>
+<span class="sd">|                |                           | [0.005/3, 0.005/3, 0.01/3].                      |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| RW speeds      | The rotation speed for    | Uniform around  +/-5% of expected values. Bounds |</span>
+<span class="sd">|                | each of the 3 wheels      | are [95, 105], [190, 210], and [285, 315]        |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+<span class="sd">| Voltage to     | The gain between the      | Uniform around  +/-5% of expected values. Bounds |</span>
+<span class="sd">| Torque Gain    | commanded torque and the  | are [0.019, 0.021]                               |</span>
+<span class="sd">|                | actual voltage            |                                                  |</span>
+<span class="sd">+----------------+---------------------------+--------------------------------------------------+</span>
+
+<span class="sd">Next a retention policy is used to log the desired data. The simulation can now be run.</span>
+<span class="sd">It returns the failed jobs, which should not occur.  When the MC have been executed,</span>
+<span class="sd">the data can be accessed and tested in different ways.</span>
+<span class="sd">This is explained in the example python code comments.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    saveFigures = False, case = 1, show_plots = True, useBokeh = False</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Object Management in Monte Carlo Simulations</span>
+<span class="sd">--------------------------------------------</span>
+
+<span class="sd">When creating Monte Carlo simulations, all simulation objects must be added as attributes to the</span>
+<span class="sd">simulation container (scSim). For example::</span>
+
+<span class="sd">    scSim.scObject = spacecraft.Spacecraft()</span>
+<span class="sd">    scSim.RW1 = RW1</span>
+<span class="sd">    scSim.rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()</span>
+
+<span class="sd">This pattern is required for the Monte Carlo framework to:</span>
+
+<span class="sd">1. Access and modify object parameters between runs (for dispersions)</span>
+<span class="sd">2. Properly retain data through the RetentionPolicy mechanism</span>
+<span class="sd">3. Ensure objects persist between simulation runs</span>
+<span class="sd">4. Allow the Controller class to track and manage simulation state</span>
+
+<span class="sd">Without adding objects to scSim, the Monte Carlo framework wouldn&#39;t be able to properly manage</span>
+<span class="sd">the simulation across multiple runs and thus unexpected behavior will occur.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the MonteCarlo module.  Runs multiple</span>
+<span class="c1">#           scenarioAttitudeFeedbackRW with dispersed initial parameters</span>
+<span class="c1">#</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">fileNameString</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactionWheelStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">motorVoltageInterface</span>
+
+<span class="c1"># import FSW Algorithm related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">inertial3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">attTrackingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rwMotorTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">fswSetupRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rwMotorVoltage</span>
+
+<span class="c1"># import message declarations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.Controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">RetentionPolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.Dispersions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">UniformEulerAngleMRPDispersion</span><span class="p">,</span> <span class="n">UniformDispersion</span><span class="p">,</span>
+                                                       <span class="n">NormalVectorCartDispersion</span><span class="p">,</span> <span class="n">InertiaTensorDispersion</span><span class="p">)</span>
+
+<span class="c1"># Add this import and check at the beginning of the file</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+<span class="c1"># Try to import Bokeh, set availability flag</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">bokeh</span>
+    <span class="n">bokeh_available</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.AnalysisBaseClass</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonteCarloPlotter</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">bokeh_available</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Add logger setup</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">NUMBER_OF_RUNS</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="c1"># Here are the name of some messages that we want to retain or otherwise use</span>
+<span class="n">rwMotorTorqueMsgName</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorqueMsg&quot;</span>
+<span class="n">guidMsgName</span> <span class="o">=</span> <span class="s2">&quot;guidMsg&quot;</span>
+<span class="n">transMsgName</span> <span class="o">=</span> <span class="s2">&quot;transMsg&quot;</span>
+<span class="n">rwSpeedMsgName</span> <span class="o">=</span> <span class="s2">&quot;rwSpeedMsg&quot;</span>
+<span class="n">voltMsgName</span> <span class="o">=</span> <span class="s2">&quot;voltMsg&quot;</span>
+<span class="n">rwOutName</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rw1Msg&quot;</span><span class="p">,</span> <span class="s2">&quot;rw2Msg&quot;</span><span class="p">,</span> <span class="s2">&quot;rw3Msg&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># We also will need the simulationTime and samplingTimes</span>
+<span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+<span class="n">samplingTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">//</span> <span class="p">(</span><span class="n">numDataPoints</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioMonteCarloAttRW.html#scenarioMonteCarloAttRW.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">saveFigures</span><span class="p">,</span> <span class="n">case</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">delete_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useBokeh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        saveFigures (bool): flag if the scenario figures should be saved for html documentation</span>
+<span class="sd">        case (int): Case 1 is normal MC, case 2 is initial condition run</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        delete_data (bool): Flag to delete Monte Carlo data after running</span>
+<span class="sd">        useBokeh (bool): Flag to use Bokeh for plotting instead of matplotlib</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">useBokeh</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bokeh_available</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bokeh is not available. Falling back to matplotlib.&quot;</span><span class="p">)</span>
+        <span class="n">useBokeh</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># A MonteCarlo simulation can be created using the `MonteCarlo` module.</span>
+    <span class="c1"># This module is used to execute monte carlo simulations, and access</span>
+    <span class="c1"># retained data from previously executed MonteCarlo runs.</span>
+
+    <span class="c1"># First, the `Controller` class is used in order to define the simulation</span>
+    <span class="n">monteCarlo</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">()</span>
+
+    <span class="c1"># Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to</span>
+    <span class="c1"># execute and returns it. Within this function, the simulation is created and configured</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setSimulationFunction</span><span class="p">(</span><span class="n">createScenarioAttitudeFeedbackRW</span><span class="p">)</span>
+
+    <span class="c1"># Also, every MonteCarlo simulation must define a function which executes the simulation that was created.</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setExecutionFunction</span><span class="p">(</span><span class="n">executeScenario</span><span class="p">)</span>
+
+    <span class="c1"># A Monte Carlo simulation must define how many simulation runs to execute</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setExecutionCount</span><span class="p">(</span><span class="n">NUMBER_OF_RUNS</span><span class="p">)</span>
+
+    <span class="c1"># The simulations can have random seeds of each simulation dispersed randomly</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setShouldDisperseSeeds</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setShowProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Optionally set the number of cores to use</span>
+    <span class="c1"># monteCarlo.setThreadCount(PROCESSES)</span>
+
+    <span class="c1"># Whether to print more verbose information during the run</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setVerbose</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">)</span>
+
+    <span class="c1"># We set up where to retain the data to.</span>
+    <span class="n">dirName</span> <span class="o">=</span> <span class="s2">&quot;montecarlo_test&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setArchiveDir</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+
+    <span class="c1"># Statistical dispersions can be applied to initial parameters using the MonteCarlo module</span>
+    <span class="n">dispMRPInit</span> <span class="o">=</span> <span class="s1">&#39;TaskList[0].TaskModels[0].hub.sigma_BNInit&#39;</span>
+    <span class="n">dispOmegaInit</span> <span class="o">=</span> <span class="s1">&#39;TaskList[0].TaskModels[0].hub.omega_BN_BInit&#39;</span>
+    <span class="n">dispMass</span> <span class="o">=</span> <span class="s1">&#39;TaskList[0].TaskModels[0].hub.mHub&#39;</span>
+    <span class="n">dispCoMOff</span> <span class="o">=</span> <span class="s1">&#39;TaskList[0].TaskModels[0].hub.r_BcB_B&#39;</span>
+    <span class="n">dispInertia</span> <span class="o">=</span> <span class="s1">&#39;hubref.IHubPntBc_B&#39;</span>
+    <span class="n">dispRW1Axis</span> <span class="o">=</span> <span class="s1">&#39;RW1.gsHat_B&#39;</span>
+    <span class="n">dispRW2Axis</span> <span class="o">=</span> <span class="s1">&#39;RW2.gsHat_B&#39;</span>
+    <span class="n">dispRW3Axis</span> <span class="o">=</span> <span class="s1">&#39;RW3.gsHat_B&#39;</span>
+    <span class="n">dispRW1Omega</span> <span class="o">=</span> <span class="s1">&#39;RW1.Omega&#39;</span>
+    <span class="n">dispRW2Omega</span> <span class="o">=</span> <span class="s1">&#39;RW2.Omega&#39;</span>
+    <span class="n">dispRW3Omega</span> <span class="o">=</span> <span class="s1">&#39;RW3.Omega&#39;</span>
+    <span class="n">dispVoltageIO_0</span> <span class="o">=</span> <span class="s1">&#39;rwVoltageIO.voltage2TorqueGain[0]&#39;</span>
+    <span class="n">dispVoltageIO_1</span> <span class="o">=</span> <span class="s1">&#39;rwVoltageIO.voltage2TorqueGain[1]&#39;</span>
+    <span class="n">dispVoltageIO_2</span> <span class="o">=</span> <span class="s1">&#39;rwVoltageIO.voltage2TorqueGain[2]&#39;</span>
+    <span class="n">dispList</span> <span class="o">=</span> <span class="p">[</span><span class="n">dispMRPInit</span><span class="p">,</span> <span class="n">dispOmegaInit</span><span class="p">,</span> <span class="n">dispMass</span><span class="p">,</span> <span class="n">dispCoMOff</span><span class="p">,</span> <span class="n">dispInertia</span><span class="p">]</span>
+
+    <span class="c1"># Add dispersions with their dispersion type</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformEulerAngleMRPDispersion</span><span class="p">(</span><span class="n">dispMRPInit</span><span class="p">))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">NormalVectorCartDispersion</span><span class="p">(</span><span class="n">dispOmegaInit</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispMass</span><span class="p">,</span> <span class="p">([</span><span class="mf">750.0</span> <span class="o">-</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">750</span><span class="p">,</span> <span class="mf">750.0</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">750</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">NormalVectorCartDispersion</span><span class="p">(</span><span class="n">dispCoMOff</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.05</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">]))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">InertiaTensorDispersion</span><span class="p">(</span><span class="n">dispInertia</span><span class="p">,</span> <span class="n">stdAngle</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">NormalVectorCartDispersion</span><span class="p">(</span><span class="n">dispRW1Axis</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.01</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">]))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">NormalVectorCartDispersion</span><span class="p">(</span><span class="n">dispRW2Axis</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.01</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">]))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">NormalVectorCartDispersion</span><span class="p">(</span><span class="n">dispRW3Axis</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.005</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.01</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">]))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispRW1Omega</span><span class="p">,</span> <span class="p">([</span><span class="mf">100.0</span> <span class="o">-</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mf">100.0</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">100</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispRW2Omega</span><span class="p">,</span> <span class="p">([</span><span class="mf">200.0</span> <span class="o">-</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">200</span><span class="p">,</span> <span class="mf">200.0</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">200</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispRW3Omega</span><span class="p">,</span> <span class="p">([</span><span class="mf">300.0</span> <span class="o">-</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">300</span><span class="p">,</span> <span class="mf">300.0</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">300</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispVoltageIO_0</span><span class="p">,</span> <span class="p">([</span><span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispVoltageIO_1</span><span class="p">,</span> <span class="p">([</span><span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">])))</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addDispersion</span><span class="p">(</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">dispVoltageIO_2</span><span class="p">,</span> <span class="p">([</span><span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">])))</span>
+
+    <span class="c1"># A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`</span>
+    <span class="c1"># is a list of messages and variables to log from each simulation run. It also has a callback,</span>
+    <span class="c1"># used for plotting/processing the retained data.</span>
+    <span class="n">retentionPolicy</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="p">()</span>
+    <span class="c1"># define the data to retain</span>
+    <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">rwMotorTorqueMsgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;motorTorque&quot;</span><span class="p">])</span>
+    <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">guidMsgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;sigma_BR&quot;</span><span class="p">,</span> <span class="s2">&quot;omega_BR_B&quot;</span><span class="p">])</span>
+    <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">transMsgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;r_BN_N&quot;</span><span class="p">])</span>
+    <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">rwSpeedMsgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;wheelSpeeds&quot;</span><span class="p">])</span>
+    <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">voltMsgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;voltage&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">msgName</span> <span class="ow">in</span> <span class="n">rwOutName</span><span class="p">:</span>
+        <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">addMessageLog</span><span class="p">(</span><span class="n">msgName</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;u_current&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">useBokeh</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t set a callback for Bokeh, we&#39;ll handle it separately</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use matplotlib for plotting</span>
+            <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">setDataCallback</span><span class="p">(</span><span class="n">plotSim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">saveFigures</span><span class="p">:</span>
+        <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">setDataCallback</span><span class="p">(</span><span class="n">plotSimAndSave</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">addRetentionPolicy</span><span class="p">(</span><span class="n">retentionPolicy</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># After the monteCarlo run is configured, it is executed.</span>
+        <span class="c1"># This method returns the list of jobs that failed.</span>
+        <span class="n">failures</span> <span class="o">=</span> <span class="n">monteCarlo</span><span class="o">.</span><span class="n">executeSimulations</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No runs should fail&quot;</span>
+
+        <span class="c1"># Now in another script (or the current one), the data from this simulation can be easily loaded.</span>
+        <span class="c1"># This demonstrates loading it from disk</span>
+        <span class="n">monteCarloLoaded</span> <span class="o">=</span> <span class="n">Controller</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+
+        <span class="c1"># Then retained data from any run can then be accessed in the form of a dictionary</span>
+        <span class="c1"># with two sub-dictionaries for messages and variables:</span>
+        <span class="n">retainedData</span> <span class="o">=</span> <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">getRetainedData</span><span class="p">(</span><span class="n">NUMBER_OF_RUNS</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">retainedData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Retained data should be available after execution&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;messages&quot;</span> <span class="ow">in</span> <span class="n">retainedData</span><span class="p">,</span> <span class="s2">&quot;Retained data should retain messages&quot;</span>
+        <span class="k">assert</span> <span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span> <span class="ow">in</span> <span class="n">retainedData</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">],</span> <span class="s2">&quot;Retained messages should exist&quot;</span>
+
+        <span class="c1"># We also can rerun a case using the same parameters and random seeds</span>
+        <span class="c1"># If we rerun a properly set-up run, it should output the same data.</span>
+        <span class="c1"># Here we test that if we rerun the case the data doesn&#39;t change</span>
+        <span class="n">oldOutput</span> <span class="o">=</span> <span class="n">retainedData</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Rerunning the case shouldn&#39;t fail</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">reRunCases</span><span class="p">([</span><span class="n">NUMBER_OF_RUNS</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Should rerun case successfully&quot;</span>
+
+        <span class="c1"># Now access the newly retained data to see if it changed</span>
+        <span class="n">retainedData</span> <span class="o">=</span> <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">getRetainedData</span><span class="p">(</span><span class="n">NUMBER_OF_RUNS</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">newOutput</span> <span class="o">=</span> <span class="n">retainedData</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">oldOutput</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k2</span><span class="p">,</span> <span class="n">v2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v1</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">oldOutput</span><span class="p">[</span><span class="n">k1</span><span class="p">][</span><span class="n">k2</span><span class="p">]</span> <span class="o">-</span> <span class="n">newOutput</span><span class="p">[</span><span class="n">k1</span><span class="p">][</span><span class="n">k2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">.001</span><span class="p">,</span> \
+                <span class="s2">&quot;Outputs shouldn&#39;t change on runs if random seeds are same&quot;</span>
+
+        <span class="c1"># We can also access the initial parameters</span>
+        <span class="c1"># The random seeds should differ between runs, so we will test that</span>
+        <span class="n">params1</span> <span class="o">=</span> <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">getParameters</span><span class="p">(</span><span class="n">NUMBER_OF_RUNS</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">params2</span> <span class="o">=</span> <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">getParameters</span><span class="p">(</span><span class="n">NUMBER_OF_RUNS</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;TaskList[0].TaskModels[0].RNGSeed&quot;</span> <span class="ow">in</span> <span class="n">params1</span><span class="p">,</span> <span class="s2">&quot;random number seed should be applied&quot;</span>
+        <span class="k">for</span> <span class="n">dispName</span> <span class="ow">in</span> <span class="n">dispList</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">dispName</span> <span class="ow">in</span> <span class="n">params1</span><span class="p">,</span> <span class="s2">&quot;dispersion should be applied&quot;</span>
+            <span class="c1"># assert two different runs had different parameters.</span>
+            <span class="k">assert</span> <span class="n">params1</span><span class="p">[</span><span class="n">dispName</span><span class="p">]</span> <span class="o">!=</span> <span class="n">params2</span><span class="p">[</span><span class="n">dispName</span><span class="p">],</span> <span class="s2">&quot;dispersion should be different in each run&quot;</span>
+
+        <span class="k">if</span> <span class="n">useBokeh</span> <span class="ow">and</span> <span class="n">bokeh_available</span><span class="p">:</span>
+            <span class="c1"># Create the Bokeh application</span>
+            <span class="n">plotter</span> <span class="o">=</span> <span class="n">MonteCarloPlotter</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">load_data</span><span class="p">([</span>
+                <span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span><span class="p">,</span>
+                <span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.omega_BR_B&quot;</span><span class="p">,</span>
+                <span class="n">rwSpeedMsgName</span> <span class="o">+</span> <span class="s2">&quot;.wheelSpeeds&quot;</span><span class="p">,</span>
+                <span class="n">voltMsgName</span> <span class="o">+</span> <span class="s2">&quot;.voltage&quot;</span><span class="p">,</span>
+                <span class="n">rwOutName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span><span class="p">,</span>
+                <span class="n">rwOutName</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span><span class="p">,</span>
+                <span class="n">rwOutName</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span>
+            <span class="p">])</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">show_plots</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="c1"># Use matplotlib for plotting</span>
+            <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">executeCallbacks</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1">#########################################################</span>
+    <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Now run initial conditions</span>
+        <span class="n">icName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/Support/run_MC_IC&quot;</span>
+        <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setICDir</span><span class="p">(</span><span class="n">icName</span><span class="p">)</span>
+        <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setICRunFlag</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">numberICs</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setExecutionCount</span><span class="p">(</span><span class="n">numberICs</span><span class="p">)</span>
+
+        <span class="c1"># Rerunning the case shouldn&#39;t fail</span>
+        <span class="n">runsList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">numberICs</span><span class="p">))</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="n">monteCarlo</span><span class="o">.</span><span class="n">runInitialConditions</span><span class="p">(</span><span class="n">runsList</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Should run ICs successfully&quot;</span>
+
+        <span class="c1"># Load the Monte Carlo data</span>
+        <span class="n">monteCarloLoaded</span> <span class="o">=</span> <span class="n">Controller</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">icName</span><span class="p">)</span>
+
+        <span class="c1"># Execute callbacks for the loaded data</span>
+        <span class="n">runsList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">numberICs</span><span class="p">))</span>
+        <span class="n">monteCarloLoaded</span><span class="o">.</span><span class="n">executeCallbacks</span><span class="p">(</span><span class="n">runsList</span><span class="p">)</span>
+
+        <span class="c1"># And possibly show the plots</span>
+        <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Now we clean up data from this test</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">icName</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;MonteCarlo.data&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberICs</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">icName</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;run&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.data&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">icName</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;MonteCarlo.data&#39;</span><span class="p">),</span> <span class="s2">&quot;No leftover data should exist after the test&quot;</span>
+
+    <span class="c1"># Delete Monte Carlo data if configured to do so. (default is True)</span>
+    <span class="k">if</span> <span class="n">delete_data</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dirName</span></div>
+
+
+<span class="c1"># This function creates the simulation to be executed in parallel.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">createScenarioAttitudeFeedbackRW</span><span class="p">():</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># All simulation objects are added as attributes to scSim (e.g., scSim.scObject, scSim.RW1, etc.)</span>
+    <span class="c1"># This is required for the Monte Carlo framework to:</span>
+    <span class="c1"># 1. Access and modify object parameters between runs (for dispersions)</span>
+    <span class="c1"># 2. Properly retain data through the RetentionPolicy mechanism</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="c1"># We store simulation objects on the simulation object itself (scSim)</span>
+    <span class="c1"># to prevent Python&#39;s garbage collection from destroying C++ wrapped objects.</span>
+    <span class="c1"># This is critical as the C++ simulation still needs these objects to function.</span>
+    <span class="c1"># Without maintaining these references, the simulation may crash with segmentation faults.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">.1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="c1"># define the simulation inertia</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">hubref</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span> <span class="o">=</span> <span class="n">motorVoltageInterface</span><span class="o">.</span><span class="n">MotorVoltageInterface</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwVoltageInterface&quot;</span>
+
+    <span class="c1"># set module parameters(s)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">setGains</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="o">/</span><span class="mf">10.</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [Nm/V] conversion gain</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># setup Earth Gravity Body</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">earth</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1"># add RW devices</span>
+    <span class="c1">#</span>
+    <span class="c1"># Make a fresh RW factory instance, this is critical to run multiple times</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+
+    <span class="c1"># store the RW dynamical model type</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">varRWModel</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">BalancedWheels</span>
+
+    <span class="c1"># create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">RW1</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span>
+                           <span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                           <span class="p">,</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span>
+                           <span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">100.</span>                 <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">RW2</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span>
+                           <span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                           <span class="p">,</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span>
+                           <span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">200.</span>                 <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">RW3</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span>
+                           <span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                           <span class="p">,</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span>
+                           <span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">300.</span>                 <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">rWB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>    <span class="c1"># meters</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="n">numRW</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">getNumOfDevices</span><span class="p">()</span>
+    <span class="c1"># create RW object container and tie to spacecraft object</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">ReactionWheelStateEffector</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">motorTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># add RW object array to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the FSW algorithm tasks</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># create the FSW vehicle configuration message</span>
+    <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="c1"># FSW RW configuration message</span>
+    <span class="c1"># use the same RW states in the FSW algorithm as in the simulation</span>
+    <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rw</span> <span class="ow">in</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwFactory</span><span class="o">.</span><span class="n">rwList</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">),</span> <span class="n">rw</span><span class="o">.</span><span class="n">Js</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRwConfMsg</span> <span class="o">=</span> <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span>
+
+    <span class="c1"># setup inertial3D guidance module</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">inertial3DObj</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>       <span class="c1"># set the desired inertial orientation</span>
+
+    <span class="c1"># setup the attitude tracking error evaluation module</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup the MRP Feedback control module</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">fswRwConfMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span>  <span class="o">=</span>   <span class="mf">3.5</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span>   <span class="o">-</span><span class="mi">1</span>          <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span>  <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">/</span><span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="c1"># add module that maps the Lr control torque into the RW motor torques</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="p">)</span>
+    <span class="c1"># Initialize the test module msg names</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">fswRwConfMsg</span><span class="p">)</span>
+    <span class="c1"># Make the RW control all three body axes</span>
+    <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+             <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+            <span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
+            <span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+        <span class="p">]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span> <span class="o">=</span> <span class="n">rwMotorVoltage</span><span class="o">.</span><span class="n">rwMotorVoltage</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorVoltage&quot;</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the test module configuration data</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">fswRwConfMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">motorVoltageInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">voltageOutMsg</span><span class="p">)</span>
+    <span class="c1"># set module parameters</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">VMin</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Volts</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">VMax</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># Volts</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   set initial Spacecraft States</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span>     <span class="o">=</span> <span class="mf">10000000.0</span>                                           <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span>     <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span>     <span class="o">=</span> <span class="mf">33.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span>     <span class="o">=</span> <span class="mf">85.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>              <span class="c1"># sigma_CN_B</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>        <span class="c1"># rad/s - omega_CN_B</span>
+
+    <span class="c1"># store the msg recorder modules in a dictionary list so the retention policy class can pull the data</span>
+    <span class="c1"># when the simulation ends</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">rwMotorTorqueMsgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">rwMotorTorqueMsgName</span><span class="p">])</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">guidMsgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">guidMsgName</span><span class="p">])</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">transMsgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">transMsgName</span><span class="p">])</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">rwSpeedMsgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">rwSpeedMsgName</span><span class="p">])</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">voltMsgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">voltageOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">voltMsgName</span><span class="p">])</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">msgName</span> <span class="ow">in</span> <span class="n">rwOutName</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">msgName</span><span class="p">]</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwOutMsgs</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">msgName</span><span class="p">])</span>
+        <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">scSim</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">executeScenario</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<span class="c1"># This method is used to plot the retained data of a simulation.</span>
+<span class="c1"># It is called once for each run of the simulation, overlapping the plots</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotSim</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">retentionPolicy</span><span class="p">):</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="n">dataUsReq</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">rwMotorTorqueMsgName</span> <span class="o">+</span> <span class="s2">&quot;.motorTorque&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.omega_BR_B&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">transMsgName</span> <span class="o">+</span> <span class="s2">&quot;.r_BN_N&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataOmegaRW</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">rwSpeedMsgName</span> <span class="o">+</span> <span class="s2">&quot;.wheelSpeeds&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataVolt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">voltMsgName</span> <span class="o">+</span> <span class="s2">&quot;.voltage&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">dataRW</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">msgName</span> <span class="ow">in</span> <span class="n">rwOutName</span><span class="p">:</span>
+        <span class="n">dataRW</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">msgName</span><span class="o">+</span><span class="s2">&quot;.u_current&quot;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="n">rwMotorTorqueMsgName</span> <span class="o">+</span> <span class="s2">&quot;.motorTorque&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="s1">&#39;AttitudeError&#39;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\sigma_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.legend(loc=&#39;lower right&#39;)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Attitude Error $\sigma_{B/R}$&#39;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="s1">&#39;RWMotorTorque&#39;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\hat u_{s,&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; $u_{s,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.legend(loc=&#39;lower right&#39;)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Motor Torque (Nm)&#39;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="s1">&#39;RateTrackingError&#39;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\omega_{BR,&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.legend(loc=&#39;lower right&#39;)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate Tracking Error (rad/s) &#39;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="s1">&#39;RWSpeed&#39;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rwOutName</span><span class="p">)):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span><span class="o">/</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\Omega_{&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.legend(loc=&#39;lower right&#39;)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Speed (RPM) &#39;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="s1">&#39;RWVoltage&#39;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rwOutName</span><span class="p">)):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataVolt</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Run &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; $V_{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="c1"># plt.legend(loc=&#39;lower right&#39;)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Voltage (V) &#39;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotSimAndSave</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">retentionPolicy</span><span class="p">):</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotSim</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">retentionPolicy</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pltName</span><span class="p">,</span> <span class="n">plt</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">figureList</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="c1"># plt.subplots_adjust(top = 0.6, bottom = 0.4)</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">saveScenarioFigure</span><span class="p">(</span>
+            <span class="n">fileNameString</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">pltName</span>
+            <span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/dataForExamples&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span>
+
+
+<span class="c1"># Modify the __main__ section</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="n">delete_data</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">useBokeh</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Parse command line arguments</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="o">==</span> <span class="s2">&quot;--delete-data&quot;</span><span class="p">:</span>
+            <span class="n">delete_data</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">arg</span> <span class="o">==</span> <span class="s2">&quot;--bokeh-server&quot;</span><span class="p">:</span>
+            <span class="n">useBokeh</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">useBokeh</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bokeh_available</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bokeh is not available. Falling back to matplotlib.&quot;</span><span class="p">)</span>
+        <span class="n">useBokeh</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">useBokeh</span> <span class="ow">and</span> <span class="n">bokeh_available</span><span class="p">:</span>
+        <span class="c1"># ... (existing Bokeh server code)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.server.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">Server</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Application</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.application.handlers.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionHandler</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Button</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.layouts</span><span class="w"> </span><span class="kn">import</span> <span class="n">row</span><span class="p">,</span> <span class="n">Spacer</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">tornado.ioloop</span><span class="w"> </span><span class="kn">import</span> <span class="n">IOLoop</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">bk_worker</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">():</span>
+                <span class="n">dirName</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">saveFigures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delete_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useBokeh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">plotter</span> <span class="o">=</span> <span class="n">MonteCarloPlotter</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+                <span class="n">plotter</span><span class="o">.</span><span class="n">load_data</span><span class="p">([</span>
+                    <span class="n">rwOutName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span><span class="p">,</span>
+                    <span class="n">rwOutName</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span><span class="p">,</span>
+                    <span class="n">rwOutName</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.u_current&quot;</span><span class="p">,</span>
+                    <span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.sigma_BR&quot;</span><span class="p">,</span>
+                    <span class="n">guidMsgName</span> <span class="o">+</span> <span class="s2">&quot;.omega_BR_B&quot;</span><span class="p">,</span>
+                    <span class="n">rwSpeedMsgName</span> <span class="o">+</span> <span class="s2">&quot;.wheelSpeeds&quot;</span><span class="p">,</span>
+                    <span class="n">voltMsgName</span> <span class="o">+</span> <span class="s2">&quot;.voltage&quot;</span>
+                <span class="p">])</span>
+                <span class="n">layout</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">show_plots</span><span class="p">()</span>
+
+                <span class="c1"># Add close button functionality</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">close_callback</span><span class="p">():</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># Add JavaScript to close the browser tab</span>
+                        <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        setTimeout(function() {</span>
+<span class="s2">                            window.close();</span>
+<span class="s2">                            if(!window.closed) {</span>
+<span class="s2">                                window.location.href = &quot;about:blank&quot;;</span>
+<span class="s2">                            }</span>
+<span class="s2">                        }, 100);</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+                        <span class="n">doc</span><span class="o">.</span><span class="n">add_next_tick_callback</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">js_on_event</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">script</span><span class="p">))</span>
+
+                        <span class="c1"># Stop the Bokeh server</span>
+                        <span class="n">doc</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+                        <span class="n">IOLoop</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+
+                        <span class="c1"># Exit the Python process</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during shutdown: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">close_button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Close Application&quot;</span><span class="p">,</span> <span class="n">button_type</span><span class="o">=</span><span class="s2">&quot;danger&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+                <span class="n">close_button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">close_callback</span><span class="p">)</span>
+                <span class="n">layout</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">(</span><span class="n">Spacer</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span> <span class="n">close_button</span><span class="p">,</span> <span class="n">Spacer</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                                            <span class="n">sizing_mode</span><span class="o">=</span><span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">))</span>
+
+                <span class="n">doc</span><span class="o">.</span><span class="n">add_root</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+                <span class="n">doc</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;BSK Monte Carlo Visualization&quot;</span>
+
+            <span class="n">doc</span><span class="o">.</span><span class="n">add_next_tick_callback</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting Bokeh server&quot;</span><span class="p">)</span>
+        <span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">({</span><span class="s1">&#39;/&#39;</span><span class="p">:</span> <span class="n">Application</span><span class="p">(</span><span class="n">FunctionHandler</span><span class="p">(</span><span class="n">bk_worker</span><span class="p">))})</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Opening Bokeh application on http://localhost:5006/&#39;</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">show</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dirName</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">saveFigures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delete_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useBokeh</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

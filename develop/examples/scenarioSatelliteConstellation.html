@@ -1,0 +1,232 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioSatelliteConstellation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioSmallBodyNav" href="scenarioSmallBodyNav.html" />
+    <link rel="prev" title="scenarioRendezVous" href="scenarioRendezVous.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationBasic.html">Basic Servicer/Debris Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationMeanOEFeedback.html">Mean orbit element based relative motion control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationReconfig.html">Impulsive feedback control of relative motion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDebrisReorbitET.html">Electrostatic Tractor Debris Reorbiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDragRendezvous.html">Attitude-Driven differential drag control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioRendezVous.html">Servicer approaching a debris object with 3 flight modes</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Walker-Delta Satellite Constellation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioSatelliteConstellation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioSatelliteConstellation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariosatelliteconstellation">
+<span id="id1"></span><h1>scenarioSatelliteConstellation<a class="headerlink" href="#scenariosatelliteconstellation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioSatelliteConstellation"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This scenario demonstrates how to set up a Walker-Delta constellation of satellites. Note that this scenario
+uses the stand-alone Basilisk architecture rather than using the ‘’examples/FormationBskSim`` or <code class="docutils literal notranslate"><span class="pre">examples/MultiSatBskSim</span></code>
+architectures for simultaneously simulating multiple spacecraft.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioSatelliteConstellation</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>When designing a satellite constellation, symmetry provides repeatable performance and makes design and operations simpler. One
+such symmetric constellation design methodology is the Walker constellation which consists of circular orbits in evenly spaced
+planes at a chosen inclination. Walker constellation layouts are fully specified by four parameters written as “i:T/P/F” where:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>i = inclination angle</p></li>
+<li><p>T = total number of satellites in the constellation</p></li>
+<li><p>P = numer of orbit planes evenly spaced in node angle</p></li>
+<li><p>F = relative spacing between satellites in adjacent orbit planes</p></li>
+</ul>
+</div></blockquote>
+<p>In order to simulate the constellation a semi-major axis ‘a’ is also specified as an input. The total number of satellites T must
+be specified as an integer multiple of the number of planes P. The relative spacing F must be an integer between 0 and (P-1).</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">29994000</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">56</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">24</span><span class="p">,</span> <span class="n">P</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>The default scenario is modelled after the Galileo constellation with Walker numbers 56:24/3/1 and a semi-major axis of 29,994 km.</p>
+<img alt="../_images/scenarioSatelliteConstellation.svg" class="align-center" src="../_images/scenarioSatelliteConstellation.svg" />
+<p>Each line color corresponds to a different orbital plane, in this case 3 planes. Green circles mark the start of each of the 24
+individual satellite’s ground tracks and a red circle marks their end.</p>
+</section>
+<section id="simulation-visualization-in-vizard">
+<h2>Simulation Visualization In Vizard<a class="headerlink" href="#simulation-visualization-in-vizard" title="Link to this heading"></a></h2>
+<p>To add a visualization of each spacecraft’s Earth nadir pointing, a cone aligned with the pointing direction
+is created through the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vizSupport</span><span class="o">.</span><span class="n">createConeInOut</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">fromBodyName</span><span class="o">=</span><span class="n">scList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span> <span class="n">toBodyName</span><span class="o">=</span><span class="s1">&#39;earth&#39;</span><span class="p">,</span> <span class="n">coneColor</span><span class="o">=</span><span class="s1">&#39;teal&#39;</span><span class="p">,</span>
+                           <span class="n">normalVector_B</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">incidenceAngle</span><span class="o">=</span><span class="mi">30</span><span class="o">/</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="n">isKeepIn</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">coneHeight</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">coneName</span><span class="o">=</span><span class="s1">&#39;pointingCone&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/scenarioSatelliteConstellationVizard.jpg"><img alt="../_images/scenarioSatelliteConstellationVizard.jpg" class="align-center" src="../_images/scenarioSatelliteConstellationVizard.jpg" style="width: 640.0px; height: 370.0px;" />
+</a>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioSatelliteConstellation.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioSatelliteConstellation.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioSatelliteConstellation.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioSatelliteConstellation.run" title="Link to this definition"></a></dt>
+<dd><p>The scenario can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – semi-major axis of all satellites [m]</p></li>
+<li><p><strong>i</strong> (<em>float</em>) – orbital inclination [rad]</p></li>
+<li><p><strong>T</strong> (<em>int</em>) – total number of satellites</p></li>
+<li><p><strong>P</strong> (<em>int</em>) – number of equally spaced orbital planes</p></li>
+<li><p><strong>F</strong> (<em>int</em>) – phasing between satellites in adjacent places</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioRendezVous.html" class="btn btn-neutral float-left" title="scenarioRendezVous" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioSmallBodyNav.html" class="btn btn-neutral float-right" title="scenarioSmallBodyNav" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

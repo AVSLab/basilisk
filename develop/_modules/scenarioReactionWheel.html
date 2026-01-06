@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioReactionWheel &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioReactionWheel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioReactionWheel</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Recommended first scenario to learn MuJoCo-based simulation!</span>
+
+<span class="sd">This script shows how to simulate a CubeSat with a reaction wheel using the</span>
+<span class="sd">Mujoco-based dynamic object in Basilisk.</span>
+
+<span class="sd">Traditional Basilisk simulations (which use the :ref:`spacecraft` :ref:`DynamicObject&lt;dynamicObject&gt;`)</span>
+<span class="sd">are &#39;`hub`&#39;-centric. This means that one usually considers a single body to be</span>
+<span class="sd">the &#39;main&#39; body of the simulation, where forces and torques are applied.</span>
+<span class="sd">``DynamicEffectors`` and ``StateEffectors`` are attached to this :ref:`DynamicObject&lt;dynamicObject&gt;`, which</span>
+<span class="sd">simulate these forces/torques or provide some (limited) multi-body behavior.</span>
+<span class="sd">For example, the ``reactionWheelStateEffector`` can be used to simulate a reaction</span>
+<span class="sd">wheel on a :ref:`spacecraft` :ref:`DynamicObject&lt;dynamicObject&gt;`.</span>
+
+<span class="sd">On the other hand, the Mujoco-based :ref:`DynamicObject&lt;dynamicObject&gt;` (:ref:`MJScene&lt;MJScene&gt;`) is more general</span>
+<span class="sd">and allows for more complex multi-body dynamics. Under this formulation, there</span>
+<span class="sd">is no &#39;main&#39; body, and all bodies are treated equally. Forces and torques can</span>
+<span class="sd">be applied at any point of any body. Two bodies can be connected by joints (like</span>
+<span class="sd">the revolute joint of a wheel, or a prismatic joint of a linear actuator). Through</span>
+<span class="sd">these joints, forces and torques from one body can be transmitted to another.</span>
+<span class="sd">This allows to model a plethora of multi-body systems, without the need to</span>
+<span class="sd">explicitly model the dynamics of each body. The same system can model a CubeSat,</span>
+<span class="sd">a set of CubeSats, a robotic arm, reaction wheels, etc. Moreover, :ref:`MJScene&lt;MJScene&gt;` (a</span>
+<span class="sd">:ref:`DynamicObject&lt;dynamicObject&gt;`) does not use ``DynamicEffectors`` and ``StateEffectors``. Instead,</span>
+<span class="sd">:ref:`MJScene&lt;MJScene&gt;` has an internal &quot;dynamics task&quot;, similar to other tasks in Basilisk.</span>
+<span class="sd">This task can hold arbitrary :ref:`SysModel&lt;sys_model&gt;`, some of which can output forces and</span>
+<span class="sd">torques to be applied at specific points of the multi-body system in :ref:`MJScene&lt;MJScene&gt;`.</span>
+<span class="sd">Unlike regular tasks in Basilisk, which run at specific time intervals, the</span>
+<span class="sd">dynamics task in :ref:`MJScene&lt;MJScene&gt;` runs at every time step of the integrator.</span>
+
+<span class="sd">In this example, we show how to simulate a CubeSat with a reaction wheel using</span>
+<span class="sd">the Mujoco-based dynamic object. The multi-body system consists of a &#39;hub&#39; body</span>
+<span class="sd">and a &#39;wheel&#39; body. The wheel is connected to the hub by a revolute joint, which</span>
+<span class="sd">allows the wheel to rotate around the hub. The wheel is actuated by a torque</span>
+<span class="sd">applied at the center of mass of the wheel. The hub is allowed to move and rotate</span>
+<span class="sd">freely. This system definition must be translated into the XML format that Mujoco</span>
+<span class="sd">understands, which is done in the ``sat_w_wheel.xml`` file. The following is a</span>
+<span class="sd">simplified version of this file, line numbers have been added on the left:</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    1  &lt;mujoco&gt;</span>
+<span class="sd">    2      &lt;worldbody&gt;</span>
+<span class="sd">    3          &lt;body name=&quot;hub&quot;&gt;</span>
+<span class="sd">    4              &lt;freejoint/&gt;</span>
+<span class="sd">    5              &lt;geom name=&quot;hub_box&quot; type=&quot;box&quot; size=&quot;1 1 1&quot; density=&quot;200&quot;/&gt;</span>
+<span class="sd">    6</span>
+<span class="sd">    7              &lt;body name=&quot;wheel_1&quot; pos=&quot;0 0 0&quot; xyaxes=&quot;1 0 0 0 0 1&quot;&gt;</span>
+<span class="sd">    8                  &lt;joint name=&quot;wheel_1&quot; type=&quot;hinge&quot; axis=&quot;0 0 1&quot;/&gt;</span>
+<span class="sd">    9                  &lt;geom name=&quot;wheel_1&quot; type=&quot;cylinder&quot; size=&quot;0.4 0.2&quot; density=&quot;2000&quot;/&gt;</span>
+<span class="sd">    10             &lt;/body&gt;</span>
+<span class="sd">    11         &lt;/body&gt;</span>
+<span class="sd">    12     &lt;/worldbody&gt;</span>
+<span class="sd">    13</span>
+<span class="sd">    14     &lt;actuator&gt;</span>
+<span class="sd">    15         &lt;motor name=&quot;wheel_1&quot; joint=&quot;wheel_1&quot; /&gt;</span>
+<span class="sd">    16     &lt;/actuator&gt;</span>
+<span class="sd">    17</span>
+<span class="sd">    18 &lt;/mujoco&gt;</span>
+
+
+<span class="sd">Every MuJoCo XML file must have a `&lt;mujoco&gt;` root element (line 1 and 18). The ``&lt;worldbody&gt;``</span>
+<span class="sd">element (line 2) contains the bodies of the system. In this case, there are two bodies:</span>
+<span class="sd">the &#39;hub&#39; body (line 3) and the &#39;wheel_1&#39; body (line 7). The &#39;hub&#39; body is connected to</span>
+<span class="sd">the world by a ``freejoint`` (line 4), which allows it to move and rotate freely. The &#39;hub&#39;</span>
+<span class="sd">body has a box geometry (line 5), which is used to define the visual representation,</span>
+<span class="sd">mass properties, and collision properties of the body.</span>
+
+<span class="sd">The &#39;wheel_1&#39; body is connected to the &#39;hub&#39; body by a revolute joint (line 8). This joint</span>
+<span class="sd">allows the &#39;wheel_1&#39; body to rotate around the &#39;hub&#39; body. For revolute joints, the ``axis``</span>
+<span class="sd">attribute defines the axis of rotation. The &#39;wheel_1&#39; body has a cylinder geometry (line 9).</span>
+<span class="sd">The &#39;wheel_1&#39; body is defined inside the &#39;hub&#39; body, which means that the position of the</span>
+<span class="sd">&#39;wheel_1&#39; body is defined with respect to the &#39;hub&#39; body. We say &quot;hub&quot; is the parent body,</span>
+<span class="sd">while &quot;wheel_1&quot; is a sub-body or child body of the &quot;hub&quot; body. Bodies can have multiple</span>
+<span class="sd">sub-bodies, but only one parent, which means that multi-body systems are (topologically)</span>
+<span class="sd">trees. Closed-loop topologies can be simulated, but this is not covered in this example.</span>
+
+<span class="sd">Each body has an &#39;origin&#39; reference frame, which is the frame in which all sub-elements of</span>
+<span class="sd">the body are defined. In the definition of the &#39;wheel_1&#39; body, we define the position</span>
+<span class="sd">and orientation of the &#39;origin&#39; frame of the &#39;wheel_1&#39; body with respect to the &#39;origin&#39;</span>
+<span class="sd">frame of the &#39;hub&#39; body using the ``pos`` and ``xyaxes`` attributes (line 7). Geometries</span>
+<span class="sd">of bodies are defined with respect to the &#39;origin&#39; frame of said body. Similarly, the</span>
+<span class="sd">``axis`` attribute of the joint is defined with respect to the &#39;origin&#39; frame of the body.</span>
+
+<span class="sd">The ``&lt;actuator&gt;`` element (line 14) contains the actuators of the system. In this case, there</span>
+<span class="sd">is a single actuator called &#39;wheel_1&#39; (line 15), which is linked to the &#39;wheel_1&#39; joint.</span>
+<span class="sd">This actuator can apply a torque to the &#39;wheel_1&#39; joint. This actuator simulates a motor</span>
+<span class="sd">applying the torque on the reaction wheel. The torque value can be controlled through</span>
+<span class="sd">the Basilisk messaging system, as shown in the script.</span>
+
+<span class="sd">This is a brief introduction to the MuJoCo XML format. For more information, please refer</span>
+<span class="sd">to the MuJoCo documentation: https://mujoco.readthedocs.io/en/stable/XMLreference.html</span>
+
+<span class="sd">The system is simulated for 120 seconds, with a torque of 2 Nm applied to</span>
+<span class="sd">the wheel for the first 60 seconds, and a torque of -2 Nm applied for the</span>
+<span class="sd">next 60 seconds. Based on conservation of momentum, the system should accelerate</span>
+<span class="sd">its rotation in the first 60 seconds and then decelerate in the next 60 seconds.</span>
+<span class="sd">The final angular velocity should be zero.</span>
+
+<span class="sd">The system states are recorded and optionally plotted and/or visualized in a 3D</span>
+<span class="sd">geometry visualization environment using ``mujoco.visualize``. It&#39;s possible that</span>
+<span class="sd">this function is not available in your system, depending on whether you chose to</span>
+<span class="sd">build the additional &#39;replay&#39; utility when building Basilisk.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">CURRENT_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">XML_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CURRENT_FOLDER</span><span class="si">}</span><span class="s2">/sat_w_wheel.xml&quot;</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioReactionWheel.html#scenarioReactionWheel.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): If True, simulation results are plotted and show.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        visualize (bool, optional): If True, the ``MJScene`` visualization tool is</span>
+<span class="sd">            run on the simulation results. Defaults to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># s</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">60</span> <span class="c1"># s</span>
+
+    <span class="c1"># Create a simulation, process, and task as usual</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="c1"># Create the Mujoco scene (our MuJoCo DynamicObject)</span>
+    <span class="c1"># Load the XML file that defines the system from a file</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># Set the integrator of the DynamicObject to RK4(5)</span>
+    <span class="c1"># Note how all Basilisk integrators are supported for</span>
+    <span class="c1"># this integrator object</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+
+    <span class="c1"># Define a stand-alone ``SingleActuatorMsg`` which defines</span>
+    <span class="c1"># the torque that a single actuator should apply. &#39;Single</span>
+    <span class="c1"># actuators&#39; are those actuators that apply a single scalar</span>
+    <span class="c1"># input to the system. In this case, the actuator is a motor</span>
+    <span class="c1"># that applies a torque to the &#39;wheel_1&#39; joint.</span>
+    <span class="n">torque</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># N*m</span>
+    <span class="n">torqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">torque</span><span class="p">))</span>
+
+    <span class="c1"># Subscribe the actuator to the torque message.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="s2">&quot;wheel_1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add the state recorder to the task</span>
+    <span class="c1"># This recorder will print all the states of the system,</span>
+    <span class="c1"># which may not very useful for users, since this is an array</span>
+    <span class="c1"># containing the minimal-coordinates of the multi-body system.</span>
+    <span class="c1"># However, the data is used in ``mujoco.visualize``.</span>
+    <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">stateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># The ``bodyStateRecorder`` is perhaps are more useful recorder</span>
+    <span class="c1"># for users. The message being recorded is of type ``SCStatesMsgPayload``,</span>
+    <span class="c1"># which contains the (inertial) position, velocity, attitude, and angular</span>
+    <span class="c1"># velocity of the &quot;origin&quot; site of the &quot;hub&quot; body.</span>
+    <span class="c1"># In this system, a &#39;body&#39; is a 3D rigid object. &#39;Sites&#39; are essentially</span>
+    <span class="c1"># frames fixed on a &#39;body&#39;. Each site has a ``stateOutMsg``, which reports</span>
+    <span class="c1"># the state of this frame. More than one site can be attached to a body.</span>
+    <span class="c1"># All bodies come with two sites by default: the &#39;origin&#39; site (accesible</span>
+    <span class="c1"># with ``getBody(&quot;body&quot;).getOrigin()``) and the &#39;center of mass&#39; site</span>
+    <span class="c1"># (accesible with ``getBody(&quot;body&quot;).getCenterOfMass()``).</span>
+    <span class="c1"># The &#39;origin&#39; frame is the frame in which all sub-elements of the body</span>
+    <span class="c1"># are defined (for example, sub-bodies, joints, geometries, etc.).</span>
+    <span class="c1"># The &#39;center of mass&#39;, as the name suggests, is the frame located at the</span>
+    <span class="c1"># center of mass of the body.</span>
+    <span class="n">bodyStateRecorder</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;hub&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">bodyStateRecorder</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Run the simulation for 60 seconds</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Change the torque to -2 N*m</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=-</span><span class="n">torque</span><span class="p">))</span>
+
+    <span class="c1"># Run the simulation for another 60 seconds</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Plot the attitude of the hub body</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">bodyStateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+                <span class="n">att</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span>
+                <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hub sigma [</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\sigma_</span><span class="si">{BN}</span><span class="s2">$ [rad]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Visualize the system in a 3D environment</span>
+    <span class="k">if</span> <span class="n">visualize</span><span class="p">:</span>
+        <span class="n">speedUp</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">mujoco</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span>
+            <span class="n">stateRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">stateRecorder</span><span class="o">.</span><span class="n">qpos</span><span class="p">),</span> <span class="n">scene</span><span class="p">,</span> <span class="n">speedUp</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

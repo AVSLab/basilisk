@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: pinholeCamera &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="pinholeCamera" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">navigation</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">pinholeCamera</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetHeading/index.html">planetHeading</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetNav/index.html">planetNav</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleNav/index.html">simpleNav</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">navigation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">pinholeCamera</a></li>
+      <li class="breadcrumb-item active">Module: pinholeCamera</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/navigation/pinholeCamera/pinholeCamera.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pinholecamera">
+<span id="pinholecamera"></span><h1>Module: pinholeCamera<a class="headerlink" href="#module-pinholecamera" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module simulates a camera pinhole model that computes landmark pixels as seen by a spacecraft.
+It reads the planet’s ephemeris and spacecraft state messages as inputs. It outputs a vector of landmark messages.</p>
+<p>The module can also account for Sun’s lighting constraint by setting a mask angle.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The module assumes a landmark is characterized by its position and surface normal (to check field of view and lighting conditions). Diffuse reflection of the light is assumed thus the reflected ray is aligned with the surface normal. Under the previous assumptions, the landmark can be thought as an infinitesimal surface element.</p>
+<p>The pinhole camera model lacks ray-tracing capabilities. Consequently, when using a landmark distribution based on a non-convex shape, it is possible that false positives occur. This means that landmarks that are not visible can be marked as such.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ephemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>planet ephemeris input message.</p></td>
+</tr>
+<tr class="row-odd"><td><p>scStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of sc state input messages.</p></td>
+</tr>
+<tr class="row-even"><td><p>landmarkOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LandmarkMsgPayload.html#landmarkmsgpayload"><span class="std std-ref">LandmarkMsgPayload</span></a></p></td>
+<td><p>vector of landmark messages.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">pinholeCamera</span></code> module handles the following behavior:</p>
+<ol class="arabic simple">
+<li><p>Reads in the spacecraft’s state using the <code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code> and planet’s ephemeris using the <code class="docutils literal notranslate"><span class="pre">ephemerisInMsg</span></code> input message</p></li>
+<li><p>Computes spacecraft position <code class="docutils literal notranslate"><span class="pre">r_BP_P</span></code> and orientation with respect to planet frame <code class="docutils literal notranslate"><span class="pre">dcm_BP</span></code>. It also computes planet to Sun’s unit-vector in planet frame <code class="docutils literal notranslate"><span class="pre">e_SP_P</span></code>.</p></li>
+<li><p>It loops through each landmark determining if it is within camera field of view and illuminated by Sun.</p></li>
+<li><p>If the previous conditions are met, the landmark pixel is saved.</p></li>
+<li><p>It writes a vector of <code class="docutils literal notranslate"><span class="pre">landmarkOutMsgs</span></code> messages for each landmark.</p></li>
+</ol>
+<section id="determining-landmark-pixels">
+<h3>Determining Landmark Pixels<a class="headerlink" href="#determining-landmark-pixels" title="Link to this heading"></a></h3>
+<p>By assuming <span class="math notranslate nohighlight">\(z\)</span> as the focal direction, the pinhole camera model maps a 3D point to 2D image plane coordinates as:</p>
+<div class="math notranslate nohighlight" id="equation-eq-pixel-1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-pixel-1" title="Link to this equation"></a></span>\[\begin{split}\begin{bmatrix}u\\ v\end{bmatrix} = \frac{f}{z}\begin{bmatrix}x\\y\end{bmatrix}\end{split}\]</div>
+<p>Since the image is digital, the pixel is defined by</p>
+<div class="math notranslate nohighlight" id="equation-eq-pixel-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-pixel-2" title="Link to this equation"></a></span>\[\begin{split}p_x = \begin{cases}\text{ceil}(u/w_p)\&gt;\&gt;\&gt;\&gt;\text{if}\&gt;\&gt;u\geq 0\\\text{floor}(u/w_p)\&gt;\&gt;\text{if}\&gt;\&gt;u&lt;0\end{cases}\&gt;\&gt;\&gt;\&gt;\&gt;\&gt;\&gt;\&gt; p_y = \begin{cases}\text{ceil}(v/w_p)\&gt;\&gt;\&gt;\&gt;\text{if}\&gt;\&gt;v\geq 0\\\text{floor}(v/w_p)\&gt;\&gt;\text{if}\&gt;\&gt;v&lt;0\end{cases}\end{split}\]</div>
+<figure class="align-center" id="id2">
+<span id="glpixelsketch"></span><img alt="../../../../_images/camera.png" src="../../../../_images/camera.png" />
+<figcaption>
+<p><span class="caption-text">Figure 1: Diagram of pinhole camera</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>A landmark is marked as visible if it pass the subsequent checks. The first check is that the landmark is illuminated by the Sun, thus</p>
+<div class="math notranslate nohighlight" id="equation-eq-check-landmark-1">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-check-landmark-1" title="Link to this equation"></a></span>\[\pi/2 - \arccos(\mathbf{e}^{P}_{SP}\cdot\mathbf{n}^{P}_{L}) \geq \theta_{Sun}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{e}^{P}_{SP}\)</span> is planet to Sun unit-vector, <span class="math notranslate nohighlight">\(\mathbf{n}^{P}_{L}\)</span> is the landmark normal and <span class="math notranslate nohighlight">\(\theta_{Sun}\)</span> Sun’s mask angle.</p>
+<p>The following checks first filter landmarks that are behind the camera focal direction <span class="math notranslate nohighlight">\(\mathbf{k}^{P}_{C}\)</span>. Then, it eliminates the landmarks that do not reflect light to the camera:</p>
+<div class="math notranslate nohighlight" id="equation-eq-check-landmark-2">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-check-landmark-2" title="Link to this equation"></a></span>\[\pi/2 - \arccos(-\mathbf{k}^{P}_{C}\cdot\mathbf{e}^{P}_{BL}) \geq 0\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-check-landmark-3">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-check-landmark-3" title="Link to this equation"></a></span>\[\pi/2 - \arccos(-\mathbf{k}^{P}_{C}\cdot\mathbf{n}^{P}_{L}) \geq 0\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{k}^{P}_{C}\)</span> is the camera focal direction and <span class="math notranslate nohighlight">\(\mathbf{e}^{P}_{BL}\)</span> is the unit-vector from landmark to spacecraft.</p>
+<p>Finally, for the remaining landmarks, the ones that are not within camera field of view are also eliminated.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>To use this module, instantiate the class and provide it with camera parameters and a landmark distribution. The camera parameters comprise: horizontal number of pixel; vertical number of pixel; pixel width; focal length; direction cosine matrix of camera w.r.t. body frame; Sun’s mask angle (optional). The landmark distribution is added using the <code class="docutils literal notranslate"><span class="pre">addLandmark(pos,</span> <span class="pre">normal)</span></code> method. The module has to be subscribed to a planet ephemeris message <a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a> and a spacecraft state message <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a>.</p>
+<p>An instance of pinholeCamera, alongside necessary user-supplied parameters, can be created by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">camera</span> <span class="o">=</span> <span class="n">pinholeCamera</span><span class="o">.</span><span class="n">PinholeCamera</span><span class="p">()</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;camera&quot;</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">nxPixel</span> <span class="o">=</span> <span class="mi">2048</span> <span class="c1"># Sets number of horizontal pixels</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">nyPixel</span> <span class="o">=</span> <span class="mi">1536</span> <span class="c1"># Sets number of vertical pixels</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">wPixel</span> <span class="o">=</span> <span class="p">(</span><span class="mf">17.3</span><span class="o">*</span><span class="mf">1e-3</span><span class="p">)</span><span class="o">/</span><span class="mi">2048</span> <span class="c1"># Sets pixel width</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">25</span><span class="o">*</span><span class="mf">1e-3</span> <span class="c1"># Sets camera focal length</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">maskSun</span> <span class="o">=</span> <span class="mi">0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span> <span class="c1"># Sets Sun&#39;s mask angle (optional)</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">dcm_CB</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># Sets dcm of camera w.r.t. spacecraft body (focal direction is [0,0,1] in camera frame)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lmk</span><span class="p">):</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">addLandmark</span><span class="p">(</span><span class="n">pos_lmk</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">normal_lmk</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># Adds a landmark</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">ephemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemConverter</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># Sets planet ephemeris message</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span> <span class="c1"># Set spacecraft state message</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">camera</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">maskSun</span></code> variable is optional and defaults to -90º.  This means by default the entire surface is lighted. Set it to a positive value to consider the lighting constraint.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">processBatch(rBatch_BP_P,</span> <span class="pre">mrpBatch_BP,</span> <span class="pre">eBatch_SP_P,</span> <span class="pre">show_progress)</span></code> method allows to execute the module detached from the <code class="docutils literal notranslate"><span class="pre">SimulationBaseClass</span></code>. It can be called as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preallocate output pixels</span>
+<span class="n">pixelBatchLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n_lmk</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># Process pinhole camera as a batch</span>
+<span class="n">e_SP_P</span> <span class="o">=</span> <span class="o">-</span><span class="n">r_PN_P</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_PN_P</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="c1"># Unit-vector from planet to Sun</span>
+<span class="n">camera</span><span class="o">.</span><span class="n">processBatch</span><span class="p">(</span><span class="n">r_BP_P</span><span class="p">,</span> <span class="n">mrp_BP</span><span class="p">,</span> <span class="n">e_SP_P</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Execute method (last argument is a bool, when True it shows progress status)</span>
+<span class="n">isvisibleBatchLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">isvisibleBatchLmk</span><span class="p">)</span> <span class="c1"># Save visibility status</span>
+<span class="n">pixelBatchLmk</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">pixelBatchLmk</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">n_lmk</span><span class="p">]</span> <span class="c1"># Save px</span>
+<span class="n">pixelBatchLmk</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">pixelBatchLmk</span><span class="p">)[:,</span> <span class="n">n_lmk</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">n_lmk</span><span class="p">]</span> <span class="c1"># Save py</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413PinholeCamera">
+<span id="_CPPv313PinholeCamera"></span><span id="_CPPv213PinholeCamera"></span><span id="PinholeCamera"></span><span class="target" id="class_pinhole_camera"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PinholeCamera</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv413PinholeCamera" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;pinholeCamera.h&gt;</em></div>
+<p>Pinhole camera class. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera13PinholeCameraEv">
+<span id="_CPPv3N13PinholeCamera13PinholeCameraEv"></span><span id="_CPPv2N13PinholeCamera13PinholeCameraEv"></span><span id="PinholeCamera::PinholeCamera"></span><span class="target" id="class_pinhole_camera_1a85197f8901712c4766083bd38177d7ff"></span><span class="sig-name descname"><span class="n"><span class="pre">PinholeCamera</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera13PinholeCameraEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an instance of the <a class="reference internal" href="#class_pinhole_camera"><span class="std std-ref">PinholeCamera</span></a> class with a prescribed focal direction in camera frame and -90º of Sun’s mask angle (that is, no lighting constraint). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCameraD0Ev">
+<span id="_CPPv3N13PinholeCameraD0Ev"></span><span id="_CPPv2N13PinholeCameraD0Ev"></span><span id="PinholeCamera::~PinholeCamera"></span><span class="target" id="class_pinhole_camera_1a699d18b6eff230cc56f33add593f7cdf"></span><span class="sig-name descname"><span class="n"><span class="pre">~PinholeCamera</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCameraD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Empty destructor method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera11UpdateStateE8uint64_t">
+<span id="_CPPv3N13PinholeCamera11UpdateStateE8uint64_t"></span><span id="_CPPv2N13PinholeCamera11UpdateStateE8uint64_t"></span><span id="PinholeCamera::UpdateState__uint64_t"></span><span class="target" id="class_pinhole_camera_1ae36ff5197d77b417c3e71abe2067e162"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update module </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera5ResetE8uint64_t">
+<span id="_CPPv3N13PinholeCamera5ResetE8uint64_t"></span><span id="_CPPv2N13PinholeCamera5ResetE8uint64_t"></span><span id="PinholeCamera::Reset__uint64_t"></span><span class="target" id="class_pinhole_camera_1a65cc33ec1640f54451381aa98ec0cc5c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera17readInputMessagesEv">
+<span id="_CPPv3N13PinholeCamera17readInputMessagesEv"></span><span id="_CPPv2N13PinholeCamera17readInputMessagesEv"></span><span id="PinholeCamera::readInputMessages"></span><span class="target" id="class_pinhole_camera_1a5d1dad5bc190c26c2179d6422d626f30"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read module input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N13PinholeCamera19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N13PinholeCamera19writeOutputMessagesE8uint64_t"></span><span id="PinholeCamera::writeOutputMessages__uint64_t"></span><span class="target" id="class_pinhole_camera_1af59cb161d76803824a0939be287b1b4d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write module output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera11addLandmarkERN5Eigen8Vector3dERN5Eigen8Vector3dE">
+<span id="_CPPv3N13PinholeCamera11addLandmarkERN5Eigen8Vector3dERN5Eigen8Vector3dE"></span><span id="_CPPv2N13PinholeCamera11addLandmarkERN5Eigen8Vector3dERN5Eigen8Vector3dE"></span><span id="PinholeCamera::addLandmark__Eigen::Vector3dR.Eigen::Vector3dR"></span><span class="target" id="class_pinhole_camera_1a0c7037b96c8299d74728409b0d31d15e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addLandmark</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pos</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">normal</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera11addLandmarkERN5Eigen8Vector3dERN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to add landmarks </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> – landmark position in planet-rotating frame </p></li>
+<li><p><strong>normal</strong> – landmark surface normal in planet-rotating frame </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera12processBatchEN5Eigen8MatrixXdEN5Eigen8MatrixXdEN5Eigen8MatrixXdEb">
+<span id="_CPPv3N13PinholeCamera12processBatchEN5Eigen8MatrixXdEN5Eigen8MatrixXdEN5Eigen8MatrixXdEb"></span><span id="_CPPv2N13PinholeCamera12processBatchEN5Eigen8MatrixXdEN5Eigen8MatrixXdEN5Eigen8MatrixXdEb"></span><span id="PinholeCamera::processBatch__Eigen::MatrixXd.Eigen::MatrixXd.Eigen::MatrixXd.b"></span><span class="target" id="class_pinhole_camera_1a0c9397d0bcc5e732511a44657b74e095"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">processBatch</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rBatch_BP_P</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mrpBatch_BP</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">eBatch_SP_P</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">show_progress</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera12processBatchEN5Eigen8MatrixXdEN5Eigen8MatrixXdEN5Eigen8MatrixXdEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Process a batch of inputs: spacecraft positions, orientation and unit-vector from planet to Sun. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rBatch_BP_P</strong> – batch of spacecraft position w.r.t. planet in planet-rotating frame </p></li>
+<li><p><strong>mrpBatch_BP</strong> – batch of spacecraft MRPs w.r.t. planet-rotating frame </p></li>
+<li><p><strong>eBatch_SP_P</strong> – batch unit-vectors from planet to Sun in planet-rotating frame </p></li>
+<li><p><strong>show_progress</strong> – boolean variable that prints batch processing status when true </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera1fE">
+<span id="_CPPv3N13PinholeCamera1fE"></span><span id="_CPPv2N13PinholeCamera1fE"></span><span id="PinholeCamera::f__double"></span><span class="target" id="class_pinhole_camera_1a76df6139e471d338749e4d58ea4dfde0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera1fE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] camera focal length </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera4FOVxE">
+<span id="_CPPv3N13PinholeCamera4FOVxE"></span><span id="_CPPv2N13PinholeCamera4FOVxE"></span><span id="PinholeCamera::FOVx__double"></span><span class="target" id="class_pinhole_camera_1ac1eae69332e2b0a4fafcbef37f0f5efd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FOVx</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera4FOVxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] horizontal field of view </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera4FOVyE">
+<span id="_CPPv3N13PinholeCamera4FOVyE"></span><span id="_CPPv2N13PinholeCamera4FOVyE"></span><span id="PinholeCamera::FOVy__double"></span><span class="target" id="class_pinhole_camera_1af77e8e9065c6cb319be9c833a9c3c21f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FOVy</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera4FOVyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] vertical field of view </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera7nxPixelE">
+<span id="_CPPv3N13PinholeCamera7nxPixelE"></span><span id="_CPPv2N13PinholeCamera7nxPixelE"></span><span id="PinholeCamera::nxPixel__double"></span><span class="target" id="class_pinhole_camera_1aae4cfacf533705c457ffd9ad7965d5ef"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nxPixel</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera7nxPixelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of horizontal pixels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera7nyPixelE">
+<span id="_CPPv3N13PinholeCamera7nyPixelE"></span><span id="_CPPv2N13PinholeCamera7nyPixelE"></span><span id="PinholeCamera::nyPixel__double"></span><span class="target" id="class_pinhole_camera_1ae2ec4a2486652cd33c806e485f3a5f43"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nyPixel</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera7nyPixelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of vertical pixels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6wPixelE">
+<span id="_CPPv3N13PinholeCamera6wPixelE"></span><span id="_CPPv2N13PinholeCamera6wPixelE"></span><span id="PinholeCamera::wPixel__double"></span><span class="target" id="class_pinhole_camera_1abf30ddb1966b4d12f8407319539bb039"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wPixel</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6wPixelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] pixel width </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6dcm_CBE">
+<span id="_CPPv3N13PinholeCamera6dcm_CBE"></span><span id="_CPPv2N13PinholeCamera6dcm_CBE"></span><span id="PinholeCamera::dcm_CB__Eigen::Matrix3d"></span><span class="target" id="class_pinhole_camera_1a8adc8227389cc1effdd5574c97e8fecb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_CB</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6dcm_CBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] dcm from body to camera </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera12isvisibleLmkE">
+<span id="_CPPv3N13PinholeCamera12isvisibleLmkE"></span><span id="_CPPv2N13PinholeCamera12isvisibleLmkE"></span><span id="PinholeCamera::isvisibleLmk__Eigen::VectorXi"></span><span class="target" id="class_pinhole_camera_1ae1e75658cc7a193a5a26795940fb0e95"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXi</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isvisibleLmk</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera12isvisibleLmkE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] flag telling if a landmark is visible </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera8pixelLmkE">
+<span id="_CPPv3N13PinholeCamera8pixelLmkE"></span><span id="_CPPv2N13PinholeCamera8pixelLmkE"></span><span id="PinholeCamera::pixelLmk__Eigen::MatrixXi"></span><span class="target" id="class_pinhole_camera_1ab2c86fdc674f3689e6bd930488452b40"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXi</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLmk</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera8pixelLmkE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] pixels for landmarks </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6r_LP_PE">
+<span id="_CPPv3N13PinholeCamera6r_LP_PE"></span><span id="_CPPv2N13PinholeCamera6r_LP_PE"></span><span id="PinholeCamera::r_LP_P__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_pinhole_camera_1a09a725531be5ada55562b1e54442bdde"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6r_LP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] landmark positions in planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera4nL_PE">
+<span id="_CPPv3N13PinholeCamera4nL_PE"></span><span id="_CPPv2N13PinholeCamera4nL_PE"></span><span id="PinholeCamera::nL_P__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_pinhole_camera_1a3f2d75a5a118dc942d8f339d7e4ae27c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nL_P</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera4nL_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] landmark normals in planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera7maskSunE">
+<span id="_CPPv3N13PinholeCamera7maskSunE"></span><span id="_CPPv2N13PinholeCamera7maskSunE"></span><span id="PinholeCamera::maskSun__double"></span><span class="target" id="class_pinhole_camera_1a1f36a15ea031b313aa470474bdb8cc3f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maskSun</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera7maskSunE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] minimum slant range for Sun lighting </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera14ephemerisInMsgE">
+<span id="_CPPv3N13PinholeCamera14ephemerisInMsgE"></span><span id="_CPPv2N13PinholeCamera14ephemerisInMsgE"></span><span id="PinholeCamera::ephemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_pinhole_camera_1a0e2a657d3ded73cd701e955781e04688"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ephemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera14ephemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>planet ephemeris input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera12scStateInMsgE">
+<span id="_CPPv3N13PinholeCamera12scStateInMsgE"></span><span id="_CPPv2N13PinholeCamera12scStateInMsgE"></span><span id="PinholeCamera::scStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_pinhole_camera_1a71076bc051cb05a58fdfcffff1307514"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera12scStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft state input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera15spacecraftStateE">
+<span id="_CPPv3N13PinholeCamera15spacecraftStateE"></span><span id="_CPPv2N13PinholeCamera15spacecraftStateE"></span><span id="PinholeCamera::spacecraftState__SCStatesMsgPayload"></span><span class="target" id="class_pinhole_camera_1a300df83722901e664c70ab2139b5caec"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftState</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera15spacecraftStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>input spacecraft state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera15ephemerisPlanetE">
+<span id="_CPPv3N13PinholeCamera15ephemerisPlanetE"></span><span id="_CPPv2N13PinholeCamera15ephemerisPlanetE"></span><span id="PinholeCamera::ephemerisPlanet__EphemerisMsgPayload"></span><span class="target" id="class_pinhole_camera_1af46568089c993e2a2e0171b3cb6789e3"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ephemerisPlanet</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera15ephemerisPlanetE" title="Link to this definition"></a><br /></dt>
+<dd><p>input planet ephemeris </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera15landmarkOutMsgsE">
+<span id="_CPPv3N13PinholeCamera15landmarkOutMsgsE"></span><span id="_CPPv2N13PinholeCamera15landmarkOutMsgsE"></span><span id="PinholeCamera::landmarkOutMsgs__std::vector:Message:LandmarkMsgPayload:P:"></span><span class="target" id="class_pinhole_camera_1abc462f3d50973ac91e4c7cc2bcb04f7f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LandmarkMsgPayload.html#_CPPv418LandmarkMsgPayload" title="LandmarkMsgPayload"><span class="n"><span class="pre">LandmarkMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">landmarkOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera15landmarkOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of landmark messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera17landmarkMsgBufferE">
+<span id="_CPPv3N13PinholeCamera17landmarkMsgBufferE"></span><span id="_CPPv2N13PinholeCamera17landmarkMsgBufferE"></span><span id="PinholeCamera::landmarkMsgBuffer__std::vector:LandmarkMsgPayload:"></span><span class="target" id="class_pinhole_camera_1a15045d72a0b61d938bb52f9af7f03c58"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LandmarkMsgPayload.html#_CPPv418LandmarkMsgPayload" title="LandmarkMsgPayload"><span class="n"><span class="pre">LandmarkMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">landmarkMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera17landmarkMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of landmark output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera9bskLoggerE">
+<span id="_CPPv3N13PinholeCamera9bskLoggerE"></span><span id="_CPPv2N13PinholeCamera9bskLoggerE"></span><span id="PinholeCamera::bskLogger__BSKLogger"></span><span class="target" id="class_pinhole_camera_1af5f76d1e2cbc77d7c70a900dc78aa570"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera13pixelBatchLmkE">
+<span id="_CPPv3N13PinholeCamera13pixelBatchLmkE"></span><span id="_CPPv2N13PinholeCamera13pixelBatchLmkE"></span><span id="PinholeCamera::pixelBatchLmk__Eigen::MatrixXi"></span><span class="target" id="class_pinhole_camera_1ac2c0268d1ee30901044d9c0c886e479a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXi</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelBatchLmk</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera13pixelBatchLmkE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] batch of landmark pixels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera17isvisibleBatchLmkE">
+<span id="_CPPv3N13PinholeCamera17isvisibleBatchLmkE"></span><span id="_CPPv2N13PinholeCamera17isvisibleBatchLmkE"></span><span id="PinholeCamera::isvisibleBatchLmk__Eigen::MatrixXi"></span><span class="target" id="class_pinhole_camera_1a4c30f583cf2574319f169f41c63b0405"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXi</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isvisibleBatchLmk</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera17isvisibleBatchLmkE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] batch of landmark visibility stauts </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera13processInputsEv">
+<span id="_CPPv3N13PinholeCamera13processInputsEv"></span><span id="_CPPv2N13PinholeCamera13processInputsEv"></span><span id="PinholeCamera::processInputs"></span><span class="target" id="class_pinhole_camera_1ae76799e92a3540fa6a391d44b1fa55a8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">processInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera13processInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Process input messages to module variables </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera13loopLandmarksEv">
+<span id="_CPPv3N13PinholeCamera13loopLandmarksEv"></span><span id="_CPPv2N13PinholeCamera13loopLandmarksEv"></span><span id="PinholeCamera::loopLandmarks"></span><span class="target" id="class_pinhole_camera_1aad3be1b76e943d570f6b40a0170fc217"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loopLandmarks</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera13loopLandmarksEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Loop through landmarks </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera13checkLightingEN5Eigen8Vector3dE">
+<span id="_CPPv3N13PinholeCamera13checkLightingEN5Eigen8Vector3dE"></span><span id="_CPPv2N13PinholeCamera13checkLightingEN5Eigen8Vector3dE"></span><span id="PinholeCamera::checkLighting__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1a3dd8e28ee5b6c2e83c567f8abbfa56e4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">checkLighting</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nLmk</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera13checkLightingEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Check lighting condition of a landmark </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nLmk</strong> – landmark surface normal in planet-rotating frame </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera8checkFOVEN5Eigen8Vector2iEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N13PinholeCamera8checkFOVEN5Eigen8Vector2iEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N13PinholeCamera8checkFOVEN5Eigen8Vector2iEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="PinholeCamera::checkFOV__Eigen::Vector2i.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1aaea8475f7fff2ba36efba254e3d0b422"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">checkFOV</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector2i</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pLmk</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rLmk</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nLmk</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera8checkFOVEN5Eigen8Vector2iEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if a landmark is within camera field of view </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pLmk</strong> – landmark pixel </p></li>
+<li><p><strong>rLmk</strong> – landmark position in planet-rotating frame </p></li>
+<li><p><strong>nLmk</strong> – landmark surface normal in planet-rotating frame </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera12computePixelEN5Eigen8Vector3dE">
+<span id="_CPPv3N13PinholeCamera12computePixelEN5Eigen8Vector3dE"></span><span id="_CPPv2N13PinholeCamera12computePixelEN5Eigen8Vector3dE"></span><span id="PinholeCamera::computePixel__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1abf1cea7a20f321ac32960c6788bafda9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector2i</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePixel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rLmk</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13PinholeCamera12computePixelEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute pixel from 3D coordinates </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rLmk</strong> – landmark position in planet-rotating frame </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera1nE">
+<span id="_CPPv3N13PinholeCamera1nE"></span><span id="_CPPv2N13PinholeCamera1nE"></span><span id="PinholeCamera::n__i"></span><span class="target" id="class_pinhole_camera_1af59c030a9250b4935fd80de76e2f6a41"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera1nE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of landmarks </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6r_PN_NE">
+<span id="_CPPv3N13PinholeCamera6r_PN_NE"></span><span id="_CPPv2N13PinholeCamera6r_PN_NE"></span><span id="PinholeCamera::r_PN_N__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1a31a105f83c6eef5a9c35fb504ea90de3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] current planet position in inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6r_BP_PE">
+<span id="_CPPv3N13PinholeCamera6r_BP_PE"></span><span id="_CPPv2N13PinholeCamera6r_BP_PE"></span><span id="PinholeCamera::r_BP_P__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1a5abeb92c881de9dd75d3d64fa1f57c84"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6r_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] current spacecraft position w.r.t. planet in planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6dcm_BPE">
+<span id="_CPPv3N13PinholeCamera6dcm_BPE"></span><span id="_CPPv2N13PinholeCamera6dcm_BPE"></span><span id="PinholeCamera::dcm_BP__Eigen::Matrix3d"></span><span class="target" id="class_pinhole_camera_1af422eabe5c5414acc6603d61a2c199b3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BP</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6dcm_BPE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] current direction cosine matrix from planet to spacecraft body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6dcm_PNE">
+<span id="_CPPv3N13PinholeCamera6dcm_PNE"></span><span id="_CPPv2N13PinholeCamera6dcm_PNE"></span><span id="PinholeCamera::dcm_PN__Eigen::Matrix3d"></span><span class="target" id="class_pinhole_camera_1ad18521d1ec7a8fc2c5955cbaaf89168e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6dcm_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] current direction cosine matrix from inertial to planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera6e_SP_PE">
+<span id="_CPPv3N13PinholeCamera6e_SP_PE"></span><span id="_CPPv2N13PinholeCamera6e_SP_PE"></span><span id="PinholeCamera::e_SP_P__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1a980a9a4f3ebc5426fb45049981b8af52"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">e_SP_P</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera6e_SP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] current unit-vector pointing from planet to Sun in planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera4eC_CE">
+<span id="_CPPv3N13PinholeCamera4eC_CE"></span><span id="_CPPv2N13PinholeCamera4eC_CE"></span><span id="PinholeCamera::eC_C__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1ad6fee1106950433281cf7a764e9319ea"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eC_C</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera4eC_CE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] focal direction unit-vector in camera frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13PinholeCamera4eC_PE">
+<span id="_CPPv3N13PinholeCamera4eC_PE"></span><span id="_CPPv2N13PinholeCamera4eC_PE"></span><span id="PinholeCamera::eC_P__Eigen::Vector3d"></span><span class="target" id="class_pinhole_camera_1a5404b4b951830af4e0dcdd1117b6f949"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eC_P</span></span></span><a class="headerlink" href="#_CPPv4N13PinholeCamera4eC_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] focal direction unit-vector in planet frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="pinholeCamera" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: planetEphemeris &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="planetEphemeris" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">planetEphemeris</a></li>
+      <li class="breadcrumb-item active">Module: planetEphemeris</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/planetEphemeris/planetEphemeris.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-planetephemeris">
+<span id="planetephemeris"></span><h1>Module: planetEphemeris<a class="headerlink" href="#module-planetephemeris" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The planetEphemeris module uses classical heliocentric orbit elements to specify a planet’s
+position and velocity vectors.</p>
+<p>Optionally, the planet’s orientation can also be specified through a right ascension angle, a declination angle, and a location sidereal time at epoch.  The planet rotation about its third (polar) axis can be specified as well.  If the planet attitude information is not complete or missing then an inertially fixed zero planet orientation is modeled.  The module is able to receive a stack or vector of classical orbit elements and orientation information to output a series of planet ephemeris messages. The module
+<a class="reference download internal" download="" href="../../../../_downloads/4262a70cf6bf05f707076d1a23773117/Basilisk-planetEphemeris-20190422.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function, how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-planet-ephemeris"></span><img alt="../../../../_images/planetEphemerisIO.svg" src="../../../../_images/planetEphemerisIO.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">planetEphemeris()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>planetOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>vector of planet spice state output messages</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415PlanetEphemeris">
+<span id="_CPPv315PlanetEphemeris"></span><span id="_CPPv215PlanetEphemeris"></span><span id="PlanetEphemeris"></span><span class="target" id="class_planet_ephemeris"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PlanetEphemeris</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv415PlanetEphemeris" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;planetEphemeris.h&gt;</em></div>
+<p>planet ephemeris class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris15PlanetEphemerisEv">
+<span id="_CPPv3N15PlanetEphemeris15PlanetEphemerisEv"></span><span id="_CPPv2N15PlanetEphemeris15PlanetEphemerisEv"></span><span id="PlanetEphemeris::PlanetEphemeris"></span><span class="target" id="class_planet_ephemeris_1a4c82df861a3aaa0122f4a6dfa33e1870"></span><span class="sig-name descname"><span class="n"><span class="pre">PlanetEphemeris</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris15PlanetEphemerisEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This constructor initializes the variables. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemerisD0Ev">
+<span id="_CPPv3N15PlanetEphemerisD0Ev"></span><span id="_CPPv2N15PlanetEphemerisD0Ev"></span><span id="PlanetEphemeris::~PlanetEphemeris"></span><span class="target" id="class_planet_ephemeris_1a3f8704b04d38e4c57a19220e36836fab"></span><span class="sig-name descname"><span class="n"><span class="pre">~PlanetEphemeris</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15PlanetEphemerisD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module deconstructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris5ResetE8uint64_t">
+<span id="_CPPv3N15PlanetEphemeris5ResetE8uint64_t"></span><span id="_CPPv2N15PlanetEphemeris5ResetE8uint64_t"></span><span id="PlanetEphemeris::Reset__uint64_t"></span><span class="target" id="class_planet_ephemeris_1aef2ec94a02d7429614f3113326de0ed2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris11UpdateStateE8uint64_t">
+<span id="_CPPv3N15PlanetEphemeris11UpdateStateE8uint64_t"></span><span id="_CPPv2N15PlanetEphemeris11UpdateStateE8uint64_t"></span><span id="PlanetEphemeris::UpdateState__uint64_t"></span><span class="target" id="class_planet_ephemeris_1ae122d058133cbc58919c4f0160804e37"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This update routine loops over all the planets and creates their heliocentric position and velocity vectors at the current time. If the planet orientation information is provided, then this is computed as well. The default orientation information is a zero orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current clock time for the simulation </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris14setPlanetNamesENSt6vectorINSt6stringEEE">
+<span id="_CPPv3N15PlanetEphemeris14setPlanetNamesENSt6vectorINSt6stringEEE"></span><span id="_CPPv2N15PlanetEphemeris14setPlanetNamesENSt6vectorINSt6stringEEE"></span><span id="PlanetEphemeris::setPlanetNames__std::vector:ss:"></span><span class="target" id="class_planet_ephemeris_1adb6cfc084373e290e200cc83b82c1440"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPlanetNames</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetNames</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris14setPlanetNamesENSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>add list of planet names </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris13planetOutMsgsE">
+<span id="_CPPv3N15PlanetEphemeris13planetOutMsgsE"></span><span id="_CPPv2N15PlanetEphemeris13planetOutMsgsE"></span><span id="PlanetEphemeris::planetOutMsgs__std::vector:Message:SpicePlanetStateMsgPayload:P:"></span><span class="target" id="class_planet_ephemeris_1a9f4c0fbeda0c3d57094513cb70d3a7b0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris13planetOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; vector of planet state output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris14planetElementsE">
+<span id="_CPPv3N15PlanetEphemeris14planetElementsE"></span><span id="_CPPv2N15PlanetEphemeris14planetElementsE"></span><span id="PlanetEphemeris::planetElements__std::vector:ClassicElements:"></span><span class="target" id="class_planet_ephemeris_1aa5895cf7c37ee39641584d0951747691"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/utilities/orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetElements</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris14planetElementsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Vector of planet classical orbit elements </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris14rightAscensionE">
+<span id="_CPPv3N15PlanetEphemeris14rightAscensionE"></span><span id="_CPPv2N15PlanetEphemeris14rightAscensionE"></span><span id="PlanetEphemeris::rightAscension__std::vector:double:"></span><span class="target" id="class_planet_ephemeris_1a13d9a82fc9f4de0425a4f0ac65e50529"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rightAscension</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris14rightAscensionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] right ascension of the north pole rotation axis (pos. 3-axis) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris11declinationE">
+<span id="_CPPv3N15PlanetEphemeris11declinationE"></span><span id="_CPPv2N15PlanetEphemeris11declinationE"></span><span id="PlanetEphemeris::declination__std::vector:double:"></span><span class="target" id="class_planet_ephemeris_1a6c0f306af0f661369df277cfc3bda122"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">declination</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris11declinationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] Declination of the north pole rotation axis (neg. 2-axis) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris4lst0E">
+<span id="_CPPv3N15PlanetEphemeris4lst0E"></span><span id="_CPPv2N15PlanetEphemeris4lst0E"></span><span id="PlanetEphemeris::lst0__std::vector:double:"></span><span class="target" id="class_planet_ephemeris_1af4a0423d700c2b98140fe1f643ecb475"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lst0</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris4lst0E" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] initial planet local sidereal time angle (pos. 3-axis) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris7rotRateE">
+<span id="_CPPv3N15PlanetEphemeris7rotRateE"></span><span id="_CPPv2N15PlanetEphemeris7rotRateE"></span><span id="PlanetEphemeris::rotRate__std::vector:double:"></span><span class="target" id="class_planet_ephemeris_1a86780caeac73d5b9940298fd7d023052"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rotRate</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris7rotRateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r/s] planet rotation rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris9bskLoggerE">
+<span id="_CPPv3N15PlanetEphemeris9bskLoggerE"></span><span id="_CPPv2N15PlanetEphemeris9bskLoggerE"></span><span id="PlanetEphemeris::bskLogger__BSKLogger"></span><span class="target" id="class_planet_ephemeris_1ae2465bdc1e1856ca4bc5d43e50988eb4"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris11planetNamesE">
+<span id="_CPPv3N15PlanetEphemeris11planetNamesE"></span><span id="_CPPv2N15PlanetEphemeris11planetNamesE"></span><span id="PlanetEphemeris::planetNames__std::vector:ss:"></span><span class="target" id="class_planet_ephemeris_1a1a3944d50ce4cc0d6c66387dcf42ffda"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetNames</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris11planetNamesE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Vector of planet names </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris9epochTimeE">
+<span id="_CPPv3N15PlanetEphemeris9epochTimeE"></span><span id="_CPPv2N15PlanetEphemeris9epochTimeE"></span><span id="PlanetEphemeris::epochTime__double"></span><span class="target" id="class_planet_ephemeris_1a91937d36b971dc06b3b0339564f01921"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochTime</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris9epochTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] time of provided planet ephemeris epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15PlanetEphemeris19computeAttitudeFlagE">
+<span id="_CPPv3N15PlanetEphemeris19computeAttitudeFlagE"></span><span id="_CPPv2N15PlanetEphemeris19computeAttitudeFlagE"></span><span id="PlanetEphemeris::computeAttitudeFlag__i"></span><span class="target" id="class_planet_ephemeris_1a951ed7686ac3a10c6ef4fbb275baaf34"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAttitudeFlag</span></span></span><a class="headerlink" href="#_CPPv4N15PlanetEphemeris19computeAttitudeFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; flag indicating if the planet orienation information is provided </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="planetEphemeris" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

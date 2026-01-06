@@ -1,0 +1,568 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: cModuleTemplate &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="cModuleTemplate" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">moduleTemplates</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#general-purpose">General Purpose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#usage-of-template-folders">Usage of Template Folders</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#usage-of-makedraftmodules-py">Usage of <code class="docutils literal notranslate"><span class="pre">makeDraftModules.py</span></code></a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../autoCModule/index.html">autoCModule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoCppModule/index.html">autoCppModule</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">cModuleTemplate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cppModuleTemplate/index.html">cppModuleTemplate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">moduleTemplates</a></li>
+          <li class="breadcrumb-item"><a href="index.html">cModuleTemplate</a></li>
+      <li class="breadcrumb-item active">Module: cModuleTemplate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/moduleTemplates/cModuleTemplate/cModuleTemplate.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cmoduletemplate">
+<span id="cmoduletemplate"></span><h1>Module: cModuleTemplate<a class="headerlink" href="#module-cmoduletemplate" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Provide a brief introduction to purpose and intent of this module.  This should be a short description.
+If this requires lots explanation, images, equations, etc., then use the <a class="reference internal" href="#detailed-module-description">Detailed Module Description</a>
+section below.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-fsw-module-template"></span><img alt="../../../_images/moduleIOcModuleTemplate.svg" src="../../../_images/moduleIOcModuleTemplate.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">cModuleTemplate()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dataInMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>(optional) Input message description.  Note here if this message is optional, and what the default behavior
+is if this message is not provided.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>Output message description.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>Provide a brief introduction to the material being discussed in this report.  For example, include what the
+motivation is, maybe provide a supportive figure such as shown below, reference earlier work if needed in a
+literature review web links. Describe the module including mathematics, implementation, etc.</p>
+<section id="equations">
+<h3>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h3>
+<p>Equations can be provided with LaTeX as well.  For example, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:math:`a = b^{2}`
+</pre></div>
+</div>
+<p>produces this equation inline <span class="math notranslate nohighlight">\(a = b^{2}\)</span> equation.  In contrast, this code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>or this compact version for 1 liners:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span> <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>creates this block of math.</p>
+<div class="math notranslate nohighlight">
+\[a = b^2\]</div>
+<p>To create a numbered equation you need to add a label:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+    <span class="p">:</span><span class="n">label</span><span class="p">:</span> <span class="n">eq</span><span class="o">-</span><span class="n">fswModule</span><span class="o">-</span><span class="n">firstLaw</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>which creates this</p>
+<div class="math notranslate nohighlight" id="equation-eq-fswmodule-firstlaw">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-fswmodule-firstlaw" title="Link to this equation"></a></span>\[a = b^2\]</div>
+<p>This label can be referenced using <code class="docutils literal notranslate"><span class="pre">:eq:`eq-fswModule-firstLaw`</span></code> to cite Eq. <a class="reference internal" href="#equation-eq-fswmodule-firstlaw">(1)</a>.
+Note that these label names must be unique across all of the Basilisk RST documentation.  It is encouraged to use
+a module-unique naming scheme.</p>
+<p>To do bold math, we can’t use the popular <code class="docutils literal notranslate"><span class="pre">\bm</span></code> command.  Instead, we can use <code class="docutils literal notranslate"><span class="pre">{\bf</span> <span class="pre">u}</span></code> (regular letters) or
+<code class="docutils literal notranslate"><span class="pre">\pmb</span> <span class="pre">\omega</span></code> (greek letters).  The following math is an example of this showing both bold and un-bold letters
+next to each other:</p>
+<div class="math notranslate nohighlight" id="equation-eq-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-2" title="Link to this equation"></a></span>\[{\bf u} u = 3 \hat{\bf e}_3\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-3">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-3" title="Link to this equation"></a></span>\[\pmb \omega \omega = 2 \hat{\imath}_{\theta}\]</div>
+<p>More details on how to typeset TeX math in Sphinx can be found <a class="reference external" href="https://documentation.help/Sphinx/math.html">here</a>.</p>
+<p>If the module description requires extensive math discussion, this can be TeX’d up using the technical note
+template inside the <code class="docutils literal notranslate"><span class="pre">_Documentation</span></code> folder. A link should be included in the HTML documentation to
+the <a class="reference download internal" download="" href="../../../_downloads/9ceb680c54d8f57ac808399bcbfbf3bb/Basilisk-MODULENAME.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Detailed</span> <span class="pre">PDF</span> <span class="pre">Documentation</span></code></a>
+using the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:download:`Detailed PDF Documentation &lt;/../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf&gt;`
+</pre></div>
+</div>
+<p>The PDF technical should only be used as a last resort effort if the math is simply too complex and long to
+include in the <cite>spinx</cite> documentation.  Another option is to link to a web site, conference paper, journal
+paper, book or thesis document that discussed the mathematical developments used.</p>
+</section>
+<section id="citations">
+<h3>Citations<a class="headerlink" href="#citations" title="Link to this heading"></a></h3>
+<p>If you want to cite other papers or text, provide a web link to a paper.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>`The link text &lt;http://example.net/&gt;`__
+</pre></div>
+</div>
+<p>creates <a class="reference external" href="http://example.net/">The link text</a>.</p>
+</section>
+<section id="images-and-figures">
+<h3>Images and Figures<a class="headerlink" href="#images-and-figures" title="Link to this heading"></a></h3>
+<p>To include static, non-<code class="docutils literal notranslate"><span class="pre">pytest</span></code> generated images and figures, you must copy the web compatible image (svg, jpg, png)
+to a local sub-folder <code class="docutils literal notranslate"><span class="pre">cModuleTemplate/_Documentation/Images/</span></code>.   This keeps the modules images grouped
+within this sub-folder and contained within the main module folder.  The SVG image format is preferred as it is
+a vectorized format that renders in a higher quality.  Further, when viewed in dark mode the svg will
+automatically convert to a dark image (preserving colors).  Pixelated formats such as jpg and png remain the same
+in light and dark mode of the documentation web page.</p>
+<p>For example, to include an image (has no caption) you can use code such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">image</span><span class="p">::</span> <span class="o">/../../</span><span class="n">src</span><span class="o">/</span><span class="n">moduleTemplates</span><span class="o">/</span><span class="n">cModuleTemplate</span><span class="o">/</span><span class="n">_Documentation</span><span class="o">/</span><span class="n">Images</span><span class="o">/</span><span class="n">fig1</span><span class="o">.</span><span class="n">svg</span>
+    <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+</pre></div>
+</div>
+<p>to generate the following image.</p>
+<img alt="../../../_images/fig1.svg" class="align-center" src="../../../_images/fig1.svg" />
+<p>Note that with pixelated images such as <code class="docutils literal notranslate"><span class="pre">jpg</span></code> and <code class="docutils literal notranslate"><span class="pre">png</span></code> format save the file at twice the resolution
+that you need, then provide <code class="docutils literal notranslate"><span class="pre">:scale:</span> <span class="pre">50</span> <span class="pre">%</span></code> to shrink it to the normal size.  This way the image has
+enough resolution to look good on high-resolution displays.</p>
+<p>To include a figure (has a caption and you can add label), use the following code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">_figLabel</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">figure</span><span class="p">::</span> <span class="o">/../../</span><span class="n">src</span><span class="o">/</span><span class="n">moduleTemplates</span><span class="o">/</span><span class="n">cModuleTemplate</span><span class="o">/</span><span class="n">_Documentation</span><span class="o">/</span><span class="n">Images</span><span class="o">/</span><span class="n">fig1</span><span class="o">.</span><span class="n">svg</span>
+    <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+
+    <span class="n">Figure</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Concept</span> <span class="n">Illustration</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Math</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">this</span> <span class="n">Module</span>
+</pre></div>
+</div>
+<p>This yields</p>
+<figure class="align-center" id="id3">
+<span id="figlabel"></span><img alt="../../../_images/fig1.svg" src="../../../_images/fig1.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 2: Concept Illustration of the Math used in this Module</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>You can cite the figure using <code class="docutils literal notranslate"><span class="pre">:ref:`figLabel`</span></code>. For example, as seen in <a class="reference internal" href="#figlabel"><span class="std std-ref">Figure 2: Concept Illustration of the Math used in this Module</span></a>, the figure can
+now be referenced.</p>
+<p>More information on how to include images or figures using sphinx can be found
+<a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/directives.html#images">here</a>.  In particular, it is
+also possible to include an image as a figure which has a caption.</p>
+</section>
+<section id="tables">
+<h3>Tables<a class="headerlink" href="#tables" title="Link to this heading"></a></h3>
+<p>The standard sphinx table formatting can be used to generate tables.  More information on spinx table formatting
+can be found <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables">here</a>.
+For example, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">table</span><span class="p">::</span> <span class="n">Module</span> <span class="n">I</span><span class="o">/</span><span class="n">O</span> <span class="n">Messages</span>
+
+    <span class="o">+------------------------+------------+----------+----------+</span>
+    <span class="o">|</span> <span class="n">Header</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="mi">1</span>   <span class="o">|</span> <span class="n">Header</span> <span class="mi">2</span>   <span class="o">|</span> <span class="n">Header</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">Header</span> <span class="mi">4</span> <span class="o">|</span>
+    <span class="o">|</span> <span class="p">(</span><span class="n">header</span> <span class="n">rows</span> <span class="n">optional</span><span class="p">)</span> <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>          <span class="o">|</span>
+    <span class="o">+========================+============+==========+==========+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">1</span><span class="p">,</span> <span class="n">column</span> <span class="mi">1</span>   <span class="o">|</span> <span class="n">column</span> <span class="mi">2</span>   <span class="o">|</span> <span class="n">column</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">column</span> <span class="mi">4</span> <span class="o">|</span>
+    <span class="o">+------------------------+------------+----------+----------+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">2</span>             <span class="o">|</span> <span class="n">Cells</span> <span class="n">may</span> <span class="n">span</span> <span class="n">columns</span><span class="o">.</span>          <span class="o">|</span>
+    <span class="o">+------------------------+------------+---------------------+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">3</span>             <span class="o">|</span> <span class="n">Cells</span> <span class="n">may</span>  <span class="o">|</span> <span class="o">-</span> <span class="n">Table</span> <span class="n">cells</span>       <span class="o">|</span>
+    <span class="o">+------------------------+</span> <span class="n">span</span> <span class="n">rows</span><span class="o">.</span> <span class="o">|</span> <span class="o">-</span> <span class="n">contain</span>           <span class="o">|</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">4</span>             <span class="o">|</span>            <span class="o">|</span> <span class="o">-</span> <span class="n">body</span> <span class="n">elements</span><span class="o">.</span>    <span class="o">|</span>
+    <span class="o">+------------------------+------------+---------------------+</span>
+</pre></div>
+</div>
+<p>will generate the following table:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Header row, column 1
+(header rows optional)</p></th>
+<th class="head"><p>Header 2</p></th>
+<th class="head"><p>Header 3</p></th>
+<th class="head"><p>Header 4</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>body row 1, column 1</p></td>
+<td><p>column 2</p></td>
+<td><p>column 3</p></td>
+<td><p>column 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>body row 2</p></td>
+<td colspan="3"><p>Cells may span columns.</p></td>
+</tr>
+<tr class="row-even"><td><p>body row 3</p></td>
+<td rowspan="2"><p>Cells may
+span rows.</p></td>
+<td colspan="2" rowspan="2"><ul class="simple">
+<li><p>Table cells</p></li>
+<li><p>contain</p></li>
+<li><p>body elements.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>body row 4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Doing tables with spinx is not simple.  The table outline must abide by tedious spacing rules.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">list-table</span></code> command is nice in that it allows for a simple table to be created where the table
+structure does not have to be drawn with ASCII vertical and horizontal lines.  However, the formatting options
+are more limited than with the above method.  See
+<a class="reference external" href="https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table">documentation</a> for more info.
+For example, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="nb">list</span><span class="o">-</span><span class="n">table</span><span class="p">::</span> <span class="n">List</span> <span class="n">Based</span> <span class="n">Table</span> <span class="n">Title</span>
+    <span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+    <span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
+
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Header</span> <span class="mi">1</span>
+      <span class="o">-</span> <span class="n">Header</span> <span class="mi">2</span>
+      <span class="o">-</span> <span class="n">Header</span> <span class="mi">3</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">1</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span> <span class="n">more</span> <span class="n">text</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">2</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">3</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span> <span class="n">some</span> <span class="n">more</span> <span class="n">text</span>
+</pre></div>
+</div>
+<p>will produce this table:</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">List Based Table Title</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Header 1</p></th>
+<th class="head"><p>Header 2</p></th>
+<th class="head"><p>Header 3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Label 1</p></td>
+<td><p>text</p></td>
+<td><p>more text</p></td>
+</tr>
+<tr class="row-odd"><td><p>Label 2</p></td>
+<td><p>text</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Label 3</p></td>
+<td><p>text</p></td>
+<td><p>some more text</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="html-highlight-options">
+<h2>HTML Highlight Options<a class="headerlink" href="#html-highlight-options" title="Link to this heading"></a></h2>
+<p>With Sphinx you can easily create HTML highlight blocks called admonitions such as
+attention, caution, danger, error, hint, important, note, tip, warning.  Here are samples of what these
+blocks look like.</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>text goes here</p>
+</div>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
+<p>text goes here</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>text goes here</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>text goes here</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>text goes here</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>text goes here</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>text goes here</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>text goes here</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>text goes here</p>
+</div>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This section should describe the assumptions used in formulating the mathematical model and how those assumptions
+limit the usefulness of the module.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section contains information directed specifically to users. It contains clear descriptions of what inputs
+are needed and what effect they have. It should also help the user be able to use the model for the first time.</p>
+<p>Add sample code as needed.  For example, to specify that the module variables <code class="docutils literal notranslate"><span class="pre">dummy</span></code> and <code class="docutils literal notranslate"><span class="pre">dumVector</span></code> must
+be setup first, you can include python formatted code block using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="p">::</span> <span class="n">python</span>
+    <span class="p">:</span><span class="n">linenos</span><span class="p">:</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">dumVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>to show:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">module</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">2</span><span class="n">module</span><span class="o">.</span><span class="n">dumVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>More information of including code blocks can be found <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block">here</a>.</p>
+<p>In the user guide, provide sub-sections as need to help explain how to use this module, list what variables
+must be set, discuss variables that might have default values if not specified by the user, etc.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t">
+<span id="_CPPv324SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t"></span><span id="_CPPv224SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t"></span><span id="SelfInit_cModuleTemplate__cModuleTemplateConfigP.int64_t"></span><span class="target" id="c_module_template_8h_1a9e926604a7ab0b574195d4ce9c90017d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t">
+<span id="_CPPv322Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="_CPPv222Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="Update_cModuleTemplate__cModuleTemplateConfigP.uint64_t.int64_t"></span><span class="target" id="c_module_template_8h_1a5dec1042b1dcbfbdc1bf0e03e3e138e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a description of what this main Update() routine does for this module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t">
+<span id="_CPPv321Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="_CPPv221Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="Reset_cModuleTemplate__cModuleTemplateConfigP.uint64_t.int64_t"></span><span class="target" id="c_module_template_8h_1a76e93267aa8739c3f69cca9d5397129d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421cModuleTemplateConfig">
+<span id="_CPPv321cModuleTemplateConfig"></span><span id="_CPPv221cModuleTemplateConfig"></span><span id="cModuleTemplateConfig"></span><span class="target" id="structc_module_template_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></span><a class="headerlink" href="#_CPPv421cModuleTemplateConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;cModuleTemplate.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig5dummyE">
+<span id="_CPPv3N21cModuleTemplateConfig5dummyE"></span><span id="_CPPv2N21cModuleTemplateConfig5dummyE"></span><span id="cModuleTemplateConfig::dummy__double"></span><span class="target" id="structc_module_template_config_1a07f39e51a154b780714a39548e6b40c0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dummy</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig5dummyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[units] sample module variable declaration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig9dumVectorE">
+<span id="_CPPv3N21cModuleTemplateConfig9dumVectorE"></span><span id="_CPPv2N21cModuleTemplateConfig9dumVectorE"></span><span id="cModuleTemplateConfig::dumVector__doubleA"></span><span class="target" id="structc_module_template_config_1a861ec928c50dc7b075800d8434c28089"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dumVector</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig9dumVectorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[units] sample vector variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig10dataOutMsgE">
+<span id="_CPPv3N21cModuleTemplateConfig10dataOutMsgE"></span><span id="_CPPv2N21cModuleTemplateConfig10dataOutMsgE"></span><span id="cModuleTemplateConfig::dataOutMsg__CModuleTemplateMsg_C"></span><span class="target" id="structc_module_template_config_1a7193fde02f71fc9f5dedde2e813c85fa"></span><span class="n"><span class="pre">CModuleTemplateMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig10dataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sample output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig9dataInMsgE">
+<span id="_CPPv3N21cModuleTemplateConfig9dataInMsgE"></span><span id="_CPPv2N21cModuleTemplateConfig9dataInMsgE"></span><span id="cModuleTemplateConfig::dataInMsg__CModuleTemplateMsg_C"></span><span class="target" id="structc_module_template_config_1aa2fa7de94f6f0b0cc4c3ad05caf48082"></span><span class="n"><span class="pre">CModuleTemplateMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig9dataInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sample input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig11inputVectorE">
+<span id="_CPPv3N21cModuleTemplateConfig11inputVectorE"></span><span id="_CPPv2N21cModuleTemplateConfig11inputVectorE"></span><span id="cModuleTemplateConfig::inputVector__doubleA"></span><span class="target" id="structc_module_template_config_1ad0f8b879942a9bc00afa1cb81a8c43e7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inputVector</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig11inputVectorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[units] vector description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig9bskLoggerE">
+<span id="_CPPv3N21cModuleTemplateConfig9bskLoggerE"></span><span id="_CPPv2N21cModuleTemplateConfig9bskLoggerE"></span><span id="cModuleTemplateConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structc_module_template_config_1addbe70795c8cf4f86f2473569b1c3c3d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="cModuleTemplate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioUnbalancedThrusters &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioArmWithThrusters" href="scenarioArmWithThrusters.html" />
+    <link rel="prev" title="scenarioReactionWheel" href="scenarioReactionWheel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioUnbalancedThrusters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/mujoco/scenarioUnbalancedThrusters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariounbalancedthrusters">
+<span id="id1"></span><h1>scenarioUnbalancedThrusters<a class="headerlink" href="#scenariounbalancedthrusters" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioUnbalancedThrusters">It’s recommended to review the following scenario(s) first (and any
+recommended scenario(s) that they may have):</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/mujoco/scenarioReactionWheel.py</span></code></p></li>
+</ol>
+<p>This script shows how to simulate a CubeSat with 4 thrusters attached
+each to a different fuel tank. All thrusters produce the same thrust,
+but one of the consumes fuel at twice the rate of the others (which
+simulates a defect). This is done using the MuJoCo-based <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicObject.html#dynamicobject"><span class="std std-ref">DynamicObject</span></a>
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+<p>The multi-body system is defined in the XML file <code class="docutils literal notranslate"><span class="pre">sat_w_thrusters.xml</span></code>.
+This XML file defines a ‘hub’ body with 4 tank bodies as their
+sub-bodies (‘tank_1’, ‘tank_2’, etc.). The ‘hub’ body is a cube, while the
+‘tank’ bodies are ‘pills’ and are contained within the ‘hub’ body. Each
+‘tank’ body has a site attached to it (‘tank_X_thrust_point’), which defines
+the point at which the thrust vector is applied. The thrust of each thruster
+is modeled as a single actuator (‘tank_X_thrust’) that applies a force at
+the corresponding site. The attribute <code class="docutils literal notranslate"><span class="pre">gear</span></code> of the actuators is set to
+<code class="docutils literal notranslate"><span class="pre">gear=&quot;0</span> <span class="pre">0</span> <span class="pre">-1</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">0&quot;</span></code>, which means ‘apply a force along the negative z-axis’.</p>
+<p>For more information on how to define a multi-body system in MuJoCo, see
+<a class="reference external" href="https://mujoco.readthedocs.io/en/stable/XMLreference.html">https://mujoco.readthedocs.io/en/stable/XMLreference.html</a></p>
+<p>To model a thruster, two things must be achieved:</p>
+<ol class="arabic simple">
+<li><p>The thrust force must be applied.</p></li>
+<li><p>The fuel consumption must be modeled.</p></li>
+</ol>
+<p>To accomplish the first, we tie a standalone <code class="docutils literal notranslate"><span class="pre">SingleActuatorMsg</span></code> to
+the control input of each of the thrusters. The payload of this message
+is kept constant at 5 N.</p>
+<p>To model the fuel consumption, we need to tell the system that the mass
+of the tank bodies is decreasing. The mass of each of the bodies in the
+system is a state, and thus should be updated by defining its time
+derivative. This is done by tying a <code class="docutils literal notranslate"><span class="pre">SCMassPropsMsg</span></code> to the
+<code class="docutils literal notranslate"><span class="pre">derivativeMassPropertiesInMsg</span></code> of the tank bodies. In this script,
+the payload of this message is kept constant at -1 kg/s for the first 3
+tanks, and -2 kg/s for the last tank.</p>
+<p>The simulation is run for 2.5 minutes, and the mass of each of the tanks
+and the state of the ‘hub’ body are recorded. The mass of the tanks should
+decrease linearly with time, with the last tank decreasing at twice the rate
+of the others. Because of the initial symmetry of the configuration, the
+‘hub’ body should appear to accelerate in a straight line. However, because
+the last tank is consuming fuel at twice the rate of the others, the inertial
+properties of the system become unbalanced, and the ‘hub’ body should start
+to rotate.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioUnbalancedThrusters.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioUnbalancedThrusters.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioUnbalancedThrusters.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioUnbalancedThrusters.run" title="Link to this definition"></a></dt>
+<dd><p>Main function, see scenario description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, simulation results are plotted and show.
+Defaults to False.</p></li>
+<li><p><strong>visualize</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> visualization tool is
+run on the simulation results. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioReactionWheel.html" class="btn btn-neutral float-left" title="scenarioReactionWheel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioArmWithThrusters.html" class="btn btn-neutral float-right" title="scenarioArmWithThrusters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

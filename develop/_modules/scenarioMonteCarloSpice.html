@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMonteCarloSpice &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioMonteCarloSpice</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioMonteCarloSpice</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">This script illustrates how to run a Monte Carlo simulation where the Spice is used within the Python</span>
+<span class="sd">setup.  Note that the Python Spice setup is separate from the BSK c++ Spice module setup.  In this tutorial</span>
+<span class="sd">a very simple simulation is shown to showcase how to correctly perform Python-based Spice function calls with a</span>
+<span class="sd">Basilisk Monte Carlo run.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioMonteCarloSpice.py</span>
+
+<span class="sd">The simulation sets up a simple spacecraft and associated initial conditions.  Note that the Basilisk spacecraft</span>
+<span class="sd">simulation is setup within the class ``MySimulation``.  Here the the code is added to load Spice kernels within</span>
+<span class="sd">Python to pull the Hubble states from Spice.  Thus, this python Spice call is performed within each Monte Carlo</span>
+<span class="sd">thread.  In this simple example the Hubble states are then printed to the terminal.</span>
+
+<span class="sd">As this Monte Carlo scenario is setup to run 12 times, by running this script the user should see</span>
+<span class="sd">no errors and the Hubble states printed out 12 times.</span>
+
+<span class="sd">In the Controller class `MyController` there is Spice kernel loading code that is commented out.</span>
+<span class="sd">If the kernels are loaded within the controller class then this results in a Spice kernel loading error.</span>
+
+<span class="sd">The user should be careful to load the Spice or use within the Python code within the simulation class.</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  This Monte Carlo example shows how to properly use Spice in such simulations.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="c1"># @cond DOXYGEN_IGNORE</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">fileNameString</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="c1"># @endcond</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.Controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+
+<div class="viewcode-block" id="MyController">
+<a class="viewcode-back" href="../examples/scenarioMonteCarloSpice.html#scenarioMonteCarloSpice.MyController">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># Constructor for Monte Carlo simulations</span>
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+        <span class="c1"># Uncomment the following block to cause this MC scenario to fail</span>
+        <span class="c1"># due to an incorrect usage of the pyswice module</span>
+
+        <span class="c1"># naif0011_path = get_path(DataFile.EphemerisData.naif0011)</span>
+        <span class="c1"># pck00010_path = get_path(DataFile.EphemerisData.pck00010)</span>
+        <span class="c1"># de403_path  = get_path(DataFile.EphemerisData.de_403_masses)</span>
+        <span class="c1"># de430_path  = get_path(DataFile.EphemerisData.de430)</span>
+        <span class="c1"># hst_edited_path = get_path(DataFile.EphemerisData.hst_edited)</span>
+
+        <span class="c1"># self.scSpiceName = &#39;HUBBLE SPACE TELESCOPE&#39;</span>
+        <span class="c1"># pyswice.furnsh_c(str(naif0011_path))</span>
+        <span class="c1"># pyswice.furnsh_c(str(pck00010_path))</span>
+        <span class="c1"># pyswice.furnsh_c(str(de403_path))</span>
+        <span class="c1"># pyswice.furnsh_c(str(de430_path))</span>
+        <span class="c1"># pyswice.furnsh_c(str(hst_edited_path))</span>
+
+
+<div class="viewcode-block" id="MySimulation">
+<a class="viewcode-back" href="../examples/scenarioMonteCarloSpice.html#scenarioMonteCarloSpice.MySimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MySimulation</span><span class="p">(</span><span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># Create simulation variable names</span>
+        <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+        <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynProcess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scObject</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7000000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7500.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># m/s - v_CN_N</span>
+
+        <span class="c1"># operate on pyswice</span>
+        <span class="n">naif0011_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0011</span><span class="p">)</span>
+        <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+        <span class="n">de403_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+        <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+        <span class="n">hst_edited_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">hst_edited</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scSpiceName</span> <span class="o">=</span> <span class="s2">&quot;HUBBLE SPACE TELESCOPE&quot;</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0011_path</span><span class="p">))</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403_path</span><span class="p">))</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hst_edited_path</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accessSpiceKernel</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">accessSpiceKernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">startCalendarTime</span> <span class="o">=</span> <span class="s2">&quot;2012 APR 29 15:18:14.907 (UTC)&quot;</span>
+        <span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Sun&quot;</span>
+        <span class="n">integFrame</span> <span class="o">=</span> <span class="s2">&quot;j2000&quot;</span>
+        <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scSpiceName</span><span class="p">,</span> <span class="n">startCalendarTime</span><span class="p">,</span> <span class="n">integFrame</span><span class="p">,</span> <span class="n">zeroBase</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stateOut</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioMonteCarloSpice.html#scenarioMonteCarloSpice.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the main function that is called in this script.  It illustrates possible ways</span>
+<span class="sd">    to include the Python Spice library in a simulation that uses Monte Carlo runs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># First, the `Controller` class is used in order to define the simulation</span>
+    <span class="n">monteCarlo</span> <span class="o">=</span> <span class="n">MyController</span><span class="p">()</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setSimulationFunction</span><span class="p">(</span><span class="n">MySimulation</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setExecutionFunction</span><span class="p">(</span><span class="n">executeScenario</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setExecutionCount</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setShouldDisperseSeeds</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setThreadCount</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setVerbose</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">dirName</span> <span class="o">=</span> <span class="s2">&quot;montecarlo_test&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="n">monteCarlo</span><span class="o">.</span><span class="n">setArchiveDir</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+
+    <span class="c1"># Here is another example where it is allowable to run the python spice routines within a MC simulation setup</span>
+    <span class="c1">#</span>
+    <span class="c1"># naif0011_path = get_path(DataFile.EphemerisData.naif0011)</span>
+    <span class="c1"># pck00010_path = get_path(DataFile.EphemerisData.pck00010)</span>
+    <span class="c1"># de403_path  = get_path(DataFile.EphemerisData.de_403_masses)</span>
+    <span class="c1"># de430_path  = get_path(DataFile.EphemerisData.de430)</span>
+
+    <span class="c1"># pyswice.furnsh_c(str(naif0011_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(pck00010_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(de403_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(de430_path))</span>
+    <span class="c1">#</span>
+    <span class="c1"># startCalendarTime = &#39;2012 AUG 05, 21:35:07.496 (UTC)&#39;</span>
+    <span class="c1"># startTimeArray = sim_model.new_doubleArray(1)</span>
+    <span class="c1"># pyswice.str2et_c(startCalendarTime, startTimeArray)</span>
+    <span class="c1"># sim_model.delete_doubleArray(startTimeArray)</span>
+
+    <span class="c1"># After the monteCarlo run is configured, it is executed.</span>
+    <span class="n">failures</span> <span class="o">=</span> <span class="n">monteCarlo</span><span class="o">.</span><span class="n">executeSimulations</span><span class="p">()</span>
+
+    <span class="c1"># Now we clean up data from this test</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">executeScenario</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">100.0</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Here is another example where it is allowable to run the python spice routines within a MC simulation setup</span>
+    <span class="c1">#</span>
+    <span class="c1"># naif0011_path = get_path(DataFile.EphemerisData.naif0011)</span>
+    <span class="c1"># pck00010_path = get_path(DataFile.EphemerisData.pck00010)</span>
+    <span class="c1"># de403_path  = get_path(DataFile.EphemerisData.de_403_masses)</span>
+    <span class="c1"># de430_path  = get_path(DataFile.EphemerisData.de430)</span>
+
+    <span class="c1"># pyswice.furnsh_c(str(naif0011_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(pck00010_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(de403_path))</span>
+    <span class="c1"># pyswice.furnsh_c(str(de430_path))</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

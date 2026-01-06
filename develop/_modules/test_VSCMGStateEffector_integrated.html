@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_VSCMGStateEffector_integrated &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_VSCMGStateEffector_integrated</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_VSCMGStateEffector_integrated</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>  <span class="c1"># general support file with common unit test functions</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vscmgStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">5.75</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">defaultVSCMG</span><span class="p">():</span>
+    <span class="n">VSCMG</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGConfigMsgPayload</span><span class="p">()</span>
+
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">rGB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_f</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">wheelLinearFrictionRatio</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_current</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_f</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gimbalLinearFrictionRatio</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega_max</span> <span class="o">=</span> <span class="mf">6000.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gammaDot_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">100.</span><span class="o">/</span><span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega_max</span> <span class="c1"># 0.159154943092</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW2</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">VSCMG</span><span class="o">.</span><span class="n">IW1</span> <span class="c1"># 0.0795774715459</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">VSCMG</span><span class="o">.</span><span class="n">IW1</span> <span class="c1"># 0.0795774715459</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG1</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG2</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="mf">4.8e-06</span> <span class="o">*</span> <span class="mf">1e4</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">1.54e-06</span> <span class="o">*</span> <span class="mf">1e4</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">rGcG_G</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0001</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.02</span><span class="p">],[</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">massW</span> <span class="o">=</span> <span class="mf">6.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">6.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">VSCMGModel</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">VSCMG</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">computeFFT</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+    <span class="n">Fs</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">dt</span>  <span class="c1"># sampling rate</span>
+    <span class="n">Ts</span> <span class="o">=</span> <span class="n">dt</span> <span class="c1"># sampling interval</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="c1"># length of the signal</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="n">Fs</span>
+    <span class="n">frq</span> <span class="o">=</span> <span class="n">k</span><span class="o">/</span><span class="n">T</span> <span class="c1"># two sides frequency range</span>
+    <span class="n">frq</span> <span class="o">=</span> <span class="n">frq</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">))]</span> <span class="c1"># one side frequency range</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">n</span> <span class="c1"># fft computing and normalization</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">))]</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">frq</span><span class="p">,</span><span class="n">Y</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">findPeaks</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">maxfind</span><span class="p">):</span>
+        <span class="n">peakIdxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">&gt;</span> <span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="kc">True</span><span class="p">]</span>
+        <span class="n">peakIdxs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">peakIdxs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">peakIdxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">peakIdxs</span><span class="o">==</span><span class="kc">True</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">peakIdxs</span><span class="p">])[</span><span class="o">-</span><span class="n">maxfind</span><span class="p">]</span>
+        <span class="n">peakIdxs</span> <span class="o">=</span> <span class="n">peakIdxs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">peakIdxs</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">peakIdxs</span>
+
+
+<div class="viewcode-block" id="test_VSCMGIntegratedTest">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_VSCMGStateEffector_integrated.html#test_VSCMGStateEffector_integrated.test_VSCMGIntegratedTest">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;useFlag, testCase&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;BalancedWheels&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;JitterSimple&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;JitterFullyCoupledGravity&#39;</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail() # need to update how the RW states are defined</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_VSCMGIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">useFlag</span><span class="p">,</span><span class="n">testCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">VSCMGIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">useFlag</span><span class="p">,</span><span class="n">testCase</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">VSCMGIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">useFlag</span><span class="p">,</span><span class="n">testCase</span><span class="p">):</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span> <span class="ow">or</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupledGravity&#39;</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.00001</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># add RW devices</span>
+    <span class="n">VSCMGs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">ang</span> <span class="o">=</span> <span class="mf">54.75</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+
+    <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mi">2000</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.06</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rGB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.002</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02</span><span class="p">]]</span>
+
+    <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span>  <span class="mi">350</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.011</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rGB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="o">-</span><span class="mi">900</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.003</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rGB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;BalancedWheels&#39;</span><span class="p">:</span>
+        <span class="n">VSCMGModel</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterSimple&#39;</span><span class="p">:</span>
+        <span class="n">VSCMGModel</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span> <span class="ow">or</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupledGravity&#39;</span><span class="p">:</span>
+        <span class="n">VSCMGModel</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">for</span> <span class="n">VSCMG</span> <span class="ow">in</span> <span class="n">VSCMGs</span><span class="p">:</span>
+        <span class="n">VSCMG</span><span class="o">.</span><span class="n">VSCMGModel</span> <span class="o">=</span> <span class="n">VSCMGModel</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+        <span class="n">VSCMGs</span> <span class="o">=</span> <span class="p">[</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">)</span>
+
+    <span class="c1"># create VSCMG object container and tie to spacecraft object</span>
+    <span class="n">rwStateEffector</span> <span class="o">=</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">VSCMGStateEffector</span><span class="p">()</span>
+    <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;VSCMGs&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">VSCMGs</span><span class="p">:</span>
+        <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">rwStateEffector</span><span class="p">)</span>
+
+    <span class="c1"># set RW torque command</span>
+    <span class="n">cmdArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;BalancedWheels&#39;</span> <span class="ow">or</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+        <span class="n">cmdArray</span><span class="o">.</span><span class="n">wheelTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+        <span class="n">cmdArray</span><span class="o">.</span><span class="n">gimbalTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmdArray</span><span class="o">.</span><span class="n">wheelTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.009</span><span class="p">]</span> <span class="c1"># [Nm]</span>
+        <span class="n">cmdArray</span><span class="o">.</span><span class="n">gimbalTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.008</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0015</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.006</span><span class="p">]</span> <span class="c1"># [Nm]</span>
+    <span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmdArray</span><span class="p">)</span>
+    <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rwStateEffector</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">!=</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span> <span class="c1"># meters!</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.0002</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0001</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span>	<span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">],</span>	<span class="p">[</span><span class="mf">0.3</span><span class="p">]]</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.4</span><span class="p">],</span>	<span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>	<span class="p">[</span><span class="o">-</span><span class="mf">0.8</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span>	<span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span>	<span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span>	<span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span>	<span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.08</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="c1"># log data</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">speedLog</span> <span class="o">=</span> <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">speedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">speedLog</span><span class="p">)</span>
+
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">sigmaRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubSigma</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span><span class="p">)</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span><span class="p">)</span>
+    <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span><span class="p">)</span>
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span><span class="p">)</span>
+
+    <span class="n">wheelSpeeds</span> <span class="o">=</span> <span class="n">speedLog</span><span class="o">.</span><span class="n">wheelSpeeds</span>
+    <span class="n">gimbalAngles</span> <span class="o">=</span> <span class="n">speedLog</span><span class="o">.</span><span class="n">gimbalAngles</span>
+    <span class="n">gimbalRates</span> <span class="o">=</span> <span class="n">speedLog</span><span class="o">.</span><span class="n">gimbalRates</span>
+    <span class="n">sigmaData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">omegaData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">omega_BN_B</span>
+
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+    <span class="n">dataSigma</span> <span class="o">=</span> <span class="n">sigmaRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dataPos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataPos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataPos</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]]]</span>
+    <span class="n">dataSigma</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dataSigma</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataSigma</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataSigma</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]]]</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;BalancedWheels&#39;</span><span class="p">:</span>
+        <span class="n">truePos</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">4025537.664298894</span><span class="p">,</span> <span class="mf">7487128.570444949</span><span class="p">,</span> <span class="mf">5249339.643828076</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">trueSigma</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.0185829763256</span><span class="p">,</span> <span class="mf">0.00212563436704</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00118728497031</span><span class="p">]</span>
+        <span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterSimple&#39;</span><span class="p">:</span>
+        <span class="n">truePos</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">4025537.659558947</span><span class="p">,</span> <span class="mf">7487128.570662447</span><span class="p">,</span> <span class="mf">5249339.653774626</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">trueSigma</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.018774477186285467</span><span class="p">,</span> <span class="mf">0.0018376842577357564</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00023633044221463834</span><span class="p">]</span>
+        <span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+        <span class="n">truePos</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.0970572658434</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.195562924079</span><span class="p">,</span> <span class="mf">0.191874379545</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">trueSigma</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.000201909373901</span><span class="p">,</span> <span class="mf">2.9217809421e-05</span><span class="p">,</span> <span class="mf">4.00231302121e-06</span><span class="p">]</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupledGravity&#39;</span><span class="p">:</span>
+        <span class="n">truePos</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">4020390.68802</span><span class="p">,</span> <span class="mf">7490532.37502</span><span class="p">,</span> <span class="mf">5248309.52745</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">trueSigma</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.000201662012765</span><span class="p">,</span> <span class="mf">2.92123940252e-05</span><span class="p">,</span> <span class="mf">4.15606551702e-06</span><span class="p">]</span>
+        <span class="p">]</span>
+
+
+
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+                <span class="p">]</span>
+
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+                 <span class="p">]</span>
+
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+                <span class="p">]</span>
+
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+                 <span class="p">]</span>
+
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="p">]</span>
+
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+                 <span class="p">]</span>
+
+    <span class="n">initialRotEnergy</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="p">]</span>
+
+    <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+                 <span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Change in Orbital Angular Momentum&quot;</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s2">&quot;ChangeInOrbitalAngularMomentum&quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span>
+                                     <span class="s2">&quot;Change in Orbital Angular Momentum &quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="s2">&quot;width=0.80</span><span class="se">\\</span><span class="s2">textwidth&quot;</span><span class="p">,</span>
+                                     <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Change in Rotational Angular Momentum&quot;</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s2">&quot;ChangeInOrbitalEnergy&quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span> <span class="s2">&quot;Change in Orbital Energy &quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span>
+                                     <span class="s2">&quot;width=0.80</span><span class="se">\\</span><span class="s2">textwidth&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">orbEnergy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Change in Orbital Energy&quot;</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s2">&quot;ChangeInRotationalAngularMomentum&quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span>
+                                     <span class="s2">&quot;Change in Rotational Angular Momentum &quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="s2">&quot;width=0.80</span><span class="se">\\</span><span class="s2">textwidth&quot;</span><span class="p">,</span>
+                                     <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">rotEnergy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Change in Rotational Energy&quot;</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s2">&quot;ChangeInRotationalEnergy&quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span> <span class="s2">&quot;Change in Rotational Energy &quot;</span> <span class="o">+</span> <span class="n">testCase</span><span class="p">,</span>
+                                     <span class="n">plt</span><span class="p">,</span> <span class="s2">&quot;width=0.80</span><span class="se">\\</span><span class="s2">textwidth&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">speedLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="mf">1.0E-9</span><span class="p">,</span> <span class="n">wheelSpeeds</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;RWA&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;RW&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\Omega$ (RPM)&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">speedLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="mf">1.0E-9</span><span class="p">,</span> <span class="n">gimbalAngles</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\gamma_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;$ (rad)&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">speedLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="mf">1.0E-9</span><span class="p">,</span> <span class="n">gimbalRates</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\dot{\gamma}_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;$ (d/s)&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="mf">1.0E-9</span><span class="p">,</span> <span class="n">sigmaData</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;MRP&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;MRP b&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="mf">1.0E-9</span><span class="p">,</span> <span class="n">omegaData</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;omega&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;b&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39; $\omega$ (d/s)&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">!=</span> <span class="s1">&#39;BalancedWheels&#39;</span> <span class="ow">and</span> <span class="n">testCase</span> <span class="o">!=</span> <span class="s1">&#39;JitterFullyCoupledGravity&#39;</span><span class="p">:</span>
+        <span class="n">istart</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">.01</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">sigmaDataCut</span> <span class="o">=</span> <span class="n">sigmaData</span><span class="c1">#sigmaData[istart:,:]</span>
+        <span class="n">thetaData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">sigmaDataCut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmaDataCut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">thetaData</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sigmaDataCut</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]))</span>
+
+        <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterSimple&#39;</span><span class="p">:</span>
+            <span class="n">fitOrd</span> <span class="o">=</span> <span class="mi">11</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fitOrd</span> <span class="o">=</span> <span class="mi">9</span>
+
+        <span class="n">thetaFit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">sigmaDataCut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">fitOrd</span><span class="p">)</span>
+        <span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">thetaData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Principle Angle Fit&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta$ (deg)&#39;</span><span class="p">)</span>
+
+        <span class="p">[</span><span class="n">frq</span><span class="p">,</span><span class="n">Y</span><span class="p">]</span> <span class="o">=</span> <span class="n">computeFFT</span><span class="p">(</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">peakIdxs</span> <span class="o">=</span> <span class="n">findPeaks</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">wheelSpeeds_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frq</span><span class="p">[</span><span class="n">peakIdxs</span><span class="p">])</span><span class="o">*</span><span class="mf">60.</span>
+        <span class="n">wheelSpeeds_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega</span><span class="o">/</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span> <span class="k">for</span> <span class="n">VSCMG</span> <span class="ow">in</span> <span class="n">VSCMGs</span><span class="p">])))</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">thetaFit</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Amplitude&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frq</span><span class="p">,</span><span class="nb">abs</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Freq (Hz)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frq</span><span class="p">[</span><span class="n">peakIdxs</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">peakIdxs</span><span class="p">],</span><span class="s1">&#39;bo&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Omega_max</span><span class="o">/</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="o">/</span><span class="mf">60.</span><span class="p">))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetaData</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">thetaData</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Principle Angle&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta$ (deg)&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-7</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">truePos</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">dataPos</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">truePos</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed pos unit test&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">trueSigma</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">dataSigma</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">trueSigma</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed attitude unit test&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterSimple&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wheelSpeeds_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">wheelSpeeds_true</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">wheelSpeeds_true</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">.09</span><span class="p">:</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed jitter unit test&quot;</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;BalancedWheels&#39;</span> <span class="ow">or</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">initialOrbAngMom_N</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed orbital angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">initialRotAngMom_N</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed rotational angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbEnergy</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed orbital energy unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialRotEnergy</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalRotEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialRotEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: VSCMG Integrated Test failed rot energy unit test&quot;</span><span class="p">)</span>
+
+    <span class="c1"># print out success message if no errors were found</span>
+    <span class="k">if</span>  <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED &quot;</span><span class="p">)</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;ForestGreen&#39;</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;PASSED&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+        <span class="c1"># Write some snippets for AutoTex</span>
+        <span class="n">snippetName</span> <span class="o">=</span> <span class="n">testCase</span> <span class="o">+</span> <span class="s1">&#39;PassFail&#39;</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">passedText</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">testFailCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;Red&#39;</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;FAILED&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+        <span class="c1"># Write some snippets for AutoTex</span>
+        <span class="n">snippetName</span> <span class="o">=</span> <span class="n">testCase</span> <span class="o">+</span> <span class="s1">&#39;PassFail&#39;</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">passedText</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; VSCMG Integrated Sim Test&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">testFailCount</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessages</span>
+
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">VSCMGIntegratedTest</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;JitterFullyCoupled&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

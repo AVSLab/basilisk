@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: powerStorageBase &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="simpleBattery" href="../simpleBattery/index.html" />
+    <link rel="prev" title="Module: powerNodeBase" href="powerNodeBase.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">power</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ReactionWheelPower/index.html">ReactionWheelPower</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleBattery/index.html">simpleBattery</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simplePowerMonitor/index.html">simplePowerMonitor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simplePowerSink/index.html">simplePowerSink</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleSolarPanel/index.html">simpleSolarPanel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">power</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: powerStorageBase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/power/_GeneralModuleFiles/powerStorageBase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-powerstoragebase">
+<span id="powerstoragebase"></span><h1>Module: powerStorageBase<a class="headerlink" href="#module-powerstoragebase" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The PowerStorageBase is a base class that is used generate a standard interface and list of features for modules that store electrical power.  This class is used by other modules as a parent class and cannot be instantiated by itself.  All Basilisk power storage modules based on this PowerStorageBase inherit the following common properties:</p>
+<ol class="arabic simple">
+<li><p>Writes out a <a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.html#powerstoragestatusmsgpayload"><span class="std std-ref">PowerStorageStatusMsgPayload</span></a> containing the current stored power (in Watt-Seconds or Joules), the current net power (in Watts), and the battery storage capacity (in Watt-Seconds or Joules).</p></li>
+<li><p>Allows for multiple <a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#powernodeusagemsgpayload"><span class="std std-ref">PowerNodeUsageMsgPayload</span></a> corresponding to individual <a class="reference internal" href="powerNodeBase.html#powernodebase"><span class="std std-ref">Module: powerNodeBase</span></a> instances to be subscribed to using the addPowerNodeToModel method.</p></li>
+<li><p>Iterates through attached <a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#powernodeusagemsgpayload"><span class="std std-ref">PowerNodeUsageMsgPayload</span></a> instances and computes the net power over all messages using <code class="docutils literal notranslate"><span class="pre">sumAllInputs()</span></code></p></li>
+<li><p>Computes the conversion between net power in and storage using the <code class="docutils literal notranslate"><span class="pre">evaluateBatteryModel</span></code> method, which must be overridden in child classes and is therefore module-specific.</p></li>
+</ol>
+<p>Core functionality is wrapped in the <code class="docutils literal notranslate"><span class="pre">evaluateBatteryModel</span></code> protected virtual void method, which is assumed to compute power storage on a module specific mathematical model.</p>
+<p>Protected methods prepended with <code class="docutils literal notranslate"><span class="pre">custom</span></code> are intended for module developers to override with additional, module-specific functionality.</p>
+<p>For more information on how to set up and use classes derived from this module, see the simple power system example: <a class="reference internal" href="../../../../examples/scenarioPowerDemo.html#scenariopowerdemo"><span class="std std-ref">scenarioPowerDemo</span></a></p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The base class makes no specific energy storage device related assumptions.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>batPowerOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.html#powerstoragestatusmsgpayload"><span class="std std-ref">PowerStorageStatusMsgPayload</span></a></p></td>
+<td><p>power storage status output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>nodePowerUseInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#powernodeusagemsgpayload"><span class="std std-ref">PowerNodeUsageMsgPayload</span></a></p></td>
+<td><p>vector of power node input messages (these are linked through the <code class="docutils literal notranslate"><span class="pre">addPowerNodeToModel(msg)</span></code> method</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The base class behavior requires the initial energy storage to be specified through <code class="docutils literal notranslate"><span class="pre">storedCharge_Init</span></code>.</p></li>
+<li><p>The integration time step is evaluated as the time between module calls.</p></li>
+<li><p>The user must set the output message name variable <code class="docutils literal notranslate"><span class="pre">batPowerOutMsg</span></code></p></li>
+<li><p>The input message names are provided by calling the method <code class="docutils literal notranslate"><span class="pre">addPowerNodeToModel(msg)</span></code></p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416PowerStorageBase">
+<span id="_CPPv316PowerStorageBase"></span><span id="_CPPv216PowerStorageBase"></span><span id="PowerStorageBase"></span><span class="target" id="class_power_storage_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PowerStorageBase</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv416PowerStorageBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;powerStorageBase.h&gt;</em></div>
+<p>power storage base class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase16PowerStorageBaseEv">
+<span id="_CPPv3N16PowerStorageBase16PowerStorageBaseEv"></span><span id="_CPPv2N16PowerStorageBase16PowerStorageBaseEv"></span><span id="PowerStorageBase::PowerStorageBase"></span><span class="target" id="class_power_storage_base_1a1ee2f5dbaaf9230def31fb81e94d255c"></span><span class="sig-name descname"><span class="n"><span class="pre">PowerStorageBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase16PowerStorageBaseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes some basic parameters for the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBaseD0Ev">
+<span id="_CPPv3N16PowerStorageBaseD0Ev"></span><span id="_CPPv2N16PowerStorageBaseD0Ev"></span><span id="PowerStorageBase::~PowerStorageBase"></span><span class="target" id="class_power_storage_base_1a47556997698ea7383d346304d30364cc"></span><span class="sig-name descname"><span class="n"><span class="pre">~PowerStorageBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBaseD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase5ResetE8uint64_t">
+<span id="_CPPv3N16PowerStorageBase5ResetE8uint64_t"></span><span id="_CPPv2N16PowerStorageBase5ResetE8uint64_t"></span><span id="PowerStorageBase::Reset__uint64_t"></span><span class="target" id="class_power_storage_base_1a0c854192f4beac3577b57a0faf04bef6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase19addPowerNodeToModelEP7MessageI24PowerNodeUsageMsgPayloadE">
+<span id="_CPPv3N16PowerStorageBase19addPowerNodeToModelEP7MessageI24PowerNodeUsageMsgPayloadE"></span><span id="_CPPv2N16PowerStorageBase19addPowerNodeToModelEP7MessageI24PowerNodeUsageMsgPayloadE"></span><span id="PowerStorageBase::addPowerNodeToModel__Message:PowerNodeUsageMsgPayload:P"></span><span class="target" id="class_power_storage_base_1a0c120365ec724b8669f78836bb4c5994"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPowerNodeToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#_CPPv424PowerNodeUsageMsgPayload" title="PowerNodeUsageMsgPayload"><span class="n"><span class="pre">PowerNodeUsageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpNodeMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase19addPowerNodeToModelEP7MessageI24PowerNodeUsageMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a PowerNodeUsageMsgPayload input message to iterate over</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpNodeMsg</strong> – Message name corresponding to a PowerNodeUsageMsgPayload. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase11UpdateStateE8uint64_t">
+<span id="_CPPv3N16PowerStorageBase11UpdateStateE8uint64_t"></span><span id="_CPPv2N16PowerStorageBase11UpdateStateE8uint64_t"></span><span id="PowerStorageBase::UpdateState__uint64_t"></span><span class="target" id="class_power_storage_base_1a64566bb286a0f244b56f07173c064a0e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements readMessages, integratePowerStatus, and writeMessages for the rest of the sim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase18nodePowerUseInMsgsE">
+<span id="_CPPv3N16PowerStorageBase18nodePowerUseInMsgsE"></span><span id="_CPPv2N16PowerStorageBase18nodePowerUseInMsgsE"></span><span id="PowerStorageBase::nodePowerUseInMsgs__std::vector:ReadFunctor:PowerNodeUsageMsgPayload::"></span><span class="target" id="class_power_storage_base_1a9a8ceb2948724a92e80a2ae707e87060"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#_CPPv424PowerNodeUsageMsgPayload" title="PowerNodeUsageMsgPayload"><span class="n"><span class="pre">PowerNodeUsageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nodePowerUseInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase18nodePowerUseInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of power node input message names. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase14batPowerOutMsgE">
+<span id="_CPPv3N16PowerStorageBase14batPowerOutMsgE"></span><span id="_CPPv2N16PowerStorageBase14batPowerOutMsgE"></span><span id="PowerStorageBase::batPowerOutMsg__Message:PowerStorageStatusMsgPayload:"></span><span class="target" id="class_power_storage_base_1aef1349e82eb2769df30fbdadb80c7500"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.html#_CPPv428PowerStorageStatusMsgPayload" title="PowerStorageStatusMsgPayload"><span class="n"><span class="pre">PowerStorageStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">batPowerOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase14batPowerOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>power storage status output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase17storedCharge_InitE">
+<span id="_CPPv3N16PowerStorageBase17storedCharge_InitE"></span><span id="_CPPv2N16PowerStorageBase17storedCharge_InitE"></span><span id="PowerStorageBase::storedCharge_Init__double"></span><span class="target" id="class_power_storage_base_1ae13559b38b371f0d001caa105dfe1e4f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storedCharge_Init</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase17storedCharge_InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W-s] Initial stored charge set by the user. Defaults to 0. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase9bskLoggerE">
+<span id="_CPPv3N16PowerStorageBase9bskLoggerE"></span><span id="_CPPv2N16PowerStorageBase9bskLoggerE"></span><span id="PowerStorageBase::bskLogger__BSKLogger"></span><span class="target" id="class_power_storage_base_1ae076cce007b125c8924326dff8640639"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase13writeMessagesE8uint64_t">
+<span id="_CPPv3N16PowerStorageBase13writeMessagesE8uint64_t"></span><span id="_CPPv2N16PowerStorageBase13writeMessagesE8uint64_t"></span><span id="PowerStorageBase::writeMessages__uint64_t"></span><span class="target" id="class_power_storage_base_1a228ae833c1847631e4b7c5363ccae223"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes out one PowerStorageStatusMsgPayload </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase12readMessagesEv">
+<span id="_CPPv3N16PowerStorageBase12readMessagesEv"></span><span id="_CPPv2N16PowerStorageBase12readMessagesEv"></span><span id="PowerStorageBase::readMessages"></span><span class="target" id="class_power_storage_base_1a3f5ccdf3ddba0076f0041b6c32854581"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming power supply/usage messages and store them for future use. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase20integratePowerStatusEd">
+<span id="_CPPv3N16PowerStorageBase20integratePowerStatusEd"></span><span id="_CPPv2N16PowerStorageBase20integratePowerStatusEd"></span><span id="PowerStorageBase::integratePowerStatus__double"></span><span class="target" id="class_power_storage_base_1a730326118bcdf3c0078f9a6a73a3ce83"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">integratePowerStatus</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase20integratePowerStatusEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Integrates the net power given the current time using a simple Euler method. </p>
+<p>This method integrates the power use provided by the attached modules. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase12sumAllInputsEv">
+<span id="_CPPv3N16PowerStorageBase12sumAllInputsEv"></span><span id="_CPPv2N16PowerStorageBase12sumAllInputsEv"></span><span id="PowerStorageBase::sumAllInputs"></span><span class="target" id="class_power_storage_base_1a678b7d55cf5efbf44e381b4880b4ee0d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sumAllInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase12sumAllInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Sums over the input power consumption messages. </p>
+<p>This method sums over the power used/generated by the attached simPowerNodes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double currentSum: current net power in Watts </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase20evaluateBatteryModelEP28PowerStorageStatusMsgPayload">
+<span id="_CPPv3N16PowerStorageBase20evaluateBatteryModelEP28PowerStorageStatusMsgPayload"></span><span id="_CPPv2N16PowerStorageBase20evaluateBatteryModelEP28PowerStorageStatusMsgPayload"></span><span id="PowerStorageBase::evaluateBatteryModel__PowerStorageStatusMsgPayloadP"></span><span class="target" id="class_power_storage_base_1a297f940996a09c5dbad5089237e307ae"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateBatteryModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.html#_CPPv428PowerStorageStatusMsgPayload" title="PowerStorageStatusMsgPayload"><span class="n"><span class="pre">PowerStorageStatusMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase20evaluateBatteryModelEP28PowerStorageStatusMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Virtual function to represent power storage computation or losses. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase11customResetE8uint64_t">
+<span id="_CPPv3N16PowerStorageBase11customResetE8uint64_t"></span><span id="_CPPv2N16PowerStorageBase11customResetE8uint64_t"></span><span id="PowerStorageBase::customReset__uint64_t"></span><span class="target" id="class_power_storage_base_1a3b4ab24db2b1eec86b8f69fc8411324d"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom <a class="reference internal" href="#class_power_storage_base_1a0c854192f4beac3577b57a0faf04bef6"><span class="std std-ref">Reset()</span></a> method, similar to customSelfInit. </p>
+<p>Custom <a class="reference internal" href="#class_power_storage_base_1a0c854192f4beac3577b57a0faf04bef6"><span class="std std-ref">Reset()</span></a> method. This allows a child class to add additional functionality to the <a class="reference internal" href="#class_power_storage_base_1a0c854192f4beac3577b57a0faf04bef6"><span class="std std-ref">Reset()</span></a> method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase19customWriteMessagesE8uint64_t">
+<span id="_CPPv3N16PowerStorageBase19customWriteMessagesE8uint64_t"></span><span id="_CPPv2N16PowerStorageBase19customWriteMessagesE8uint64_t"></span><span id="PowerStorageBase::customWriteMessages__uint64_t"></span><span class="target" id="class_power_storage_base_1a60f0af7c3fd9eccf7b1212816a26742d"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customWriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase19customWriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom Write() method, similar to customSelfInit. </p>
+<p>custom Write method, similar to customSelfInit. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase18customReadMessagesEv">
+<span id="_CPPv3N16PowerStorageBase18customReadMessagesEv"></span><span id="_CPPv2N16PowerStorageBase18customReadMessagesEv"></span><span id="PowerStorageBase::customReadMessages"></span><span class="target" id="class_power_storage_base_1a163ffdb1ef2598d7b0e4cbd83a4a56ad"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16PowerStorageBase18customReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom Read() method, similar to customSelfInit. </p>
+<p>Custom read method, similar to customSelfInit; returns <code class="docutils literal notranslate"><span class="pre">true</span></code> by default. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase16storageStatusMsgE">
+<span id="_CPPv3N16PowerStorageBase16storageStatusMsgE"></span><span id="_CPPv2N16PowerStorageBase16storageStatusMsgE"></span><span id="PowerStorageBase::storageStatusMsg__PowerStorageStatusMsgPayload"></span><span class="target" id="class_power_storage_base_1af5bc8ce3cf5d787dd6138b744031c76e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerStorageStatusMsgPayload.html#_CPPv428PowerStorageStatusMsgPayload" title="PowerStorageStatusMsgPayload"><span class="n"><span class="pre">PowerStorageStatusMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storageStatusMsg</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase16storageStatusMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase12nodeWattMsgsE">
+<span id="_CPPv3N16PowerStorageBase12nodeWattMsgsE"></span><span id="_CPPv2N16PowerStorageBase12nodeWattMsgsE"></span><span id="PowerStorageBase::nodeWattMsgs__std::vector:PowerNodeUsageMsgPayload:"></span><span class="target" id="class_power_storage_base_1a655210a8de325e824890c106ea390535"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#_CPPv424PowerNodeUsageMsgPayload" title="PowerNodeUsageMsgPayload"><span class="n"><span class="pre">PowerNodeUsageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nodeWattMsgs</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase12nodeWattMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase12previousTimeE">
+<span id="_CPPv3N16PowerStorageBase12previousTimeE"></span><span id="_CPPv2N16PowerStorageBase12previousTimeE"></span><span id="PowerStorageBase::previousTime__double"></span><span class="target" id="class_power_storage_base_1a44a5bee11d56a5dbdbec996785b45978"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">previousTime</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase12previousTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Previous time used for integration. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase15currentTimestepE">
+<span id="_CPPv3N16PowerStorageBase15currentTimestepE"></span><span id="_CPPv2N16PowerStorageBase15currentTimestepE"></span><span id="PowerStorageBase::currentTimestep__double"></span><span class="target" id="class_power_storage_base_1ac649f20920580dee28f9585daf042d21"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentTimestep</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase15currentTimestepE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Timestep duration in seconds. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase12storedChargeE">
+<span id="_CPPv3N16PowerStorageBase12storedChargeE"></span><span id="_CPPv2N16PowerStorageBase12storedChargeE"></span><span id="PowerStorageBase::storedCharge__double"></span><span class="target" id="class_power_storage_base_1a024603a82e471feb15f6d37d5a001eff"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storedCharge</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase12storedChargeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W-s] Stored charge in Watt-hours. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16PowerStorageBase15currentPowerSumE">
+<span id="_CPPv3N16PowerStorageBase15currentPowerSumE"></span><span id="_CPPv2N16PowerStorageBase15currentPowerSumE"></span><span id="PowerStorageBase::currentPowerSum__double"></span><span class="target" id="class_power_storage_base_1a771327b3e1b43f5fa5b52313743fc339"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentPowerSum</span></span></span><a class="headerlink" href="#_CPPv4N16PowerStorageBase15currentPowerSumE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Current net power. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="powerNodeBase.html" class="btn btn-neutral float-left" title="Module: powerNodeBase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../simpleBattery/index.html" class="btn btn-neutral float-right" title="simpleBattery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

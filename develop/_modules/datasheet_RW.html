@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datasheet_RW &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datasheet_RW</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for datasheet_RW</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+
+<div class="viewcode-block" id="Honeywell_HR16">
+<a class="viewcode-back" href="../Documentation/utilities/datasheet_RW.html#datasheet_RW.Honeywell_HR16">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Honeywell_HR16</span><span class="p">(</span><span class="n">maxMomentum_level</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Honeywell HR16 (100Nm, 75Nm, 50Nm)</span>
+
+<span class="sd">    RW Information Source:</span>
+<span class="sd">    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf</span>
+
+<span class="sd">    There are 3 momentum capacity options for this RW type.  The maximum momentum</span>
+<span class="sd">    capacity must be set prior to creating the HR16 RW type using::</span>
+
+<span class="sd">        maxMomentum = 100, 75 or 50</span>
+
+<span class="sd">    :param maxMomentum_level:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Omega_max</span> <span class="o">=</span> <span class="mf">6000.0</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">rpm2radsec</span>  <span class="c1"># maximum speed</span>
+    <span class="n">u_max</span> <span class="o">=</span> <span class="mf">0.200</span>  <span class="c1"># maximum RW torque [Nm]</span>
+    <span class="n">u_min</span> <span class="o">=</span> <span class="mf">0.00001</span>  <span class="c1"># minimum RW torque [Nm]</span>
+    <span class="n">u_f</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># static friction torque [Nm]</span>
+    <span class="n">maxMomentum_large</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">maxMomentum_medium</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">maxMomentum_small</span> <span class="o">=</span> <span class="mi">50</span>
+
+
+    <span class="c1"># mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.</span>
+    <span class="c1"># U_s = static RW imbalance [kg*m]</span>
+    <span class="c1"># U_d = dynamic RW imbalance [kg*m^2]</span>
+    <span class="k">if</span> <span class="n">maxMomentum_level</span> <span class="o">==</span> <span class="s1">&#39;large&#39;</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">12.0</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">4.8E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">15.4E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum_level</span> <span class="o">==</span> <span class="s1">&#39;medium&#39;</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">10.4</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">3.8E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">11.5E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum_level</span> <span class="o">==</span> <span class="s1">&#39;small&#39;</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">9.0</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">2.8E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">7.7E-7</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16(maxMomentum_level) only has arg options maxMomentum = [large, medium, small]&#39;</span><span class="p">)</span>
+
+    <span class="n">maxMomentum</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;maxMomentum_&#39;</span> <span class="o">+</span> <span class="n">maxMomentum_level</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">maxMomentum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;maxMomentum_</span><span class="si">{</span><span class="n">maxMomentum_level</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">Omega_max</span><span class="p">,</span> <span class="n">u_max</span><span class="p">,</span> <span class="n">u_min</span><span class="p">,</span> <span class="n">u_f</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">U_s</span><span class="p">,</span> <span class="n">U_d</span><span class="p">,</span> <span class="n">maxMomentum</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="Honeywell_HR14">
+<a class="viewcode-back" href="../Documentation/utilities/datasheet_RW.html#datasheet_RW.Honeywell_HR14">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Honeywell_HR14</span><span class="p">(</span><span class="n">maxMomentum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Honeywell HR14 (25Nm, 50Nm, 75Nm)</span>
+
+<span class="sd">    RW Information Source:</span>
+<span class="sd">    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf</span>
+
+<span class="sd">    There are 3 momentum capacity options for this RW type.  The maximum momentum</span>
+<span class="sd">    capacity must be set prior to creating the HR14 RW type using::</span>
+
+<span class="sd">        options.maxMomentum = 75, 50 or 25</span>
+
+<span class="sd">    :param maxMomentum:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Omega_max</span> <span class="o">=</span> <span class="mf">6000.0</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">rpm2radsec</span>  <span class="c1"># maximum speed</span>
+    <span class="n">u_max</span> <span class="o">=</span> <span class="mf">0.200</span>  <span class="c1"># maximum RW torque [Nm]</span>
+    <span class="n">u_min</span> <span class="o">=</span> <span class="mf">0.00001</span>  <span class="c1"># minimum RW torque [Nm]</span>
+    <span class="n">u_f</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># static friction torque [Nm]</span>
+
+    <span class="c1"># mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.</span>
+    <span class="c1"># U_s = static RW imbalance [kg*m]</span>
+    <span class="c1"># U_d = dynamic RW imbalance [kg*m^2]</span>
+    <span class="n">large</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">medium</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">small</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="k">if</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">large</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">10.6</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">4.8E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">13.7E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">medium</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">8.5</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">3.5E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">9.1E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">small</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">7.5</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">2.2E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">4.6E-7</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR14(maxMomentum) only has arg options maxMomentum = [large, medium, small]&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">Omega_max</span><span class="p">,</span> <span class="n">u_max</span><span class="p">,</span> <span class="n">u_min</span><span class="p">,</span> <span class="n">u_f</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">U_s</span><span class="p">,</span> <span class="n">U_d</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="Honeywell_HR12">
+<a class="viewcode-back" href="../Documentation/utilities/datasheet_RW.html#datasheet_RW.Honeywell_HR12">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Honeywell_HR12</span><span class="p">(</span><span class="n">maxMomentum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Honeywell HR12 (12Nm, 25Nm, 50Nm)</span>
+
+<span class="sd">    RW Information Source:</span>
+<span class="sd">    http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf</span>
+
+<span class="sd">    There are 3 momentum capacity options for this RW type.  The maximum momentum</span>
+<span class="sd">    capacity must be set prior to creating the HR12 RW type using::</span>
+
+<span class="sd">        options.maxMomentum = 12, 25 or 50</span>
+
+<span class="sd">    :param maxMomentum:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Omega_max</span> <span class="o">=</span> <span class="mf">6000.0</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">rpm2radsec</span>  <span class="c1"># maximum speed</span>
+    <span class="n">u_max</span> <span class="o">=</span> <span class="mf">0.200</span>  <span class="c1"># maximum RW torque [Nm]</span>
+    <span class="n">u_min</span> <span class="o">=</span> <span class="mf">0.00001</span>  <span class="c1"># minimum RW torque [Nm]</span>
+    <span class="n">u_f</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># static friction torque [Nm]</span>
+
+    <span class="c1"># mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.</span>
+    <span class="c1"># U_s = static RW imbalance [kg*m]</span>
+    <span class="c1"># U_d = dynamic RW imbalance [kg*m^2]</span>
+    <span class="n">large</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">medium</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">small</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="k">if</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">large</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">9.5</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">4.4E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">9.1E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">medium</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">7.0</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">2.4E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">4.6E-7</span>
+    <span class="k">elif</span> <span class="n">maxMomentum</span> <span class="o">==</span> <span class="n">small</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mf">6.0</span>
+        <span class="n">U_s</span> <span class="o">=</span> <span class="mf">1.5E-6</span>
+        <span class="n">U_d</span> <span class="o">=</span> <span class="mf">2.2E-7</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR12(maxMomentum) only has arg options maxMomentum = [large, medium, small]&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">Omega_max</span><span class="p">,</span> <span class="n">u_max</span><span class="p">,</span> <span class="n">u_min</span><span class="p">,</span> <span class="n">u_f</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">U_s</span><span class="p">,</span> <span class="n">U_d</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

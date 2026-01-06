@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioQuadMaps &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioQuadMaps</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioQuadMaps</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. raw:: html</span>
+
+<span class="sd">    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/oV2lPwB1J2g?si=Sw0z6B1D6RXydbTw&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates how to set up and modify QuadMaps within Vizard, as both rectangular/polar</span>
+<span class="sd">defined regions and camera field-of-view regions.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioQuadMaps.py</span>
+
+<span class="sd">.. important:: This scenario requires BSK to be built with ``vizInterface`` enabled.</span>
+
+<span class="sd">Creating QuadMaps</span>
+<span class="sd">-----------------</span>
+<span class="sd">As shown in this scenario, QuadMaps can be created using the helper functions in :ref:`quadMapSupport`.</span>
+<span class="sd">This is already imported within :ref:`vizSupport`, and can be accessed using ``vizSupport.qms``.</span>
+<span class="sd">QuadMaps can also be built by hand.</span>
+
+<span class="sd">.. note:: The ordering of the ``vertices`` field is important for QuadMaps to be rendered correctly.</span>
+<span class="sd">          Each corner must be specified in the fixed-frame of its parent body, and the resulting vector</span>
+<span class="sd">          is [x1, y1, z1, x2, ..., y4, z4]. If another quadrilateral is to be added to the mesh, its</span>
+<span class="sd">          vertices append directly after the first set. Thus, the ``vertices`` field should always contain</span>
+<span class="sd">          a multiple of 12 elements (k quads, each with 4 corners, each with a 3D position).</span>
+
+<span class="sd">This scenario demonstrates setting up QuadMaps using latitude/longitude/altitude, as shown by both Colorado (bounded by</span>
+<span class="sd">[37°N, 41°N] latitude and [-109°02&#39;48&quot;E, -102°02&#39;48&quot;E] longitude) and the Arctic Region (bounded by [66.5°N, 90°N]</span>
+<span class="sd">latitude and [-180°E, 180°E] longitude). These are computed using ``vizSupport.qms.computeRectMesh()``.</span>
+
+<span class="sd">The satellite is capturing images of Earth&#39;s surface every 20 minutes, and the camera field-of-view is projected onto</span>
+<span class="sd">the surface as a red QuadMap. Due to the eccentricity of the orbit, the spacing and scale of these FOV boxes change</span>
+<span class="sd">over time. There are two separate functions which handle the camera FOV: ``vizSupport.qms.computeCamFOVBox()`` returns</span>
+<span class="sd">the intersection points between the reference ellipsoid and the camera FOV, while ``vizSupport.qms.subdivideFOVBox()``</span>
+<span class="sd">interpolates these corners according to produce a square grid that can more easily wrap a convex surface. It is</span>
+<span class="sd">important to note that, in this scenario, the FOV box is only drawn if all 4 corners find a valid intersection with the</span>
+<span class="sd">reference ellipsoid. Otherwise, the non-intersection case becomes more complex to handle and is currently the</span>
+<span class="sd">responsibility of the user to handle.</span>
+
+<span class="sd">A custom QuadMap is also created on one of the solar cells of the satellite, which is defined by hand in body-fixed coordinates.</span>
+
+<span class="sd">.. image:: /_images/static/scenarioQuadMaps_overview.png</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Once half of the simulation time passes, various settings are changed: Arctic Region toggles its ``isHidden`` flag,</span>
+<span class="sd">Solar Cell switches its label to &quot;NOLABEL&quot;, and Colorado changes its label/color.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the Vizard QuadMap surface highlight visual element.</span>
+<span class="c1"># Author:   Jack Fox</span>
+<span class="c1"># Creation Date:  Apr. 15, 2025</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder</span>
+<span class="c1"># outside the Basilisk directory.</span>
+<span class="c1">#</span>
+<span class="c1"># To copy them, first find the location of the Basilisk installation.</span>
+<span class="c1"># After installing, you can find the installed location of Basilisk by opening a python interpreter and</span>
+<span class="c1"># running the commands:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">fileNamePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+
+<span class="c1"># general support file with common unit test functions</span>
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span>
+                                <span class="n">simIncludeGravBody</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioQuadMaps.html#scenarioQuadMaps.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots.  This script has no plots to show.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create the simulation process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># Create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># Set up the simulation tasks/objects</span>
+    <span class="c1"># Initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+
+    <span class="c1"># Add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Set up Gravity Body</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>          <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">planet</span><span class="o">.</span><span class="n">radiusRatio</span> <span class="o">=</span> <span class="mf">0.9966</span>
+
+    <span class="c1"># Finally, the gravitational body must be connected to the spacecraft object.  This is done with</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Setup spice library for Earth ephemeris</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2000 November 26, 09:30:00.0 TDB&quot;</span>
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">timeInitString</span><span class="p">,</span> <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s1">&#39;Earth&#39;</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Set up orbit and simulation time</span>
+    <span class="c1">#</span>
+    <span class="c1"># Set up the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rMEO</span> <span class="o">=</span> <span class="mf">11260.</span> <span class="o">*</span> <span class="mi">1000</span>      <span class="c1"># meters</span>
+
+    <span class="c1"># Elliptic MEO case</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rMEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">28.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">20.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">10.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="c1"># To set the spacecraft initial conditions, the following initial position and velocity variables are set:</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_BN_N</span>
+
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">hour2nano</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="c1"># Set up data logging before the simulation is initialized</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="c1"># create a logging task object of the spacecraft output message at the desired down sampling ratio</span>
+    <span class="n">dataRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span>
+                                                  <span class="c1"># saveFile=__file__</span>
+                                                  <span class="p">)</span>
+
+        <span class="c1"># Del viz.quadMaps[:] at the start of the sim</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">quadMaps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c1"># Create Standard Camera</span>
+        <span class="n">cam</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">createStandardCamera</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                              <span class="n">setMode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                              <span class="n">bodyTarget</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                              <span class="n">fieldOfView</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                                              <span class="p">)</span>
+
+        <span class="c1"># In more complex scenarios with pointing modules, a CameraConfigMsg can be used</span>
+        <span class="c1"># for more precise camera-pointing. See scenarioVizPoint.py for this camera setup demo.</span>
+
+        <span class="c1"># cam = messaging.CameraConfigMsgPayload()</span>
+        <span class="c1"># cam.cameraID = 1</span>
+        <span class="c1"># cam.sigma_CB = [-0.333333, 0.333333, -0.333333]</span>
+        <span class="c1"># cam.cameraPos_B = [5., 0., 0.]</span>
+        <span class="c1"># cam.fieldOfView = 75.*macros.D2R</span>
+        <span class="c1"># cam.resolution = [2048, 2048]</span>
+        <span class="c1"># cam.skybox = &quot;&quot;</span>
+        <span class="c1"># viz.addCamMsgToModule(messaging.CameraConfigMsg().write(cam))</span>
+
+        <span class="c1"># Create initial QuadMaps</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                              <span class="n">ID</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                              <span class="n">vertices</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">computeRectMesh</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span>
+                                                                      <span class="p">[</span><span class="mf">66.5</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span>
+                                                                      <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">],</span>
+                                                                      <span class="mi">8</span><span class="p">),</span>
+                              <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                              <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Arctic Region&quot;</span>
+                              <span class="p">)</span>
+
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                              <span class="n">ID</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                              <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                              <span class="n">vertices</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">computeRectMesh</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span>
+                                                                      <span class="p">[</span><span class="mi">37</span><span class="p">,</span> <span class="mi">41</span><span class="p">],</span>
+                                                                      <span class="p">[</span><span class="o">-</span><span class="mf">102.0467</span><span class="p">,</span> <span class="o">-</span><span class="mf">109.0467</span><span class="p">],</span>
+                                                                      <span class="mi">5</span><span class="p">),</span>
+                              <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                              <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Colorado&quot;</span>
+                              <span class="p">)</span>
+
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                              <span class="n">ID</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                              <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;bsk-Sat&quot;</span><span class="p">,</span>
+                              <span class="n">vertices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">2.551</span><span class="p">,</span> <span class="mf">0.341</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                        <span class="o">-</span><span class="mf">2.804</span><span class="p">,</span> <span class="mf">0.341</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                        <span class="o">-</span><span class="mf">2.804</span><span class="p">,</span> <span class="mf">0.111</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                        <span class="o">-</span><span class="mf">2.551</span><span class="p">,</span> <span class="mf">0.111</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">],</span>
+                              <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                              <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Solar Cell&quot;</span><span class="p">)</span>
+
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">mainCameraTarget</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+
+        <span class="c1"># Number of interpolations for camera FOV when generating QuadMaps (helps wrap convex surface)</span>
+        <span class="n">fieldOfViewSubdivs</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="c1"># ==================== Run simulation loop ==================== #</span>
+    <span class="c1">#   initialize Simulation:  This function runs the self_init()</span>
+    <span class="c1">#   and reset() routines on each module.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">camQM_ID</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">incrementalStopTime</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">imgTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">incrementalStopTime</span> <span class="o">&lt;</span> <span class="n">simulationTime</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+            <span class="c1"># Add QuadMap showing camera FOV</span>
+            <span class="n">FOVBox</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">computeCamFOVBox</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="n">cam</span><span class="p">)</span>
+            <span class="c1"># Only draw if all 4 corners intersect Earth!</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">FOVBox</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+                <span class="c1"># Subdivide region to wrap onto ellipsoid</span>
+                <span class="k">if</span> <span class="n">fieldOfViewSubdivs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">FOVBox</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">subdivideFOVBox</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span> <span class="n">FOVBox</span><span class="p">,</span> <span class="n">fieldOfViewSubdivs</span><span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                      <span class="n">ID</span><span class="o">=</span><span class="n">camQM_ID</span><span class="p">,</span>
+                                      <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                      <span class="n">vertices</span><span class="o">=</span><span class="n">FOVBox</span><span class="p">,</span>
+                                      <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>
+                                      <span class="p">)</span>
+                <span class="n">camQM_ID</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">incrementalStopTime</span> <span class="o">==</span> <span class="n">simulationTime</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                      <span class="n">ID</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                      <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                      <span class="n">vertices</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">computeRectMesh</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span>
+                                                                              <span class="p">[</span><span class="mf">66.5</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span>
+                                                                              <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">],</span>
+                                                                              <span class="mi">8</span><span class="p">),</span>
+                                      <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                                      <span class="n">isHidden</span><span class="o">=</span><span class="kc">True</span>
+                                      <span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                      <span class="n">ID</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                      <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                      <span class="n">vertices</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">qms</span><span class="o">.</span><span class="n">computeRectMesh</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span>
+                                                                              <span class="p">[</span><span class="mi">37</span><span class="p">,</span> <span class="mi">41</span><span class="p">],</span>
+                                                                              <span class="p">[</span><span class="o">-</span><span class="mf">102.0467</span><span class="p">,</span> <span class="o">-</span><span class="mf">109.0467</span><span class="p">],</span>
+                                                                              <span class="mi">5</span><span class="p">),</span>
+                                      <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                                      <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CO (new color!)&quot;</span>
+                                      <span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                      <span class="n">ID</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                      <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;bsk-Sat&quot;</span><span class="p">,</span>
+                                      <span class="n">vertices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">2.551</span><span class="p">,</span> <span class="mf">0.341</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                                <span class="o">-</span><span class="mf">2.804</span><span class="p">,</span> <span class="mf">0.341</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                                <span class="o">-</span><span class="mf">2.804</span><span class="p">,</span> <span class="mf">0.111</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span>
+                                                <span class="o">-</span><span class="mf">2.551</span><span class="p">,</span> <span class="mf">0.111</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">],</span>
+                                      <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                                      <span class="n">label</span><span class="o">=</span><span class="s2">&quot;NOLABEL&quot;</span><span class="p">)</span>
+
+        <span class="n">incrementalStopTime</span> <span class="o">+=</span> <span class="n">imgTimeStep</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">incrementalStopTime</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="c1"># Empty out QuadMap container so they are only sent once</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">quadMapList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Unload Spice kernel</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{}</span> <span class="c1"># no figures to return</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: torque2Dipole &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="torque2Dipole" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../jointMotionCompensator/index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgVelocitySteering/index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">torque2Dipole</a></li>
+      <li class="breadcrumb-item active">Module: torque2Dipole</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/torque2Dipole/torque2Dipole.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-torque2dipole">
+<span id="torque2dipole"></span><h1>Module: torque2Dipole<a class="headerlink" href="#module-torque2dipole" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes a Body frame reequested dipole given a requested body torque and magnetic field vector.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tamSensorBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.html#tamsensorbodymsgpayload"><span class="std std-ref">TAMSensorBodyMsgPayload</span></a></p></td>
+<td><p>input message for magnetic field sensor data</p></td>
+</tr>
+<tr class="row-odd"><td><p>tauRequestInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>input message containing control torque in the Body frame</p></td>
+</tr>
+<tr class="row-even"><td><p>dipoleRequestOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/DipoleRequestBodyMsgPayload.html#dipolerequestbodymsgpayload"><span class="std std-ref">DipoleRequestBodyMsgPayload</span></a></p></td>
+<td><p>output message containing dipole request in the Body frame</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The following presents the mathematics for converting a requested Body torque into a requested Body dipole to be produced the torque rods given the local magnetic field vector. The desired Body frame dipole is given by</p>
+<div class="math notranslate nohighlight">
+\[{}^{\cal B} {\pmb\mu}_{\text{desired}} = \frac{1}{|\bf b|^2}
+{}^{\cal B}{\bf b} \times \ {}^{\cal B} {\pmb\tau}_{\text{desired}} = [G_t] {\pmb\mu}_{\text{cmd}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\bf b\)</span> is the local magnetic field vector and <span class="math notranslate nohighlight">\([G_t]\)</span> is a 3 <span class="math notranslate nohighlight">\(\times N_{\text{MTB}}\)</span>
+matrix that transforms the individual rod dipoles to the Body frame.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>See the example script <a class="reference internal" href="../../../../examples/scenarioMtbMomentumManagementSimple.html#scenariomtbmomentummanagementsimple"><span class="std std-ref">scenarioMtbMomentumManagementSimple</span></a> for an illustration on how to use this module.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The module <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> function zeros the output message to ensure safe management of effector states when the algorithm is disabled.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422SelfInit_torque2DipoleP19torque2DipoleConfig7int64_t">
+<span id="_CPPv322SelfInit_torque2DipoleP19torque2DipoleConfig7int64_t"></span><span id="_CPPv222SelfInit_torque2DipoleP19torque2DipoleConfig7int64_t"></span><span id="SelfInit_torque2Dipole__torque2DipoleConfigP.int64_t"></span><span class="target" id="torque2_dipole_8h_1a6850455074ac582e954deda9d458fe0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_torque2Dipole</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419torque2DipoleConfig" title="torque2DipoleConfig"><span class="n"><span class="pre">torque2DipoleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422SelfInit_torque2DipoleP19torque2DipoleConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420Update_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t">
+<span id="_CPPv320Update_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t"></span><span id="_CPPv220Update_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t"></span><span id="Update_torque2Dipole__torque2DipoleConfigP.uint64_t.int64_t"></span><span class="target" id="torque2_dipole_8h_1a1dc2455e14931875b950cdaa4a8f44fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_torque2Dipole</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419torque2DipoleConfig" title="torque2DipoleConfig"><span class="n"><span class="pre">torque2DipoleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420Update_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method transforms the requested torque from the torque rods into a Body frame requested dipole from the torque rods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419Reset_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t">
+<span id="_CPPv319Reset_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t"></span><span id="_CPPv219Reset_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t"></span><span id="Reset_torque2Dipole__torque2DipoleConfigP.uint64_t.int64_t"></span><span class="target" id="torque2_dipole_8h_1afdd5e0a5dbf25ff99d9236e68e4c53b1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_torque2Dipole</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv419torque2DipoleConfig" title="torque2DipoleConfig"><span class="n"><span class="pre">torque2DipoleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419Reset_torque2DipoleP19torque2DipoleConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. Check if required input messages are connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419torque2DipoleConfig">
+<span id="_CPPv319torque2DipoleConfig"></span><span id="_CPPv219torque2DipoleConfig"></span><span id="torque2DipoleConfig"></span><span class="target" id="structtorque2_dipole_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torque2DipoleConfig</span></span></span><a class="headerlink" href="#_CPPv419torque2DipoleConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;torque2Dipole.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19torque2DipoleConfig18tamSensorBodyInMsgE">
+<span id="_CPPv3N19torque2DipoleConfig18tamSensorBodyInMsgE"></span><span id="_CPPv2N19torque2DipoleConfig18tamSensorBodyInMsgE"></span><span id="torque2DipoleConfig::tamSensorBodyInMsg__TAMSensorBodyMsg_C"></span><span class="target" id="structtorque2_dipole_config_1a610252bdefa47cab99c7140c0e2d6d17"></span><span class="n"><span class="pre">TAMSensorBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tamSensorBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19torque2DipoleConfig18tamSensorBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Tesla] input message for magnetic field sensor data in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19torque2DipoleConfig15tauRequestInMsgE">
+<span id="_CPPv3N19torque2DipoleConfig15tauRequestInMsgE"></span><span id="_CPPv2N19torque2DipoleConfig15tauRequestInMsgE"></span><span id="torque2DipoleConfig::tauRequestInMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="structtorque2_dipole_config_1a9ea2cd454716397cc6dfe312a960c889"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tauRequestInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19torque2DipoleConfig15tauRequestInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] input message containing control torque in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19torque2DipoleConfig19dipoleRequestOutMsgE">
+<span id="_CPPv3N19torque2DipoleConfig19dipoleRequestOutMsgE"></span><span id="_CPPv2N19torque2DipoleConfig19dipoleRequestOutMsgE"></span><span id="torque2DipoleConfig::dipoleRequestOutMsg__DipoleRequestBodyMsg_C"></span><span class="target" id="structtorque2_dipole_config_1a697ab61db3ea4055224fbbd2e6ad5d86"></span><span class="n"><span class="pre">DipoleRequestBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dipoleRequestOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N19torque2DipoleConfig19dipoleRequestOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[A-m2] output message containing dipole request in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19torque2DipoleConfig9bskLoggerE">
+<span id="_CPPv3N19torque2DipoleConfig9bskLoggerE"></span><span id="_CPPv2N19torque2DipoleConfig9bskLoggerE"></span><span id="torque2DipoleConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structtorque2_dipole_config_1a16f11ca46d9e5dc9ce1a35caac95e3b7"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N19torque2DipoleConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="torque2Dipole" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

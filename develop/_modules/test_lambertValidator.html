@@ -1,0 +1,607 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_lambertValidator &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_lambertValidator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_lambertValidator</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">nullcontext</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">lambertValidator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+
+<span class="c1"># parameters</span>
+<span class="n">DVs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">500.</span><span class="p">,</span> <span class="o">-</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">200.</span><span class="p">]])</span>
+<span class="n">time_maneuver</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.e3</span><span class="p">,</span> <span class="mf">2.e3</span><span class="p">]</span>
+<span class="n">time_final</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.1e3</span><span class="p">,</span> <span class="mf">4.e3</span><span class="p">]</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">errorsX</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-9</span><span class="p">]</span>
+
+<span class="n">paramArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">DVs</span><span class="p">,</span> <span class="n">time_maneuver</span><span class="p">,</span> <span class="n">time_final</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span> <span class="n">errorsX</span><span class="p">]</span>
+<span class="c1"># create list with all combinations of parameters</span>
+<span class="n">paramList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">paramArray</span><span class="p">))</span>
+<span class="c1"># add cases to check Lambert solver iterations and error limits, plus final time occurring before maneuver time</span>
+<span class="n">paramList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">DVs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="mf">2.e3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">1.e-9</span><span class="p">))</span>
+<span class="n">paramList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">DVs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="mf">2.e3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.e-5</span><span class="p">))</span>
+<span class="n">paramList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">DVs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">2.e3</span><span class="p">,</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.e-9</span><span class="p">))</span>
+<span class="n">paramList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">DVs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">2.e3</span><span class="p">,</span> <span class="mf">2.e3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.e-9</span><span class="p">))</span>
+
+<div class="viewcode-block" id="test_lambertValidator">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertValidator/_UnitTest/test_lambertValidator.html#test_lambertValidator.test_lambertValidator">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;p1_dv, p2_tm, p3_tf, p4_iter, p5_errX&quot;</span><span class="p">,</span> <span class="n">paramList</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_lambertValidator</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_dv</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_tf</span><span class="p">,</span> <span class="n">p4_iter</span><span class="p">,</span> <span class="n">p5_errX</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This test checks if the Lambert validator module works correctly for different Delta-V vectors, maneuver times and</span>
+<span class="sd">    final times. Different values for the Lambert solver root finder iteration number and error are also used.</span>
+<span class="sd">    If the iteration number or error is too large, the commanded Delta-V should be zero.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots: flag if plots should be shown</span>
+<span class="sd">        p1_dv: Delta-V vector</span>
+<span class="sd">        p2_tm: maneuver time</span>
+<span class="sd">        p3_tf: final time</span>
+<span class="sd">        p4_iter: number of iterations of the Lambert solver root finder</span>
+<span class="sd">        p5_errX: error of the Lambert solver root finder solution</span>
+<span class="sd">        accuracy: accuracy of the test</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The content of the DvBurnCmdMsg output message (DV vector and burn start time) is compared with the true values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expect_error</span> <span class="o">=</span> <span class="n">p2_tm</span> <span class="o">&gt;</span> <span class="n">p3_tf</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">)</span> <span class="k">if</span> <span class="n">expect_error</span> <span class="k">else</span> <span class="n">nullcontext</span><span class="p">():</span>
+        <span class="n">lambertValidatorTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_dv</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_tf</span><span class="p">,</span> <span class="n">p4_iter</span><span class="p">,</span> <span class="n">p5_errX</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getInitialStates</span><span class="p">(</span><span class="n">r1_BN_N</span><span class="p">,</span> <span class="n">v1_BN_N</span><span class="p">,</span> <span class="n">dv_N</span><span class="p">,</span> <span class="n">errStates</span><span class="p">,</span> <span class="n">errDV</span><span class="p">):</span>
+    <span class="c1"># state and DV vector expressed in Hill frame</span>
+    <span class="n">dcm_HN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">hillFrame</span><span class="p">(</span><span class="n">r1_BN_N</span><span class="p">,</span> <span class="n">v1_BN_N</span><span class="p">)</span>
+    <span class="n">r1_BN_H</span> <span class="o">=</span> <span class="n">dcm_HN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r1_BN_N</span><span class="p">)</span>
+    <span class="n">v1_BN_H</span> <span class="o">=</span> <span class="n">dcm_HN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1_BN_N</span><span class="p">)</span>
+    <span class="n">X1nom_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">r1_BN_H</span><span class="p">,</span> <span class="n">v1_BN_H</span><span class="p">))</span>
+    <span class="n">dv_H</span> <span class="o">=</span> <span class="n">dcm_HN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dv_N</span><span class="p">)</span>
+    <span class="n">dvHat_H</span> <span class="o">=</span> <span class="n">dv_H</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dv_H</span><span class="p">)</span>
+
+    <span class="c1"># 6x6 dcm that can be used for 6x1 state vector</span>
+    <span class="n">dcm_HN_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">dcm_HN</span><span class="p">)</span>
+
+    <span class="c1"># state uncertainty matrix</span>
+    <span class="n">Psqrt</span> <span class="o">=</span> <span class="n">errStates</span>
+
+    <span class="n">numInitialStates</span> <span class="o">=</span> <span class="mi">27</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="n">initialStates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">numInitialStates</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">jj</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">multiplier</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
+
+            <span class="c1"># add state uncertainty</span>
+            <span class="n">X1_H</span> <span class="o">=</span> <span class="n">X1nom_H</span> <span class="o">+</span> <span class="n">multiplier</span><span class="o">*</span><span class="n">Psqrt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">]</span>
+            <span class="n">X1minDV_H</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">X1_H</span><span class="p">)</span>
+            <span class="n">X1maxDV_H</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">X1_H</span><span class="p">)</span>
+
+            <span class="c1"># add DV uncertainty</span>
+            <span class="n">X1minDV_H</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dv_H</span> <span class="o">-</span> <span class="n">errDV</span> <span class="o">*</span> <span class="n">dvHat_H</span>
+            <span class="n">X1maxDV_H</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dv_H</span> <span class="o">+</span> <span class="n">errDV</span> <span class="o">*</span> <span class="n">dvHat_H</span>
+
+            <span class="n">initialStates</span><span class="p">[:,</span> <span class="n">jj</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_HN_states</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1minDV_H</span><span class="p">)</span>
+            <span class="n">initialStates</span><span class="p">[:,</span> <span class="mi">2</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="n">jj</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_HN_states</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1maxDV_H</span><span class="p">)</span>
+
+    <span class="n">X1_H</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">X1nom_H</span><span class="p">)</span>
+    <span class="n">X1minDV_H</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">X1_H</span><span class="p">)</span>
+    <span class="n">X1maxDV_H</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">X1_H</span><span class="p">)</span>
+
+    <span class="c1"># no state uncertainty, only DV uncertainty</span>
+    <span class="n">X1_H</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dv_H</span>
+    <span class="n">X1minDV_H</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dv_H</span> <span class="o">-</span> <span class="n">errDV</span> <span class="o">*</span> <span class="n">dvHat_H</span>
+    <span class="n">X1maxDV_H</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dv_H</span> <span class="o">+</span> <span class="n">errDV</span> <span class="o">*</span> <span class="n">dvHat_H</span>
+
+    <span class="n">initialStates</span><span class="p">[:,</span> <span class="mi">4</span><span class="o">*</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_HN_states</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1_H</span><span class="p">)</span>
+    <span class="n">initialStates</span><span class="p">[:,</span> <span class="mi">4</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_HN_states</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1minDV_H</span><span class="p">)</span>
+    <span class="n">initialStates</span><span class="p">[:,</span> <span class="mi">4</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_HN_states</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1maxDV_H</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">initialStates</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">countViolations</span><span class="p">(</span><span class="n">initialStates</span><span class="p">,</span> <span class="n">muBody</span><span class="p">,</span> <span class="n">tm</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">r_TN_N</span><span class="p">,</span> <span class="n">maxDistanceTarget</span><span class="p">,</span> <span class="n">minOrbitRadius</span><span class="p">):</span>
+    <span class="n">violationsDistanceTarget</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">violationsOrbitRadius</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">numInitialStates</span> <span class="o">=</span> <span class="mi">27</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numInitialStates</span><span class="p">):</span>
+        <span class="n">Xm_N</span> <span class="o">=</span> <span class="n">initialStates</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">]</span>
+        <span class="n">rm_BN_N</span> <span class="o">=</span> <span class="n">Xm_N</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">vm_BN_N</span> <span class="o">=</span> <span class="n">Xm_N</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">oem</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">rm_BN_N</span><span class="p">,</span> <span class="n">vm_BN_N</span><span class="p">)</span>
+
+        <span class="n">oef</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">oem</span><span class="p">)</span>
+        <span class="n">eccf</span> <span class="o">=</span> <span class="n">oem</span><span class="o">.</span><span class="n">e</span>
+
+        <span class="k">if</span> <span class="n">eccf</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1"># elliptic case</span>
+            <span class="n">M2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oem</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">eccf</span><span class="p">),</span> <span class="n">eccf</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="n">oem</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">M3</span> <span class="o">=</span> <span class="n">M2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+            <span class="n">oef</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">M3</span><span class="p">,</span> <span class="n">eccf</span><span class="p">),</span> <span class="n">eccf</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">eccf</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1"># parabolic case</span>
+            <span class="n">D2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">oem</span><span class="o">.</span><span class="n">f</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">M2</span> <span class="o">=</span> <span class="n">D2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">D2</span><span class="o">**</span><span class="mi">3</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">oem</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="n">M3</span> <span class="o">=</span> <span class="n">M2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">M3</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+            <span class="n">oef</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">B</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># hyperbolic case</span>
+            <span class="n">N2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2N</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2H</span><span class="p">(</span><span class="n">oem</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">eccf</span><span class="p">),</span> <span class="n">eccf</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="n">oem</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">N3</span> <span class="o">=</span> <span class="n">N2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+            <span class="n">oef</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">N2H</span><span class="p">(</span><span class="n">N3</span><span class="p">,</span> <span class="n">eccf</span><span class="p">),</span> <span class="n">eccf</span><span class="p">)</span>
+
+        <span class="c1"># spacecraft state at final time</span>
+        <span class="n">rf_BN_N</span><span class="p">,</span> <span class="n">vf_BN_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">oef</span><span class="p">)</span>
+
+        <span class="c1"># difference of final location and target location</span>
+        <span class="n">rf_BT_N</span> <span class="o">=</span> <span class="n">rf_BN_N</span> <span class="o">-</span> <span class="n">r_TN_N</span>
+
+        <span class="c1"># find the smallest orbit radius along transfer arc</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">remainder</span><span class="p">(</span><span class="n">oem</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">remainder</span><span class="p">(</span><span class="n">oef</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f1</span><span class="o">*</span><span class="n">f2</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="n">f_rmin</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f_rmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">f1</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f2</span><span class="p">)])</span>
+        <span class="n">oe_rmin</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">oem</span><span class="p">)</span>
+        <span class="n">oe_rmin</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f_rmin</span>
+        <span class="n">rmin</span> <span class="o">=</span> <span class="n">oe_rmin</span><span class="o">.</span><span class="n">rmag</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rf_BT_N</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxDistanceTarget</span><span class="p">:</span>
+            <span class="n">violationsDistanceTarget</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">rmin</span> <span class="o">&lt;</span> <span class="n">minOrbitRadius</span><span class="p">:</span>
+            <span class="n">violationsOrbitRadius</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">violationsDistanceTarget</span><span class="p">,</span> <span class="n">violationsOrbitRadius</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lambertValidatorTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_dv</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_tf</span><span class="p">,</span> <span class="n">p4_iter</span><span class="p">,</span> <span class="n">p5_errX</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="n">solverMethod</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">IZZO</span>
+    <span class="n">muBody</span> <span class="o">=</span> <span class="mf">3.986004418e14</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">tm</span> <span class="o">=</span> <span class="n">p2_tm</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">p3_tf</span>
+    <span class="n">numIter</span> <span class="o">=</span> <span class="n">p4_iter</span>
+    <span class="n">errX</span> <span class="o">=</span> <span class="n">p5_errX</span>
+    <span class="n">ecc</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">dv_N</span> <span class="o">=</span> <span class="n">p1_dv</span>
+    <span class="n">errStates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">])</span>  <span class="c1"># 6x6 state uncertainty matrix</span>
+    <span class="n">errDV</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m/s] Delta-V magnitude uncertainty</span>
+    <span class="n">maxDistanceTarget</span> <span class="o">=</span> <span class="mf">3000.</span>
+    <span class="n">minOrbitRadius</span> <span class="o">=</span> <span class="mi">6378</span> <span class="o">*</span> <span class="mf">1000.</span>
+
+    <span class="c1"># set up orbit using classical orbit elements</span>
+    <span class="n">oe0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">10000.</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="k">if</span> <span class="n">ecc</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># elliptic case</span>
+        <span class="n">oe0</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">r</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># parabolic and hyperbolic case</span>
+        <span class="n">oe0</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="n">r</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">ecc</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">10.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">20.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">30.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">40.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="c1"># spacecraft state at initial time</span>
+    <span class="n">r0_BN_N</span><span class="p">,</span> <span class="n">v0_BN_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">oe0</span><span class="p">)</span>
+    <span class="n">oe0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">r0_BN_N</span><span class="p">,</span> <span class="n">v0_BN_N</span><span class="p">)</span>
+
+    <span class="n">oe1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">oe0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ecc</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># elliptic case</span>
+        <span class="n">M0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">ecc</span><span class="p">),</span> <span class="n">ecc</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="n">M0</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tm</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
+        <span class="n">oe1</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">ecc</span><span class="p">),</span> <span class="n">ecc</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ecc</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># parabolic case</span>
+        <span class="n">D0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">f</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">M0</span> <span class="o">=</span> <span class="n">D0</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">D0</span><span class="o">**</span><span class="mi">3</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="n">M0</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tm</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">M1</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+        <span class="n">oe1</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">B</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># hyperbolic case</span>
+        <span class="n">N0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2N</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2H</span><span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">ecc</span><span class="p">),</span> <span class="n">ecc</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">N1</span> <span class="o">=</span> <span class="n">N0</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tm</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
+        <span class="n">oe1</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">N2H</span><span class="p">(</span><span class="n">N1</span><span class="p">,</span> <span class="n">ecc</span><span class="p">),</span> <span class="n">ecc</span><span class="p">)</span>
+
+    <span class="c1"># spacecraft state at maneuver time, just before maneuver</span>
+    <span class="n">r1_BN_N</span><span class="p">,</span> <span class="n">v1_BN_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">oe1</span><span class="p">)</span>
+
+    <span class="c1"># spacecraft state at maneuver time, just after maneuver</span>
+    <span class="n">r2_BN_N</span> <span class="o">=</span> <span class="n">r1_BN_N</span>
+    <span class="n">v2_BN_N</span> <span class="o">=</span> <span class="n">v1_BN_N</span> <span class="o">+</span> <span class="n">dv_N</span>
+    <span class="n">oe2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">r2_BN_N</span><span class="p">,</span> <span class="n">v2_BN_N</span><span class="p">)</span>
+
+    <span class="n">oe3</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">oe2</span><span class="p">)</span>
+    <span class="n">ecc3</span> <span class="o">=</span> <span class="n">oe3</span><span class="o">.</span><span class="n">e</span>
+
+    <span class="k">if</span> <span class="n">ecc3</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># elliptic case</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe2</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">ecc3</span><span class="p">),</span> <span class="n">ecc3</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="n">oe2</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">M3</span> <span class="o">=</span> <span class="n">M2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+        <span class="n">oe3</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">M3</span><span class="p">,</span> <span class="n">ecc3</span><span class="p">),</span> <span class="n">ecc3</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ecc3</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># parabolic case</span>
+        <span class="n">D2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">oe2</span><span class="o">.</span><span class="n">f</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="n">D2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">D2</span><span class="o">**</span><span class="mi">3</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">oe2</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">M3</span> <span class="o">=</span> <span class="n">M2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">M3</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+        <span class="n">oe3</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">B</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># hyperbolic case</span>
+        <span class="n">N2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2N</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2H</span><span class="p">(</span><span class="n">oe2</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">ecc3</span><span class="p">),</span> <span class="n">ecc3</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muBody</span> <span class="o">/</span> <span class="p">(</span><span class="o">-</span><span class="n">oe2</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">N3</span> <span class="o">=</span> <span class="n">N2</span> <span class="o">+</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">tf</span><span class="o">-</span><span class="n">tm</span><span class="p">)</span>
+        <span class="n">oe3</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">H2f</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">N2H</span><span class="p">(</span><span class="n">N3</span><span class="p">,</span> <span class="n">ecc3</span><span class="p">),</span> <span class="n">ecc3</span><span class="p">)</span>
+
+    <span class="c1"># spacecraft state at final time</span>
+    <span class="n">r3_BN_N</span><span class="p">,</span> <span class="n">v3_BN_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">oe3</span><span class="p">)</span>
+
+    <span class="c1"># setup module to be tested</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertValidator</span><span class="o">.</span><span class="n">LambertValidator</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;lambertValidator&quot;</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setFinalTime</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setManeuverTime</span><span class="p">(</span><span class="n">tm</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setMaxDistanceTarget</span><span class="p">(</span><span class="n">maxDistanceTarget</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setMinOrbitRadius</span><span class="p">(</span><span class="n">minOrbitRadius</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setUncertaintyStates</span><span class="p">(</span><span class="n">errStates</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setUncertaintyDV</span><span class="p">(</span><span class="n">errDV</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setDvConvergenceTolerance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dv_N</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># Configure input messages</span>
+    <span class="n">navTransInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+    <span class="n">navTransInMsgData</span><span class="o">.</span><span class="n">timeTag</span> <span class="o">=</span> <span class="n">t0</span>
+    <span class="n">navTransInMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r0_BN_N</span>
+    <span class="n">navTransInMsgData</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">v0_BN_N</span>
+    <span class="n">navTransInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">navTransInMsgData</span><span class="p">)</span>
+
+    <span class="n">lambertProblemInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">solverMethod</span> <span class="o">=</span> <span class="n">solverMethod</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">r1_N</span> <span class="o">=</span> <span class="n">r1_BN_N</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">r3_BN_N</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">transferTime</span> <span class="o">=</span> <span class="n">tf</span><span class="o">-</span><span class="n">tm</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">muBody</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">numRevolutions</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lambertProblemInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lambertProblemInMsgData</span><span class="p">)</span>
+
+    <span class="n">lambertSolutionInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertSolutionMsgPayload</span><span class="p">()</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v1_N</span> <span class="o">=</span> <span class="n">v1_BN_N</span> <span class="o">+</span> <span class="n">dv_N</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v2_N</span> <span class="o">=</span> <span class="n">v3_BN_N</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v1Sol2_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v2Sol2_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lambertSolutionInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertSolutionMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lambertSolutionInMsgData</span><span class="p">)</span>
+
+    <span class="n">lambertPerformanceInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertPerformanceMsgPayload</span><span class="p">()</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">numIter</span> <span class="o">=</span> <span class="n">numIter</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">errX</span> <span class="o">=</span> <span class="n">errX</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">xSol2</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">numIterSol2</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lambertPerformanceInMsgData</span><span class="o">.</span><span class="n">errXSol2</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">lambertPerformanceInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertPerformanceMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lambertPerformanceInMsgData</span><span class="p">)</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">navTransInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lambertProblemInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertPerformanceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lambertPerformanceInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertSolutionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lambertSolutionInMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup output message recorder objects</span>
+    <span class="n">dvBurnCmdOutMsgRec</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">dvBurnCmdOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dvBurnCmdOutMsgRec</span><span class="p">)</span>
+    <span class="n">lambertValidatorOutMsgRec</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">lambertValidatorOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">lambertValidatorOutMsgRec</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># run simulation for 3 time steps (excluding initial time step at 0 ns), scale DV vector each time step</span>
+    <span class="c1"># returned dV vector should only be non-zero if dV solution has converged</span>
+    <span class="c1"># (simulated by using scaler of 1.0 twice in a row)</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">dvTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">),</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="n">burnStartTimeTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)])</span>
+    <span class="n">failedNumIterationsLambertTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)])</span>
+    <span class="n">failedXToleranceLambertTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)])</span>
+    <span class="n">failedDistanceTargetConstraintTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)])</span>
+    <span class="n">failedOrbitRadiusConstraintTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)])</span>
+    <span class="n">failedDvSolutionConvergenceTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">dvTheoryTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">),</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scaler</span><span class="p">)):</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v1_N</span> <span class="o">=</span> <span class="n">v1_BN_N</span> <span class="o">+</span> <span class="n">dv_N</span> <span class="o">*</span> <span class="n">scaler</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v2_N</span> <span class="o">=</span> <span class="n">v3_BN_N</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v1Sol2_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">v2Sol2_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">lambertSolutionInMsgData</span><span class="o">.</span><span class="n">validSol2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">lambertSolutionInMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lambertSolutionInMsgData</span><span class="p">,</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">testProcessRate</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="n">initialStates</span> <span class="o">=</span> <span class="n">getInitialStates</span><span class="p">(</span><span class="n">r1_BN_N</span><span class="p">,</span> <span class="n">v1_BN_N</span><span class="p">,</span> <span class="n">dv_N</span> <span class="o">*</span> <span class="n">scaler</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errStates</span><span class="p">,</span> <span class="n">errDV</span><span class="p">)</span>
+        <span class="n">violationsDistanceTarget</span><span class="p">,</span> <span class="n">violationsOrbitRadius</span> <span class="o">=</span> <span class="n">countViolations</span><span class="p">(</span><span class="n">initialStates</span><span class="p">,</span> <span class="n">muBody</span><span class="p">,</span> <span class="n">tm</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">r3_BN_N</span><span class="p">,</span>
+                                                                                  <span class="n">maxDistanceTarget</span><span class="p">,</span> <span class="n">minOrbitRadius</span><span class="p">)</span>
+
+        <span class="c1"># true values</span>
+        <span class="k">if</span> <span class="n">violationsDistanceTarget</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+                <span class="n">violationsOrbitRadius</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+                <span class="n">failedDvSolutionConvergenceTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+                <span class="n">numIter</span> <span class="o">&lt;</span> <span class="mi">6</span> <span class="ow">and</span> \
+                <span class="n">errX</span> <span class="o">&lt;</span> <span class="mf">1.e-8</span><span class="p">:</span>
+            <span class="n">dvTrue</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dv_N</span> <span class="o">*</span> <span class="n">scaler</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">burnStartTimeTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tm</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dvTrue</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+            <span class="n">burnStartTimeTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numIter</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">failedNumIterationsLambertTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">errX</span> <span class="o">&gt;=</span> <span class="mf">1.e-8</span><span class="p">:</span>
+            <span class="n">failedXToleranceLambertTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">violationsDistanceTarget</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failedDistanceTargetConstraintTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">violationsOrbitRadius</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failedOrbitRadiusConstraintTrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">dvTheoryTrue</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dv_N</span> <span class="o">*</span> <span class="n">scaler</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># pull module data</span>
+    <span class="n">dv</span> <span class="o">=</span> <span class="n">dvBurnCmdOutMsgRec</span><span class="o">.</span><span class="n">dvInrtlCmd</span>  <span class="c1"># commanded Delta-V</span>
+    <span class="n">burnStartTime</span> <span class="o">=</span> <span class="n">dvBurnCmdOutMsgRec</span><span class="o">.</span><span class="n">burnStartTime</span>
+    <span class="n">failedNumIterationsLambert</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">failedNumIterationsLambert</span>
+    <span class="n">failedXToleranceLambert</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">failedXToleranceLambert</span>
+    <span class="n">failedDvSolutionConvergence</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">failedDvSolutionConvergence</span>
+    <span class="n">failedDistanceTargetConstraint</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">failedDistanceTargetConstraint</span>
+    <span class="n">failedOrbitRadiusConstraint</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">failedOrbitRadiusConstraint</span>
+    <span class="n">dvTheory</span> <span class="o">=</span> <span class="n">lambertValidatorOutMsgRec</span><span class="o">.</span><span class="n">dv_N</span>  <span class="c1"># Delta-V that would be returned if all tests were passed</span>
+
+    <span class="c1"># make sure module output data is correct</span>
+    <span class="n">paramsString</span> <span class="o">=</span> <span class="s1">&#39; for DV=</span><span class="si">{}</span><span class="s1">, maneuver time=</span><span class="si">{}</span><span class="s1">, final time=</span><span class="si">{}</span><span class="s1">, iterations=</span><span class="si">{}</span><span class="s1">, errorsX=</span><span class="si">{}</span><span class="s1">, accuracy=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p1_dv</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p2_tm</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p3_tf</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p4_iter</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p5_errX</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dv</span><span class="p">,</span>
+                               <span class="n">dvTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: dv_N,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">burnStartTime</span><span class="p">,</span>
+                               <span class="n">burnStartTimeTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: burnStartTime,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">failedNumIterationsLambert</span><span class="p">,</span>
+                               <span class="n">failedNumIterationsLambertTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: failedNumIterationsLambert,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">failedXToleranceLambert</span><span class="p">,</span>
+                               <span class="n">failedXToleranceLambertTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: failedXToleranceLambert,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">failedDvSolutionConvergence</span><span class="p">,</span>
+                               <span class="n">failedDvSolutionConvergenceTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: failedDvSolutionConvergence,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">failedDistanceTargetConstraint</span><span class="p">,</span>
+                               <span class="n">failedDistanceTargetConstraintTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: failedDistanceTargetConstraint,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">failedOrbitRadiusConstraint</span><span class="p">,</span>
+                               <span class="n">failedOrbitRadiusConstraintTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: failedOrbitRadiusConstraint,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dvTheory</span><span class="p">,</span>
+                               <span class="n">dvTheoryTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: dvTheory,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_lambertValidator</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">DVs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">time_maneuver</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_final</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">iterations</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">errorsX</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

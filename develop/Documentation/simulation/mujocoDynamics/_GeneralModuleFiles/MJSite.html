@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: MJSite &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: MJSpec" href="MJSpec.html" />
+    <link rel="prev" title="Module: MJScene" href="MJScene.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: MJSite</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJSite.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mjsite">
+<span id="mjsite"></span><h1>Module: MJSite<a class="headerlink" href="#module-mjsite" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46MJSite">
+<span id="_CPPv36MJSite"></span><span id="_CPPv26MJSite"></span><span id="MJSite"></span><span class="target" id="class_m_j_site"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJSite</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="MJObject.html#_CPPv4I0E8MJObject" title="MJObject"><span class="n"><span class="pre">MJObject</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjsSite</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv46MJSite" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJSite.h&gt;</em></div>
+<p>Represents a MuJoCo site, which is a reference point attached to a body. </p>
+<p>The <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_site"><span class="std std-ref"><span class="pre">MJSite</span></span></a></code> class provides functionality to manage a ‘site’ in MuJoCo. A ‘site’ represents a point in MuJoCo where one may query dynamic information (such as position, orientation, velocity…) and apply forces and torques. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite6MJSiteEP7mjsSiteR6MJBody">
+<span id="_CPPv3N6MJSite6MJSiteEP7mjsSiteR6MJBody"></span><span id="_CPPv2N6MJSite6MJSiteEP7mjsSiteR6MJBody"></span><span id="MJSite::MJSite__mjsSiteP.MJBodyR"></span><span class="target" id="class_m_j_site_1ab14cd2ebce7c41fc7c7ae554c0a5d717"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSite</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">mjsSite</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">site</span></span>, <a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">body</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSite6MJSiteEP7mjsSiteR6MJBody" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_site"><span class="std std-ref"><span class="pre">MJSite</span></span></a></code> object with a given MuJoCo site object and the body where it’s attached. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site</strong> – Pointer to the MuJoCo site. </p></li>
+<li><p><strong>body</strong> – Reference to the body the site is attached to. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite6MJSiteERK6MJSite">
+<span id="_CPPv3N6MJSite6MJSiteERK6MJSite"></span><span id="_CPPv2N6MJSite6MJSiteERK6MJSite"></span><span id="MJSite::MJSite__MJSiteCR"></span><span class="target" id="class_m_j_site_1a0edd4d7dbb9a18eebea3d0d53acb137d"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSite</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N6MJSite6MJSiteERK6MJSite" title="MJSite::MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSite6MJSiteERK6MJSite" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite6MJSiteERR6MJSite">
+<span id="_CPPv3N6MJSite6MJSiteERR6MJSite"></span><span id="_CPPv2N6MJSite6MJSiteERR6MJSite"></span><span id="MJSite::MJSite__MJSiteRR"></span><span class="target" id="class_m_j_site_1a0a9c23b85dd8320b7daa276527f2e508"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSite</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6MJSite6MJSiteERR6MJSite" title="MJSite::MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSite6MJSiteERR6MJSite" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSiteaSERK6MJSite">
+<span id="_CPPv3N6MJSiteaSERK6MJSite"></span><span id="_CPPv2N6MJSiteaSERK6MJSite"></span><span id="MJSite::assign-operator__MJSiteCR"></span><span class="target" id="class_m_j_site_1a811a501f6a0972e5e18f79c481873e38"></span><a class="reference internal" href="#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSiteaSERK6MJSite" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSiteaSERR6MJSite">
+<span id="_CPPv3N6MJSiteaSERR6MJSite"></span><span id="_CPPv2N6MJSiteaSERR6MJSite"></span><span id="MJSite::assign-operator__MJSiteRR"></span><span class="target" id="class_m_j_site_1a0daceb4398c4169c3fc845acaf6df02e"></span><a class="reference internal" href="#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSiteaSERR6MJSite" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite7getBodyEv">
+<span id="_CPPv3N6MJSite7getBodyEv"></span><span id="_CPPv2N6MJSite7getBodyEv"></span><span id="MJSite::getBody"></span><span class="target" id="class_m_j_site_1ab728549e5177cc0775a32025b03457e3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getBody</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSite7getBodyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the body the site is attached to. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the attached <code class="docutils literal notranslate"><a class="reference internal" href="MJBody.html#class_m_j_body"><span class="std std-ref"><span class="pre">MJBody</span></span></a></code> object. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite25setPositionRelativeToBodyERKN5Eigen8Vector3dE">
+<span id="_CPPv3N6MJSite25setPositionRelativeToBodyERKN5Eigen8Vector3dE"></span><span id="_CPPv2N6MJSite25setPositionRelativeToBodyERKN5Eigen8Vector3dE"></span><span id="MJSite::setPositionRelativeToBody__Eigen::Vector3dCR"></span><span class="target" id="class_m_j_site_1ad958b5dd995f52ee811c59e66b63692d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPositionRelativeToBody</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">position</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSite25setPositionRelativeToBodyERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the position of the site relative to the body it’s attached to. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>position</strong> – The 3D position vector relative to the body, in the body reference frame. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite25setAttitudeRelativeToBodyERKN5Eigen4MRPdE">
+<span id="_CPPv3N6MJSite25setAttitudeRelativeToBodyERKN5Eigen4MRPdE"></span><span id="_CPPv2N6MJSite25setAttitudeRelativeToBodyERKN5Eigen4MRPdE"></span><span id="MJSite::setAttitudeRelativeToBody__Eigen::MRPdCR"></span><span class="target" id="class_m_j_site_1a4960b5a84f29955d826717b0b237b548"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAttitudeRelativeToBody</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">attitude</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSite25setAttitudeRelativeToBodyERKN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the attitude (orientation) of the site relative to the body it’s attached to. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attitude</strong> – The orientation represented as Modified Rodrigues Parameters (MRP) from the body reference frame. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite25writeFwdKinematicsMessageEP7mjModelP6mjData8uint64_t">
+<span id="_CPPv3N6MJSite25writeFwdKinematicsMessageEP7mjModelP6mjData8uint64_t"></span><span id="_CPPv2N6MJSite25writeFwdKinematicsMessageEP7mjModelP6mjData8uint64_t"></span><span id="MJSite::writeFwdKinematicsMessage__mjModelP.mjDataP.uint64_t"></span><span class="target" id="class_m_j_site_1a8fe353a0fd0aef8a3558f1cd6c1b085a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeFwdKinematicsMessage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSite25writeFwdKinematicsMessageEP7mjModelP6mjData8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes the frame state message (<code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_site_1a206a1ff591a462aa7e674f0be453dcd0"><span class="std std-ref"><span class="pre">stateOutMsg</span></span></a></code>) based on the state of the site. </p>
+<p>Sets the position, velocity, orientation, and angular rate of the site in the inertial frame, as parsed from the given MuJoCo model and data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Pointer to the MuJoCo model. </p></li>
+<li><p><strong>data</strong> – Pointer to the MuJoCo simulation data. </p></li>
+<li><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite11stateOutMsgE">
+<span id="_CPPv3N6MJSite11stateOutMsgE"></span><span id="_CPPv2N6MJSite11stateOutMsgE"></span><span id="MJSite::stateOutMsg__Message:SCStatesMsgPayload:"></span><span class="target" id="class_m_j_site_1a206a1ff591a462aa7e674f0be453dcd0"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N6MJSite11stateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message to output site frame state. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSite4bodyE">
+<span id="_CPPv3N6MJSite4bodyE"></span><span id="_CPPv2N6MJSite4bodyE"></span><span id="MJSite::body__MJBodyR"></span><span class="target" id="class_m_j_site_1a298678cedc70e65b07ae80385ea0624a"></span><a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">body</span></span></span><a class="headerlink" href="#_CPPv4N6MJSite4bodyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Reference to the body to which the site is attached. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJScene.html" class="btn btn-neutral float-left" title="Module: MJScene" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MJSpec.html" class="btn btn-neutral float-right" title="Module: MJSpec" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

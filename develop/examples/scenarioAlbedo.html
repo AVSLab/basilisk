@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAlbedo &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioCSS" href="scenarioCSS.html" />
+    <link rel="prev" title="scenarioSpacecraftLocation" href="scenarioSpacecraftLocation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#magnetic-field-models">Magnetic Field Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#gravity-gradient-torque">Gravity Gradient Torque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#atmospheric-drag">Atmospheric Drag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#access-to-communication-locations">Access to Communication Locations</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#planet-albedo">Planet Albedo</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioAlbedo</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioAlbedo.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioalbedo">
+<span id="id1"></span><h1>scenarioAlbedo<a class="headerlink" href="#scenarioalbedo" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioAlbedo"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>Demonstrates how to add albedo module to coarse sun sensor. The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and
+executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioAlbedo</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This script sets up a spacecraft with scenario options (1) and (2) shown in the following illustration.
+In scenario (1), only earth is considered as a celestial body, and the spacecraft is orbiting around earth.
+In scenario (2), there are two bodies (earth, moon) and spacecraft close to Earth increases its altitude up to moon
+without considering the gravity effector. In both scenarios, rotational  motion is simulated too.</p>
+<img alt="../_images/test_scenarioAlbedo.svg" class="align-center" src="../_images/test_scenarioAlbedo.svg" />
+</section>
+<section id="simulation-scenario-setup-details">
+<h2>Simulation Scenario Setup Details<a class="headerlink" href="#simulation-scenario-setup-details" title="Link to this heading"></a></h2>
+<p>A simulation process is created which contains both the spacecraft simulation module,
+as well as one albedo module from <a class="reference internal" href="../Documentation/simulation/environment/albedo/albedo.html#albedo"><span class="std std-ref">Module: albedo</span></a> module using CSS configuration.
+The dynamics simulation is setup using <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a>.
+The CSS module is created using <a class="reference internal" href="../Documentation/simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">Module: coarseSunSensor</span></a>.
+The input message <code class="docutils literal notranslate"><span class="pre">sunPositionInMsg</span></code> specifies an input message that contains the sun’s position.</p>
+<p>Albedo module calculates the albedo value for any instrument location. The instrument configuration can be set
+through the variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fov</span>
+<span class="n">nHat_B</span>
+<span class="n">r_IB_B</span>
+</pre></div>
+</div>
+<p>which specify half field of view angle of the instrument, unit normal vector, and misalignment vector in meters.
+The instrument configuration is added to the albedo module through:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">instInMsgName</span><span class="p">,</span> <span class="n">configMsg</span><span class="p">)</span>
+<span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">instInMsgName</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">nHat_B</span><span class="p">,</span> <span class="n">r_IB_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Both method can be used for the same purpose. Note that this commands can be repeated if the albedo should be computed
+for different instruments.</p>
+<p>Every time an instrument is added to the albedo module, an automated output message is created.
+For <code class="docutils literal notranslate"><span class="pre">albModule</span></code> is “AlbedoModule_0_data” as the ModelTag string is <code class="docutils literal notranslate"><span class="pre">AlbedoModule</span></code> and the instrument number is 0.
+This output is added to the <code class="docutils literal notranslate"><span class="pre">albOutMsgs</span></code> module vector within the  <code class="docutils literal notranslate"><span class="pre">addInstrumentConfig()</span></code> function.</p>
+<p>Multiple planets can be added to the albedo module through:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">SpicePlanetStateMsg</span><span class="p">)</span>
+<span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">SpicePlanetStateMsg</span><span class="p">,</span> <span class="n">ALB_avg</span><span class="p">,</span> <span class="n">numLat</span><span class="p">,</span> <span class="n">numLon</span><span class="p">)</span>
+<span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoDataModel</span><span class="p">(</span><span class="n">SpicePlanetStateMsg</span><span class="p">,</span> <span class="n">dataPath</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>based on the albedo model to be used for the planet. Note that this commands should be repeated for adding multiple
+planets. However, the albedo module gives a summed albedo value at the instrument not a vector of values corresponding
+to each planet. The albedo module is created using one of the albedo models, e.g.
+<code class="docutils literal notranslate"><span class="pre">ALBEDO_DATA</span></code>
+which is based on the albedo coefficient data using the specified fileName and dataPath, and
+<code class="docutils literal notranslate"><span class="pre">ALBEDO_AVG</span></code>
+which is a model based on an average albedo value that can be specified with <code class="docutils literal notranslate"><span class="pre">ALB_avg</span></code> variable,
+and used for any planet. If <code class="docutils literal notranslate"><span class="pre">ALB_avg</span></code> is not specified albedo module uses the default value defined for each planet.</p>
+<p>An optional input is the solar eclipse case <code class="docutils literal notranslate"><span class="pre">eclipseCase</span></code>.
+If it is specified as True, then the shadow factor is calculated by the albedo module automatically.</p>
+<p>When the simulation completes, one to three plots are shown depending on the case. First one always show the
+albedo value at the instrument (instrument’s signal) with or without the instrument’s total signal. In case of
+using albedo data file, the albedo coefficient data map of the planet is shown. And, for the multiple planets case,
+the radius of the spacecraft is shown.</p>
+<p>albedoData, multipleInstrument, multiplePlanet, useEclipse</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">albedoData</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multipleInstrument</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">multiplePlanet</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">useEclipse</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioAlbedo11000.svg" class="align-center" src="../_images/scenarioAlbedo11000.svg" />
+<img alt="../_images/scenarioAlbedo21000.svg" class="align-center" src="../_images/scenarioAlbedo21000.svg" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">albedoData</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">multipleInstrument</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multiplePlanet</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">useEclipse</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioAlbedo10100.svg" class="align-center" src="../_images/scenarioAlbedo10100.svg" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">albedoData</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">multipleInstrument</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multiplePlanet</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">useEclipse</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioAlbedo10101.svg" class="align-center" src="../_images/scenarioAlbedo10101.svg" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">albedoData</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">multipleInstrument</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multiplePlanet</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useEclipse</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioAlbedo10110.svg" class="align-center" src="../_images/scenarioAlbedo10110.svg" />
+<img alt="../_images/scenarioAlbedo20110.svg" class="align-center" src="../_images/scenarioAlbedo20110.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAlbedo.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioAlbedo.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">albedoData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multipleInstrument</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplePlanet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useEclipse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simTimeStep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAlbedo.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAlbedo.run" title="Link to this definition"></a></dt>
+<dd><p>At the end of the python script you can specify the following example parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots.</p></li>
+<li><p><strong>albedoData</strong> (<em>bool</em>) – Flag indicating if the albedo data based model should be used.</p></li>
+<li><p><strong>multipleInstrument</strong> (<em>bool</em>) – Flag indicating if multiple instrument should be used.</p></li>
+<li><p><strong>multiplePlanet</strong> (<em>bool</em>) – Flag specifying if multiple planets should be used.</p></li>
+<li><p><strong>useEclipse</strong> (<em>bool</em>) – Flag indicating if the partial eclipse at the incremental area is considered.</p></li>
+<li><p><strong>simTimeStep</strong> (<em>double</em>) – Flag specifying the simulation time step.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioSpacecraftLocation.html" class="btn btn-neutral float-left" title="scenarioSpacecraftLocation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioCSS.html" class="btn btn-neutral float-right" title="scenarioCSS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

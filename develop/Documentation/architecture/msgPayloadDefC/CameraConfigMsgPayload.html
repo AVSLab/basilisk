@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CameraConfigMsgPayload &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="CameraImageMsgPayload" href="CameraImageMsgPayload.html" />
+    <link rel="prev" title="CSSUnitConfigMsgPayload" href="CSSUnitConfigMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefC</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="AccDataMsgPayload.html">AccDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccPktDataMsgPayload.html">AccPktDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccessMsgPayload.html">AccessMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AlbedoMsgPayload.html">AlbedoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayEffectorLockMsgPayload.html">ArrayEffectorLockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorForceMsgPayload.html">ArrayMotorForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorTorqueMsgPayload.html">ArrayMotorTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorVoltageMsgPayload.html">ArrayMotorVoltageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AtmoPropsMsgPayload.html">AtmoPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttGuidMsgPayload.html">AttGuidMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttRefMsgPayload.html">AttRefMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttStateMsgPayload.html">AttStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BodyHeadingMsgPayload.html">BodyHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BoreAngleMsgPayload.html">BoreAngleMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CMEstDataMsgPayload.html">CMEstDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CModuleTemplateMsgPayload.html">CModuleTemplateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSArraySensorMsgPayload.html">CSSArraySensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigMsgPayload.html">CSSConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSRawDataMsgPayload.html">CSSRawDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSUnitConfigMsgPayload.html">CSSUnitConfigMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">CameraConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CameraImageMsgPayload.html">CameraImageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ClassicElementsMsgPayload.html">ClassicElementsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceBodyMsgPayload.html">CmdForceBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceInertialMsgPayload.html">CmdForceInertialMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdTorqueBodyMsgPayload.html">CmdTorqueBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ColorMsgPayload.html">ColorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ConstDynEffectorMsgPayload.html">ConstDynEffectorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataNodeUsageMsgPayload.html">DataNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DesiredVelocityMsgPayload.html">DesiredVelocityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceCmdMsgPayload.html">DeviceCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceStatusMsgPayload.html">DeviceStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DipoleRequestBodyMsgPayload.html">DipoleRequestBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvBurnCmdMsgPayload.html">DvBurnCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvExecutionDataMsgPayload.html">DvExecutionDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EclipseMsgPayload.html">EclipseMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EphemerisMsgPayload.html">EphemerisMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EpochMsgPayload.html">EpochMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ForceAtSiteMsgPayload.html">ForceAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="FuelTankMsgPayload.html">FuelTankMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GravityGradientMsgPayload.html">GravityGradientMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GroundStateMsgPayload.html">GroundStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HeadingFilterMsgPayload.html">HeadingFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HillRelStateMsgPayload.html">HillRelStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HingedRigidBodyMsgPayload.html">HingedRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorBodyMsgPayload.html">IMUSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorMsgPayload.html">IMUSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialFilterMsgPayload.html">InertialFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialHeadingMsgPayload.html">InertialHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertPerformanceMsgPayload.html">LambertPerformanceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertProblemMsgPayload.html">LambertProblemMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertSolutionMsgPayload.html">LambertSolutionMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertValidatorMsgPayload.html">LambertValidatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LandmarkMsgPayload.html">LandmarkMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LinearTranslationRigidBodyMsgPayload.html">LinearTranslationRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBArrayConfigMsgPayload.html">MTBArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBCmdMsgPayload.html">MTBCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBMsgPayload.html">MTBMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MagneticFieldMsgPayload.html">MagneticFieldMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MotorStepCommandMsgPayload.html">MotorStepCommandMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavAttMsgPayload.html">NavAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavTransMsgPayload.html">NavTransMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavCirclesMsgPayload.html">OpNavCirclesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavFilterMsgPayload.html">OpNavFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavLimbMsgPayload.html">OpNavLimbMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavMsgPayload.html">OpNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PixelLineFilterMsgPayload.html">PixelLineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PlasmaFluxMsgPayload.html">PlasmaFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeStatusMsgPayload.html">PowerNodeStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeUsageMsgPayload.html">PowerNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageFaultMsgPayload.html">PowerStorageFaultMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageStatusMsgPayload.html">PowerStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedMotionMsgPayload.html">PrescribedMotionMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedRotationMsgPayload.html">PrescribedRotationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedTranslationMsgPayload.html">PrescribedTranslationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PyBatteryMsgPayload.html">PyBatteryMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWArrayConfigMsgPayload.html">RWArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWAvailabilityMsgPayload.html">RWAvailabilityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWCmdMsgPayload.html">RWCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigElementMsgPayload.html">RWConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigLogMsgPayload.html">RWConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConstellationMsgPayload.html">RWConstellationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWSpeedMsgPayload.html">RWSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RateCmdMsgPayload.html">RateCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RealTimeFactorMsgPayload.html">RealTimeFactorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnArrayInfoMsgPayload.html">ReconfigBurnArrayInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnInfoMsgPayload.html">ReconfigBurnInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCEnergyMomentumMsgPayload.html">SCEnergyMomentumMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCMassPropsMsgPayload.html">SCMassPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCStatesMsgPayload.html">SCStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STAttMsgPayload.html">STAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STSensorMsgPayload.html">STSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScalarJointStateMsgPayload.html">ScalarJointStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SingleActuatorMsgPayload.html">SingleActuatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavMsgPayload.html">SmallBodyNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavUKFMsgPayload.html">SmallBodyNavUKFMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SolarFluxMsgPayload.html">SolarFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpicePlanetStateMsgPayload.html">SpicePlanetStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpiceTimeMsgPayload.html">SpiceTimeMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="StepperMotorMsgPayload.html">StepperMotorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SunlineFilterMsgPayload.html">SunlineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SwDataMsgPayload.html">SwDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SynchClockMsgPayload.html">SynchClockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorBodyMsgPayload.html">TAMSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorMsgPayload.html">TAMSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TDBVehicleClockCorrelationMsgPayload.html">TDBVehicleClockCorrelationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayCmdForceMsgPayload.html">THRArrayCmdForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayConfigMsgPayload.html">THRArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayOnTimeCmdMsgPayload.html">THRArrayOnTimeCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRConfigMsgPayload.html">THRConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TemperatureMsgPayload.html">TemperatureMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TorqueAtSiteMsgPayload.html">TorqueAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TransRefMsgPayload.html">TransRefMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TypesTestMsgPayload.html">TypesTestMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayConfigMsgPayload.html">VSCMGArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayTorqueMsgPayload.html">VSCMGArrayTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGCmdMsgPayload.html">VSCMGCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGConfigElementMsgPayload.html">VSCMGConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGRefStatesMsgPayload.html">VSCMGRefStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGSpeedMsgPayload.html">VSCMGSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VehicleConfigMsgPayload.html">VehicleConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VoltMsgPayload.html">VoltMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefC</a></li>
+      <li class="breadcrumb-item active">CameraConfigMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefC/CameraConfigMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cameraconfigmsgpayload">
+<span id="id1"></span><h1>CameraConfigMsgPayload<a class="headerlink" href="#cameraconfigmsgpayload" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MAX_STRING_LENGTH">
+<span class="target" id="_camera_config_msg_payload_8h_1a6789ebc0df71a8ef76bfbb4fb5f74aad"></span><span class="sig-name descname"><span class="n"><span class="pre">MAX_STRING_LENGTH</span></span></span><a class="headerlink" href="#c.MAX_STRING_LENGTH" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422CameraConfigMsgPayload">
+<span id="_CPPv322CameraConfigMsgPayload"></span><span id="_CPPv222CameraConfigMsgPayload"></span><span id="CameraConfigMsgPayload"></span><span class="target" id="struct_camera_config_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></span><a class="headerlink" href="#_CPPv422CameraConfigMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;CameraConfigMsgPayload.h&gt;</em></div>
+<p>Structure used to define the camera parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload8cameraIDE">
+<span id="_CPPv3N22CameraConfigMsgPayload8cameraIDE"></span><span id="_CPPv2N22CameraConfigMsgPayload8cameraIDE"></span><span id="CameraConfigMsgPayload::cameraID__int64_t"></span><span class="target" id="struct_camera_config_msg_payload_1a2031ad1e87454d393f1d38c3e169cf82"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraID</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload8cameraIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ID of the camera that took the snapshot*/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload4isOnE">
+<span id="_CPPv3N22CameraConfigMsgPayload4isOnE"></span><span id="_CPPv2N22CameraConfigMsgPayload4isOnE"></span><span id="CameraConfigMsgPayload::isOn__i"></span><span class="target" id="struct_camera_config_msg_payload_1a561e569df00c718df9265259b0d29c18"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isOn</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload4isOnE" title="Link to this definition"></a><br /></dt>
+<dd><p>The camera is taking images at rendering rate if 1, 0 if not*/. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload10parentNameE">
+<span id="_CPPv3N22CameraConfigMsgPayload10parentNameE"></span><span id="_CPPv2N22CameraConfigMsgPayload10parentNameE"></span><span id="CameraConfigMsgPayload::parentName__cA"></span><span class="target" id="struct_camera_config_msg_payload_1ac60e2b74ee72021149097d3332a6177f"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentName</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_STRING_LENGTH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload10parentNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the parent body to which the camera should be attached </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload11fieldOfViewE">
+<span id="_CPPv3N22CameraConfigMsgPayload11fieldOfViewE"></span><span id="_CPPv2N22CameraConfigMsgPayload11fieldOfViewE"></span><span id="CameraConfigMsgPayload::fieldOfView__double"></span><span class="target" id="struct_camera_config_msg_payload_1a2765085c94a7769ef6c57ba502d80b25"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fieldOfView</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload11fieldOfViewE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Camera Field of View, edge-to-edge along camera y-axis */ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload10resolutionE">
+<span id="_CPPv3N22CameraConfigMsgPayload10resolutionE"></span><span id="_CPPv2N22CameraConfigMsgPayload10resolutionE"></span><span id="CameraConfigMsgPayload::resolution__iA"></span><span class="target" id="struct_camera_config_msg_payload_1af7ba248a9a03935ba7fa30f998c4a117"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resolution</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload10resolutionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload10renderRateE">
+<span id="_CPPv3N22CameraConfigMsgPayload10renderRateE"></span><span id="_CPPv2N22CameraConfigMsgPayload10renderRateE"></span><span id="CameraConfigMsgPayload::renderRate__uint64_t"></span><span class="target" id="struct_camera_config_msg_payload_1a3fec7a76bc290a4699b17776f99ed480"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">renderRate</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload10renderRateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Frame time interval at which to capture images in units of nanosecond */ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload11cameraPos_BE">
+<span id="_CPPv3N22CameraConfigMsgPayload11cameraPos_BE"></span><span id="_CPPv2N22CameraConfigMsgPayload11cameraPos_BE"></span><span id="CameraConfigMsgPayload::cameraPos_B__doubleA"></span><span class="target" id="struct_camera_config_msg_payload_1a9899353368cb10f84b6e105f4e272049"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraPos_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload11cameraPos_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Camera position in body frame */ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload8sigma_CBE">
+<span id="_CPPv3N22CameraConfigMsgPayload8sigma_CBE"></span><span id="_CPPv2N22CameraConfigMsgPayload8sigma_CBE"></span><span id="CameraConfigMsgPayload::sigma_CB__doubleA"></span><span class="target" id="struct_camera_config_msg_payload_1add1d6f022977a3ce17b92362f572ef5c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_CB</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload8sigma_CBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] MRP defining the orientation of the camera frame relative to the body frame */ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload6skyBoxE">
+<span id="_CPPv3N22CameraConfigMsgPayload6skyBoxE"></span><span id="_CPPv2N22CameraConfigMsgPayload6skyBoxE"></span><span id="CameraConfigMsgPayload::skyBox__cA"></span><span class="target" id="struct_camera_config_msg_payload_1a42602c1aee2b1f8cdf449d4c57edea9e"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">skyBox</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_STRING_LENGTH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload6skyBoxE" title="Link to this definition"></a><br /></dt>
+<dd><p>string containing the star field preference </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload16postProcessingOnE">
+<span id="_CPPv3N22CameraConfigMsgPayload16postProcessingOnE"></span><span id="_CPPv2N22CameraConfigMsgPayload16postProcessingOnE"></span><span id="CameraConfigMsgPayload::postProcessingOn__i"></span><span class="target" id="struct_camera_config_msg_payload_1acba0392a7634298b067a28fa076a5cc6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postProcessingOn</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload16postProcessingOnE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default which is off, -1 for false, 1 for true </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload15ppFocusDistanceE">
+<span id="_CPPv3N22CameraConfigMsgPayload15ppFocusDistanceE"></span><span id="_CPPv2N22CameraConfigMsgPayload15ppFocusDistanceE"></span><span id="CameraConfigMsgPayload::ppFocusDistance__double"></span><span class="target" id="struct_camera_config_msg_payload_1acff7eee4601bfc8ab2ed6d97f9482a80"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppFocusDistance</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload15ppFocusDistanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload10ppApertureE">
+<span id="_CPPv3N22CameraConfigMsgPayload10ppApertureE"></span><span id="_CPPv2N22CameraConfigMsgPayload10ppApertureE"></span><span id="CameraConfigMsgPayload::ppAperture__double"></span><span class="target" id="struct_camera_config_msg_payload_1aef18082f63e5c31dbbfd5f59d68b2ded"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppAperture</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload10ppApertureE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload13ppFocalLengthE">
+<span id="_CPPv3N22CameraConfigMsgPayload13ppFocalLengthE"></span><span id="_CPPv2N22CameraConfigMsgPayload13ppFocalLengthE"></span><span id="CameraConfigMsgPayload::ppFocalLength__double"></span><span class="target" id="struct_camera_config_msg_payload_1aa89171d0afc6b5a3c5cc7900f7ce2894"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppFocalLength</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload13ppFocalLengthE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] (Optional) Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload13ppMaxBlurSizeE">
+<span id="_CPPv3N22CameraConfigMsgPayload13ppMaxBlurSizeE"></span><span id="_CPPv2N22CameraConfigMsgPayload13ppMaxBlurSizeE"></span><span id="CameraConfigMsgPayload::ppMaxBlurSize__i"></span><span class="target" id="struct_camera_config_msg_payload_1a5c2585bf972830d13dc41976d4637fa7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppMaxBlurSize</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload13ppMaxBlurSizeE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload22updateCameraParametersE">
+<span id="_CPPv3N22CameraConfigMsgPayload22updateCameraParametersE"></span><span id="_CPPv2N22CameraConfigMsgPayload22updateCameraParametersE"></span><span id="CameraConfigMsgPayload::updateCameraParameters__i"></span><span class="target" id="struct_camera_config_msg_payload_1a1102055f92aae320f8b50f76469f4564"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateCameraParameters</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload22updateCameraParametersE" title="Link to this definition"></a><br /></dt>
+<dd><p>If true, commands camera to update Instrument Camera to current message’s parameters. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload10renderModeE">
+<span id="_CPPv3N22CameraConfigMsgPayload10renderModeE"></span><span id="_CPPv2N22CameraConfigMsgPayload10renderModeE"></span><span id="CameraConfigMsgPayload::renderMode__i"></span><span class="target" id="struct_camera_config_msg_payload_1a49d0bb047e22c102db0e790d316903cd"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">renderMode</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload10renderModeE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload22depthMapClippingPlanesE">
+<span id="_CPPv3N22CameraConfigMsgPayload22depthMapClippingPlanesE"></span><span id="_CPPv2N22CameraConfigMsgPayload22depthMapClippingPlanesE"></span><span id="CameraConfigMsgPayload::depthMapClippingPlanes__doubleA"></span><span class="target" id="struct_camera_config_msg_payload_1aec58655a3bb79c739f582ad20ec89320"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">depthMapClippingPlanes</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload22depthMapClippingPlanesE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22CameraConfigMsgPayload22showHUDElementsInImageE">
+<span id="_CPPv3N22CameraConfigMsgPayload22showHUDElementsInImageE"></span><span id="_CPPv2N22CameraConfigMsgPayload22showHUDElementsInImageE"></span><span id="CameraConfigMsgPayload::showHUDElementsInImage__i"></span><span class="target" id="struct_camera_config_msg_payload_1a40cc81b3ce0982c8b34f8a7563d343e7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">showHUDElementsInImage</span></span></span><a class="headerlink" href="#_CPPv4N22CameraConfigMsgPayload22showHUDElementsInImageE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="CSSUnitConfigMsgPayload.html" class="btn btn-neutral float-left" title="CSSUnitConfigMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="CameraImageMsgPayload.html" class="btn btn-neutral float-right" title="CameraImageMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

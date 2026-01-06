@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LambertValidatorMsgPayload &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="LandmarkMsgPayload" href="LandmarkMsgPayload.html" />
+    <link rel="prev" title="LambertSolutionMsgPayload" href="LambertSolutionMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefC</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="AccDataMsgPayload.html">AccDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccPktDataMsgPayload.html">AccPktDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccessMsgPayload.html">AccessMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AlbedoMsgPayload.html">AlbedoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayEffectorLockMsgPayload.html">ArrayEffectorLockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorForceMsgPayload.html">ArrayMotorForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorTorqueMsgPayload.html">ArrayMotorTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorVoltageMsgPayload.html">ArrayMotorVoltageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AtmoPropsMsgPayload.html">AtmoPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttGuidMsgPayload.html">AttGuidMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttRefMsgPayload.html">AttRefMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttStateMsgPayload.html">AttStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BodyHeadingMsgPayload.html">BodyHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BoreAngleMsgPayload.html">BoreAngleMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CMEstDataMsgPayload.html">CMEstDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CModuleTemplateMsgPayload.html">CModuleTemplateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSArraySensorMsgPayload.html">CSSArraySensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigMsgPayload.html">CSSConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSRawDataMsgPayload.html">CSSRawDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSUnitConfigMsgPayload.html">CSSUnitConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CameraConfigMsgPayload.html">CameraConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CameraImageMsgPayload.html">CameraImageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ClassicElementsMsgPayload.html">ClassicElementsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceBodyMsgPayload.html">CmdForceBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceInertialMsgPayload.html">CmdForceInertialMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdTorqueBodyMsgPayload.html">CmdTorqueBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ColorMsgPayload.html">ColorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ConstDynEffectorMsgPayload.html">ConstDynEffectorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataNodeUsageMsgPayload.html">DataNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DesiredVelocityMsgPayload.html">DesiredVelocityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceCmdMsgPayload.html">DeviceCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceStatusMsgPayload.html">DeviceStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DipoleRequestBodyMsgPayload.html">DipoleRequestBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvBurnCmdMsgPayload.html">DvBurnCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvExecutionDataMsgPayload.html">DvExecutionDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EclipseMsgPayload.html">EclipseMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EphemerisMsgPayload.html">EphemerisMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EpochMsgPayload.html">EpochMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ForceAtSiteMsgPayload.html">ForceAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="FuelTankMsgPayload.html">FuelTankMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GravityGradientMsgPayload.html">GravityGradientMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GroundStateMsgPayload.html">GroundStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HeadingFilterMsgPayload.html">HeadingFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HillRelStateMsgPayload.html">HillRelStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HingedRigidBodyMsgPayload.html">HingedRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorBodyMsgPayload.html">IMUSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorMsgPayload.html">IMUSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialFilterMsgPayload.html">InertialFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialHeadingMsgPayload.html">InertialHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertPerformanceMsgPayload.html">LambertPerformanceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertProblemMsgPayload.html">LambertProblemMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertSolutionMsgPayload.html">LambertSolutionMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">LambertValidatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LandmarkMsgPayload.html">LandmarkMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LinearTranslationRigidBodyMsgPayload.html">LinearTranslationRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBArrayConfigMsgPayload.html">MTBArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBCmdMsgPayload.html">MTBCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBMsgPayload.html">MTBMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MagneticFieldMsgPayload.html">MagneticFieldMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MotorStepCommandMsgPayload.html">MotorStepCommandMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavAttMsgPayload.html">NavAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavTransMsgPayload.html">NavTransMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavCirclesMsgPayload.html">OpNavCirclesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavFilterMsgPayload.html">OpNavFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavLimbMsgPayload.html">OpNavLimbMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavMsgPayload.html">OpNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PixelLineFilterMsgPayload.html">PixelLineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PlasmaFluxMsgPayload.html">PlasmaFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeStatusMsgPayload.html">PowerNodeStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeUsageMsgPayload.html">PowerNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageFaultMsgPayload.html">PowerStorageFaultMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageStatusMsgPayload.html">PowerStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedMotionMsgPayload.html">PrescribedMotionMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedRotationMsgPayload.html">PrescribedRotationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedTranslationMsgPayload.html">PrescribedTranslationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PyBatteryMsgPayload.html">PyBatteryMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWArrayConfigMsgPayload.html">RWArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWAvailabilityMsgPayload.html">RWAvailabilityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWCmdMsgPayload.html">RWCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigElementMsgPayload.html">RWConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigLogMsgPayload.html">RWConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConstellationMsgPayload.html">RWConstellationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWSpeedMsgPayload.html">RWSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RateCmdMsgPayload.html">RateCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RealTimeFactorMsgPayload.html">RealTimeFactorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnArrayInfoMsgPayload.html">ReconfigBurnArrayInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnInfoMsgPayload.html">ReconfigBurnInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCEnergyMomentumMsgPayload.html">SCEnergyMomentumMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCMassPropsMsgPayload.html">SCMassPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCStatesMsgPayload.html">SCStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STAttMsgPayload.html">STAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STSensorMsgPayload.html">STSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScalarJointStateMsgPayload.html">ScalarJointStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SingleActuatorMsgPayload.html">SingleActuatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavMsgPayload.html">SmallBodyNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavUKFMsgPayload.html">SmallBodyNavUKFMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SolarFluxMsgPayload.html">SolarFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpicePlanetStateMsgPayload.html">SpicePlanetStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpiceTimeMsgPayload.html">SpiceTimeMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="StepperMotorMsgPayload.html">StepperMotorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SunlineFilterMsgPayload.html">SunlineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SwDataMsgPayload.html">SwDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SynchClockMsgPayload.html">SynchClockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorBodyMsgPayload.html">TAMSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorMsgPayload.html">TAMSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TDBVehicleClockCorrelationMsgPayload.html">TDBVehicleClockCorrelationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayCmdForceMsgPayload.html">THRArrayCmdForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayConfigMsgPayload.html">THRArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayOnTimeCmdMsgPayload.html">THRArrayOnTimeCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRConfigMsgPayload.html">THRConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TemperatureMsgPayload.html">TemperatureMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TorqueAtSiteMsgPayload.html">TorqueAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TransRefMsgPayload.html">TransRefMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TypesTestMsgPayload.html">TypesTestMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayConfigMsgPayload.html">VSCMGArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayTorqueMsgPayload.html">VSCMGArrayTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGCmdMsgPayload.html">VSCMGCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGConfigElementMsgPayload.html">VSCMGConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGRefStatesMsgPayload.html">VSCMGRefStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGSpeedMsgPayload.html">VSCMGSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VehicleConfigMsgPayload.html">VehicleConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VoltMsgPayload.html">VoltMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefC</a></li>
+      <li class="breadcrumb-item active">LambertValidatorMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefC/LambertValidatorMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lambertvalidatormsgpayload">
+<span id="id1"></span><h1>LambertValidatorMsgPayload<a class="headerlink" href="#lambertvalidatormsgpayload" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv426LambertValidatorMsgPayload">
+<span id="_CPPv326LambertValidatorMsgPayload"></span><span id="_CPPv226LambertValidatorMsgPayload"></span><span id="LambertValidatorMsgPayload"></span><span class="target" id="struct_lambert_validator_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LambertValidatorMsgPayload</span></span></span><a class="headerlink" href="#_CPPv426LambertValidatorMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;LambertValidatorMsgPayload.h&gt;</em></div>
+<p>Structure used to log results of lambert validator, such as constraint violations. Specifies why lambertValidator failed to write a non-zero DV command message. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload18failedValidLambertE">
+<span id="_CPPv3N26LambertValidatorMsgPayload18failedValidLambertE"></span><span id="_CPPv2N26LambertValidatorMsgPayload18failedValidLambertE"></span><span id="LambertValidatorMsgPayload::failedValidLambert__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1ada27e8dd4e6837ec7d508e333be601eb"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedValidLambert</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload18failedValidLambertE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] no valid lambert solution if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload26failedNumIterationsLambertE">
+<span id="_CPPv3N26LambertValidatorMsgPayload26failedNumIterationsLambertE"></span><span id="_CPPv2N26LambertValidatorMsgPayload26failedNumIterationsLambertE"></span><span id="LambertValidatorMsgPayload::failedNumIterationsLambert__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1a76196cdd5851dee4a03b85110885af64"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedNumIterationsLambert</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload26failedNumIterationsLambertE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lambert solver root finder iterations for x too high if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload23failedXToleranceLambertE">
+<span id="_CPPv3N26LambertValidatorMsgPayload23failedXToleranceLambertE"></span><span id="_CPPv2N26LambertValidatorMsgPayload23failedXToleranceLambertE"></span><span id="LambertValidatorMsgPayload::failedXToleranceLambert__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1a58ed2afeed6c0cd630b6ac879f7446af"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedXToleranceLambert</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload23failedXToleranceLambertE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lambert solver root finder for x not converged if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload26failedXSolutionConvergenceE">
+<span id="_CPPv3N26LambertValidatorMsgPayload26failedXSolutionConvergenceE"></span><span id="_CPPv2N26LambertValidatorMsgPayload26failedXSolutionConvergenceE"></span><span id="LambertValidatorMsgPayload::failedXSolutionConvergence__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1afb5bd6d237a07cf47e657cc5805f3f14"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedXSolutionConvergence</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload26failedXSolutionConvergenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] x solution too different from previous time step if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload27failedDvSolutionConvergenceE">
+<span id="_CPPv3N26LambertValidatorMsgPayload27failedDvSolutionConvergenceE"></span><span id="_CPPv2N26LambertValidatorMsgPayload27failedDvSolutionConvergenceE"></span><span id="LambertValidatorMsgPayload::failedDvSolutionConvergence__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1a5e4f25cfe679af078e7171d9c69bb5f3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedDvSolutionConvergence</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload27failedDvSolutionConvergenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Delta-V solution too different from previous time step if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload30failedDistanceTargetConstraintE">
+<span id="_CPPv3N26LambertValidatorMsgPayload30failedDistanceTargetConstraintE"></span><span id="_CPPv2N26LambertValidatorMsgPayload30failedDistanceTargetConstraintE"></span><span id="LambertValidatorMsgPayload::failedDistanceTargetConstraint__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1abbd9b8076c9d1a5dcbbba4a94903e08e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedDistanceTargetConstraint</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload30failedDistanceTargetConstraintE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] violated the maximum distance from target constraint if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload27failedOrbitRadiusConstraintE">
+<span id="_CPPv3N26LambertValidatorMsgPayload27failedOrbitRadiusConstraintE"></span><span id="_CPPv2N26LambertValidatorMsgPayload27failedOrbitRadiusConstraintE"></span><span id="LambertValidatorMsgPayload::failedOrbitRadiusConstraint__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1ace478e607c7d3b7897945dceca5a3de0"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">failedOrbitRadiusConstraint</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload27failedOrbitRadiusConstraintE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] violated the minimum orbit radius constraint if 1, otherwise 0 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload19xSolutionDifferenceE">
+<span id="_CPPv3N26LambertValidatorMsgPayload19xSolutionDifferenceE"></span><span id="_CPPv2N26LambertValidatorMsgPayload19xSolutionDifferenceE"></span><span id="LambertValidatorMsgPayload::xSolutionDifference__double"></span><span class="target" id="struct_lambert_validator_msg_payload_1aa3a27baa6a446bfaa12107accb33f5c7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xSolutionDifference</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload19xSolutionDifferenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] difference in solution for free variable (iteration variable) to previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload20dvSolutionDifferenceE">
+<span id="_CPPv3N26LambertValidatorMsgPayload20dvSolutionDifferenceE"></span><span id="_CPPv2N26LambertValidatorMsgPayload20dvSolutionDifferenceE"></span><span id="LambertValidatorMsgPayload::dvSolutionDifference__double"></span><span class="target" id="struct_lambert_validator_msg_payload_1af7c433549e802b15509d7bee69966bbd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvSolutionDifference</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload20dvSolutionDifferenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] difference in Delta-V solution magnitude to previous time step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload24violationsDistanceTargetE">
+<span id="_CPPv3N26LambertValidatorMsgPayload24violationsDistanceTargetE"></span><span id="_CPPv2N26LambertValidatorMsgPayload24violationsDistanceTargetE"></span><span id="LambertValidatorMsgPayload::violationsDistanceTarget__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1aba2b4d3ec8e5d2d0ea0e844ebeb14efe"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">violationsDistanceTarget</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload24violationsDistanceTargetE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of violations of the maximum distance from target constraint </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload21violationsOrbitRadiusE">
+<span id="_CPPv3N26LambertValidatorMsgPayload21violationsOrbitRadiusE"></span><span id="_CPPv2N26LambertValidatorMsgPayload21violationsOrbitRadiusE"></span><span id="LambertValidatorMsgPayload::violationsOrbitRadius__i"></span><span class="target" id="struct_lambert_validator_msg_payload_1a6b37005eed5621932f726ba256c84d90"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">violationsOrbitRadius</span></span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload21violationsOrbitRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of violations of the minimum orbit radius constraint </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26LambertValidatorMsgPayload4dv_NE">
+<span id="_CPPv3N26LambertValidatorMsgPayload4dv_NE"></span><span id="_CPPv2N26LambertValidatorMsgPayload4dv_NE"></span><span id="LambertValidatorMsgPayload::dv_N__doubleA"></span><span class="target" id="struct_lambert_validator_msg_payload_1ab55fd92e62c64e2f0eb18b9a571b3829"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dv_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N26LambertValidatorMsgPayload4dv_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Delta-V vector that would be commanded at maneuver time if all checks passed </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="LambertSolutionMsgPayload.html" class="btn btn-neutral float-left" title="LambertSolutionMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="LandmarkMsgPayload.html" class="btn btn-neutral float-right" title="LandmarkMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

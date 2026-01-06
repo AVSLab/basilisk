@@ -1,0 +1,728 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioDragRendezvous &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioDragRendezvous</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioDragRendezvous</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft attempts to rendezvous with the</span>
+<span class="sd">chief using attitude-driven differential drag using the strategy outlined in `this paper &lt;https://arc.aiaa.org/doi/10.2514/1.G004521&gt;`_.</span>
+
+<span class="sd">This script is found in the folder ``src/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioDragRendezvous</span>
+
+<span class="sd">The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at</span>
+<span class="sd">close distance. Perturbations from atmospheric drag, provided by :ref:`exponentialAtmosphere` and</span>
+<span class="sd">:ref:`facetDragDynamicEffector`,  are implemented by default; the :math:`J_2` gravity perturbation</span>
+<span class="sd">can also be included. Each spacecraft sends a :ref:`simpleNav`</span>
+<span class="sd">output message of type :ref:`NavAttMsgPayload` continuously to a :ref:`hillStateConverter` module,</span>
+<span class="sd">which is assumed to be a part of the deputy (maneuvering)</span>
+<span class="sd">spacecraft&#39;s flight software stack. The :ref:`hillStateConverter` module then writes</span>
+<span class="sd">a :ref:`hillRelStateMsgPayload`, which is read by the :ref:`hillToAttRef` module implementing</span>
+<span class="sd">the differential drag attitude guidance law.</span>
+
+<span class="sd">.. image:: /_images/static/scenarioDragRendezvousDiagram.png</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">        0.0, #   altitude offset (m)</span>
+<span class="sd">        0.1, #  True anomaly offset (deg)</span>
+<span class="sd">        1, #    Density multiplier (non-dimensional)</span>
+<span class="sd">        ctrlType=&#39;lqr&#39;,</span>
+<span class="sd">        useJ2=False</span>
+
+<span class="sd">In this case, the deputy spacecraft attempts to catch up to a reference set ten kilometers ahead of it</span>
+<span class="sd">along-track using a static LQR control law, without considering the impact of :math:`J_2` perturbations.</span>
+<span class="sd">The resulting relative attitude and in-plane Hill trajectory are shown below.</span>
+
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDragRendezvous_relativeAtt.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDragRendezvous_hillTraj.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Time trajectories of the in-plane Hill components of the Deputy are shown here:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDragRendezvous_hillX.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDragRendezvous_hillY.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">hillStateConverter</span><span class="p">,</span> <span class="n">hillToAttRef</span><span class="p">,</span> <span class="n">hillPoint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">spacecraft</span><span class="p">,</span>
+    <span class="n">facetDragDynamicEffector</span><span class="p">,</span>
+    <span class="n">simpleNav</span><span class="p">,</span>
+    <span class="n">exponentialAtmosphere</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">astroConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1">#   Declare some linearized drag HCW dynamics</span>
+<span class="n">drag_state_dynamics</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">1.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">1.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">4.134628279603025589e-06</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">7.178791202675993545e-10</span><span class="p">,</span>
+        <span class="mf">2.347943292785702706e-03</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">2.347943292785702706e-03</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">1.435758240535198709e-09</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="n">drag_ctrl_effects</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">4.1681080996120926e-05</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">,</span> <span class="mf">0.000000000000000000e00</span><span class="p">],</span>
+<span class="p">]</span>
+<span class="n">drag_sens_effects</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">7.178791202675151888e-10</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">1.435758240535030378e-09</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+        <span class="mf">0.000000000000000000e00</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="n">drag_R_inv</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">]]</span>
+<span class="c1">#   Static LQR gain</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">dataFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;dataForExamples&quot;</span><span class="p">,</span> <span class="s2">&quot;static_lqr_controlGain.npz&quot;</span><span class="p">)</span>
+<span class="n">lqr_gain_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">)[</span><span class="s2">&quot;arr_0.npy&quot;</span><span class="p">]</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="setup_spacecraft_plant">
+<a class="viewcode-back" href="../examples/scenarioDragRendezvous.html#scenarioDragRendezvous.setup_spacecraft_plant">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_spacecraft_plant</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">modelName</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convenience function to set up a spacecraft and its associated dragEffector and simpleNav module.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rN (float(3)): Inertial position vector</span>
+<span class="sd">        vN (float(3)): Inertial velocity vector</span>
+<span class="sd">        modelName (string): String specifying the spacecraft name</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">modelName</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">6.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+
+    <span class="n">scNav</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">scNav</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;_navigator&quot;</span>
+    <span class="n">scNav</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">dragArea</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="mf">0.2</span>
+    <span class="n">dragCoeff</span> <span class="o">=</span> <span class="mf">2.2</span>
+    <span class="n">normalVector</span> <span class="o">=</span> <span class="o">-</span><span class="n">rbk</span><span class="o">.</span><span class="n">euler3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.0</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">panelLocation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">dragEffector</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;_dragEffector&quot;</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">dragArea</span><span class="p">,</span> <span class="n">dragCoeff</span><span class="p">,</span> <span class="n">normalVector</span><span class="p">,</span> <span class="n">panelLocation</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dragEffector</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scObject</span><span class="p">,</span> <span class="n">dragEffector</span><span class="p">,</span> <span class="n">scNav</span></div>
+
+
+
+<div class="viewcode-block" id="drag_simulator">
+<a class="viewcode-back" href="../examples/scenarioDragRendezvous.html#scenarioDragRendezvous.drag_simulator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drag_simulator</span><span class="p">(</span>
+    <span class="n">altOffset</span><span class="p">,</span> <span class="n">trueAnomOffset</span><span class="p">,</span> <span class="n">densMultiplier</span><span class="p">,</span> <span class="n">ctrlType</span><span class="o">=</span><span class="s2">&quot;lqr&quot;</span><span class="p">,</span> <span class="n">useJ2</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes</span>
+<span class="sd">    both static gain and desensitized time-varying gain options and the option to use simulated attitude control or</span>
+<span class="sd">    direct reference inputs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        altOffset - double - deputy altitude offset from the chief (&#39;x&#39; hill direction), meters</span>
+<span class="sd">        trueAnomOffset - double - deputy true anomaly difference from the chief (&#39;y&#39; direction), degrees</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Starting process execution for altOffset = </span><span class="si">{</span><span class="n">altOffset</span><span class="si">}</span><span class="s2">, trueAnomOffset=</span><span class="si">{</span><span class="n">trueAnomOffset</span><span class="si">}</span><span class="s2">, densMultiplier=</span><span class="si">{</span><span class="n">densMultiplier</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">ctrlType</span><span class="si">}</span><span class="s2"> controls...&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#   Configure simulation container and timestep</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;dynTask&quot;</span>
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">&quot;fswTask&quot;</span>
+    <span class="n">simProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">dynTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span>  <span class="c1"># Timestep to evaluate dynamics at</span>
+    <span class="n">fswTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span>  <span class="c1"># Timestep to evaluate FSW at</span>
+    <span class="n">simProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">dynTimeStep</span><span class="p">))</span>
+    <span class="n">simProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">fswTimeStep</span><span class="p">))</span>
+
+    <span class="c1">##  Configure environmental parameters</span>
+    <span class="c1">#   Gravity; includes 2-body plus J2.</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+    <span class="k">if</span> <span class="n">useJ2</span><span class="p">:</span>
+        <span class="n">ggm03s_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S</span><span class="p">)</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s_path</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># timeInitString = &#39;2021 MAY 04 07:47:48.965 (UTC)&#39;</span>
+    <span class="c1"># spiceObject = gravFactory.createSpiceInterface(time=timeInitString)</span>
+    <span class="c1"># spiceObject.zeroBase = &#39;earth&#39;</span>
+
+    <span class="c1">#   Density</span>
+    <span class="n">atmosphere</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;atmosphere&quot;</span>
+    <span class="c1"># atmosphere.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">300e3</span>  <span class="c1">#   m</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">envMinReach</span> <span class="o">=</span> <span class="o">-</span><span class="mf">300e3</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">envMaxReach</span> <span class="o">=</span> <span class="o">+</span><span class="mf">300e3</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="mf">8.0e3</span>  <span class="c1"># m</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="mf">2.022e-14</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">densMultiplier</span>  <span class="c1">#    kg/m^3</span>
+
+    <span class="c1">##   Set up chief, deputy orbits:</span>
+    <span class="n">chief_oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">300e3</span>  <span class="c1"># meters</span>
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span>
+    <span class="n">chief_oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">chief_rN</span><span class="p">,</span> <span class="n">chief_vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">chief_oe</span><span class="p">)</span>
+
+    <span class="n">dep_oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">300e3</span> <span class="o">+</span> <span class="p">(</span><span class="n">altOffset</span><span class="p">)</span>  <span class="c1"># meters</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span>
+    <span class="n">dep_oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">20.0</span> <span class="o">-</span> <span class="n">trueAnomOffset</span><span class="p">)</span>
+    <span class="n">dep_rN</span><span class="p">,</span> <span class="n">dep_vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dep_oe</span><span class="p">)</span>
+
+    <span class="c1">#   Initialize s/c dynamics, drag, navigation solutions</span>
+    <span class="n">chiefSc</span><span class="p">,</span> <span class="n">chiefDrag</span><span class="p">,</span> <span class="n">chiefNav</span> <span class="o">=</span> <span class="n">setup_spacecraft_plant</span><span class="p">(</span><span class="n">chief_rN</span><span class="p">,</span> <span class="n">chief_vN</span><span class="p">,</span> <span class="s2">&quot;wiggum&quot;</span><span class="p">)</span>
+    <span class="n">depSc</span><span class="p">,</span> <span class="n">depDrag</span><span class="p">,</span> <span class="n">depNav</span> <span class="o">=</span> <span class="n">setup_spacecraft_plant</span><span class="p">(</span><span class="n">dep_rN</span><span class="p">,</span> <span class="n">dep_vN</span><span class="p">,</span> <span class="s2">&quot;lou&quot;</span><span class="p">)</span>
+
+    <span class="c1">#   Connect s/c to environment (gravity, density)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">chiefSc</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">depSc</span><span class="p">)</span>
+
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">depSc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">depDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">atmosphere</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">chiefSc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">chiefDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1">#   Add all dynamics stuff to dynamics task</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">atmosphere</span><span class="p">,</span> <span class="mi">920</span><span class="p">)</span>
+    <span class="c1"># scSim.AddModelToTask(dynTaskName, ephemConverter, 921)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefDrag</span><span class="p">,</span> <span class="mi">890</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depDrag</span><span class="p">,</span> <span class="mi">891</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefSc</span><span class="p">,</span> <span class="mi">810</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depSc</span><span class="p">,</span> <span class="mi">811</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefNav</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depNav</span><span class="p">,</span> <span class="mi">801</span><span class="p">)</span>
+    <span class="c1"># scSim.AddModelToTask(dynTaskName, spiceObject, 999)</span>
+
+    <span class="c1">##  FSW setup</span>
+    <span class="c1">#   Chief S/C</span>
+    <span class="c1">#   hillPoint - set such that the chief attitude follows its hill frame.</span>
+    <span class="n">chiefAttRef</span> <span class="o">=</span> <span class="n">hillPoint</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">()</span>
+    <span class="n">chiefAttRef</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;chief_att_ref&quot;</span>
+    <span class="n">chiefAttRef</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+    <span class="c1"># chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn&#39;t need this because the planet is the origin</span>
+    <span class="n">chiefSc</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+        <span class="n">chiefAttRef</span><span class="o">.</span><span class="n">attRefOutMsg</span>
+    <span class="p">)</span>  <span class="c1">#  Force the chief spacecraft to follow the hill direction</span>
+
+    <span class="n">depHillRef</span> <span class="o">=</span> <span class="n">hillPoint</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">()</span>
+    <span class="n">depHillRef</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;dep_hill_ref&quot;</span>
+    <span class="n">depHillRef</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">depNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+    <span class="c1"># chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn&#39;t need this because the planet is the origin</span>
+    <span class="c1"># chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction</span>
+
+    <span class="c1"># hillStateConverter</span>
+    <span class="n">hillStateNavObj</span> <span class="o">=</span> <span class="n">hillStateConverter</span><span class="o">.</span><span class="n">hillStateConverter</span><span class="p">()</span>
+    <span class="n">hillStateNavObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;dep_hillStateNav&quot;</span>
+    <span class="n">hillStateNavObj</span><span class="o">.</span><span class="n">depStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">depNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+    <span class="n">hillStateNavObj</span><span class="o">.</span><span class="n">chiefStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># hillToAtt guidance law w/ static gain</span>
+    <span class="n">depAttRef</span> <span class="o">=</span> <span class="n">hillToAttRef</span><span class="o">.</span><span class="n">hillToAttRef</span><span class="p">()</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;dep_att_ref&quot;</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">gainMatrix</span> <span class="o">=</span> <span class="n">hillToAttRef</span><span class="o">.</span><span class="n">MultiArray</span><span class="p">(</span><span class="n">lqr_gain_set</span><span class="p">)</span>
+    <span class="c1">#   Configure parameters common to relative attitude guidance modules</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">hillStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">hillStateNavObj</span><span class="o">.</span><span class="n">hillStateOutMsg</span><span class="p">)</span>
+    <span class="c1"># depAttRef.attStateInMsg.subscribeTo(chiefNav.attOutMsg)</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">depHillRef</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">relMRPMin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span>
+    <span class="n">depAttRef</span><span class="o">.</span><span class="n">relMRPMax</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="c1">#   Set the deputy spacecraft to directly follow the attRefMessage</span>
+    <span class="n">depSc</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">depAttRef</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefAttRef</span><span class="p">,</span> <span class="mi">710</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">hillStateNavObj</span><span class="p">,</span> <span class="mi">790</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depHillRef</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depAttRef</span><span class="p">,</span> <span class="mi">700</span><span class="p">)</span>
+    <span class="c1"># ----- log ----- #</span>
+    <span class="n">orbit_period</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">chief_oe</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="mi">40</span> <span class="o">*</span> <span class="n">orbit_period</span>  <span class="c1"># 106920.14366466808</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">21384</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">//</span> <span class="p">(</span><span class="n">numDataPoints</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#   Set up recorders and loggers</span>
+    <span class="n">chiefStateRec</span> <span class="o">=</span> <span class="n">chiefSc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">depStateRec</span> <span class="o">=</span> <span class="n">depSc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">hillStateRec</span> <span class="o">=</span> <span class="n">hillStateNavObj</span><span class="o">.</span><span class="n">hillStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">depAttRec</span> <span class="o">=</span> <span class="n">depAttRef</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">chiefAttRec</span> <span class="o">=</span> <span class="n">chiefAttRef</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">chiefDragForceLog</span> <span class="o">=</span> <span class="n">chiefDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">)</span>
+    <span class="n">depDragForceLog</span> <span class="o">=</span> <span class="n">depDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">)</span>
+    <span class="n">atmoRecs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">:</span>
+        <span class="n">atmoRec</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">atmoRecs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atmoRec</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefStateRec</span><span class="p">,</span> <span class="mi">700</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depStateRec</span><span class="p">,</span> <span class="mi">701</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">hillStateRec</span><span class="p">,</span> <span class="mi">702</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depAttRec</span><span class="p">,</span> <span class="mi">703</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefAttRec</span><span class="p">,</span> <span class="mi">704</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">chiefDragForceLog</span><span class="p">,</span> <span class="mi">705</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">depDragForceLog</span><span class="p">,</span> <span class="mi">706</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">rec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atmoRecs</span><span class="p">):</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">rec</span><span class="p">,</span> <span class="mi">707</span> <span class="o">+</span> <span class="n">ind</span><span class="p">)</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="c1"># to save the BSK data to a file, uncomment the saveFile line below</span>
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+        <span class="n">scSim</span><span class="p">,</span>
+        <span class="n">dynTaskName</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">chiefSc</span><span class="p">,</span> <span class="n">depSc</span><span class="p">],</span>
+        <span class="c1"># saveFile=fileName,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ----- execute sim ----- #</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">setupTimeStamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">setupTime</span> <span class="o">=</span> <span class="n">setupTimeStamp</span> <span class="o">-</span> <span class="n">startTime</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sim setup complete in </span><span class="si">{</span><span class="n">setupTime</span><span class="si">}</span><span class="s2"> seconds, executing...&quot;</span><span class="p">)</span>
+    <span class="c1"># scSim.ShowExecutionFigure(True)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">execTimeStamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">execTime</span> <span class="o">=</span> <span class="n">execTimeStamp</span> <span class="o">-</span> <span class="n">setupTimeStamp</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sim complete in </span><span class="si">{</span><span class="n">execTime</span><span class="si">}</span><span class="s2"> seconds, pulling data...&quot;</span><span class="p">)</span>
+    <span class="c1"># ----- pull ----- #</span>
+    <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;chiefDrag_B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiefDragForceLog</span><span class="o">.</span><span class="n">forceExternal_B</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;depDrag_B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depDragForceLog</span><span class="o">.</span><span class="n">forceExternal_B</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;dynTimeData&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiefStateRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;fswTimeData&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depAttRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;wiggum.r_BN_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiefStateRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;wiggum.v_BN_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiefStateRec</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;lou.r_BN_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depStateRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;lou.v_BN_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depStateRec</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;relState.r_DC_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hillStateRec</span><span class="o">.</span><span class="n">r_DC_H</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;relState.v_DC_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hillStateRec</span><span class="o">.</span><span class="n">v_DC_H</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;wiggum.sigma_BN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiefStateRec</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;lou.sigma_BN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depStateRec</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;depDensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atmoRecs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;chiefDensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atmoRecs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s2">&quot;dens_mult&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">densMultiplier</span>
+    <span class="n">pullTimeStamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">pullTime</span> <span class="o">=</span> <span class="n">pullTimeStamp</span> <span class="o">-</span> <span class="n">execTimeStamp</span>
+    <span class="n">overallTime</span> <span class="o">=</span> <span class="n">pullTimeStamp</span> <span class="o">-</span> <span class="n">startTime</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data pulled in </span><span class="si">{</span><span class="n">pullTime</span><span class="si">}</span><span class="s2"> seconds. Overall time: </span><span class="si">{</span><span class="n">overallTime</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results_dict</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+    <span class="n">show_plots</span><span class="p">,</span> <span class="n">altOffset</span><span class="p">,</span> <span class="n">trueAnomOffset</span><span class="p">,</span> <span class="n">densMultiplier</span><span class="p">,</span> <span class="n">ctrlType</span><span class="o">=</span><span class="s2">&quot;lqr&quot;</span><span class="p">,</span> <span class="n">useJ2</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">drag_simulator</span><span class="p">(</span>
+        <span class="n">altOffset</span><span class="p">,</span> <span class="n">trueAnomOffset</span><span class="p">,</span> <span class="n">densMultiplier</span><span class="p">,</span> <span class="n">ctrlType</span><span class="o">=</span><span class="n">ctrlType</span><span class="p">,</span> <span class="n">useJ2</span><span class="o">=</span><span class="n">useJ2</span>
+    <span class="p">)</span>
+
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;dynTimeData&quot;</span><span class="p">]</span>
+    <span class="n">fswTimeData</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;fswTimeData&quot;</span><span class="p">]</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;wiggum.r_BN_N&quot;</span><span class="p">]</span>
+    <span class="n">vel</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;wiggum.v_BN_N&quot;</span><span class="p">]</span>
+    <span class="n">chiefAtt</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;wiggum.sigma_BN&quot;</span><span class="p">]</span>
+    <span class="n">pos2</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;lou.r_BN_N&quot;</span><span class="p">]</span>
+    <span class="n">vel2</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;lou.v_BN_N&quot;</span><span class="p">]</span>
+    <span class="n">depAtt</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;lou.sigma_BN&quot;</span><span class="p">]</span>
+    <span class="n">hillPos</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;relState.r_DC_H&quot;</span><span class="p">]</span>
+    <span class="n">hillVel</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;relState.v_DC_H&quot;</span><span class="p">]</span>
+    <span class="n">depDensity</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;depDensity&quot;</span><span class="p">]</span>
+    <span class="n">chiefDensity</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;chiefDensity&quot;</span><span class="p">]</span>
+    <span class="n">depDrag</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;depDrag_B&quot;</span><span class="p">]</span>
+    <span class="n">chiefDrag</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;chiefDrag_B&quot;</span><span class="p">]</span>
+    <span class="n">densData</span> <span class="o">=</span> <span class="n">results</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeData</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span>
+    <span class="n">rel_mrp_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">numDataPoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">):</span>
+        <span class="n">rel_mrp_hist</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">subMRP</span><span class="p">(</span><span class="n">depAtt</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:],</span> <span class="n">chiefAtt</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1">#   Plots for general consumption</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">hillPos</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;r_1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hill X Position (m)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hillX&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">hillPos</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;r_2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hill Y Position (m)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hillY&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">hillVel</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v_1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hill X Velocity (m/s)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hilldX&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">hillVel</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v_2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hill Y Velocity (m/s)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hilldy&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">chiefDensity</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Chief $\rho$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDensity</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Deputy $\rho$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density (kg/m3)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_densities&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hillPos</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">hillPos</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Hill X (m)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hill Y (m)&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hillTraj&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">rel_mrp_hist</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Relative MRP Value&quot;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_relativeAtt&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+    <span class="c1">#   Debug plots</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;delta a_1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;delta a_2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;delta a_3&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Relative acceleration due to drag, body frame (m/s)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;chief a_1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;chief a_2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">chiefDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;chief a_3&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Relative acceleration due to drag, body frame (m/s)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dep a_1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dep a_2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">depDrag</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dep a_3&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Relative acceleration due to drag, body frame (m/s)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="mf">0.0</span><span class="p">,</span>  <span class="c1">#   altitude offset (m)</span>
+        <span class="mf">0.1</span><span class="p">,</span>  <span class="c1">#  True anomaly offset (deg)</span>
+        <span class="mi">1</span><span class="p">,</span>  <span class="c1">#    Density multiplier (nondimensional)</span>
+        <span class="n">ctrlType</span><span class="o">=</span><span class="s2">&quot;lqr&quot;</span><span class="p">,</span>
+        <span class="n">useJ2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

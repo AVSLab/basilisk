@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioDragRendezvous &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioRendezVous" href="scenarioRendezVous.html" />
+    <link rel="prev" title="scenarioDebrisReorbitET" href="scenarioDebrisReorbitET.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationBasic.html">Basic Servicer/Debris Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationMeanOEFeedback.html">Mean orbit element based relative motion control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationReconfig.html">Impulsive feedback control of relative motion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDebrisReorbitET.html">Electrostatic Tractor Debris Reorbiting</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Attitude-Driven differential drag control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioRendezVous.html">Servicer approaching a debris object with 3 flight modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSatelliteConstellation.html">Walker-Delta Satellite Constellation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioDragRendezvous</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioDragRendezvous.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariodragrendezvous">
+<span id="id1"></span><h1>scenarioDragRendezvous<a class="headerlink" href="#scenariodragrendezvous" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioDragRendezvous"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This script sets up a formation flying scenario with two spacecraft. The deputy spacecraft attempts to rendezvous with the
+chief using attitude-driven differential drag using the strategy outlined in <a class="reference external" href="https://arc.aiaa.org/doi/10.2514/1.G004521">this paper</a>.</p>
+<p>This script is found in the folder <code class="docutils literal notranslate"><span class="pre">src/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioDragRendezvous</span>
+</pre></div>
+</div>
+<p>The simulation layout is shown in the following illustration. Two spacecraft are orbiting the earth at
+close distance. Perturbations from atmospheric drag, provided by <a class="reference internal" href="../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">Module: exponentialAtmosphere</span></a> and
+<a class="reference internal" href="../Documentation/simulation/dynamics/facetDragEffector/facetDragDynamicEffector.html#facetdragdynamiceffector"><span class="std std-ref">Module: facetDragDynamicEffector</span></a>,  are implemented by default; the <span class="math notranslate nohighlight">\(J_2\)</span> gravity perturbation
+can also be included. Each spacecraft sends a <a class="reference internal" href="../Documentation/simulation/navigation/simpleNav/simpleNav.html#simplenav"><span class="std std-ref">Module: simpleNav</span></a>
+output message of type <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a> continuously to a <a class="reference internal" href="../Documentation/fswAlgorithms/formationFlying/hillStateConverter/hillStateConverter.html#hillstateconverter"><span class="std std-ref">Module: hillStateConverter</span></a> module,
+which is assumed to be a part of the deputy (maneuvering)
+spacecraft’s flight software stack. The <a class="reference internal" href="../Documentation/fswAlgorithms/formationFlying/hillStateConverter/hillStateConverter.html#hillstateconverter"><span class="std std-ref">Module: hillStateConverter</span></a> module then writes
+a <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/HillRelStateMsgPayload.html#hillrelstatemsgpayload"><span class="std std-ref">HillRelStateMsgPayload</span></a>, which is read by the <a class="reference internal" href="../Documentation/fswAlgorithms/formationFlying/hillToAttRef/hillToAttRef.html#hilltoattref"><span class="std std-ref">Module: hillToAttRef</span></a> module implementing
+the differential drag attitude guidance law.</p>
+<img alt="../_images/scenarioDragRendezvousDiagram.png" class="align-center" src="../_images/scenarioDragRendezvousDiagram.png" />
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.0</span><span class="p">,</span> <span class="c1">#   altitude offset (m)</span>
+<span class="mf">0.1</span><span class="p">,</span> <span class="c1">#  True anomaly offset (deg)</span>
+<span class="mi">1</span><span class="p">,</span> <span class="c1">#    Density multiplier (non-dimensional)</span>
+<span class="n">ctrlType</span><span class="o">=</span><span class="s1">&#39;lqr&#39;</span><span class="p">,</span>
+<span class="n">useJ2</span><span class="o">=</span><span class="kc">False</span>
+</pre></div>
+</div>
+<p>In this case, the deputy spacecraft attempts to catch up to a reference set ten kilometers ahead of it
+along-track using a static LQR control law, without considering the impact of <span class="math notranslate nohighlight">\(J_2\)</span> perturbations.
+The resulting relative attitude and in-plane Hill trajectory are shown below.</p>
+<img alt="../_images/scenarioDragRendezvous_relativeAtt.svg" class="align-center" src="../_images/scenarioDragRendezvous_relativeAtt.svg" />
+<img alt="../_images/scenarioDragRendezvous_hillTraj.svg" class="align-center" src="../_images/scenarioDragRendezvous_hillTraj.svg" />
+<p>Time trajectories of the in-plane Hill components of the Deputy are shown here:</p>
+<img alt="../_images/scenarioDragRendezvous_hillX.svg" class="align-center" src="../_images/scenarioDragRendezvous_hillX.svg" />
+<img alt="../_images/scenarioDragRendezvous_hillY.svg" class="align-center" src="../_images/scenarioDragRendezvous_hillY.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioDragRendezvous.drag_simulator">
+<span class="sig-prename descclassname"><span class="pre">scenarioDragRendezvous.</span></span><span class="sig-name descname"><span class="pre">drag_simulator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">altOffset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueAnomOffset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">densMultiplier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrlType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lqr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useJ2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioDragRendezvous.html#drag_simulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioDragRendezvous.drag_simulator" title="Link to this definition"></a></dt>
+<dd><p>Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
+both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
+direct reference inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chief</strong> (<em>trueAnomOffset - double - deputy true anomaly difference from the</em>)</p></li>
+<li><p><strong>chief</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioDragRendezvous.setup_spacecraft_plant">
+<span class="sig-prename descclassname"><span class="pre">scenarioDragRendezvous.</span></span><span class="sig-name descname"><span class="pre">setup_spacecraft_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioDragRendezvous.html#setup_spacecraft_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioDragRendezvous.setup_spacecraft_plant" title="Link to this definition"></a></dt>
+<dd><p>Convenience function to set up a spacecraft and its associated dragEffector and simpleNav module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rN</strong> (<em>float</em><em>(</em><em>3</em><em>)</em>) – Inertial position vector</p></li>
+<li><p><strong>vN</strong> (<em>float</em><em>(</em><em>3</em><em>)</em>) – Inertial velocity vector</p></li>
+<li><p><strong>modelName</strong> (<em>string</em>) – String specifying the spacecraft name</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioDebrisReorbitET.html" class="btn btn-neutral float-left" title="scenarioDebrisReorbitET" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioRendezVous.html" class="btn btn-neutral float-right" title="scenarioRendezVous" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

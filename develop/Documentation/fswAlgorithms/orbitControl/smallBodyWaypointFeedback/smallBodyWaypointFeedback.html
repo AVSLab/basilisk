@@ -1,0 +1,640 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: smallBodyWaypointFeedback &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="smallBodyWaypointFeedback" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">orbitControl</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../lambertPlanner/index.html">lambertPlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSecondDV/index.html">lambertSecondDV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSolver/index.html">lambertSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSurfaceRelativeVelocity/index.html">lambertSurfaceRelativeVelocity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertValidator/index.html">lambertValidator</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">smallBodyWaypointFeedback</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">orbitControl</a></li>
+          <li class="breadcrumb-item"><a href="index.html">smallBodyWaypointFeedback</a></li>
+      <li class="breadcrumb-item active">Module: smallBodyWaypointFeedback</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/orbitControl/smallBodyWaypointFeedback/smallBodyWaypointFeedback.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-smallbodywaypointfeedback">
+<span id="smallbodywaypointfeedback"></span><h1>Module: smallBodyWaypointFeedback<a class="headerlink" href="#module-smallbodywaypointfeedback" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module is provides a feedback control law for waypoint-to-waypoint control about a small body. The waypoints are defined in the Hill frame of the body.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>translational navigation input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>navAttInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>attitude navigation input message</p></td>
+</tr>
+<tr class="row-even"><td><p>asteroidEphemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>asteroid ephemeris input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>sunEphemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>sun ephemeris input message</p></td>
+</tr>
+<tr class="row-even"><td><p>forceOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#cmdforcebodymsgpayload"><span class="std std-ref">CmdForceBodyMsgPayload</span></a></p></td>
+<td><p>force command output</p></td>
+</tr>
+<tr class="row-odd"><td><p>forceOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#cmdforcebodymsgpayload"><span class="std std-ref">CmdForceBodyMsgPayload</span></a></p></td>
+<td><p>C-wrapped force output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="general-function">
+<h3>General Function<a class="headerlink" href="#general-function" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">smallBodyWaypointFeedback()</span></code> module provides a solution for waypoint-to-waypoint control about a small body. The feedback
+control law is similar to the cartesian coordinate continuous feedback control law in Chapter 14 of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>.
+A cannonball SRP model, third body perturbations from the sun, and point-mass gravity are utilized. The state inputs are
+messages written out by <a class="reference internal" href="../../../simulation/navigation/simpleNav/simpleNav.html#simplenav"><span class="std std-ref">Module: simpleNav</span></a> and <a class="reference internal" href="../../../simulation/navigation/planetNav/planetNav.html#planetnav"><span class="std std-ref">Module: planetNav</span></a> modules or an estimator that provides the same input messages.</p>
+</section>
+<section id="algorithm">
+<h3>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h3>
+<p>The state vector is defined as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-smwf-state">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-smwf-state" title="Link to this equation"></a></span>\[\begin{split}\mathbf{X} =
+\begin{bmatrix}
+\mathbf{x}_1\\
+\mathbf{x}_2\\
+\end{bmatrix}=
+\begin{bmatrix}
+{}^O\mathbf{r}_{B/O} \\
+{}^O\dot{\mathbf{r}}_{B/O} \\
+\end{bmatrix}\end{split}\]</div>
+<p>The associated frame definitions may be found in the following table.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Frame Definitions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Frame Description</p></th>
+<th class="head"><p>Frame Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Small Body Hill Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(O: \{\hat{\mathbf{o}}_1, \hat{\mathbf{o}}_2, \hat{\mathbf{o}}_3\}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Spacecraft Body Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(B: \{\hat{\mathbf{b}}_1, \hat{\mathbf{b}}_2, \hat{\mathbf{b}}_3\}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>The derivation of the control law is skipped here for brevity. The thrust, however, is computed as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-smwf-u">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-smwf-u" title="Link to this equation"></a></span>\[\begin{equation}
+\mathbf{u} = -(f(\mathbf{x}) - f(\mathbf{x}_{ref})) - [K_1]\Delta\mathbf{x}_1 - [K_2]\Delta\mathbf{x}_2
+\end{equation}\]</div>
+<p>The relative velocity dynamics are described in detail by <a class="reference external" href="https://doi.org/10.2514/1.G005733">Takahashi</a> and
+<a class="reference external" href="http://dx.doi.org/10.2514/1.57247">Scheeres</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-smwf-x-dot-2">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-smwf-x-dot-2" title="Link to this equation"></a></span>\[\begin{split}\begin{split}
+f(\mathbf{x}) = ^O\ddot{\mathbf{r}}_{S/O} = -\ddot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1 - 2\dot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_2 - \dot{F}^2[\tilde{\hat{\mathbf{o}}}_3][\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1- \dfrac{\mu_a \mathbf{x}_1}{||\mathbf{x}_1||^3} + \dfrac{\mu_s(3{}^O\hat{\mathbf{d}}{}^O\hat{\mathbf{d}}^T-[I_{3 \times 3}])\mathbf{x}_1}{d^3} \\
++ C_{SRP}\dfrac{P_0(1+\rho)A_{sc}}{M_{sc}}\dfrac{(1\text{AU})^2}{d^2}\hat{\mathbf{o}}_1 + \sum_i^I\dfrac{{}^O\mathbf{F}_i}{M_{sc}} + \sum_j^J\dfrac{{}^O\mathbf{F}_j}{M_{sc}}
+\end{split}\end{split}\]</div>
+</section>
+<section id="user-guide">
+<h3>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h3>
+<p>A detailed example of the module is provided in <a class="reference internal" href="../../../../examples/scenarioSmallBodyFeedbackControl.html#scenariosmallbodyfeedbackcontrol"><span class="std std-ref">scenarioSmallBodyFeedbackControl</span></a>. However, the initialization
+of the module is also shown here. The module is first initialized as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span> <span class="o">=</span> <span class="n">smallBodyWaypointFeedback</span><span class="o">.</span><span class="n">SmallBodyWaypointFeedback</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The asteroid ephemeris input message is then connected. In this example, we use the <a class="reference internal" href="../../../simulation/navigation/planetNav/planetNav.html#planetnav"><span class="std std-ref">Module: planetNav</span></a> module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span><span class="o">.</span><span class="n">asteroidEphemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetNavMeas</span><span class="o">.</span><span class="n">ephemerisOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A standalone message is created for the sun ephemeris message.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sunEphemerisMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsgPayload</span><span class="p">()</span>
+<span class="n">sunEphemerisMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsg</span><span class="p">()</span>
+<span class="n">sunEphemerisMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunEphemerisMsgData</span><span class="p">)</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">sunEphemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunEphemerisMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The navigation attitude and translation messages are then subscribed to</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span><span class="o">.</span><span class="n">navAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">simpleNavMeas</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">simpleNavMeas</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, the area, mass, inertia, and gravitational parameter of the asteroid are initialized</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span><span class="o">.</span><span class="n">A_sc</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Surface area of the spacecraft, m^2</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">M_sc</span> <span class="o">=</span> <span class="n">mass</span>  <span class="c1"># Mass of the spacecraft, kg</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">IHubPntC_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>  <span class="c1"># sc inertia</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">mu_ast</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># Gravitational constant of the asteroid</span>
+</pre></div>
+</div>
+<p>The reference states are then defined:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span><span class="o">.</span><span class="n">x1_ref</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2000.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">x2_ref</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Finally, the feedback gains are set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">waypointFeedback</span><span class="o">.</span><span class="n">K1</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">([</span><span class="mf">5e-4</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">0e-5</span><span class="p">,</span> <span class="mf">5e-4</span><span class="p">])</span>
+<span class="n">waypointFeedback</span><span class="o">.</span><span class="n">K2</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv425SmallBodyWaypointFeedback">
+<span id="_CPPv325SmallBodyWaypointFeedback"></span><span id="_CPPv225SmallBodyWaypointFeedback"></span><span id="SmallBodyWaypointFeedback"></span><span class="target" id="class_small_body_waypoint_feedback"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SmallBodyWaypointFeedback</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv425SmallBodyWaypointFeedback" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;smallBodyWaypointFeedback.h&gt;</em></div>
+<p>This module is provides a Lyapunov feedback control law for waypoint to waypoint guidance and control about a small body. The waypoints are defined in the Hill frame of the body. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback25SmallBodyWaypointFeedbackEv">
+<span id="_CPPv3N25SmallBodyWaypointFeedback25SmallBodyWaypointFeedbackEv"></span><span id="_CPPv2N25SmallBodyWaypointFeedback25SmallBodyWaypointFeedbackEv"></span><span id="SmallBodyWaypointFeedback::SmallBodyWaypointFeedback"></span><span class="target" id="class_small_body_waypoint_feedback_1a43f3e665d04c2b742b24699ea65c0cc4"></span><span class="sig-name descname"><span class="n"><span class="pre">SmallBodyWaypointFeedback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback25SmallBodyWaypointFeedbackEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedbackD0Ev">
+<span id="_CPPv3N25SmallBodyWaypointFeedbackD0Ev"></span><span id="_CPPv2N25SmallBodyWaypointFeedbackD0Ev"></span><span id="SmallBodyWaypointFeedback::~SmallBodyWaypointFeedback"></span><span class="target" id="class_small_body_waypoint_feedback_1a953c2906111c62cad877a28ef9eec788"></span><span class="sig-name descname"><span class="n"><span class="pre">~SmallBodyWaypointFeedback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedbackD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback8SelfInitEv">
+<span id="_CPPv3N25SmallBodyWaypointFeedback8SelfInitEv"></span><span id="_CPPv2N25SmallBodyWaypointFeedback8SelfInitEv"></span><span id="SmallBodyWaypointFeedback::SelfInit"></span><span class="target" id="class_small_body_waypoint_feedback_1afc8bf4b699910182075a64f4d464c656"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Self initialization for C-wrapped messages. </p>
+<p>Initialize C-wrapped output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback5ResetE8uint64_t">
+<span id="_CPPv3N25SmallBodyWaypointFeedback5ResetE8uint64_t"></span><span id="_CPPv2N25SmallBodyWaypointFeedback5ResetE8uint64_t"></span><span id="SmallBodyWaypointFeedback::Reset__uint64_t"></span><span class="target" id="class_small_body_waypoint_feedback_1a97ba689283644ffb9a40c936345a1b5a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connect. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback11UpdateStateE8uint64_t">
+<span id="_CPPv3N25SmallBodyWaypointFeedback11UpdateStateE8uint64_t"></span><span id="_CPPv2N25SmallBodyWaypointFeedback11UpdateStateE8uint64_t"></span><span id="SmallBodyWaypointFeedback::UpdateState__uint64_t"></span><span class="target" id="class_small_body_waypoint_feedback_1a0936e2402cc596173e41c6411cb2903a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. Provide an appropriate description. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback12readMessagesEv">
+<span id="_CPPv3N25SmallBodyWaypointFeedback12readMessagesEv"></span><span id="_CPPv2N25SmallBodyWaypointFeedback12readMessagesEv"></span><span id="SmallBodyWaypointFeedback::readMessages"></span><span class="target" id="class_small_body_waypoint_feedback_1aca0cf7dcd8f5b07fd78bebca9dc17185"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the input messages each call of updateState </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback14computeControlE8uint64_t">
+<span id="_CPPv3N25SmallBodyWaypointFeedback14computeControlE8uint64_t"></span><span id="_CPPv2N25SmallBodyWaypointFeedback14computeControlE8uint64_t"></span><span id="SmallBodyWaypointFeedback::computeControl__uint64_t"></span><span class="target" id="class_small_body_waypoint_feedback_1aa34df9fa0fe16db4a3f1ef8564f87eba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeControl</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback14computeControlE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the control using a Lyapunov feedback law </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback13writeMessagesE8uint64_t">
+<span id="_CPPv3N25SmallBodyWaypointFeedback13writeMessagesE8uint64_t"></span><span id="_CPPv2N25SmallBodyWaypointFeedback13writeMessagesE8uint64_t"></span><span id="SmallBodyWaypointFeedback::writeMessages__uint64_t"></span><span class="target" id="class_small_body_waypoint_feedback_1afa1b7696cf3d1ef8f787c89b5aff529d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the input messages each call of updateState </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback13navTransInMsgE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback13navTransInMsgE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback13navTransInMsgE"></span><span id="SmallBodyWaypointFeedback::navTransInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_small_body_waypoint_feedback_1af89f1eaa08915f7715878fd9a4415441"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback13navTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>translational navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback11navAttInMsgE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback11navAttInMsgE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback11navAttInMsgE"></span><span id="SmallBodyWaypointFeedback::navAttInMsg__ReadFunctor:NavAttMsgPayload:"></span><span class="target" id="class_small_body_waypoint_feedback_1ad52de6e23325b44ee01a28ee4b80a15f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttInMsg</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback11navAttInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback22asteroidEphemerisInMsgE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback22asteroidEphemerisInMsgE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback22asteroidEphemerisInMsgE"></span><span id="SmallBodyWaypointFeedback::asteroidEphemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_small_body_waypoint_feedback_1ac0afb617e5fbdab9c1c039a6e1b7e618"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback22asteroidEphemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>asteroid ephemeris input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback17sunEphemerisInMsgE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback17sunEphemerisInMsgE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback17sunEphemerisInMsgE"></span><span id="SmallBodyWaypointFeedback::sunEphemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_small_body_waypoint_feedback_1a4f00e9c0b5a41ea8c966127abad1b6ea"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEphemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback17sunEphemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sun ephemeris input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback11forceOutMsgE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback11forceOutMsgE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback11forceOutMsgE"></span><span id="SmallBodyWaypointFeedback::forceOutMsg__Message:CmdForceBodyMsgPayload:"></span><span class="target" id="class_small_body_waypoint_feedback_1a9489ea95f2fe43d8e7b57f1a6c029ad1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#_CPPv422CmdForceBodyMsgPayload" title="CmdForceBodyMsgPayload"><span class="n"><span class="pre">CmdForceBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback11forceOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>force command output </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback12forceOutMsgCE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback12forceOutMsgCE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback12forceOutMsgCE"></span><span id="SmallBodyWaypointFeedback::forceOutMsgC__CmdForceBodyMsg_C"></span><span class="target" id="class_small_body_waypoint_feedback_1af7344cb8424579274d5af3f3a6af3adb"></span><span class="n"><span class="pre">CmdForceBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback12forceOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped force output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback9bskLoggerE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback9bskLoggerE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback9bskLoggerE"></span><span id="SmallBodyWaypointFeedback::bskLogger__BSKLogger"></span><span class="target" id="class_small_body_waypoint_feedback_1a8e766bad6315ca66600065cf873fa414"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback5C_SRPE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback5C_SRPE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback5C_SRPE"></span><span id="SmallBodyWaypointFeedback::C_SRP__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a2ff1f4b2f1179369d95abc748ae8d151"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C_SRP</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback5C_SRPE" title="Link to this definition"></a><br /></dt>
+<dd><p>SRP scaling coefficient. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback3P_0E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback3P_0E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback3P_0E"></span><span id="SmallBodyWaypointFeedback::P_0__double"></span><span class="target" id="class_small_body_waypoint_feedback_1ad9c008c8f6ec6dfe58efe2327a33d670"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_0</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback3P_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>SRP at 1 AU. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback3rhoE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback3rhoE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback3rhoE"></span><span id="SmallBodyWaypointFeedback::rho__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a528cfa5269bed92be38c490907d54eb1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rho</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback3rhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>Surface reflectivity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback4A_scE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback4A_scE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback4A_scE"></span><span id="SmallBodyWaypointFeedback::A_sc__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a9c1a8fb1c922f967eebc307b9e14227d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A_sc</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback4A_scE" title="Link to this definition"></a><br /></dt>
+<dd><p>Surface area of the spacecraft. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback4M_scE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback4M_scE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback4M_scE"></span><span id="SmallBodyWaypointFeedback::M_sc__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a7758c13252b1ec0ca5db26a766d02a14"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">M_sc</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback4M_scE" title="Link to this definition"></a><br /></dt>
+<dd><p>Mass of the spacecraft. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback10IHubPntC_BE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback10IHubPntC_BE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback10IHubPntC_BE"></span><span id="SmallBodyWaypointFeedback::IHubPntC_B__Eigen::Matrix3d"></span><span class="target" id="class_small_body_waypoint_feedback_1ab4c0038e277ce8b89c504e73671ee8e1"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IHubPntC_B</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback10IHubPntC_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>sc inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6mu_astE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6mu_astE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6mu_astE"></span><span id="SmallBodyWaypointFeedback::mu_ast__double"></span><span class="target" id="class_small_body_waypoint_feedback_1aab24253d3629caa32feaf94c025d7482"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu_ast</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6mu_astE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gravitational constant of the asteroid. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6x1_refE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6x1_refE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6x1_refE"></span><span id="SmallBodyWaypointFeedback::x1_ref__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a5f8ca701df1b82b3ffea10e2492206af"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x1_ref</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6x1_refE" title="Link to this definition"></a><br /></dt>
+<dd><p>Desired Hill-frame position. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6x2_refE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6x2_refE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6x2_refE"></span><span id="SmallBodyWaypointFeedback::x2_ref__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a23c782526862a87069173c0ab7af83f5"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x2_ref</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6x2_refE" title="Link to this definition"></a><br /></dt>
+<dd><p>Desired Hill-frame velocity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback2K1E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback2K1E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback2K1E"></span><span id="SmallBodyWaypointFeedback::K1__Eigen::Matrix3d"></span><span class="target" id="class_small_body_waypoint_feedback_1aff4ce9fd34d4931992e2286d791483c0"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K1</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback2K1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Position gain. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback2K2E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback2K2E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback2K2E"></span><span id="SmallBodyWaypointFeedback::K2__Eigen::Matrix3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a56a3c9805b3c00a93e61ac63b0c3fe32"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K2</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback2K2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Velocity gain. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback19navTransInMsgBufferE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback19navTransInMsgBufferE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback19navTransInMsgBufferE"></span><span id="SmallBodyWaypointFeedback::navTransInMsgBuffer__NavTransMsgPayload"></span><span class="target" id="class_small_body_waypoint_feedback_1a620063cfd54d9902c06598736e648f7e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback19navTransInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback17navAttInMsgBufferE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback17navAttInMsgBufferE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback17navAttInMsgBufferE"></span><span id="SmallBodyWaypointFeedback::navAttInMsgBuffer__NavAttMsgPayload"></span><span class="target" id="class_small_body_waypoint_feedback_1ae5982a0bed4303db1489ea81fa2e39e8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback17navAttInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback28asteroidEphemerisInMsgBufferE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback28asteroidEphemerisInMsgBufferE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback28asteroidEphemerisInMsgBufferE"></span><span id="SmallBodyWaypointFeedback::asteroidEphemerisInMsgBuffer__EphemerisMsgPayload"></span><span class="target" id="class_small_body_waypoint_feedback_1ae74ba53a27a5cfcbb0461cc3582b1bb9"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback28asteroidEphemerisInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback23sunEphemerisInMsgBufferE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback23sunEphemerisInMsgBufferE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback23sunEphemerisInMsgBufferE"></span><span id="SmallBodyWaypointFeedback::sunEphemerisInMsgBuffer__EphemerisMsgPayload"></span><span class="target" id="class_small_body_waypoint_feedback_1a30f38dfa6deb3c30041c57c26b52cceb"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEphemerisInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback23sunEphemerisInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback8prevTimeE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback8prevTimeE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback8prevTimeE"></span><span id="SmallBodyWaypointFeedback::prevTime__uint64_t"></span><span class="target" id="class_small_body_waypoint_feedback_1a71d47ff0b280f078422a1172a486834f"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevTime</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback8prevTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Previous time, ns. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6mu_sunE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6mu_sunE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6mu_sunE"></span><span id="SmallBodyWaypointFeedback::mu_sun__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a163d53ccb738b8c2c16af640257b5039"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu_sun</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6mu_sunE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gravitational parameter of the sun. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback13o_hat_3_tildeE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback13o_hat_3_tildeE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback13o_hat_3_tildeE"></span><span id="SmallBodyWaypointFeedback::o_hat_3_tilde__Eigen::Matrix3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a40be2a2c0563b9ef61c473eafd40ef23"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">o_hat_3_tilde</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback13o_hat_3_tildeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Tilde matrix of the third asteroid orbit frame base vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback7o_hat_1E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback7o_hat_1E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback7o_hat_1E"></span><span id="SmallBodyWaypointFeedback::o_hat_1__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a6208b6f17a1b5efa6705c47b298e1cdc"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">o_hat_1</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback7o_hat_1E" title="Link to this definition"></a><br /></dt>
+<dd><p>First asteroid orbit frame base vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback1IE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback1IE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback1IE"></span><span id="SmallBodyWaypointFeedback::I__Eigen::MatrixXd"></span><span class="target" id="class_small_body_waypoint_feedback_1af0d430cf10ca8536b1a51d0d7c832670"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback1IE" title="Link to this definition"></a><br /></dt>
+<dd><p>3 x 3 identity matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6oe_astE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6oe_astE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6oe_astE"></span><span id="SmallBodyWaypointFeedback::oe_ast__ClassicElements"></span><span class="target" id="class_small_body_waypoint_feedback_1a2e09a9f7b933ddca52ce5321fddd4225"></span><a class="reference internal" href="../../../architecture/utilities/orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oe_ast</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6oe_astE" title="Link to this definition"></a><br /></dt>
+<dd><p>Orbital elements of the asteroid. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback5F_dotE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback5F_dotE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback5F_dotE"></span><span id="SmallBodyWaypointFeedback::F_dot__double"></span><span class="target" id="class_small_body_waypoint_feedback_1ab8a8d884c9f978e41838cf3d6807e9e8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_dot</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback5F_dotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Time rate of change of true anomaly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6F_ddotE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6F_ddotE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6F_ddotE"></span><span id="SmallBodyWaypointFeedback::F_ddot__double"></span><span class="target" id="class_small_body_waypoint_feedback_1a79b66eda55cb0e94d259c248bbdc29c2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_ddot</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6F_ddotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Second time derivative of true anomaly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6r_BN_NE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6r_BN_NE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6r_BN_NE"></span><span id="SmallBodyWaypointFeedback::r_BN_N__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a072f767e8c622c8a6a8d602ac9007cc9"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6r_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6v_BN_NE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6v_BN_NE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6v_BN_NE"></span><span id="SmallBodyWaypointFeedback::v_BN_N__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a84563e6ba5a83c8c39f95783e532f596"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6v_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6v_ON_NE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6v_ON_NE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6v_ON_NE"></span><span id="SmallBodyWaypointFeedback::v_ON_N__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a00b99b8a66cdc6cbf673045933f1af6e"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_ON_N</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6v_ON_NE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6r_ON_NE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6r_ON_NE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6r_ON_NE"></span><span id="SmallBodyWaypointFeedback::r_ON_N__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1ab1e65e536eaf6ee9294822a145190784"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_ON_N</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6r_ON_NE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6r_SN_NE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6r_SN_NE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6r_SN_NE"></span><span id="SmallBodyWaypointFeedback::r_SN_N__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a30ab6cce380a1539c98e017216df72f6"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SN_N</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6r_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6dcm_ONE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6dcm_ONE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6dcm_ONE"></span><span id="SmallBodyWaypointFeedback::dcm_ON__Eigen::Matrix3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a60d1cabd43d0b77b4a1bfb8b9b2e7038"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_ON</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6dcm_ONE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the inertial frame to the small-body’s hill frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6r_SO_OE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6r_SO_OE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6r_SO_OE"></span><span id="SmallBodyWaypointFeedback::r_SO_O__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a89e3d9ed224defe6be5a3492a372771b"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SO_O</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6r_SO_OE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector from the small body’s origin to the inertial frame origin in small-body hill frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback6f_currE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback6f_currE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback6f_currE"></span><span id="SmallBodyWaypointFeedback::f_curr__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a361bb6cf564c482d56d503f8a9624abf"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f_curr</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback6f_currE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback5f_refE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback5f_refE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback5f_refE"></span><span id="SmallBodyWaypointFeedback::f_ref__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1aae9f0a9d7889d33e939b81fbe11745d8"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f_ref</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback5f_refE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback2x1E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback2x1E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback2x1E"></span><span id="SmallBodyWaypointFeedback::x1__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1ac7f61108ef98855d2947ad19b86c6938"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x1</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback2x1E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback2x2E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback2x2E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback2x2E"></span><span id="SmallBodyWaypointFeedback::x2__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a3c05633e9837d1c417205e7214757429"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x2</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback2x2E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback3dx1E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback3dx1E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback3dx1E"></span><span id="SmallBodyWaypointFeedback::dx1__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a012854af542c949184c687b420a0886f"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dx1</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback3dx1E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback3dx2E">
+<span id="_CPPv3N25SmallBodyWaypointFeedback3dx2E"></span><span id="_CPPv2N25SmallBodyWaypointFeedback3dx2E"></span><span id="SmallBodyWaypointFeedback::dx2__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a5d4a4f9a4110d088583a3ff21474257b"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dx2</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback3dx2E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback8thrust_OE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback8thrust_OE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback8thrust_OE"></span><span id="SmallBodyWaypointFeedback::thrust_O__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a6b5161c63695d3845b20079db306d01f"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrust_O</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback8thrust_OE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25SmallBodyWaypointFeedback8thrust_BE">
+<span id="_CPPv3N25SmallBodyWaypointFeedback8thrust_BE"></span><span id="_CPPv2N25SmallBodyWaypointFeedback8thrust_BE"></span><span id="SmallBodyWaypointFeedback::thrust_B__Eigen::Vector3d"></span><span class="target" id="class_small_body_waypoint_feedback_1a402a6e85432b7478e7969d567363609a"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrust_B</span></span></span><a class="headerlink" href="#_CPPv4N25SmallBodyWaypointFeedback8thrust_BE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="smallBodyWaypointFeedback" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_unitSpice &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_unitSpice</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_unitSpice</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="c1">#</span>
+<span class="c1"># Spice Unit Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the proper function of the Spice Ephemeris module.</span>
+<span class="c1">#           Proper function is tested by comparing Spice Ephemeris to</span>
+<span class="c1">#           JPL Horizons Database for different planets and times of year</span>
+<span class="c1"># Author:   Thibaud Teil</span>
+<span class="c1"># Creation Date:  Dec. 20, 2016</span>
+<span class="c1">#</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spiceInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="c1"># Class in order to plot using data across the different parameterized scenarios</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataStore</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># replace these with appropriate containers for the data to be stored for plotting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MarsPosErr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">EarthPosErr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SunPosErr</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">patch</span>
+        <span class="n">rect</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Date</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MarsPosErr</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mars&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EarthPosErr</span><span class="p">,</span> <span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Earth&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SunPosErr</span><span class="p">,</span> <span class="s1">&#39;yo&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sun&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+        <span class="n">fig1</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date of test&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Position Error [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">giveData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Date</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MarsPosErr</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mars&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EarthPosErr</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Earth&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SunPosErr</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sun&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+        <span class="n">fig1</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date of test&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Position Error [m]&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plt</span>
+
+
+<span class="c1"># Py.test fixture in order to plot</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">testPlottingFixture</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="n">dataStore</span> <span class="o">=</span> <span class="n">DataStore</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">dataStore</span>
+
+    <span class="n">plt</span> <span class="o">=</span> <span class="n">dataStore</span><span class="o">.</span><span class="n">giveData</span><span class="p">()</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s1">&#39;EphemMars&#39;</span><span class="p">,</span> <span class="s1">&#39;Ephemeris Error on Mars&#39;</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;height=0.7</span><span class="se">\\</span><span class="s1">textwidth, keepaspectratio&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2E-2</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s1">&#39;EphemEarth&#39;</span><span class="p">,</span> <span class="s1">&#39;Ephemeris Error on Earth&#39;</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;height=0.7</span><span class="se">\\</span><span class="s1">textwidth, keepaspectratio&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5E-6</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s1">&#39;EphemSun&#39;</span><span class="p">,</span> <span class="s1">&#39;Ephemeris Error on Sun&#39;</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;height=0.7</span><span class="se">\\</span><span class="s1">textwidth, keepaspectratio&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">dataStore</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True)</span>
+
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1">#   of the multiple test runs for this test.</span>
+<div class="viewcode-block" id="test_unitSpice">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_unitSpice.html#test_unitSpice.test_unitSpice">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;2015 February 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;02/10/15&quot;</span> <span class="p">,[</span><span class="mf">2.049283795042291E+08</span><span class="p">,</span> <span class="mf">4.654550957513031E+07</span><span class="p">,</span> <span class="mf">1.580778617009296E+07</span><span class="p">]</span> <span class="p">,[</span><span class="o">-</span><span class="mf">1.137790671899544E+08</span><span class="p">,</span> <span class="mf">8.569008401822130E+07</span><span class="p">,</span> <span class="mf">3.712507705247846E+07</span><span class="p">],[</span><span class="mf">4.480338216752146E+05</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.947764237588293E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.745748832696378E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 February 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;02/20/15&quot;</span> <span class="p">,[</span> <span class="mf">1.997780190793433E+08</span><span class="p">,</span> <span class="mf">6.636509140613769E+07</span><span class="p">,</span> <span class="mf">2.503734390917690E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.286636391244711E+08</span><span class="p">,</span> <span class="mf">6.611156946652703E+07</span><span class="p">,</span> <span class="mf">2.863736192793162E+07</span><span class="p">],[</span><span class="mf">4.535258225415821E+05</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.180260790174162E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.428151563919459E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 April 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;04/10/15&quot;</span> <span class="p">,[</span><span class="mf">1.468463828343225E+08</span><span class="p">,</span> <span class="mf">1.502909016357645E+08</span><span class="p">,</span> <span class="mf">6.495986693265321E+07</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.406808744055921E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.614996219219251E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.003047222725225E+07</span><span class="p">],[</span><span class="mf">4.786772771370058E+05</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.283487082146838E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.809690999538498E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 April 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;04/20/15&quot;</span> <span class="p">,[</span><span class="mf">1.313859463489376E+08</span><span class="p">,</span> <span class="mf">1.637422864185919E+08</span><span class="p">,</span> <span class="mf">7.154683454681394E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.304372112275012E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.769916175223185E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.937179538983412E+07</span><span class="p">],[</span><span class="mf">4.834188130324496E+05</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.461799304268214E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.467083541217462E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 June 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;06/10/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">3.777078276008123E+07</span><span class="p">,</span> <span class="mf">2.080046702252371E+08</span><span class="p">,</span> <span class="mf">9.437503998071109E+07</span><span class="p">],[</span><span class="o">-</span><span class="mf">2.946784585692780E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.365779215199542E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.923299652516938E+07</span><span class="p">],[</span><span class="mf">5.052070933145228E+05</span><span class="p">,</span> <span class="mf">1.837038638578682E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.665575509449521E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 June 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;06/20/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">1.778745850655047E+07</span><span class="p">,</span> <span class="mf">2.116712756672253E+08</span><span class="p">,</span> <span class="mf">9.659608128589308E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.338053580692466E+06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.393743714818930E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.044500073550620E+07</span><span class="p">],[</span><span class="mf">5.090137386469169E+05</span><span class="p">,</span> <span class="mf">2.694272566092012E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.304862690440150E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 August 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;08/10/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">8.302866300591002E+07</span><span class="p">,</span> <span class="mf">2.053384243312354E+08</span><span class="p">,</span> <span class="mf">9.641192179982041E+07</span><span class="p">],[</span><span class="mf">1.111973130587749E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.507060674145325E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.123957889640842E+07</span><span class="p">],[</span><span class="mf">5.263951240980130E+05</span><span class="p">,</span> <span class="mf">7.113788303899391E+04</span><span class="p">,</span> <span class="mf">5.601415938789949E+03</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 August 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;08/20/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.015602120938274E+08</span><span class="p">,</span> <span class="mf">1.994877113707506E+08</span><span class="p">,</span> <span class="mf">9.422840996376510E+07</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.267319535735967E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.664279872369213E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.325170492059625E+07</span><span class="p">],[</span><span class="mf">5.294368386862668E+05</span><span class="p">,</span> <span class="mf">7.989635630604146E+04</span><span class="p">,</span> <span class="mf">9.307380417148834E+03</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 October 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;10/10/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.828944464171771E+08</span><span class="p">,</span> <span class="mf">1.498117608528323E+08</span><span class="p">,</span> <span class="mf">7.363786404040858E+07</span><span class="p">],[</span><span class="mf">1.440636517249971E+08</span><span class="p">,</span> <span class="mf">3.827074461651713E+07</span><span class="p">,</span> <span class="mf">1.656440704503509E+07</span><span class="p">],[</span><span class="mf">5.433268959250135E+05</span><span class="p">,</span> <span class="mf">1.251717566539142E+05</span><span class="p">,</span> <span class="mf">2.849999378507032E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 October 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;10/20/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.955685835661002E+08</span><span class="p">,</span> <span class="mf">1.367530082668284E+08</span><span class="p">,</span> <span class="mf">6.799006120628108E+07</span><span class="p">],[</span><span class="mf">1.343849818314204E+08</span><span class="p">,</span> <span class="mf">6.019977403127116E+07</span><span class="p">,</span> <span class="mf">2.607024615553362E+07</span><span class="p">],[</span><span class="mf">5.457339294611338E+05</span><span class="p">,</span> <span class="mf">1.342148834831663E+05</span><span class="p">,</span> <span class="mf">3.234185290692726E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 December 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;12/10/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.392022492203017E+08</span><span class="p">,</span> <span class="mf">5.847873056287902E+07</span><span class="p">,</span> <span class="mf">3.326431285934674E+07</span><span class="p">],[</span><span class="mf">3.277145427626925E+07</span><span class="p">,</span> <span class="mf">1.320956053465003E+08</span><span class="p">,</span> <span class="mf">5.723804900679157E+07</span><span class="p">],[</span><span class="mf">5.559607335969181E+05</span><span class="p">,</span> <span class="mf">1.813263443761486E+05</span><span class="p">,</span> <span class="mf">5.242991145066972E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2015 December 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;12/20/15&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.432532635321551E+08</span><span class="p">,</span> <span class="mf">4.156075241419497E+07</span><span class="p">,</span> <span class="mf">2.561357000250468E+07</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.866134677340530E+06</span><span class="p">,</span> <span class="mf">1.351080593806486E+08</span><span class="p">,</span> <span class="mf">5.854460725992832E+07</span><span class="p">],[</span><span class="mf">5.575179227151767E+05</span><span class="p">,</span> <span class="mf">1.907337298309725E+05</span><span class="p">,</span> <span class="mf">5.645553733620559E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 February 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;02/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.385499316808322E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.818711325555268E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.567983931044450E+07</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.132504603146183E+08</span><span class="p">,</span> <span class="mf">8.647183658089657E+07</span><span class="p">,</span> <span class="mf">3.746046979137553E+07</span><span class="p">],[</span><span class="mf">5.630027736619673E+05</span><span class="p">,</span> <span class="mf">2.402590276126245E+05</span><span class="p">,</span> <span class="mf">7.772804647512530E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 February 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;02/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.326189626865872E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.493600278878165E+07</span><span class="p">,</span><span class="o">-</span><span class="mf">2.352250994262638E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.282197228963156E+08</span><span class="p">,</span> <span class="mf">6.695033443521750E+07</span><span class="p">,</span> <span class="mf">2.899822684259482E+07</span><span class="p">],[</span><span class="mf">5.635403728358555E+05</span><span class="p">,</span> <span class="mf">2.498445036007692E+05</span><span class="p">,</span> <span class="mf">8.185973180152237E+04</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 April 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;04/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.795928090776869E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.395102817786797E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.916067235603344E+07</span><span class="p">],[</span><span class="o">-</span><span class="mf">1.399773606371217E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.749126225182984E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.061331784067504E+07</span><span class="p">],[</span><span class="mf">5.639699901756521E+05</span><span class="p">,</span> <span class="mf">2.977755140828988E+05</span><span class="p">,</span> <span class="mf">1.025609223621660E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 April 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;04/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.646488222290798E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.517361128528306E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.517204439842616E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.294310199316289E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.890085351639988E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.989515576444890E+07</span><span class="p">],[</span><span class="mf">5.636348418836893E+05</span><span class="p">,</span> <span class="mf">3.073681895822543E+05</span><span class="p">,</span> <span class="mf">1.067117713233756E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 June 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;06/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">7.085675304355654E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.933788289169757E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.680583098365544E+07</span><span class="p">],[</span><span class="o">-</span><span class="mf">2.756178030784301E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.365892814324490E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.923888961370525E+07</span><span class="p">],[</span><span class="mf">5.597493293268962E+05</span><span class="p">,</span> <span class="mf">3.563312003229167E+05</span><span class="p">,</span> <span class="mf">1.279448896916322E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 June 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;06/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.994076874358515E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.967336617729592E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.890950206156498E+07</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.413995783152328E+06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.390828611356292E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.032062925759617E+07</span><span class="p">],[</span><span class="mf">5.585605124166313E+05</span><span class="p">,</span> <span class="mf">3.659402953599973E+05</span><span class="p">,</span> <span class="mf">1.321213212542782E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 August 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;08/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">5.965895856067932E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.851251207911916E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.654489416392270E+07</span><span class="p">],[</span><span class="mf">1.124873641861596E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.344410235679612E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.053621796412993E+07</span><span class="p">],[</span><span class="mf">5.501477436262188E+05</span><span class="p">,</span> <span class="mf">4.149525682073312E+05</span><span class="p">,</span> <span class="mf">1.534983234437988E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 August 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;08/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">8.021899957229958E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.770523551156136E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.339737954004113E+07</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span><span class="mf">1.277516713236801E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.484361731649198E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.247232896320245E+07</span><span class="p">],[</span><span class="mf">5.480148786547601E+05</span><span class="p">,</span> <span class="mf">4.245199573757614E+05</span><span class="p">,</span> <span class="mf">1.576874582857746E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 October 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;10/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">1.674991232418756E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.090427183510760E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.456038490399034E+07</span><span class="p">],[</span> <span class="mf">1.434719792031415E+08</span><span class="p">,</span> <span class="mf">4.029387436854774E+07</span><span class="p">,</span> <span class="mf">1.744057129058395E+07</span><span class="p">],[</span><span class="mf">5.348794087050703E+05</span><span class="p">,</span> <span class="mf">4.727986075510736E+05</span><span class="p">,</span> <span class="mf">1.788947974297997E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 October 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;10/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">1.797014954219412E+08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.133803506487390E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.676932170648168E+07</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span> <span class="mf">1.334883617893556E+08</span><span class="p">,</span> <span class="mf">6.209917895944476E+07</span><span class="p">,</span> <span class="mf">2.689423661839254E+07</span><span class="p">],[</span><span class="mf">5.318931290166953E+05</span><span class="p">,</span> <span class="mf">4.821605725626923E+05</span><span class="p">,</span> <span class="mf">1.830201949404063E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 December 10, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;12/10/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">2.087370835407280E+08</span><span class="p">,</span> <span class="mf">1.035903131428964E+07</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.084001492689754E+05</span><span class="p">]</span> <span class="p">,[</span><span class="mf">3.082308903715757E+07</span><span class="p">,</span> <span class="mf">1.328026978502711E+08</span><span class="p">,</span> <span class="mf">5.754559376449955E+07</span><span class="p">],[</span><span class="mf">5.147792796720199E+05</span><span class="p">,</span> <span class="mf">5.293951386498961E+05</span><span class="p">,</span> <span class="mf">2.038816823549219E+05</span><span class="p">],</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;2016 December 20, 00:00:00.0 TDB&quot;</span><span class="p">,</span> <span class="s2">&quot;12/20/16&quot;</span> <span class="p">,</span> <span class="p">[</span><span class="mf">2.075411186038260E+08</span><span class="p">,</span> <span class="mf">3.092173198610598E+07</span><span class="p">,</span> <span class="mf">8.555251204561792E+06</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.885421269793877E+06</span><span class="p">,</span> <span class="mf">1.355125217382336E+08</span><span class="p">,</span> <span class="mf">5.872015978003684E+07</span><span class="p">],[</span><span class="mf">5.110736843893399E+05</span><span class="p">,</span> <span class="mf">5.385860060393942E+05</span><span class="p">,</span> <span class="mf">2.079481168492821E+05</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+<span class="p">])</span>
+
+
+
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unitSpice</span><span class="p">(</span><span class="n">testPlottingFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">DateSpice</span><span class="p">,</span> <span class="n">DatePlot</span><span class="p">,</span> <span class="n">MarsTruthPos</span><span class="p">,</span> <span class="n">EarthTruthPos</span><span class="p">,</span>
+                   <span class="n">SunTruthPos</span><span class="p">,</span> <span class="n">useMsg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">unitSpice</span><span class="p">(</span><span class="n">testPlottingFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">DateSpice</span><span class="p">,</span> <span class="n">DatePlot</span><span class="p">,</span> <span class="n">MarsTruthPos</span><span class="p">,</span>
+                                           <span class="n">EarthTruthPos</span><span class="p">,</span> <span class="n">SunTruthPos</span><span class="p">,</span> <span class="n">useMsg</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="c1"># Run unit test</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unitSpice</span><span class="p">(</span><span class="n">testPlottingFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">DateSpice</span><span class="p">,</span> <span class="n">DatePlot</span><span class="p">,</span> <span class="n">MarsTruthPos</span><span class="p">,</span> <span class="n">EarthTruthPos</span><span class="p">,</span> <span class="n">SunTruthPos</span><span class="p">,</span> <span class="n">useMsg</span><span class="p">):</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty array to store test log messages</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">TotalSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">DynUnitTestProc</span> <span class="o">=</span> <span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">DynUnitTestProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)))</span>
+
+    <span class="c1"># Initialize the spice modules that we are using.</span>
+    <span class="n">SpiceObject</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpiceInterfaceData&quot;</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICEDataPath</span> <span class="o">=</span> <span class="n">bskPath</span> <span class="o">+</span> <span class="s1">&#39;/supportData/EphemerisData/&#39;</span>
+    <span class="n">planetNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;mars barycenter&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">]</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">(</span><span class="n">spiceInterface</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">planetNames</span><span class="p">))</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">DateSpice</span>
+
+    <span class="k">if</span> <span class="n">useMsg</span><span class="p">:</span>      <span class="c1"># in this case check that the planet frame names can be set as well</span>
+        <span class="n">planetFrames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">planetNames</span><span class="p">:</span>
+            <span class="n">planetFrames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;IAU_&quot;</span> <span class="o">+</span> <span class="n">planet</span><span class="p">)</span>
+        <span class="n">planetFrames</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>    <span class="c1"># testing that default IAU values are used here</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">planetFrames</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">planetFrames</span><span class="p">)</span>
+
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">SpiceObject</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useMsg</span><span class="p">:</span>
+        <span class="n">epochMsg</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">timeStringToGregorianUTCMsg</span><span class="p">(</span><span class="n">DateSpice</span><span class="p">)</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+
+        <span class="c1"># The following value is set, but should not be used by the module.  This checks that the above</span>
+        <span class="c1"># epoch message over-rules any info set in this variable.</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="s2">&quot;1990 February 10, 00:00:00.0 TDB&quot;</span>
+
+    <span class="n">spiceObjectLog</span> <span class="o">=</span> <span class="n">SpiceObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;GPSSeconds&quot;</span><span class="p">,</span> <span class="s2">&quot;J2000Current&quot;</span><span class="p">,</span> <span class="s2">&quot;julianDateCurrent&quot;</span><span class="p">,</span> <span class="s2">&quot;GPSWeek&quot;</span><span class="p">])</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">spiceObjectLog</span><span class="p">)</span>
+
+    <span class="c1"># Configure simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">60.0</span> <span class="o">*</span> <span class="mf">1E9</span><span class="p">))</span>
+
+    <span class="c1"># Execute simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Get the logged variables (GPS seconds, Julian Date)</span>
+    <span class="n">DataGPSSec</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">spiceObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">spiceObjectLog</span><span class="o">.</span><span class="n">GPSSeconds</span><span class="p">)</span>
+    <span class="n">DataJD</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">spiceObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">spiceObjectLog</span><span class="o">.</span><span class="n">julianDateCurrent</span><span class="p">)</span>
+
+    <span class="c1"># Get parametrized date from DatePlot</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s2">&quot;20&quot;</span><span class="p">,</span> <span class="n">DatePlot</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">DatePlot</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">DatePlot</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]))</span>
+
+    <span class="n">testPlottingFixture</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">DatePlot</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+
+    <span class="c1"># Get the GPS time</span>
+    <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1980</span><span class="p">,</span> <span class="mo">0o1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># Start of GPS time</span>
+    <span class="n">timeDiff</span> <span class="o">=</span> <span class="n">date</span><span class="o">-</span><span class="n">date2</span>  <span class="c1"># Time in days since GPS time</span>
+    <span class="n">GPSTimeSeconds</span> <span class="o">=</span> <span class="n">timeDiff</span><span class="o">.</span><span class="n">days</span><span class="o">*</span><span class="mi">86400</span>
+
+    <span class="c1"># Get the Julian day</span>
+    <span class="n">JulianStartDate</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span><span class="o">+</span><span class="mf">1721424.5</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Begin testing module results to truth values</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># Truth values</span>
+    <span class="c1"># For Time delta check</span>
+    <span class="n">GPSRow</span> <span class="o">=</span> <span class="n">DataGPSSec</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">InitDiff</span> <span class="o">=</span> <span class="n">GPSRow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">GPSRow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0E-9</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Compare the GPS seconds values</span>
+    <span class="n">AllowTolerance</span> <span class="o">=</span> <span class="mf">1E-6</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">DataGPSSec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">isoweekday</span><span class="p">()</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>  <span class="c1"># Skip test on Sundays, because it&#39;s the end of a GPS week (seconds go to zero)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">GPSRow</span> <span class="o">=</span> <span class="n">DataGPSSec</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">CurrDiff</span> <span class="o">=</span> <span class="n">GPSRow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">GPSRow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0E-9</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">CurrDiff</span> <span class="o">-</span> <span class="n">InitDiff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">AllowTolerance</span><span class="p">:</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Time delta check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span> \
+                                <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="n">CurrDiff</span> <span class="o">-</span> <span class="n">InitDiff</span><span class="p">})</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Truth values</span>
+    <span class="c1"># For absolute GPS time check</span>
+    <span class="k">if</span> <span class="n">date</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mo">0o6</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>  <span class="c1"># Taking into account the extra leap second added on 6/30/2015</span>
+        <span class="n">GPSEndTime</span> <span class="o">=</span> <span class="n">GPSTimeSeconds</span> <span class="o">+</span> <span class="mi">17</span> <span class="o">+</span> <span class="mf">60.0</span> <span class="o">-</span> <span class="mf">68.184</span>  <span class="c1"># 17 GPS skip seconds passed that date</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">GPSEndTime</span> <span class="o">=</span> <span class="n">GPSTimeSeconds</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">+</span> <span class="mf">60.0</span> <span class="o">-</span> <span class="mf">67.184</span>  <span class="c1"># 16 GPS skip seconds before</span>
+
+    <span class="n">GPSWeek</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">GPSEndTime</span> <span class="o">/</span> <span class="p">(</span><span class="mi">86400</span> <span class="o">*</span> <span class="mi">7</span><span class="p">))</span>
+    <span class="n">GPSSecondAssumed</span> <span class="o">=</span> <span class="n">GPSEndTime</span> <span class="o">-</span> <span class="n">GPSWeek</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">*</span> <span class="mi">7</span>
+    <span class="n">GPSSecDiff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">GPSRow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">GPSSecondAssumed</span><span class="p">)</span>
+
+    <span class="c1"># TestResults[&#39;GPSAbsTimeCheck&#39;] = True</span>
+    <span class="n">AllowTolerance</span> <span class="o">=</span> <span class="mf">1E-4</span>
+    <span class="k">if</span> <span class="n">useMsg</span><span class="p">:</span>
+        <span class="n">AllowTolerance</span> <span class="o">=</span> <span class="mf">2E-2</span>
+    <span class="c1"># Skip test days that are Sunday because of the end of a GPS week</span>
+    <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">isoweekday</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">GPSSecDiff</span> <span class="o">&gt;</span> <span class="n">AllowTolerance</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Absolute GPS time check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                            <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="n">GPSSecDiff</span><span class="p">})</span>
+
+    <span class="c1"># Truth values</span>
+    <span class="c1"># For absolute Julian date time check</span>
+    <span class="k">if</span> <span class="n">date</span><span class="o">&gt;</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mo">0o6</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>  <span class="c1"># Taking into account the extra leap second added on 6/30/2015</span>
+        <span class="n">JDEndTime</span> <span class="o">=</span> <span class="n">JulianStartDate</span> <span class="o">+</span> <span class="mf">0.0006944440</span> <span class="o">-</span> <span class="mf">68.184</span> <span class="o">/</span> <span class="mi">86400</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">JDEndTime</span> <span class="o">=</span> <span class="n">JulianStartDate</span> <span class="o">+</span> <span class="mf">0.0006944440</span> <span class="o">-</span> <span class="mf">67.184</span> <span class="o">/</span> <span class="mi">86400</span>
+
+    <span class="c1"># Simulated values</span>
+    <span class="n">JDEndSim</span> <span class="o">=</span> <span class="n">DataJD</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">JDTimeErrorAllow</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">24.0</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">JDEndSim</span> <span class="o">-</span> <span class="n">JDEndTime</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">JDTimeErrorAllow</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Absolute Julian Date time check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                            <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">JDEndSim</span> <span class="o">-</span> <span class="n">JDEndTime</span><span class="p">)})</span>
+
+    <span class="c1"># Truth values</span>
+    <span class="c1"># For Mars position check</span>
+    <span class="n">MarsPosEnd</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">MarsTruthPos</span><span class="p">)</span>
+    <span class="n">MarsPosEnd</span> <span class="o">=</span> <span class="n">MarsPosEnd</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="c1"># Get Simulated values</span>
+    <span class="n">MarsPosVec</span> <span class="o">=</span> <span class="n">SpiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">PositionVector</span>
+
+    <span class="c1"># Compare Mars position values</span>
+    <span class="n">MarsPosArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">MarsPosVec</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MarsPosVec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">MarsPosVec</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">MarsPosDiff</span> <span class="o">=</span> <span class="n">MarsPosArray</span> <span class="o">-</span> <span class="n">MarsPosEnd</span>
+    <span class="n">PosDiffNorm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">MarsPosDiff</span><span class="p">)</span>
+
+    <span class="c1"># Plot Mars position values</span>
+    <span class="n">testPlottingFixture</span><span class="o">.</span><span class="n">MarsPosErr</span> <span class="o">=</span> <span class="n">PosDiffNorm</span>
+
+    <span class="c1"># Test Mars position values</span>
+    <span class="n">PosErrTolerance</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="k">if</span> <span class="n">useMsg</span><span class="p">:</span>
+        <span class="n">PosErrTolerance</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PosDiffNorm</span> <span class="o">&gt;</span> <span class="n">PosErrTolerance</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Mars position check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                            <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="n">PosDiffNorm</span><span class="p">})</span>
+
+    <span class="c1"># Truth values</span>
+    <span class="c1"># For Earth position check</span>
+    <span class="n">EarthPosEnd</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">EarthTruthPos</span><span class="p">)</span>
+    <span class="n">EarthPosEnd</span> <span class="o">=</span> <span class="n">EarthPosEnd</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="c1"># Simulated Earth position values</span>
+    <span class="n">EarthPosVec</span> <span class="o">=</span> <span class="n">SpiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">PositionVector</span>
+
+    <span class="c1"># Compare Earth position values</span>
+    <span class="n">EarthPosArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">EarthPosVec</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">EarthPosVec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">EarthPosVec</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">EarthPosDiff</span> <span class="o">=</span> <span class="n">EarthPosArray</span> <span class="o">-</span> <span class="n">EarthPosEnd</span>
+    <span class="n">PosDiffNorm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">EarthPosDiff</span><span class="p">)</span>
+
+    <span class="c1"># Plot Earth position values</span>
+    <span class="n">testPlottingFixture</span><span class="o">.</span><span class="n">EarthPosErr</span> <span class="o">=</span> <span class="n">PosDiffNorm</span>
+
+    <span class="c1"># TestResults[&#39;EarthPosCheck&#39;] = True</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PosDiffNorm</span> <span class="o">&gt;</span> <span class="n">PosErrTolerance</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Earth position check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                            <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="n">PosDiffNorm</span><span class="p">})</span>
+
+    <span class="c1"># Truth Sun position values</span>
+    <span class="n">SunPosEnd</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">SunTruthPos</span><span class="p">)</span>
+    <span class="n">SunPosEnd</span> <span class="o">=</span> <span class="n">SunPosEnd</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="c1">#Simulated Sun position values</span>
+    <span class="n">SunPosVec</span> <span class="o">=</span> <span class="n">SpiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">PositionVector</span>
+
+    <span class="c1"># Compare Sun position values</span>
+    <span class="n">SunPosArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">SunPosVec</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">SunPosVec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">SunPosVec</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">SunPosDiff</span> <span class="o">=</span> <span class="n">SunPosArray</span> <span class="o">-</span> <span class="n">SunPosEnd</span>
+    <span class="n">PosDiffNorm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">SunPosDiff</span><span class="p">)</span>
+
+    <span class="c1"># plot Sun position values</span>
+    <span class="n">testPlottingFixture</span><span class="o">.</span><span class="n">SunPosErr</span> <span class="o">=</span> <span class="n">PosDiffNorm</span>
+
+    <span class="c1"># Test Sun position values</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PosDiffNorm</span> <span class="o">&gt;</span> <span class="n">PosErrTolerance</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Sun position check failed with difference of: </span><span class="si">%(DiffVal)f</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                            <span class="p">{</span><span class="s2">&quot;DiffVal&quot;</span><span class="p">:</span> <span class="n">PosDiffNorm</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">date</span> <span class="o">==</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span> <span class="c1"># Only test the false files on the last test</span>
+
+        <span class="c1"># Test non existing directory</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICEDataPath</span> <span class="o">=</span> <span class="s2">&quot;ADirectoryThatDoesntreallyexist&quot;</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICELoaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># TotalSim.ConfigureStopTime(int(1E9)) #Uncomment these 3 lines to test false directory</span>
+        <span class="c1"># TotalSim.InitializeSimulation()</span>
+        <span class="c1"># TotalSim.ExecuteSimulation()</span>
+
+        <span class="c1"># Test overly long planet name</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICEDataPath</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICELoaded</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Uncomment these 4 lines to test false planet names</span>
+        <span class="c1"># SpiceObject.addPlanetNames(spiceInterface.StringVector([&quot;earth&quot;, &quot;mars&quot;, &quot;sun&quot;,</span>
+        <span class="c1">#                                                     &quot;thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode&quot;]))</span>
+        <span class="c1"># TotalSim.ConfigureStopTime(int(1E9))</span>
+        <span class="c1"># TotalSim.InitializeSimulation()</span>
+        <span class="c1"># TotalSim.ExecuteSimulation()</span>
+
+    <span class="c1"># print out success message if no error were found</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> PASSED &quot;</span><span class="p">)</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="test_59_999999_second_epoch">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_unitSpice.html#test_unitSpice.test_59_999999_second_epoch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_59_999999_second_epoch</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unit test added to reproduce issue #690</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DateSpice</span> <span class="o">=</span> <span class="s2">&quot;2015 February 10, 00:00:59.999999 UTC&quot;</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">TotalSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">DynUnitTestProc</span> <span class="o">=</span> <span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">DynUnitTestProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)))</span>
+
+    <span class="c1"># Initialize the spice modules that we are using.</span>
+    <span class="n">SpiceObject</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpiceInterfaceData&quot;</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">SPICEDataPath</span> <span class="o">=</span> <span class="n">bskPath</span> <span class="o">+</span> <span class="s1">&#39;/supportData/EphemerisData/&#39;</span>
+
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">SpiceObject</span><span class="p">)</span>
+
+    <span class="n">epochMsg</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">timeStringToGregorianUTCMsg</span><span class="p">(</span><span class="n">DateSpice</span><span class="p">)</span>
+    <span class="n">SpiceObject</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+
+    <span class="c1"># Configure simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">60.0</span> <span class="o">*</span> <span class="mf">1E9</span><span class="p">))</span>
+
+    <span class="c1"># Execute simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">SpiceObject</span><span class="o">.</span><span class="n">UTCCalInit</span><span class="p">)</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">SpiceObject</span><span class="o">.</span><span class="n">UTCCalInit</span><span class="p">[</span><span class="o">-</span><span class="mi">15</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;59.999999 (UTC)&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_unitSpice</span><span class="p">(</span>
+                   <span class="n">testPlottingFixture</span><span class="p">,</span>
+                   <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+                   <span class="s2">&quot;2015 February 10, 00:00:00.00 TDB&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;02/10/15&quot;</span><span class="p">,</span>
+                   <span class="p">[</span><span class="mf">2.049283795042291E+08</span><span class="p">,</span> <span class="mf">4.654550957513031E+07</span><span class="p">,</span> <span class="mf">1.580778617009296E+07</span><span class="p">],</span>
+                   <span class="p">[</span><span class="o">-</span><span class="mf">1.137790671899544E+08</span><span class="p">,</span> <span class="mf">8.569008401822130E+07</span><span class="p">,</span> <span class="mf">3.712507705247846E+07</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mf">4.480338216752146E+05</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.947764237588293E+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.745748832696378E+04</span><span class="p">],</span>
+                   <span class="kc">True</span>   <span class="c1"># useMsg</span>
+                   <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

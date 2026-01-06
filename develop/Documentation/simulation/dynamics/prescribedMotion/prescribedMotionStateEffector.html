@@ -1,0 +1,1261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: prescribedMotionStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="prescribedMotion" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">prescribedMotion</a></li>
+      <li class="breadcrumb-item active">Module: prescribedMotionStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-prescribedmotionstateeffector">
+<span id="prescribedmotionstateeffector"></span><h1>Module: prescribedMotionStateEffector<a class="headerlink" href="#module-prescribedmotionstateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The prescribed motion state effector class is an instantiation of the state effector abstract class. This module
+is used to connect a prescribed motion component to the spacecraft hub. The states of the prescribed component are
+purely prescribed, meaning there are no free degrees of freedom associated with its motion and hence there are no
+states integrated in this module. Instead, the states of the prescribed component are externally profiled using
+a kinematic profiler module and are provided as input messages to the prescribed state effector class.</p>
+<p>The body frame for the prescribed body is designated by the frame <span class="math notranslate nohighlight">\(\mathcal{P}\)</span>. The prescribed body is attached
+to the hub through a hub-fixed mount interface described by the mount frame <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>. The prescribed body
+hub-relative motion is profiled with respect to the mount frame <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>. The prescribed states are:
+<code class="docutils literal notranslate"><span class="pre">r_PM_M</span></code>, <code class="docutils literal notranslate"><span class="pre">rPrime_PM_M</span></code>, <code class="docutils literal notranslate"><span class="pre">rPrimePrime_PM_M</span></code>, <code class="docutils literal notranslate"><span class="pre">omega_PM_P</span></code>, <code class="docutils literal notranslate"><span class="pre">omegaPrime_PM_P</span></code>, and <code class="docutils literal notranslate"><span class="pre">sigma_PM</span></code>.</p>
+<p>The states of the prescribed body are not defined in this module. Therefore, separate kinematic profiler modules must
+be connected to this module’s <a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a> and <a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedRotationMsgPayload.html#prescribedrotationmsgpayload"><span class="std std-ref">PrescribedRotationMsgPayload</span></a>
+input messages to profile the prescribed body’s states as a function of time. If neither message is connected to the
+module, the prescribed body will not move with respect to the hub. If the prescribed body should only rotate, then only
+the rotational message needs to be subscribed to the module and the translational message can be ignored. Similarly,
+if the prescribed component should only translate, the rotational message can be ignored. Note that either a single
+profiler module can be used to connect both messages to this module, or two separate profiler modules can be used;
+where one profiles the translational states and the other profiles the rotational states.
+See the example script <a class="reference internal" href="../../../../examples/scenarioDeployingSolarArrays.html#scenariodeployingsolararrays"><span class="std std-ref">scenarioDeployingSolarArrays</span></a> for more information about how to set up hub-relative
+multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>prescribedTranslationInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a></p></td>
+<td><p>Input message for the effector’s translational prescribed states</p></td>
+</tr>
+<tr class="row-odd"><td><p>prescribedRotationInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedRotationMsgPayload.html#prescribedrotationmsgpayload"><span class="std std-ref">PrescribedRotationMsgPayload</span></a></p></td>
+<td><p>Input message for the effector’s rotational prescribed states</p></td>
+</tr>
+<tr class="row-even"><td><p>prescribedTranslationOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a></p></td>
+<td><p>Output message for the effector’s translational prescribed states</p></td>
+</tr>
+<tr class="row-odd"><td><p>prescribedRotationOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedRotationMsgPayload.html#prescribedrotationmsgpayload"><span class="std std-ref">PrescribedRotationMsgPayload</span></a></p></td>
+<td><p>Output message for the effector’s rotational prescribed states</p></td>
+</tr>
+<tr class="row-even"><td><p>prescribedMotionConfigLogOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Output message containing the effector’s inertial position and attitude states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading"></a></h2>
+<section id="module-basic-capability">
+<h3>Module Basic Capability<a class="headerlink" href="#module-basic-capability" title="Link to this heading"></a></h3>
+<p>The basic capability of this module is to connect a prescribed motion component to the spacecraft hub. An in-depth
+discussion of the functionality of this module and the dynamics derivation required to simulate this type of component
+motion is provided in the following journal paper</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference external" href="https://www.researchgate.net/publication/392662137_Spacecraft_Backsubstitution_Dynamics_with_General_Multibody_Prescribed_Subcomponents">“Spacecraft Backsubstitution Dynamics with General Multibody Prescribed Subcomponents”</a>,
+Leah Kiner, Hanspeter Schaub, and Cody Allard
+Journal of Aerospace Information Systems 2025 22:8, 703-715</p>
+</div>
+</section>
+<section id="branching-capability">
+<h3>Branching Capability<a class="headerlink" href="#branching-capability" title="Link to this heading"></a></h3>
+<p>An additional feature of this module is the ability to attach other state effectors to the prescribed motion component.
+Doing so creates a chain, where the prescribed component is wedged between the hub and its attached state effector.
+This capability enables select component branching relative to the spacecraft hub. A detailed discussion of this
+capability is provided in the following conference paper</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>L. Kiner, and H. Schaub, <a class="reference external" href="https://www.researchgate.net/publication/394150919_Backsubstitution_Method_for_Prescribed_Motion_Actuators_with_Attached_Dynamic_Sub-Components">“Backsubstitution Method For Prescribed Motion Actuators With Attached Dynamic Sub-Components”</a>,
+AAS Astrodynamics Specialist Conference, Boston, Massachusetts, August 10–14, 2025</p>
+</div>
+<p>Currently, this branching capability has only been configured for the spinningBodyOneDOF, spinningBodyTwoDOF, and
+linearTranslationOneDOF state effectors. See the User Guide section for how to connect these effectors to the
+prescribed motion effector. The scenario scripts <a class="reference internal" href="../../../../examples/scenarioPrescribedMotionWithRotationBranching.html#scenarioprescribedmotionwithrotationbranching"><span class="std std-ref">scenarioPrescribedMotionWithRotationBranching</span></a>
+and <a class="reference internal" href="../../../../examples/scenarioPrescribedMotionWithTranslationBranching.html#scenarioprescribedmotionwithtranslationbranching"><span class="std std-ref">scenarioPrescribedMotionWithTranslationBranching</span></a> are more complex examples demonstrating how to connect
+multiple state effectors to the prescribed motion effector.</p>
+</section>
+</section>
+<section id="module-testing">
+<h2>Module Testing<a class="headerlink" href="#module-testing" title="Link to this heading"></a></h2>
+<p>There are two unit test scripts for this module. The first tests the basic functionality of the module, while
+the second test checks the branching capability of the module. Both tests are integrated tests with the
+<a class="reference internal" href="../../deviceInterface/prescribedRotation1DOF/prescribedRotation1DOF.html#prescribedrotation1dof"><span class="std std-ref">Module: prescribedRotation1DOF</span></a> and <a class="reference internal" href="../../deviceInterface/prescribedLinearTranslation/prescribedLinearTranslation.html#prescribedlineartranslation"><span class="std std-ref">Module: prescribedLinearTranslation</span></a> profiler modules.</p>
+<section id="basic-test">
+<h3>Basic Test<a class="headerlink" href="#basic-test" title="Link to this heading"></a></h3>
+<p>The basic test script for this module profiles simultaneous translation and rotation for the prescribed body relative
+to the hub using the <a class="reference internal" href="../../deviceInterface/prescribedRotation1DOF/prescribedRotation1DOF.html#prescribedrotation1dof"><span class="std std-ref">Module: prescribedRotation1DOF</span></a> and <a class="reference internal" href="../../deviceInterface/prescribedLinearTranslation/prescribedLinearTranslation.html#prescribedlineartranslation"><span class="std std-ref">Module: prescribedLinearTranslation</span></a> profiler modules. The initial
+and reference attitude and displacement of the prescribed body relative to the hub are varied in the test. The test
+checks that the quantities of spacecraft orbital angular momentum, rotational angular momentum, and orbital energy
+are conserved for the duration of the simulation to verify the module dynamics.</p>
+</section>
+<section id="branching-test">
+<h3>Branching Test<a class="headerlink" href="#branching-test" title="Link to this heading"></a></h3>
+<p>The branching test script for this module has three separate test functions. All tests configure an identical spacecraft
+hub an actuating prescribed motion component. The first test connects a free <a class="reference internal" href="../spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">Module: spinningBodyOneDOFStateEffector</span></a>
+to the prescribed component. The second test connects a free <a class="reference internal" href="../spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">Module: spinningBodyTwoDOFStateEffector</span></a> to the
+prescribed component. The third test connects a free <a class="reference internal" href="../linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.html#lineartranslationonedofstateeffector"><span class="std std-ref">Module: linearTranslationOneDOFStateEffector</span></a> to the prescribed
+component. All tests check that the quantities of spacecraft orbital energy, orbital angular momentum, rotational
+angular momentum are conserved for the duration of the simulation.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section outlines how to set up the prescribed motion module in python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the prescribedMotionStateEffector class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedMotionStateEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the prescribed motion state effector:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribed_body</span> <span class="o">=</span> <span class="n">prescribedMotionStateEffector</span><span class="o">.</span><span class="n">PrescribedMotionStateEffector</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the prescribed motion module parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribed_body</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setIPntPc_P</span><span class="p">([[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]])</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setR_MB_B</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setR_PcP_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setR_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setRPrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setRPrimePrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setOmega_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setOmegaPrime_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setSigma_PM</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">setSigma_MB</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">prescribed_body</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedBody&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the prescribed state effector to your spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">prescribed_body</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> documentation on how to set up a spacecraft object.</p>
+</li>
+<li><p>Make sure to connect the required messages for this module.</p></li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">prescribed_body</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>See the example script <a class="reference internal" href="../../../../examples/scenarioDeployingSolarArrays.html#scenariodeployingsolararrays"><span class="std std-ref">scenarioDeployingSolarArrays</span></a> for more information about how to set up hub-relative
+multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.</p>
+<p>If you’d like to connect a state effector to the prescribed state effector instead of the spacecraft hub,
+the states of the attached effector must be written with respect to the prescribed body frame instead of the hub
+body frame. After creating the attached state effector, make sure to connect it to the prescribed motion effector
+rather than the hub:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribed_body</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">attached_state_effector</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See the example scripts <a class="reference internal" href="../../../../examples/scenarioPrescribedMotionWithRotationBranching.html#scenarioprescribedmotionwithrotationbranching"><span class="std std-ref">scenarioPrescribedMotionWithRotationBranching</span></a>
+and <a class="reference internal" href="../../../../examples/scenarioPrescribedMotionWithTranslationBranching.html#scenarioprescribedmotionwithtranslationbranching"><span class="std std-ref">scenarioPrescribedMotionWithTranslationBranching</span></a> for more information about how to connect
+multiple state effectors to the prescribed motion effector.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv429PrescribedMotionStateEffector">
+<span id="_CPPv329PrescribedMotionStateEffector"></span><span id="_CPPv229PrescribedMotionStateEffector"></span><span id="PrescribedMotionStateEffector"></span><span class="target" id="class_prescribed_motion_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedMotionStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv429PrescribedMotionStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;prescribedMotionStateEffector.h&gt;</em></div>
+<p>prescribed motion state effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector29PrescribedMotionStateEffectorEv">
+<span id="_CPPv3N29PrescribedMotionStateEffector29PrescribedMotionStateEffectorEv"></span><span id="_CPPv2N29PrescribedMotionStateEffector29PrescribedMotionStateEffectorEv"></span><span id="PrescribedMotionStateEffector::PrescribedMotionStateEffector"></span><span class="target" id="class_prescribed_motion_state_effector_1ab5f0193926e271a4839c863017abf053"></span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedMotionStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector29PrescribedMotionStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor, setting variables to default values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffectorD0Ev">
+<span id="_CPPv3N29PrescribedMotionStateEffectorD0Ev"></span><span id="_CPPv2N29PrescribedMotionStateEffectorD0Ev"></span><span id="PrescribedMotionStateEffector::~PrescribedMotionStateEffector"></span><span class="target" id="class_prescribed_motion_state_effector_1a8b494c74e15cabc96123d5ddafcb7609"></span><span class="sig-name descname"><span class="n"><span class="pre">~PrescribedMotionStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7setMassEKd">
+<span id="_CPPv3N29PrescribedMotionStateEffector7setMassEKd"></span><span id="_CPPv2N29PrescribedMotionStateEffector7setMassEKd"></span><span id="PrescribedMotionStateEffector::setMass__doubleC"></span><span class="target" id="class_prescribed_motion_state_effector_1a537acf1c9f8e7d8478c72cf08b3873a2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMass</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mass</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7setMassEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the effector mass. </p>
+<p>Setter method for the effector mass. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mass</strong> – [kg] Effector mass </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11setIPntPc_PEKN5Eigen8Matrix3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector11setIPntPc_PEKN5Eigen8Matrix3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector11setIPntPc_PEKN5Eigen8Matrix3dE"></span><span id="PrescribedMotionStateEffector::setIPntPc_P__Eigen::Matrix3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1a1d90e4411e1c77a8ab97a77bd7af200f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setIPntPc_P</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">IPntPc_P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11setIPntPc_PEKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for IPntPc_P. </p>
+<p>Setter method for IPntPc_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>IPntPc_P</strong> – [kg-m^2] Effector’s inertia matrix about its center of mass point Pc expressed in P frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10setR_PcP_PEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10setR_PcP_PEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10setR_PcP_PEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setR_PcP_P__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1aa6b5eb23dcfca2dda072e090f2326bff"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_PcP_P</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_PcP_P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10setR_PcP_PEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for r_PcP_P. </p>
+<p>Setter method for r_PcP_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r_PcP_P</strong> – [m] Position vector of the effector’s center of mass point Pc relative to the effector’s body frame origin point P expressed in P frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector9setR_PM_MEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector9setR_PM_MEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector9setR_PM_MEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setR_PM_M__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1a83d91b405b56b9d54f49a25a67a55f67"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_PM_M</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_PM_M</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector9setR_PM_MEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for r_PM_M. </p>
+<p>Setter method for r_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r_PM_M</strong> – [m] Position vector of the effector’s body frame origin point P relative to the hub-fixed mount frame origin point M expressed in M frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector14setRPrime_PM_MEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector14setRPrime_PM_MEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector14setRPrime_PM_MEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setRPrime_PM_M__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1a2ee438727493ce5812f2a6640c029d54"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRPrime_PM_M</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rPrime_PM_M</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector14setRPrime_PM_MEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for rPrime_PM_M. </p>
+<p>Setter method for rPrime_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rPrime_PM_M</strong> – [m/s] B frame time derivative of r_PM_M expressed in M frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector19setRPrimePrime_PM_MEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector19setRPrimePrime_PM_MEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector19setRPrimePrime_PM_MEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setRPrimePrime_PM_M__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1aa791d61183de5ba2229ad52229d1cade"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRPrimePrime_PM_M</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rPrimePrime_PM_M</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector19setRPrimePrime_PM_MEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for rPrimePrime_PM_M. </p>
+<p>Setter method for rPrimePrime_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rPrimePrime_PM_M</strong> – [m/s^2] B frame time derivative of rPrime_PM_M expressed in M frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector13setOmega_PM_PEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector13setOmega_PM_PEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector13setOmega_PM_PEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setOmega_PM_P__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1af9e7f9e68e5cb5daf7f632ae147af3a7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setOmega_PM_P</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_PM_P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector13setOmega_PM_PEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for omega_PM_P. </p>
+<p>Setter method for omega_PM_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>omega_PM_P</strong> – [rad/s] Angular velocity of the effector body frame P relative to the hub-fixed mount frame M expressed in P frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector18setOmegaPrime_PM_PEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector18setOmegaPrime_PM_PEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector18setOmegaPrime_PM_PEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setOmegaPrime_PM_P__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1ae12f69495b26d1c209c98c590f469e38"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setOmegaPrime_PM_P</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaPrime_PM_P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector18setOmegaPrime_PM_PEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for omegaPrime_PM_P. </p>
+<p>Setter method for omegaPrime_PM_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>omegaPrime_PM_P</strong> – [rad/s^2] Angular acceleration of the effector body frame P relative to the hub-fixed mount frame M expressed in P frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11setSigma_PMEKN5Eigen4MRPdE">
+<span id="_CPPv3N29PrescribedMotionStateEffector11setSigma_PMEKN5Eigen4MRPdE"></span><span id="_CPPv2N29PrescribedMotionStateEffector11setSigma_PMEKN5Eigen4MRPdE"></span><span id="PrescribedMotionStateEffector::setSigma_PM__Eigen::MRPdC"></span><span class="target" id="class_prescribed_motion_state_effector_1aae723cb8ceb23fe041ca3b8d621b17dc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSigma_PM</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_PM</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11setSigma_PMEKN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for sigma_PM. </p>
+<p>Setter method for sigma_PM. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigma_PM</strong> – MRP attitude of the effector’s body frame P relative to the hub-fixed mount frame M </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector9setR_MB_BEKN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector9setR_MB_BEKN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector9setR_MB_BEKN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::setR_MB_B__Eigen::Vector3dC"></span><span class="target" id="class_prescribed_motion_state_effector_1a4c51294d7bcd5fbe7421e858ed1d5ed3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_MB_B</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_MB_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector9setR_MB_BEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for r_MB_B. </p>
+<p>Setter method for r_MB_B. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r_MB_B</strong> – [m] Position vector describing the hub-fixed mount frame origin point M location relative to the hub frame origin point B expressed in B frame components </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11setSigma_MBEKN5Eigen4MRPdE">
+<span id="_CPPv3N29PrescribedMotionStateEffector11setSigma_MBEKN5Eigen4MRPdE"></span><span id="_CPPv2N29PrescribedMotionStateEffector11setSigma_MBEKN5Eigen4MRPdE"></span><span id="PrescribedMotionStateEffector::setSigma_MB__Eigen::MRPdC"></span><span class="target" id="class_prescribed_motion_state_effector_1a4ae36bec3a8ffbd8f40bbd6a87dcb7d8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSigma_MB</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_MB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11setSigma_MBEKN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for sigma_MB. </p>
+<p>Setter method for sigma_MB. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigma_MB</strong> – MRP attitude of the hub-fixed frame M relative to the hub body frame B </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector7getMassEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector7getMassEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector7getMassEv"></span><span id="PrescribedMotionStateEffector::getMassC"></span><span class="target" id="class_prescribed_motion_state_effector_1ae96ee47c488bec35bbe261b5aebd5cb2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector7getMassEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the effector mass. </p>
+<p>Getter method for the effector mass. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector11getIPntPc_PEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector11getIPntPc_PEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector11getIPntPc_PEv"></span><span id="PrescribedMotionStateEffector::getIPntPc_PC"></span><span class="target" id="class_prescribed_motion_state_effector_1a5d2810dfe86c2c57e8c525f6d50ecab6"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getIPntPc_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector11getIPntPc_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for IPntPc_P. </p>
+<p>Getter method for IPntPc_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Matrix3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector10getR_PcP_PEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector10getR_PcP_PEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector10getR_PcP_PEv"></span><span id="PrescribedMotionStateEffector::getR_PcP_PC"></span><span class="target" id="class_prescribed_motion_state_effector_1a3c3b7ce17307412eb1164347689a13dd"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_PcP_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector10getR_PcP_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for r_PcP_P. </p>
+<p>Getter method for r_PcP_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector9getR_PM_MEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector9getR_PM_MEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector9getR_PM_MEv"></span><span id="PrescribedMotionStateEffector::getR_PM_MC"></span><span class="target" id="class_prescribed_motion_state_effector_1ab412591c8e05150246f41bb2f2462647"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_PM_M</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector9getR_PM_MEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for r_PM_M. </p>
+<p>Getter method for r_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector14getRPrime_PM_MEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector14getRPrime_PM_MEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector14getRPrime_PM_MEv"></span><span id="PrescribedMotionStateEffector::getRPrime_PM_MC"></span><span class="target" id="class_prescribed_motion_state_effector_1aba37b524b37db5f52090d9e04c2fc73b"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRPrime_PM_M</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector14getRPrime_PM_MEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for rPrime_PM_M. </p>
+<p>Getter method for rPrime_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector19getRPrimePrime_PM_MEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector19getRPrimePrime_PM_MEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector19getRPrimePrime_PM_MEv"></span><span id="PrescribedMotionStateEffector::getRPrimePrime_PM_MC"></span><span class="target" id="class_prescribed_motion_state_effector_1a97c61bae65a0dc83ba5f561a2c6108e0"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRPrimePrime_PM_M</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector19getRPrimePrime_PM_MEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for rPrimePrime_PM_M. </p>
+<p>Getter method for rPrimePrime_PM_M. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector13getOmega_PM_PEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector13getOmega_PM_PEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector13getOmega_PM_PEv"></span><span id="PrescribedMotionStateEffector::getOmega_PM_PC"></span><span class="target" id="class_prescribed_motion_state_effector_1ac6c59e30a849745ac655834198101168"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getOmega_PM_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector13getOmega_PM_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for omega_PM_P. </p>
+<p>Getter method for omega_PM_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector18getOmegaPrime_PM_PEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector18getOmegaPrime_PM_PEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector18getOmegaPrime_PM_PEv"></span><span id="PrescribedMotionStateEffector::getOmegaPrime_PM_PC"></span><span class="target" id="class_prescribed_motion_state_effector_1a2c307e97f249f0ec09f25f6855997edf"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getOmegaPrime_PM_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector18getOmegaPrime_PM_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for omegaPrime_PM_P. </p>
+<p>Getter method for omegaPrime_PM_P. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector11getSigma_PMEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector11getSigma_PMEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector11getSigma_PMEv"></span><span id="PrescribedMotionStateEffector::getSigma_PMC"></span><span class="target" id="class_prescribed_motion_state_effector_1ab1c86f45a75e3388255b7f979b1ce54a"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSigma_PM</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector11getSigma_PMEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for sigma_PM. </p>
+<p>Getter method for sigma_PM. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::MRPd </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector9getR_MB_BEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector9getR_MB_BEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector9getR_MB_BEv"></span><span id="PrescribedMotionStateEffector::getR_MB_BC"></span><span class="target" id="class_prescribed_motion_state_effector_1a8cb5c4d249b5c0096b5718f2d0f6af39"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_MB_B</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector9getR_MB_BEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for r_MB_B. </p>
+<p>Getter method for r_MB_B. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29PrescribedMotionStateEffector11getSigma_MBEv">
+<span id="_CPPv3NK29PrescribedMotionStateEffector11getSigma_MBEv"></span><span id="_CPPv2NK29PrescribedMotionStateEffector11getSigma_MBEv"></span><span id="PrescribedMotionStateEffector::getSigma_MBC"></span><span class="target" id="class_prescribed_motion_state_effector_1a8d4d3add244470216780a850043423e7"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSigma_MB</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29PrescribedMotionStateEffector11getSigma_MBEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for sigma_MB. </p>
+<p>Getter method for sigma_MB. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::MRPd </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N29PrescribedMotionStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N29PrescribedMotionStateEffector5ResetE8uint64_t"></span><span id="PrescribedMotionStateEffector::Reset__uint64_t"></span><span class="target" id="class_prescribed_motion_state_effector_1a69f13d0a52abadb02e2d88f8fbc0b695"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for reset. </p>
+<p>This method is used to reset the module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentClock</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N29PrescribedMotionStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N29PrescribedMotionStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="PrescribedMotionStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_prescribed_motion_state_effector_1a5b8785daabc7ff5148620dd056426822"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for writing the output messages. </p>
+<p>This method takes the computed states and outputs them to the messaging system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentClock</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N29PrescribedMotionStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N29PrescribedMotionStateEffector11UpdateStateE8uint64_t"></span><span id="PrescribedMotionStateEffector::UpdateState__uint64_t"></span><span class="target" id="class_prescribed_motion_state_effector_1aefa3b7999a1e965b68326c841e35ec0c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for updating the effector states. </p>
+<p>This method updates the effector state at the dynamics frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N29PrescribedMotionStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N29PrescribedMotionStateEffector14registerStatesER15DynParamManager"></span><span id="PrescribedMotionStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_prescribed_motion_state_effector_1a4d7e859e1994dd5ef0483e4b563e52ca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for registering the effector’s states. </p>
+<p>This method allows the state effector to register its states with the dynamic parameter manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Pointer to give the state effector access the hub states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N29PrescribedMotionStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N29PrescribedMotionStateEffector12linkInStatesER15DynParamManager"></span><span id="PrescribedMotionStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_prescribed_motion_state_effector_1a65309b96baeb45c6d80518641a571bad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for giving the effector access to hub states. </p>
+<p>This method allows the effector to have access to the hub states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>statesIn</strong> – Pointer to give the state effector access the hub states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector18registerPropertiesER15DynParamManager">
+<span id="_CPPv3N29PrescribedMotionStateEffector18registerPropertiesER15DynParamManager"></span><span id="_CPPv2N29PrescribedMotionStateEffector18registerPropertiesER15DynParamManager"></span><span id="PrescribedMotionStateEffector::registerProperties__DynParamManagerR"></span><span class="target" id="class_prescribed_motion_state_effector_1a2dcad3526d50aa0cc7811150486f7a2b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector18registerPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for registering the prescribed motion properties. </p>
+<p>This method allows the state effector to register its properties with the dynamic parameter manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Pointer to give the state effector access the hub states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ae6ec889b474e02bd8cbdaa6631ed9914"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the effector’s back-substitution contributions. </p>
+<p>This method allows the state effector to give its contributions to the matrices needed for the back-sub. method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – [s] Time the method is called </p></li>
+<li><p><strong>backSubContr</strong> – State effector contribution matrices for back-substitution </p></li>
+<li><p><strong>sigma_BN</strong> – Current B frame attitude with respect to the inertial frame </p></li>
+<li><p><strong>omega_BN_B</strong> – [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame components </p></li>
+<li><p><strong>g_N</strong> – [m/s^2] Gravitational acceleration in N frame components </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1abd2755ebccbe9fa578a84bb6f91dcbf2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for effector to compute its state derivatives. </p>
+<p>This method is for defining the state effector’s MRP state derivative</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – [s] Time the method is called </p></li>
+<li><p><strong>rDDot_BN_N</strong> – [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin, expressed in inertial frame components </p></li>
+<li><p><strong>omegaDot_BN_B</strong> – [rad/s^2] Inertial time derivative of the angular velocity of the B frame with respect to the inertial frame, expressed in B frame components </p></li>
+<li><p><strong>sigma_BN</strong> – Current B frame attitude with respect to the inertial frame </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N29PrescribedMotionStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N29PrescribedMotionStateEffector23updateEffectorMassPropsEd"></span><span id="PrescribedMotionStateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_prescribed_motion_state_effector_1a49784b562bc29cfcb6914c06bc11decd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for calculating the effector mass props and prop rates. </p>
+<p>This method allows the state effector to provide its contributions to the mass props and mass prop rates of the spacecraft.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integTime</strong> – [s] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N29PrescribedMotionStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N29PrescribedMotionStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="PrescribedMotionStateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a05c880db26b9076d37cb3daf9af504f4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the energy and momentum of the effector. </p>
+<p>This method is for calculating the contributions of the effector to the energy and momentum of the spacecraft.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – [s] Time the method is called </p></li>
+<li><p><strong>rotAngMomPntCContr_B</strong> – [kg m^2/s] Contribution of stateEffector to total rotational angular mom </p></li>
+<li><p><strong>rotEnergyContr</strong> – [J] Contribution of stateEffector to total rotational energy </p></li>
+<li><p><strong>omega_BN_B</strong> – [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame components </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector37computePrescribedMotionInertialStatesEv">
+<span id="_CPPv3N29PrescribedMotionStateEffector37computePrescribedMotionInertialStatesEv"></span><span id="_CPPv2N29PrescribedMotionStateEffector37computePrescribedMotionInertialStatesEv"></span><span id="PrescribedMotionStateEffector::computePrescribedMotionInertialStates"></span><span class="target" id="class_prescribed_motion_state_effector_1af246c61319b45facad3451aad54e5c81"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePrescribedMotionInertialStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector37computePrescribedMotionInertialStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the effector’s states relative to the inertial frame. </p>
+<p>This method computes the effector states relative to the inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector16addStateEffectorEP13StateEffector">
+<span id="_CPPv3N29PrescribedMotionStateEffector16addStateEffectorEP13StateEffector"></span><span id="_CPPv2N29PrescribedMotionStateEffector16addStateEffectorEP13StateEffector"></span><span id="PrescribedMotionStateEffector::addStateEffector__StateEffectorP"></span><span class="target" id="class_prescribed_motion_state_effector_1adc563f161a2feca552b670e205c0acc3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addStateEffector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newStateEffector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector16addStateEffectorEP13StateEffector" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to attach a state effector to prescribed motion. </p>
+<p>This method attaches a stateEffector to the prescribedMotionStateEffector </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector26prescribedTranslationInMsgE">
+<span id="_CPPv3N29PrescribedMotionStateEffector26prescribedTranslationInMsgE"></span><span id="_CPPv2N29PrescribedMotionStateEffector26prescribedTranslationInMsgE"></span><span id="PrescribedMotionStateEffector::prescribedTranslationInMsg__ReadFunctor:PrescribedTranslationMsgPayload:"></span><span class="target" id="class_prescribed_motion_state_effector_1a5e72fa5e8887e72da2d4ee69f3880574"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#_CPPv431PrescribedTranslationMsgPayload" title="PrescribedTranslationMsgPayload"><span class="n"><span class="pre">PrescribedTranslationMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedTranslationInMsg</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector26prescribedTranslationInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input message for the effector’s translational prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector23prescribedRotationInMsgE">
+<span id="_CPPv3N29PrescribedMotionStateEffector23prescribedRotationInMsgE"></span><span id="_CPPv2N29PrescribedMotionStateEffector23prescribedRotationInMsgE"></span><span id="PrescribedMotionStateEffector::prescribedRotationInMsg__ReadFunctor:PrescribedRotationMsgPayload:"></span><span class="target" id="class_prescribed_motion_state_effector_1a14212d1bc20270479933dbea174ec066"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedRotationMsgPayload.html#_CPPv428PrescribedRotationMsgPayload" title="PrescribedRotationMsgPayload"><span class="n"><span class="pre">PrescribedRotationMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedRotationInMsg</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector23prescribedRotationInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input message for the effector’s rotational prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector27prescribedTranslationOutMsgE">
+<span id="_CPPv3N29PrescribedMotionStateEffector27prescribedTranslationOutMsgE"></span><span id="_CPPv2N29PrescribedMotionStateEffector27prescribedTranslationOutMsgE"></span><span id="PrescribedMotionStateEffector::prescribedTranslationOutMsg__Message:PrescribedTranslationMsgPayload:"></span><span class="target" id="class_prescribed_motion_state_effector_1a9312b2f40ad1c50b8640866b361e8515"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#_CPPv431PrescribedTranslationMsgPayload" title="PrescribedTranslationMsgPayload"><span class="n"><span class="pre">PrescribedTranslationMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedTranslationOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector27prescribedTranslationOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output message for the effector’s translational prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector24prescribedRotationOutMsgE">
+<span id="_CPPv3N29PrescribedMotionStateEffector24prescribedRotationOutMsgE"></span><span id="_CPPv2N29PrescribedMotionStateEffector24prescribedRotationOutMsgE"></span><span id="PrescribedMotionStateEffector::prescribedRotationOutMsg__Message:PrescribedRotationMsgPayload:"></span><span class="target" id="class_prescribed_motion_state_effector_1a7d7ce0fbb4d249644ae8f2566244e040"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedRotationMsgPayload.html#_CPPv428PrescribedRotationMsgPayload" title="PrescribedRotationMsgPayload"><span class="n"><span class="pre">PrescribedRotationMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedRotationOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector24prescribedRotationOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output message for the effector’s rotational prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector31prescribedMotionConfigLogOutMsgE">
+<span id="_CPPv3N29PrescribedMotionStateEffector31prescribedMotionConfigLogOutMsgE"></span><span id="_CPPv2N29PrescribedMotionStateEffector31prescribedMotionConfigLogOutMsgE"></span><span id="PrescribedMotionStateEffector::prescribedMotionConfigLogOutMsg__Message:SCStatesMsgPayload:"></span><span class="target" id="class_prescribed_motion_state_effector_1a5712b59c0ad8eecb9737346fb1e30d78"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedMotionConfigLogOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector31prescribedMotionConfigLogOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output config log message for the effector’s states. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN29PrescribedMotionStateEffector21assignStateParamNamesEv4Type">
+<span id="_CPPv3I0EN29PrescribedMotionStateEffector21assignStateParamNamesE4Type"></span><span id="_CPPv2I0EN29PrescribedMotionStateEffector21assignStateParamNamesE4Type"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Type</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_prescribed_motion_state_effector_1a9f56926e0f2b45fce73dc743d53c2083"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">assignStateParamNames</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN29PrescribedMotionStateEffector21assignStateParamNamesEv4Type" title="PrescribedMotionStateEffector::assignStateParamNames::Type"><span class="n"><span class="pre">Type</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">effector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN29PrescribedMotionStateEffector21assignStateParamNamesEv4Type" title="Link to this definition"></a><br /></dt>
+<dd><p>Assign the state engine parameter names to attached effectors </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector17currentSimTimeSecE">
+<span id="_CPPv3N29PrescribedMotionStateEffector17currentSimTimeSecE"></span><span id="_CPPv2N29PrescribedMotionStateEffector17currentSimTimeSecE"></span><span id="PrescribedMotionStateEffector::currentSimTimeSec__double"></span><span class="target" id="class_prescribed_motion_state_effector_1a1f075a1a64d9840d1999de9a4842bada"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentSimTimeSec</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector17currentSimTimeSecE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Current simulation time, updated at the dynamics frequency </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector4massE">
+<span id="_CPPv3N29PrescribedMotionStateEffector4massE"></span><span id="_CPPv2N29PrescribedMotionStateEffector4massE"></span><span id="PrescribedMotionStateEffector::mass__double"></span><span class="target" id="class_prescribed_motion_state_effector_1a1406ee9900c0575da463cae550791680"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector4massE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] Effector mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8IPntPc_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8IPntPc_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8IPntPc_PE"></span><span id="PrescribedMotionStateEffector::IPntPc_P__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a9a6ae18365c019727de24fbda3022e11"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntPc_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8IPntPc_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of the effector about its center of mass in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6r_MB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6r_MB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6r_MB_BE"></span><span id="PrescribedMotionStateEffector::r_MB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1abe031f922f14724ba8058c551836cc00"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_MB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6r_MB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of point M relative to point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7r_PcP_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7r_PcP_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7r_PcP_PE"></span><span id="PrescribedMotionStateEffector::r_PcP_P__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aa763ad88bf15ab92c14085d33f018362"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PcP_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7r_PcP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of the effector center of mass relative to point P in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8sigma_MBE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8sigma_MBE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8sigma_MBE"></span><span id="PrescribedMotionStateEffector::sigma_MB__Eigen::MRPd"></span><span class="target" id="class_prescribed_motion_state_effector_1a205e88ae7accc04bbcbbb21f21e3b692"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_MB</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8sigma_MBE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame M relative to frame B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6r_PM_ME">
+<span id="_CPPv3N29PrescribedMotionStateEffector6r_PM_ME"></span><span id="_CPPv2N29PrescribedMotionStateEffector6r_PM_ME"></span><span id="PrescribedMotionStateEffector::r_PM_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a47ff3255c425f98e9c00864c986769ed"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PM_M</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6r_PM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of point P relative to point M in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11rPrime_PM_ME">
+<span id="_CPPv3N29PrescribedMotionStateEffector11rPrime_PM_ME"></span><span id="_CPPv2N29PrescribedMotionStateEffector11rPrime_PM_ME"></span><span id="PrescribedMotionStateEffector::rPrime_PM_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a48001d6f3b4560428f5a3125e1c30a53"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_PM_M</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11rPrime_PM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_PM_M in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PM_ME">
+<span id="_CPPv3N29PrescribedMotionStateEffector16rPrimePrime_PM_ME"></span><span id="_CPPv2N29PrescribedMotionStateEffector16rPrimePrime_PM_ME"></span><span id="PrescribedMotionStateEffector::rPrimePrime_PM_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a0d71e412e1794cf833823625ff0bc303"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimePrime_PM_M</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] B frame time derivative of rPrime_PM_M in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PM_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PM_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PM_PE"></span><span id="PrescribedMotionStateEffector::omega_PM_P__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ab9b02349bfb935d68caa39682fe36c5e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PM_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PM_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to frame M in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PM_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaPrime_PM_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaPrime_PM_PE"></span><span id="PrescribedMotionStateEffector::omegaPrime_PM_P__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aeb2738515989b5033ca6e31975a5684f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaPrime_PM_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PM_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] B frame time derivative of omega_PM_P in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8sigma_PME">
+<span id="_CPPv3N29PrescribedMotionStateEffector8sigma_PME"></span><span id="_CPPv2N29PrescribedMotionStateEffector8sigma_PME"></span><span id="PrescribedMotionStateEffector::sigma_PM__Eigen::MRPd"></span><span class="target" id="class_prescribed_motion_state_effector_1aec1cedec04cbf317af8fac2f116dcc9b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_PM</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8sigma_PME" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame P relative to frame M. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector19nameOfsigma_PMStateE">
+<span id="_CPPv3N29PrescribedMotionStateEffector19nameOfsigma_PMStateE"></span><span id="_CPPv2N29PrescribedMotionStateEffector19nameOfsigma_PMStateE"></span><span id="PrescribedMotionStateEffector::nameOfsigma_PMState__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1aca4bf088828b5c0a1ec8a6ff5cc2214c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfsigma_PMState</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector19nameOfsigma_PMStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for the sigma_PM state data container. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8IPntPc_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8IPntPc_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8IPntPc_BE"></span><span id="PrescribedMotionStateEffector::IPntPc_B__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a5f93bb22286616bd85f58d9b8c9375aa"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntPc_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8IPntPc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of the effector about its center of mass in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7r_PcP_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7r_PcP_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7r_PcP_BE"></span><span id="PrescribedMotionStateEffector::r_PcP_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aa09fd6a8b469271210c4f7fabd54e497"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PcP_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7r_PcP_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of the effector center of mass relative to point P in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6r_PM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6r_PM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6r_PM_BE"></span><span id="PrescribedMotionStateEffector::r_PM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a89f85975d376b5b9ff6f501820b42cc8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6r_PM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of point P relative to point M in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11rPrime_PM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector11rPrime_PM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector11rPrime_PM_BE"></span><span id="PrescribedMotionStateEffector::rPrime_PM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ada5811b69e6f6588c656853ec7a79c5a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_PM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11rPrime_PM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of position r_PM_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector16rPrimePrime_PM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector16rPrimePrime_PM_BE"></span><span id="PrescribedMotionStateEffector::rPrimePrime_PM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aead2178c1563acbd819f48d777f0adda"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimePrime_PM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] B frame time derivative of rPrime_PM_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PM_BE"></span><span id="PrescribedMotionStateEffector::omega_PM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a98e0a63c55af190092856b4f154d8563"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of P frame relative to the M frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaPrime_PM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaPrime_PM_BE"></span><span id="PrescribedMotionStateEffector::omegaPrime_PM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ae87cdfe07e3ea7eea6ea2ccc9efb6abe"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaPrime_PM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] B frame time derivative of omega_PB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PB_BE"></span><span id="PrescribedMotionStateEffector::omega_PB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1afad0950e6fd7f6b5d37ae2aa8378ac50"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to frame B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaPrime_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaPrime_PB_BE"></span><span id="PrescribedMotionStateEffector::omegaPrime_PB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a5bc4ec6fa696fe39d352c63c879a908d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaPrime_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] B frame time derivative of omega_PB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7r_PcM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7r_PcM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7r_PcM_BE"></span><span id="PrescribedMotionStateEffector::r_PcM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aa327c7e2ba9d4fae8c463ea683fb79fe"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PcM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7r_PcM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of frame P center of mass relative to point M in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7r_PcB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7r_PcB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7r_PcB_BE"></span><span id="PrescribedMotionStateEffector::r_PcB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a0e9408747cde25cbc50691a93b3aaf7e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PcB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7r_PcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of frame P center of mass relative to point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector12rPrime_PcM_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector12rPrime_PcM_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector12rPrime_PcM_BE"></span><span id="PrescribedMotionStateEffector::rPrime_PcM_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a99fee0187618adddfdd55247d8308eb2"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_PcM_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector12rPrime_PcM_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_PcM_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector12rPrime_PcB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector12rPrime_PcB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector12rPrime_PcB_BE"></span><span id="PrescribedMotionStateEffector::rPrime_PcB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aa87fe6e28889912cb56aae00c7069d4b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_PcB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector12rPrime_PcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_PcB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector17rPrimePrime_PcB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector17rPrimePrime_PcB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector17rPrimePrime_PcB_BE"></span><span id="PrescribedMotionStateEffector::rPrimePrime_PcB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a13b84aaa4383ab41a483dddc00497ff3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimePrime_PcB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector17rPrimePrime_PcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] B frame time derivative of rPrime_PcB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_BN_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_BN_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_BN_BE"></span><span id="PrescribedMotionStateEffector::omega_BN_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1abe58b94d3d2b6955855decead27aed2b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame B relative to the inertial frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PN_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PN_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PN_BE"></span><span id="PrescribedMotionStateEffector::omega_PN_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aec5a284eb43bd616601950446ea4f649"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PN_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to the inertial frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10rDot_PcB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10rDot_PcB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10rDot_PcB_BE"></span><span id="PrescribedMotionStateEffector::rDot_PcB_B__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1afaa3565eff5935fada6feca502a84d6e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rDot_PcB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10rDot_PcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Inertial time derivative of r_PcB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8sigma_BNE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8sigma_BNE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8sigma_BNE"></span><span id="PrescribedMotionStateEffector::sigma_BN__Eigen::MRPd"></span><span class="target" id="class_prescribed_motion_state_effector_1a651984fafa95d4940768b0b1548f1cc2"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8sigma_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame B relative to the inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6dcm_BNE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6dcm_BNE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6dcm_BNE"></span><span id="PrescribedMotionStateEffector::dcm_BN__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a5f939017bea808b317a10e0d50125746"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BN</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6dcm_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from inertial frame to frame B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6dcm_BME">
+<span id="_CPPv3N29PrescribedMotionStateEffector6dcm_BME"></span><span id="_CPPv2N29PrescribedMotionStateEffector6dcm_BME"></span><span id="PrescribedMotionStateEffector::dcm_BM__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ab238f6d2f4ec36bcfd80805d9cc0652d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BM</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6dcm_BME" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from frame M to frame B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6dcm_PME">
+<span id="_CPPv3N29PrescribedMotionStateEffector6dcm_PME"></span><span id="_CPPv2N29PrescribedMotionStateEffector6dcm_PME"></span><span id="PrescribedMotionStateEffector::dcm_PM__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1aab70bf176401eff258938002bad09345"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PM</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6dcm_PME" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from frame M to frame P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6dcm_BPE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6dcm_BPE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6dcm_BPE"></span><span id="PrescribedMotionStateEffector::dcm_BP__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1ae9dedda093aa07840bc7d473b3f4af57"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BP</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6dcm_BPE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from frame P to frame B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector12rTilde_PcB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector12rTilde_PcB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector12rTilde_PcB_BE"></span><span id="PrescribedMotionStateEffector::rTilde_PcB_B__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a0bcabff292c81f275df4050999c20fbf"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTilde_PcB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector12rTilde_PcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Tilde cross product matrix of r_PcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaTilde_BN_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaTilde_BN_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaTilde_BN_BE"></span><span id="PrescribedMotionStateEffector::omegaTilde_BN_B__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a8aea38bb11b18eba7c9fd112715ca1f9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaTilde_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Tilde cross product matrix of omega_BN_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaTilde_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaTilde_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaTilde_PB_BE"></span><span id="PrescribedMotionStateEffector::omegaTilde_PB_B__Eigen::Matrix3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a01c01904443e8af20dd6de1ff36aa061"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaTilde_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Tilde cross product matrix of omega_PB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7r_PcN_NE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7r_PcN_NE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7r_PcN_NE"></span><span id="PrescribedMotionStateEffector::r_PcN_N__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1abd22b178857033b74ef2a269481bc727"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PcN_N</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7r_PcN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of frame P center of mass relative to the inertial frame in inertial frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector7v_PcN_NE">
+<span id="_CPPv3N29PrescribedMotionStateEffector7v_PcN_NE"></span><span id="_CPPv2N29PrescribedMotionStateEffector7v_PcN_NE"></span><span id="PrescribedMotionStateEffector::v_PcN_N__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a2a9a32b177f52257cb22e83596a0af7b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_PcN_N</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector7v_PcN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Inertial velocity of frame P center of mass relative to the inertial frame in inertial frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6r_PN_NE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6r_PN_NE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6r_PN_NE"></span><span id="PrescribedMotionStateEffector::r_PN_N__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a2b4813a3b83df17a54cc5b99c69d92e1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of frame P relative to the inertial frame in inertial frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6v_PN_NE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6v_PN_NE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6v_PN_NE"></span><span id="PrescribedMotionStateEffector::v_PN_N__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a76792b82a6892103460fa2dc7f75f088"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">v_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6v_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Inertial velocity of frame P relative to the inertial frame in inertial frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8sigma_PNE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8sigma_PNE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8sigma_PNE"></span><span id="PrescribedMotionStateEffector::sigma_PN__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a816ad72482a9435bc9b0fbb25c6e5647"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sigma_PN</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8sigma_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame P relative to the inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PN_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PN_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PN_PE"></span><span id="PrescribedMotionStateEffector::omega_PN_P__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a2f4573985254fc43f6fc9bd3d7e3f7b9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">omega_PN_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PN_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to the inertial frame in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector24inertialPositionPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector24inertialPositionPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector24inertialPositionPropertyE"></span><span id="PrescribedMotionStateEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a529b26f1182fbede7e23da64c83440cf"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N Inertial position relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector24inertialVelocityPropertyE"></span><span id="PrescribedMotionStateEffector::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1af4a738f1e29e4178f960f08212cde65a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] v_N Inertial velocity relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11rEpoch_PM_ME">
+<span id="_CPPv3N29PrescribedMotionStateEffector11rEpoch_PM_ME"></span><span id="_CPPv2N29PrescribedMotionStateEffector11rEpoch_PM_ME"></span><span id="PrescribedMotionStateEffector::rEpoch_PM_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a263e13d1fc424d7d4e23b993177259fb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEpoch_PM_M</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11rEpoch_PM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of point P relative to point M in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector16rPrimeEpoch_PM_ME">
+<span id="_CPPv3N29PrescribedMotionStateEffector16rPrimeEpoch_PM_ME"></span><span id="_CPPv2N29PrescribedMotionStateEffector16rPrimeEpoch_PM_ME"></span><span id="PrescribedMotionStateEffector::rPrimeEpoch_PM_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1a8c4cdf9ac988eca854b1bb9a61bc74d0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeEpoch_PM_M</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector16rPrimeEpoch_PM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_PM_M in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaEpoch_PM_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaEpoch_PM_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaEpoch_PM_PE"></span><span id="PrescribedMotionStateEffector::omegaEpoch_PM_P__Eigen::Vector3d"></span><span class="target" id="class_prescribed_motion_state_effector_1af86b16aa5a1c5fdd79f06b7ce38124ee"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaEpoch_PM_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaEpoch_PM_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to frame M in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector13sigma_PMStateE">
+<span id="_CPPv3N29PrescribedMotionStateEffector13sigma_PMStateE"></span><span id="_CPPv2N29PrescribedMotionStateEffector13sigma_PMStateE"></span><span id="PrescribedMotionStateEffector::sigma_PMState__StateDataP"></span><span class="target" id="class_prescribed_motion_state_effector_1a09615d7cedf3b0aa2e199be186681e85"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sigma_PMState</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector13sigma_PMStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame P relative to frame M. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector14spacecraftNameE">
+<span id="_CPPv3N29PrescribedMotionStateEffector14spacecraftNameE"></span><span id="_CPPv2N29PrescribedMotionStateEffector14spacecraftNameE"></span><span id="PrescribedMotionStateEffector::spacecraftName__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1ae5b6cabc9cb05a1fc4fb79f7a797ef7b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftName</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector14spacecraftNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of prescribed object used for effector branching. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector14stateEffectorsE">
+<span id="_CPPv3N29PrescribedMotionStateEffector14stateEffectorsE"></span><span id="_CPPv2N29PrescribedMotionStateEffector14stateEffectorsE"></span><span id="PrescribedMotionStateEffector::stateEffectors__std::vector:StateEffectorP:"></span><span class="target" id="class_prescribed_motion_state_effector_1a00dd364a0da42c502797e0666d5151d7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateEffectors</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector14stateEffectorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of attached state effectors. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector6r_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector6r_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector6r_PB_BE"></span><span id="PrescribedMotionStateEffector::r_PB_B__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a2484e6e2b082bbb905cbcb634ead1d97"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">r_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector6r_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of point P relative to point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector11rPrime_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector11rPrime_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector11rPrime_PB_BE"></span><span id="PrescribedMotionStateEffector::rPrime_PB_B__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a77458047cbc906f86385e3a2bc3d4128"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector11rPrime_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_PB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PB_BE">
+<span id="_CPPv3N29PrescribedMotionStateEffector16rPrimePrime_PB_BE"></span><span id="_CPPv2N29PrescribedMotionStateEffector16rPrimePrime_PB_BE"></span><span id="PrescribedMotionStateEffector::rPrimePrime_PB_B__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1aac565ec8cd4cc19768e0cf0e55090d84"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">rPrimePrime_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector16rPrimePrime_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] B frame time derivative of rPrime_PB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector8sigma_PBE">
+<span id="_CPPv3N29PrescribedMotionStateEffector8sigma_PBE"></span><span id="_CPPv2N29PrescribedMotionStateEffector8sigma_PBE"></span><span id="PrescribedMotionStateEffector::sigma_PB__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1aee46d8de4ff034b1708c2b746f30ba14"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sigma_PB</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector8sigma_PBE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame P relative to frame B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10omega_PB_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10omega_PB_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10omega_PB_PE"></span><span id="PrescribedMotionStateEffector::omega_PB_P__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a2d6a543df4276bf4f95dd4d6c1cb9b90"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">omega_PB_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10omega_PB_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of frame P relative to frame B in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PB_PE">
+<span id="_CPPv3N29PrescribedMotionStateEffector15omegaPrime_PB_PE"></span><span id="_CPPv2N29PrescribedMotionStateEffector15omegaPrime_PB_PE"></span><span id="PrescribedMotionStateEffector::omegaPrime_PB_P__Eigen::MatrixXdP"></span><span class="target" id="class_prescribed_motion_state_effector_1a7bdfb49b9c3779666630be80ea59f02d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">omegaPrime_PB_P</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector15omegaPrime_PB_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] B frame time derivative of omega_PB_P in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedPositionPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector32nameOfPrescribedPositionPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector32nameOfPrescribedPositionPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedPositionProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a07765fdeb2a7547da69f47f344b10ee4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed position r_PB_B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedVelocityPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector32nameOfPrescribedVelocityPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector32nameOfPrescribedVelocityPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedVelocityProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1ac186e00b405a86d9b488b70af17baebe"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed velocity rPrime_PB_B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector36nameOfPrescribedAccelerationPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector36nameOfPrescribedAccelerationPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector36nameOfPrescribedAccelerationPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedAccelerationProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a32f07b051b6863213de67b9aac07473b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedAccelerationProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector36nameOfPrescribedAccelerationPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed acceleration rPrimePrime_PB_B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedAttitudePropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector32nameOfPrescribedAttitudePropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector32nameOfPrescribedAttitudePropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedAttitudeProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a0cb511ebd9cc5906275f0e1645ad50e7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedAttitudeProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector32nameOfPrescribedAttitudePropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed attitude sigma_PB. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector35nameOfPrescribedAngVelocityPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector35nameOfPrescribedAngVelocityPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector35nameOfPrescribedAngVelocityPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedAngVelocityProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1ad1eb1487151505472d364ae435929a00"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedAngVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector35nameOfPrescribedAngVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed angular velocity omega_PB_P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector39nameOfPrescribedAngAccelerationPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector39nameOfPrescribedAngAccelerationPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector39nameOfPrescribedAngAccelerationPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfPrescribedAngAccelerationProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1ad6942e12b41783e0c8ef327c57a341b0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfPrescribedAngAccelerationProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector39nameOfPrescribedAngAccelerationPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed angular acceleration omegaPrime_PB_P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector30nameOfInertialPositionPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector30nameOfInertialPositionPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector30nameOfInertialPositionPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfInertialPositionProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a1838769a2c6b4c25f2a129011d68231d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector30nameOfInertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed motion inertial position r_PN_N. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector30nameOfInertialVelocityPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector30nameOfInertialVelocityPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector30nameOfInertialVelocityPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfInertialVelocityProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1af5cb52a98b6104f01d3daec9275d5cb1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector30nameOfInertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for prescribed motion inertial velocity property v_PN_N. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector30nameOfInertialAttitudePropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector30nameOfInertialAttitudePropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector30nameOfInertialAttitudePropertyE"></span><span id="PrescribedMotionStateEffector::nameOfInertialAttitudeProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a0250c04850d3ef25c137733c21cccf63"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialAttitudeProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector30nameOfInertialAttitudePropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for the prescribed motion inertial attitude property sigma_PN. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector33nameOfInertialAngVelocityPropertyE">
+<span id="_CPPv3N29PrescribedMotionStateEffector33nameOfInertialAngVelocityPropertyE"></span><span id="_CPPv2N29PrescribedMotionStateEffector33nameOfInertialAngVelocityPropertyE"></span><span id="PrescribedMotionStateEffector::nameOfInertialAngVelocityProperty__ss"></span><span class="target" id="class_prescribed_motion_state_effector_1a5236f7e8a2aaa141186cb95f22da2261"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialAngVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector33nameOfInertialAngVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for the prescribed motion inertial angular velocity property omega_PN_P. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29PrescribedMotionStateEffector10effectorIDE">
+<span id="_CPPv3N29PrescribedMotionStateEffector10effectorIDE"></span><span id="_CPPv2N29PrescribedMotionStateEffector10effectorIDE"></span><span id="PrescribedMotionStateEffector::effectorID__uint64_t"></span><span class="target" id="class_prescribed_motion_state_effector_1a381e029650ae4e6fa23ed16bac806ec0"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N29PrescribedMotionStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>ID number of this panel. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="prescribedMotion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

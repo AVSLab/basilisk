@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>messaging &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="msgHeader" href="msgHeader.html" />
+    <link rel="prev" title="messaging" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">messaging</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">messaging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="msgHeader.html">msgHeader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTest/index.html">_UnitTest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cMsgCInterface/index.html">cMsgCInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cMsgCInterfacePy/index.html">cMsgCInterfacePy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">messaging</a></li>
+      <li class="breadcrumb-item active">messaging</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/messaging/messaging.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="messaging">
+<span id="id1"></span><h1>messaging<a class="headerlink" href="#messaging" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E11ReadFunctor">
+<span id="_CPPv3I0E11ReadFunctor"></span><span id="_CPPv2I0E11ReadFunctor"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">messageType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_read_functor"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadFunctor</span></span></span><a class="headerlink" href="#_CPPv4I0E11ReadFunctor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messaging.h&gt;</em></div>
+<p>Read functors have read-only access to messages </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11ReadFunctorEv">
+<span id="_CPPv3N11ReadFunctor11ReadFunctorEv"></span><span id="_CPPv2N11ReadFunctor11ReadFunctorEv"></span><span id="ReadFunctor::ReadFunctor"></span><span class="target" id="class_read_functor_1a239f3d1ddfde3be4dfd4e94ff4b1cea3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadFunctor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor11ReadFunctorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11ReadFunctorEP11messageTypeP9MsgHeader">
+<span id="_CPPv3N11ReadFunctor11ReadFunctorEP11messageTypeP9MsgHeader"></span><span id="_CPPv2N11ReadFunctor11ReadFunctorEP11messageTypeP9MsgHeader"></span><span id="ReadFunctor::ReadFunctor__messageTypeP.MsgHeaderP"></span><span class="target" id="class_read_functor_1aba9e06f354903e0fd5c6ab39d47a3190"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadFunctor</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">payloadPtr</span></span>, <a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">headerPtr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor11ReadFunctorEP11messageTypeP9MsgHeader" title="Link to this definition"></a><br /></dt>
+<dd><p>constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctorclEv">
+<span id="_CPPv3N11ReadFunctorclEv"></span><span id="_CPPv2N11ReadFunctorclEv"></span><span id="ReadFunctor::call-operator"></span><span class="target" id="class_read_functor_1a874aa47a1d4bf71b9fe80fdd0435c657"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctorclEv" title="Link to this definition"></a><br /></dt>
+<dd><p>constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor8isLinkedEv">
+<span id="_CPPv3N11ReadFunctor8isLinkedEv"></span><span id="_CPPv2N11ReadFunctor8isLinkedEv"></span><span id="ReadFunctor::isLinked"></span><span class="target" id="class_read_functor_1a20c1a1f1bd674eafb6a7d812d9a3cc96"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isLinked</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor8isLinkedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>check if this msg has been connected to </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor9isWrittenEv">
+<span id="_CPPv3N11ReadFunctor9isWrittenEv"></span><span id="_CPPv2N11ReadFunctor9isWrittenEv"></span><span id="ReadFunctor::isWritten"></span><span class="target" id="class_read_functor_1a770bcf3f3f6fc9ef97e1ee2debaf4fd8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isWritten</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor9isWrittenEv" title="Link to this definition"></a><br /></dt>
+<dd><p>check if the message has been ever written to </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11timeWrittenEv">
+<span id="_CPPv3N11ReadFunctor11timeWrittenEv"></span><span id="_CPPv2N11ReadFunctor11timeWrittenEv"></span><span id="ReadFunctor::timeWritten"></span><span class="target" id="class_read_functor_1ac35f410c0131e0af28727ff6c214af89"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeWritten</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor11timeWrittenEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return the time at which the message was written </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor8moduleIDEv">
+<span id="_CPPv3N11ReadFunctor8moduleIDEv"></span><span id="_CPPv2N11ReadFunctor8moduleIDEv"></span><span id="ReadFunctor::moduleID"></span><span class="target" id="class_read_functor_1a44866a398b091478fa9b54830b6c832c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">moduleID</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor8moduleIDEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return the moduleID of who wrote wrote the message </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor12subscribeToCEPv">
+<span id="_CPPv3N11ReadFunctor12subscribeToCEPv"></span><span id="_CPPv2N11ReadFunctor12subscribeToCEPv"></span><span id="ReadFunctor::subscribeToC__voidP"></span><span class="target" id="class_read_functor_1a4ae659ad3f75346b7a6039daed610fa5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">subscribeToC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor12subscribeToCEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>subscribe to a C message </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor15subscribeToAddrE8uint64_t">
+<span id="_CPPv3N11ReadFunctor15subscribeToAddrE8uint64_t"></span><span id="_CPPv2N11ReadFunctor15subscribeToAddrE8uint64_t"></span><span id="ReadFunctor::subscribeToAddr__uint64_t"></span><span class="target" id="class_read_functor_1afbe2f0b2e5a5ecfd5a0718371a2a7207"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">subscribeToAddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sourceAddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor15subscribeToAddrE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Subscribe to the message located at the sourceAddr in memory. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor16subscribeToCAddrE8uint64_t">
+<span id="_CPPv3N11ReadFunctor16subscribeToCAddrE8uint64_t"></span><span id="_CPPv2N11ReadFunctor16subscribeToCAddrE8uint64_t"></span><span id="ReadFunctor::subscribeToCAddr__uint64_t"></span><span class="target" id="class_read_functor_1acbd96ab9746f58f90652317c34425823"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">subscribeToCAddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sourceAddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor16subscribeToCAddrE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Subscribe to the C message located at the sourceAddr in memory. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11subscribeToEP7MessageI11messageTypeE">
+<span id="_CPPv3N11ReadFunctor11subscribeToEP7MessageI11messageTypeE"></span><span id="_CPPv2N11ReadFunctor11subscribeToEP7MessageI11messageTypeE"></span><span id="ReadFunctor::subscribeTo__Message:messageType:P"></span><span class="target" id="class_read_functor_1ab0d18ebd0fb0b8f92d088fa57c4455c4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">subscribeTo</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor11subscribeToEP7MessageI11messageTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Subscribe to a C++ message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11unsubscribeEv">
+<span id="_CPPv3N11ReadFunctor11unsubscribeEv"></span><span id="_CPPv2N11ReadFunctor11unsubscribeEv"></span><span id="ReadFunctor::unsubscribe"></span><span class="target" id="class_read_functor_1a9dab2338e7d655bfff76c24dc919fdb1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unsubscribe</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor11unsubscribeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Unsubscribe to the connected message, noop if no message was connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor15isSubscribedToCEPv">
+<span id="_CPPv3N11ReadFunctor15isSubscribedToCEPv"></span><span id="_CPPv2N11ReadFunctor15isSubscribedToCEPv"></span><span id="ReadFunctor::isSubscribedToC__voidP"></span><span class="target" id="class_read_functor_1a45eda48f0f38c92ea0ef286a21f1bdec"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isSubscribedToC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor15isSubscribedToCEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if self has been subscribed to a C message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor14isSubscribedToEP7MessageI11messageTypeE">
+<span id="_CPPv3N11ReadFunctor14isSubscribedToEP7MessageI11messageTypeE"></span><span id="_CPPv2N11ReadFunctor14isSubscribedToEP7MessageI11messageTypeE"></span><span id="ReadFunctor::isSubscribedTo__Message:messageType:P"></span><span class="target" id="class_read_functor_1a8114a7f28c01ed251140069575b8adab"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isSubscribedTo</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">source</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor14isSubscribedToEP7MessageI11messageTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if self has been subscribed to a Cpp message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor18isSubscribedToAddrE8uint64_t">
+<span id="_CPPv3N11ReadFunctor18isSubscribedToAddrE8uint64_t"></span><span id="_CPPv2N11ReadFunctor18isSubscribedToAddrE8uint64_t"></span><span id="ReadFunctor::isSubscribedToAddr__uint64_t"></span><span class="target" id="class_read_functor_1a6b3f1e255decad619cde3ea2fc5504df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isSubscribedToAddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sourceAddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor18isSubscribedToAddrE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if self has been subscribed to the message at sourceAddr. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor19isSubscribedToCAddrE8uint64_t">
+<span id="_CPPv3N11ReadFunctor19isSubscribedToCAddrE8uint64_t"></span><span id="_CPPv2N11ReadFunctor19isSubscribedToCAddrE8uint64_t"></span><span id="ReadFunctor::isSubscribedToCAddr__uint64_t"></span><span class="target" id="class_read_functor_1a5999d15400c2b7b48d98e338a7f3001d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isSubscribedToCAddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sourceAddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor19isSubscribedToCAddrE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if self has been subscribed to the message at sourceAddr. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor8recorderE8uint64_t">
+<span id="_CPPv3N11ReadFunctor8recorderE8uint64_t"></span><span id="_CPPv2N11ReadFunctor8recorderE8uint64_t"></span><span id="ReadFunctor::recorder__uint64_t"></span><span class="target" id="class_read_functor_1a6fb31656bf96eef6d2a0b35ada06fd7f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder"><span class="n"><span class="pre">Recorder</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">recorder</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ReadFunctor8recorderE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_recorder"><span class="std std-ref">Recorder</span></a> method description. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor9bskLoggerE">
+<span id="_CPPv3N11ReadFunctor9bskLoggerE"></span><span id="_CPPv2N11ReadFunctor9bskLoggerE"></span><span id="ReadFunctor::bskLogger__BSKLogger"></span><span class="target" id="class_read_functor_1adbad2cf8fc5a044b66191c56bdfc3785"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N11ReadFunctor9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&lt; &amp;#8212; BSK Logging </p>
+<p>&amp;#8212; bsk logging instance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor14zeroMsgPayloadE">
+<span id="_CPPv3N11ReadFunctor14zeroMsgPayloadE"></span><span id="_CPPv2N11ReadFunctor14zeroMsgPayloadE"></span><span id="ReadFunctor::zeroMsgPayload__messageType"></span><span class="target" id="class_read_functor_1a86cbcbb19dc2659174868fd7ba4ebe73"></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">zeroMsgPayload</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N11ReadFunctor14zeroMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; zero’d copy of the message payload type </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor14payloadPointerE">
+<span id="_CPPv3N11ReadFunctor14payloadPointerE"></span><span id="_CPPv2N11ReadFunctor14payloadPointerE"></span><span id="ReadFunctor::payloadPointer__messageTypeP"></span><span class="target" id="class_read_functor_1a6cd445da7f56b893e43e10129576a047"></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payloadPointer</span></span></span><a class="headerlink" href="#_CPPv4N11ReadFunctor14payloadPointerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; pointer to the incoming msg data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor13headerPointerE">
+<span id="_CPPv3N11ReadFunctor13headerPointerE"></span><span id="_CPPv2N11ReadFunctor13headerPointerE"></span><span id="ReadFunctor::headerPointer__MsgHeaderP"></span><span class="target" id="class_read_functor_1a5ea0b7790449efd87ace570fab25af31"></span><a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">headerPointer</span></span></span><a class="headerlink" href="#_CPPv4N11ReadFunctor13headerPointerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; pointer to the incoming msg header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11ReadFunctor11initializedE">
+<span id="_CPPv3N11ReadFunctor11initializedE"></span><span id="_CPPv2N11ReadFunctor11initializedE"></span><span id="ReadFunctor::initialized__b"></span><span class="target" id="class_read_functor_1a8900af23a061b1a15608524719e7fbbc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initialized</span></span></span><a class="headerlink" href="#_CPPv4N11ReadFunctor11initializedE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; flag indicating if the input message is connect to another message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E12WriteFunctor">
+<span id="_CPPv3I0E12WriteFunctor"></span><span id="_CPPv2I0E12WriteFunctor"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">messageType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_write_functor"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteFunctor</span></span></span><a class="headerlink" href="#_CPPv4I0E12WriteFunctor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messaging.h&gt;</em></div>
+<p>Write Functor </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12WriteFunctor12WriteFunctorEv">
+<span id="_CPPv3N12WriteFunctor12WriteFunctorEv"></span><span id="_CPPv2N12WriteFunctor12WriteFunctorEv"></span><span id="WriteFunctor::WriteFunctor"></span><span class="target" id="class_write_functor_1a5ba165481825148cab8c4bcc269b5a7c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteFunctor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12WriteFunctor12WriteFunctorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>write functor constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12WriteFunctor12WriteFunctorEP11messageTypeP9MsgHeader">
+<span id="_CPPv3N12WriteFunctor12WriteFunctorEP11messageTypeP9MsgHeader"></span><span id="_CPPv2N12WriteFunctor12WriteFunctorEP11messageTypeP9MsgHeader"></span><span id="WriteFunctor::WriteFunctor__messageTypeP.MsgHeaderP"></span><span class="target" id="class_write_functor_1a3bd7cb033af023a84e1d80d21ac410f7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteFunctor</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">payloadPointer</span></span>, <a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">headerPointer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12WriteFunctor12WriteFunctorEP11messageTypeP9MsgHeader" title="Link to this definition"></a><br /></dt>
+<dd><p>write functor constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12WriteFunctorclEP11messageType7int64_t8uint64_t">
+<span id="_CPPv3N12WriteFunctorclEP11messageType7int64_t8uint64_t"></span><span id="_CPPv2N12WriteFunctorclEP11messageType7int64_t8uint64_t"></span><span id="WriteFunctor::call-operator__messageTypeP.int64_t.uint64_t"></span><span class="target" id="class_write_functor_1a6d7fdf5341bf0c711c4c480bc42545f8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">payload</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12WriteFunctorclEP11messageType7int64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>write functor constructor </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12WriteFunctor14payloadPointerE">
+<span id="_CPPv3N12WriteFunctor14payloadPointerE"></span><span id="_CPPv2N12WriteFunctor14payloadPointerE"></span><span id="WriteFunctor::payloadPointer__messageTypeP"></span><span class="target" id="class_write_functor_1a95c3e208fab46edfa99775ff3318b77d"></span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payloadPointer</span></span></span><a class="headerlink" href="#_CPPv4N12WriteFunctor14payloadPointerE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to the message payload </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12WriteFunctor13headerPointerE">
+<span id="_CPPv3N12WriteFunctor13headerPointerE"></span><span id="_CPPv2N12WriteFunctor13headerPointerE"></span><span id="WriteFunctor::headerPointer__MsgHeaderP"></span><span class="target" id="class_write_functor_1acba2dbb4377988d5c47530145033bd45"></span><a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">headerPointer</span></span></span><a class="headerlink" href="#_CPPv4N12WriteFunctor13headerPointerE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to the message header </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E7Message">
+<span id="_CPPv3I0E7Message"></span><span id="_CPPv2I0E7Message"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">messageType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_message"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Message</span></span></span><a class="headerlink" href="#_CPPv4I0E7Message" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messaging.h&gt;</em></div>
+<p>forward-declare sim message for use by read functor</p>
+<p>base class template for bsk messages </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message13addSubscriberEv">
+<span id="_CPPv3N7Message13addSubscriberEv"></span><span id="_CPPv2N7Message13addSubscriberEv"></span><span id="Message::addSubscriber"></span><span class="target" id="class_message_1aaf9bf1023cf97b61453e348b718c003c"></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSubscriber</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message13addSubscriberEv" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; request read rights. returns reference to class <code class="docutils literal notranslate"><span class="pre">read</span></code> variable </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message9addAuthorEv">
+<span id="_CPPv3N7Message9addAuthorEv"></span><span id="_CPPv2N7Message9addAuthorEv"></span><span id="Message::addAuthor"></span><span class="target" id="class_message_1a119d23d8cbfd5c4ad40e66abfb5ad951"></span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor"><span class="n"><span class="pre">WriteFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addAuthor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message9addAuthorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; request write rights. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message12subscribeRawEPP9MsgHeader">
+<span id="_CPPv3N7Message12subscribeRawEPP9MsgHeader"></span><span id="_CPPv2N7Message12subscribeRawEPP9MsgHeader"></span><span id="Message::subscribeRaw__MsgHeaderPP"></span><span class="target" id="class_message_1a91600ef7c5d6666d15b784efe1bea201"></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">subscribeRaw</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msgPtr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message12subscribeRawEPP9MsgHeader" title="Link to this definition"></a><br /></dt>
+<dd><p>for plain ole c modules </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message14getMsgPointersEPP9MsgHeader">
+<span id="_CPPv3N7Message14getMsgPointersEPP9MsgHeader"></span><span id="_CPPv2N7Message14getMsgPointersEPP9MsgHeader"></span><span id="Message::getMsgPointers__MsgHeaderPP"></span><span class="target" id="class_message_1a1a840c3e3f9b74dde5989688f2c7cc6a"></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMsgPointers</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msgPtr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message14getMsgPointersEPP9MsgHeader" title="Link to this definition"></a><br /></dt>
+<dd><p>for plain ole c modules </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message8recorderE8uint64_t">
+<span id="_CPPv3N7Message8recorderE8uint64_t"></span><span id="_CPPv2N7Message8recorderE8uint64_t"></span><span id="Message::recorder__uint64_t"></span><span class="target" id="class_message_1ac5d936a5196562792d0360a17c40be32"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder"><span class="n"><span class="pre">Recorder</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">recorder</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message8recorderE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_recorder"><span class="std std-ref">Recorder</span></a> object. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message8isLinkedEv">
+<span id="_CPPv3N7Message8isLinkedEv"></span><span id="_CPPv2N7Message8isLinkedEv"></span><span id="Message::isLinked"></span><span class="target" id="class_message_1afab8e409f40fe9059705246aeda9c200"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isLinked</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message8isLinkedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>check if this msg has been connected to </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message14getPayloadSizeEv">
+<span id="_CPPv3N7Message14getPayloadSizeEv"></span><span id="_CPPv2N7Message14getPayloadSizeEv"></span><span id="Message::getPayloadSize"></span><span class="target" id="class_message_1ae7cbcbe30dee96310f16f42076782e07"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPayloadSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Message14getPayloadSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the memory size of the payload, be careful about dynamically sized things. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message5writeE">
+<span id="_CPPv3N7Message5writeE"></span><span id="_CPPv2N7Message5writeE"></span><span id="Message::write__WriteFunctor:messageType:"></span><span class="target" id="class_message_1aed1e0f77358ed822bf3d6deea11f8e70"></span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor"><span class="n"><span class="pre">WriteFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">write</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E12WriteFunctor" title="WriteFunctor"><span class="n"><span class="pre">WriteFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="o"><span class="pre">&amp;</span></span><a class="reference internal" href="#_CPPv4N7Message7payloadE" title="Message::payload"><span class="n"><span class="pre">payload</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span><a class="reference internal" href="#_CPPv4N7Message6headerE" title="Message::header"><span class="n"><span class="pre">header</span></span></a><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N7Message5writeE" title="Link to this definition"></a><br /></dt>
+<dd><p>write functor to this message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message14zeroMsgPayloadE">
+<span id="_CPPv3N7Message14zeroMsgPayloadE"></span><span id="_CPPv2N7Message14zeroMsgPayloadE"></span><span id="Message::zeroMsgPayload__messageType"></span><span class="target" id="class_message_1a159ab0efd3a7a1c32764cdf2a1781a5f"></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">zeroMsgPayload</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N7Message14zeroMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>zero’d copy of the message payload structure </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message7payloadE">
+<span id="_CPPv3N7Message7payloadE"></span><span id="_CPPv2N7Message7payloadE"></span><span id="Message::payload__messageType"></span><span class="target" id="class_message_1a003d552244b77f57e26649ed6427ab80"></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">payload</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N7Message7payloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>struct defining message payload, zero’d on creation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message6headerE">
+<span id="_CPPv3N7Message6headerE"></span><span id="_CPPv2N7Message6headerE"></span><span id="Message::header__MsgHeader"></span><span class="target" id="class_message_1ab4c957adb6d4395e1754b54f4a3a43e8"></span><a class="reference internal" href="msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">header</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N7Message6headerE" title="Link to this definition"></a><br /></dt>
+<dd><p>struct defining the message header, zero’d on creation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Message4readE">
+<span id="_CPPv3N7Message4readE"></span><span id="_CPPv2N7Message4readE"></span><span id="Message::read__ReadFunctor:messageType:"></span><span class="target" id="class_message_1a346bb08d8b14ff3350726391ff55ca55"></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">read</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="o"><span class="pre">&amp;</span></span><a class="reference internal" href="#_CPPv4N7Message7payloadE" title="Message::payload"><span class="n"><span class="pre">payload</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span><a class="reference internal" href="#_CPPv4N7Message6headerE" title="Message::header"><span class="n"><span class="pre">header</span></span></a><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N7Message4readE" title="Link to this definition"></a><br /></dt>
+<dd><p>read functor instance </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E8Recorder">
+<span id="_CPPv3I0E8Recorder"></span><span id="_CPPv2I0E8Recorder"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">messageType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_recorder"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Recorder</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv4I0E8Recorder" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messaging.h&gt;</em></div>
+<p>Keep a time history of messages accessible to users from python </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder8RecorderEv">
+<span id="_CPPv3N8Recorder8RecorderEv"></span><span id="_CPPv2N8Recorder8RecorderEv"></span><span id="Recorder::Recorder"></span><span class="target" id="class_recorder_1afbdce8e89252c39992f7c51ff55beff8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Recorder</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder8RecorderEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder8RecorderEP7MessageI11messageTypeE8uint64_t">
+<span id="_CPPv3N8Recorder8RecorderEP7MessageI11messageTypeE8uint64_t"></span><span id="_CPPv2N8Recorder8RecorderEP7MessageI11messageTypeE8uint64_t"></span><span id="Recorder::Recorder__Message:messageType:P.uint64_t"></span><span class="target" id="class_recorder_1af8f9d820758a80b14b835b32167ca11b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Recorder</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">message</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder8RecorderEP7MessageI11messageTypeE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Use this to record cpp messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder8RecorderEPv8uint64_t">
+<span id="_CPPv3N8Recorder8RecorderEPv8uint64_t"></span><span id="_CPPv2N8Recorder8RecorderEPv8uint64_t"></span><span id="Recorder::Recorder__voidP.uint64_t"></span><span class="target" id="class_recorder_1a8c38cb1187e038ec273b6f48b36d9b69"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Recorder</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">message</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder8RecorderEPv8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Use this to record C messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder8RecorderEP11ReadFunctorI11messageTypeE8uint64_t">
+<span id="_CPPv3N8Recorder8RecorderEP11ReadFunctorI11messageTypeE8uint64_t"></span><span id="_CPPv2N8Recorder8RecorderEP11ReadFunctorI11messageTypeE8uint64_t"></span><span id="Recorder::Recorder__ReadFunctor:messageType:P.uint64_t"></span><span class="target" id="class_recorder_1a3e3b0501a1231e477697b0eb6caa03a8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Recorder</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">messageReader</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder8RecorderEP11ReadFunctorI11messageTypeE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Use this to keep track of what someone is reading </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8RecorderD0Ev">
+<span id="_CPPv3N8RecorderD0Ev"></span><span id="_CPPv2N8RecorderD0Ev"></span><span id="Recorder::~Recorder"></span><span class="target" id="class_recorder_1ade2d4b06f4092cef8e00b9855ec8c34a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~Recorder</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8RecorderD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder8SelfInitEv">
+<span id="_CPPv3N8Recorder8SelfInitEv"></span><span id="_CPPv2N8Recorder8SelfInitEv"></span><span id="Recorder::SelfInit"></span><span class="target" id="class_recorder_1a86cc9953757de9ed07f4e81bda5913fe"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; self initialization </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder14IntegratedInitEv">
+<span id="_CPPv3N8Recorder14IntegratedInitEv"></span><span id="_CPPv2N8Recorder14IntegratedInitEv"></span><span id="Recorder::IntegratedInit"></span><span class="target" id="class_recorder_1ab5fd51789b6de630a660b0c3a330799f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IntegratedInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder14IntegratedInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; cross initialization </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder11UpdateStateE8uint64_t">
+<span id="_CPPv3N8Recorder11UpdateStateE8uint64_t"></span><span id="_CPPv2N8Recorder11UpdateStateE8uint64_t"></span><span id="Recorder::UpdateState__uint64_t"></span><span class="target" id="class_recorder_1aeb8561c7cfba47c4a71b2faaf6b76f7b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Read and record the message </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder5ResetE8uint64_t">
+<span id="_CPPv3N8Recorder5ResetE8uint64_t"></span><span id="_CPPv2N8Recorder5ResetE8uint64_t"></span><span id="Recorder::Reset__uint64_t"></span><span class="target" id="class_recorder_1a600ead436d02555bdc789d4661667fe5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder5timesEv">
+<span id="_CPPv3N8Recorder5timesEv"></span><span id="_CPPv2N8Recorder5timesEv"></span><span id="Recorder::times"></span><span class="target" id="class_recorder_1a9514a8cdf484b6f78a3e64d0a24d440e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">times</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder5timesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>time recorded method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder12timesWrittenEv">
+<span id="_CPPv3N8Recorder12timesWrittenEv"></span><span id="_CPPv2N8Recorder12timesWrittenEv"></span><span id="Recorder::timesWritten"></span><span class="target" id="class_recorder_1af99f10a05385544e5f0c1f198c1ae16a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">timesWritten</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder12timesWrittenEv" title="Link to this definition"></a><br /></dt>
+<dd><p>time written method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder6recordEv">
+<span id="_CPPv3N8Recorder6recordEv"></span><span id="_CPPv2N8Recorder6recordEv"></span><span id="Recorder::record"></span><span class="target" id="class_recorder_1a66874b92f5b2f0f270c00ca7d6858388"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">record</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder6recordEv" title="Link to this definition"></a><br /></dt>
+<dd><p>record method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder4sizeEv">
+<span id="_CPPv3N8Recorder4sizeEv"></span><span id="_CPPv2N8Recorder4sizeEv"></span><span id="Recorder::size"></span><span class="target" id="class_recorder_1a9e1c76dbe293ce9513eae52c39df5e7e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>size of the record so far </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder11findMsgNameENSt6stringE">
+<span id="_CPPv3N8Recorder11findMsgNameENSt6stringE"></span><span id="_CPPv2N8Recorder11findMsgNameENSt6stringE"></span><span id="Recorder::findMsgName__ss"></span><span class="target" id="class_recorder_1a05e22f586ac508c0b580ce6d72d0d852"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">findMsgName</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">msgName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder11findMsgNameENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>determine message name </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder5clearEv">
+<span id="_CPPv3N8Recorder5clearEv"></span><span id="_CPPv2N8Recorder5clearEv"></span><span id="Recorder::clear"></span><span class="target" id="class_recorder_1a1054a982a62e40a40401e43dd6c08dff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>clear the recorded messages, i.e. purge the history </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder18updateTimeIntervalE8uint64_t">
+<span id="_CPPv3N8Recorder18updateTimeIntervalE8uint64_t"></span><span id="_CPPv2N8Recorder18updateTimeIntervalE8uint64_t"></span><span id="Recorder::updateTimeInterval__uint64_t"></span><span class="target" id="class_recorder_1ac7d569a619f95d2161bd4f70e9ffe630"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateTimeInterval</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeDiff</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8Recorder18updateTimeIntervalE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>method to update the minimum time interval before recording the next message </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder9bskLoggerE">
+<span id="_CPPv3N8Recorder9bskLoggerE"></span><span id="_CPPv2N8Recorder9bskLoggerE"></span><span id="Recorder::bskLogger__BSKLogger"></span><span class="target" id="class_recorder_1ae076726846472beb9ef55ada292ed54e"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder9msgRecordE">
+<span id="_CPPv3N8Recorder9msgRecordE"></span><span id="_CPPv2N8Recorder9msgRecordE"></span><span id="Recorder::msgRecord__std::vector:messageType:"></span><span class="target" id="class_recorder_1ad947a7d2a82630cfcd0f528546e45a43"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgRecord</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder9msgRecordE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of recorded messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder14msgRecordTimesE">
+<span id="_CPPv3N8Recorder14msgRecordTimesE"></span><span id="_CPPv2N8Recorder14msgRecordTimesE"></span><span id="Recorder::msgRecordTimes__std::vector:uint64_t:"></span><span class="target" id="class_recorder_1a38f48d08b809d00462be5875a14b74fb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgRecordTimes</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder14msgRecordTimesE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of times at which messages are recorded </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder15msgWrittenTimesE">
+<span id="_CPPv3N8Recorder15msgWrittenTimesE"></span><span id="_CPPv2N8Recorder15msgWrittenTimesE"></span><span id="Recorder::msgWrittenTimes__std::vector:uint64_t:"></span><span class="target" id="class_recorder_1ac9f0c7022a139f89e51feddc845390e8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgWrittenTimes</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder15msgWrittenTimesE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of times at which messages are written </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder14nextUpdateTimeE">
+<span id="_CPPv3N8Recorder14nextUpdateTimeE"></span><span id="_CPPv2N8Recorder14nextUpdateTimeE"></span><span id="Recorder::nextUpdateTime__uint64_t"></span><span class="target" id="class_recorder_1a995e53b06d6e6a10832691f6facec1cc"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nextUpdateTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N8Recorder14nextUpdateTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] earliest time at which the msg is recorded again </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder12timeIntervalE">
+<span id="_CPPv3N8Recorder12timeIntervalE"></span><span id="_CPPv2N8Recorder12timeIntervalE"></span><span id="Recorder::timeInterval__uint64_t"></span><span class="target" id="class_recorder_1aebfb65528ae8f1a23e1cef8ba4e24988"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeInterval</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder12timeIntervalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] recording time intervale </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8Recorder11readMessageE">
+<span id="_CPPv3N8Recorder11readMessageE"></span><span id="_CPPv2N8Recorder11readMessageE"></span><span id="Recorder::readMessage__ReadFunctor:messageType:"></span><span class="target" id="class_recorder_1a70281c8a03ed5febf38dca3f0069bb31"></span><a class="reference internal" href="#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E8Recorder" title="Recorder::messageType"><span class="n"><span class="pre">messageType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessage</span></span></span><a class="headerlink" href="#_CPPv4N8Recorder11readMessageE" title="Link to this definition"></a><br /></dt>
+<dd><p>method description </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="messaging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="msgHeader.html" class="btn btn-neutral float-right" title="msgHeader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

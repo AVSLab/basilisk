@@ -1,0 +1,869 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: stateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: stateVecIntegrator" href="stateVecIntegrator.html" />
+    <link rel="prev" title="Module: stateData" href="stateData.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: stateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-stateeffector">
+<span id="stateeffector"></span><h1>Module: stateEffector<a class="headerlink" href="#module-stateeffector" title="Link to this heading"></a></h1>
+<p>Abstract class that is used to implement an effector attached to the dynamicObject that has a state that needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc</p>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415BackSubMatrices">
+<span id="_CPPv315BackSubMatrices"></span><span id="_CPPv215BackSubMatrices"></span><span id="BackSubMatrices"></span><span class="target" id="struct_back_sub_matrices"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BackSubMatrices</span></span></span><a class="headerlink" href="#_CPPv415BackSubMatrices" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateEffector.h&gt;</em></div>
+<p>back substitution matrix structure </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices7matrixAE">
+<span id="_CPPv3N15BackSubMatrices7matrixAE"></span><span id="_CPPv2N15BackSubMatrices7matrixAE"></span><span id="BackSubMatrices::matrixA__Eigen::Matrix3d"></span><span class="target" id="struct_back_sub_matrices_1a6114ee23aef48be0728b39c51547bfb8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixA</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices7matrixAE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution matrix A. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices7matrixBE">
+<span id="_CPPv3N15BackSubMatrices7matrixBE"></span><span id="_CPPv2N15BackSubMatrices7matrixBE"></span><span id="BackSubMatrices::matrixB__Eigen::Matrix3d"></span><span class="target" id="struct_back_sub_matrices_1acaccbb6a7b6cf423a41ed8e6140b5853"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixB</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices7matrixBE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution matrix B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices7matrixCE">
+<span id="_CPPv3N15BackSubMatrices7matrixCE"></span><span id="_CPPv2N15BackSubMatrices7matrixCE"></span><span id="BackSubMatrices::matrixC__Eigen::Matrix3d"></span><span class="target" id="struct_back_sub_matrices_1ad25b72d7ae4dd7aeb3cd05abc500256c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixC</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices7matrixCE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution matrix C. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices7matrixDE">
+<span id="_CPPv3N15BackSubMatrices7matrixDE"></span><span id="_CPPv2N15BackSubMatrices7matrixDE"></span><span id="BackSubMatrices::matrixD__Eigen::Matrix3d"></span><span class="target" id="struct_back_sub_matrices_1aab9282b8811200ed1bf8f62ea92625bf"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixD</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices7matrixDE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution matrix D. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices8vecTransE">
+<span id="_CPPv3N15BackSubMatrices8vecTransE"></span><span id="_CPPv2N15BackSubMatrices8vecTransE"></span><span id="BackSubMatrices::vecTrans__Eigen::Vector3d"></span><span class="target" id="struct_back_sub_matrices_1aff54b7d92e2cd20f4ad18e2ef5770bd6"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vecTrans</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices8vecTransE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution translation vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15BackSubMatrices6vecRotE">
+<span id="_CPPv3N15BackSubMatrices6vecRotE"></span><span id="_CPPv2N15BackSubMatrices6vecRotE"></span><span id="BackSubMatrices::vecRot__Eigen::Vector3d"></span><span class="target" id="struct_back_sub_matrices_1af0010d9b57072064c4ad5c287fce5efd"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vecRot</span></span></span><a class="headerlink" href="#_CPPv4N15BackSubMatrices6vecRotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-Substitution rotation vector. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417EffectorMassProps">
+<span id="_CPPv317EffectorMassProps"></span><span id="_CPPv217EffectorMassProps"></span><span id="EffectorMassProps"></span><span class="target" id="struct_effector_mass_props"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EffectorMassProps</span></span></span><a class="headerlink" href="#_CPPv417EffectorMassProps" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateEffector.h&gt;</em></div>
+<p>Abstract class that is used to implement an effector attached to the dynamicObject that has a state that needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps4mEffE">
+<span id="_CPPv3N17EffectorMassProps4mEffE"></span><span id="_CPPv2N17EffectorMassProps4mEffE"></span><span id="EffectorMassProps::mEff__double"></span><span class="target" id="struct_effector_mass_props_1aa41cd9c15ee194e8f0c835e3ffa4806d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mEff</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps4mEffE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] Mass of the effector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps7mEffDotE">
+<span id="_CPPv3N17EffectorMassProps7mEffDotE"></span><span id="_CPPv2N17EffectorMassProps7mEffDotE"></span><span id="EffectorMassProps::mEffDot__double"></span><span class="target" id="struct_effector_mass_props_1aba0e4a44dbf7910f1efcb2f23b49c64b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mEffDot</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps7mEffDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/s] Time derivate of mEff </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps10IEffPntB_BE">
+<span id="_CPPv3N17EffectorMassProps10IEffPntB_BE"></span><span id="_CPPv2N17EffectorMassProps10IEffPntB_BE"></span><span id="EffectorMassProps::IEffPntB_B__Eigen::Matrix3d"></span><span class="target" id="struct_effector_mass_props_1a3a0b04d9806d75d91fc3a06b5301085e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IEffPntB_B</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps10IEffPntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2] Inertia of effector relative to point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps9rEff_CB_BE">
+<span id="_CPPv3N17EffectorMassProps9rEff_CB_BE"></span><span id="_CPPv2N17EffectorMassProps9rEff_CB_BE"></span><span id="EffectorMassProps::rEff_CB_B__Eigen::Vector3d"></span><span class="target" id="struct_effector_mass_props_1aabddaf397db331a8d1532be3bd87d345"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEff_CB_B</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps9rEff_CB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Center of mass of effector with respect to point B in B frame comp </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps14rEffPrime_CB_BE">
+<span id="_CPPv3N17EffectorMassProps14rEffPrime_CB_BE"></span><span id="_CPPv2N17EffectorMassProps14rEffPrime_CB_BE"></span><span id="EffectorMassProps::rEffPrime_CB_B__Eigen::Vector3d"></span><span class="target" id="struct_effector_mass_props_1a720c863f0ad5efa396de592af9c690f9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEffPrime_CB_B</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps14rEffPrime_CB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Time derivative with respect to the body of rEff_CB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17EffectorMassProps15IEffPrimePntB_BE">
+<span id="_CPPv3N17EffectorMassProps15IEffPrimePntB_BE"></span><span id="_CPPv2N17EffectorMassProps15IEffPrimePntB_BE"></span><span id="EffectorMassProps::IEffPrimePntB_B__Eigen::Matrix3d"></span><span class="target" id="struct_effector_mass_props_1a9d5079370d30a7b37290902aef9c69be"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IEffPrimePntB_B</span></span></span><a class="headerlink" href="#_CPPv4N17EffectorMassProps15IEffPrimePntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Time derivative with respect to the body of IEffPntB_B </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413StateEffector">
+<span id="_CPPv313StateEffector"></span><span id="_CPPv213StateEffector"></span><span id="StateEffector"></span><span class="target" id="class_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateEffector</span></span></span><a class="headerlink" href="#_CPPv413StateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateEffector.h&gt;</em></div>
+<p>state effector class </p>
+<p>Subclassed by <a class="reference internal" href="hubEffector.html#class_hub_effector"><span class="std std-ref">HubEffector</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector22setStateNameOfPositionENSt6stringE">
+<span id="_CPPv3N13StateEffector22setStateNameOfPositionENSt6stringE"></span><span id="_CPPv2N13StateEffector22setStateNameOfPositionENSt6stringE"></span><span id="StateEffector::setStateNameOfPosition__ss"></span><span class="target" id="class_state_effector_1a43e1740085fb0c61716dac7d347c0ddc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector22setStateNameOfPositionENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ad5f1a6b15fb96a65381b89c180d57fa5"><span class="std std-ref"><span class="pre">stateNameOfPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector22getStateNameOfPositionEv">
+<span id="_CPPv3NK13StateEffector22getStateNameOfPositionEv"></span><span id="_CPPv2NK13StateEffector22getStateNameOfPositionEv"></span><span id="StateEffector::getStateNameOfPositionC"></span><span class="target" id="class_state_effector_1aabc07eaa3da8184b60cf1f6784ae1211"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateNameOfPosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector22getStateNameOfPositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ad5f1a6b15fb96a65381b89c180d57fa5"><span class="std std-ref"><span class="pre">stateNameOfPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector22setStateNameOfVelocityENSt6stringE">
+<span id="_CPPv3N13StateEffector22setStateNameOfVelocityENSt6stringE"></span><span id="_CPPv2N13StateEffector22setStateNameOfVelocityENSt6stringE"></span><span id="StateEffector::setStateNameOfVelocity__ss"></span><span class="target" id="class_state_effector_1a1cb3f38700e6dd0424b7afa319b30327"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector22setStateNameOfVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a87d63badb33bed64c9291a82f32ebb2a"><span class="std std-ref"><span class="pre">stateNameOfVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector22getStateNameOfVelocityEv">
+<span id="_CPPv3NK13StateEffector22getStateNameOfVelocityEv"></span><span id="_CPPv2NK13StateEffector22getStateNameOfVelocityEv"></span><span id="StateEffector::getStateNameOfVelocityC"></span><span class="target" id="class_state_effector_1a8801c44fd7b4cc5472424053714f136b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateNameOfVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector22getStateNameOfVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a87d63badb33bed64c9291a82f32ebb2a"><span class="std std-ref"><span class="pre">stateNameOfVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19setStateNameOfSigmaENSt6stringE">
+<span id="_CPPv3N13StateEffector19setStateNameOfSigmaENSt6stringE"></span><span id="_CPPv2N13StateEffector19setStateNameOfSigmaENSt6stringE"></span><span id="StateEffector::setStateNameOfSigma__ss"></span><span class="target" id="class_state_effector_1a12375349a0a259f1e6884133475fe121"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfSigma</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector19setStateNameOfSigmaENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac3eb21e82d0be8f47b50268ba6107d89"><span class="std std-ref"><span class="pre">stateNameOfSigma</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector19getStateNameOfSigmaEv">
+<span id="_CPPv3NK13StateEffector19getStateNameOfSigmaEv"></span><span id="_CPPv2NK13StateEffector19getStateNameOfSigmaEv"></span><span id="StateEffector::getStateNameOfSigmaC"></span><span class="target" id="class_state_effector_1a0641006bbaaa3604fb738ddbd7322fd5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateNameOfSigma</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector19getStateNameOfSigmaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac3eb21e82d0be8f47b50268ba6107d89"><span class="std std-ref"><span class="pre">stateNameOfSigma</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19setStateNameOfOmegaENSt6stringE">
+<span id="_CPPv3N13StateEffector19setStateNameOfOmegaENSt6stringE"></span><span id="_CPPv2N13StateEffector19setStateNameOfOmegaENSt6stringE"></span><span id="StateEffector::setStateNameOfOmega__ss"></span><span class="target" id="class_state_effector_1af6be043f598e9667b992542ad314f8ad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfOmega</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector19setStateNameOfOmegaENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a77d0c009d1b801deb4abdec97e2a0cc7"><span class="std std-ref"><span class="pre">stateNameOfOmega</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector19getStateNameOfOmegaEv">
+<span id="_CPPv3NK13StateEffector19getStateNameOfOmegaEv"></span><span id="_CPPv2NK13StateEffector19getStateNameOfOmegaEv"></span><span id="StateEffector::getStateNameOfOmegaC"></span><span class="target" id="class_state_effector_1afc3dd008b2fe4e405a0eeca31fe8a816"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateNameOfOmega</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector19getStateNameOfOmegaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a77d0c009d1b801deb4abdec97e2a0cc7"><span class="std std-ref"><span class="pre">stateNameOfOmega</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector16setPropName_m_SCENSt6stringE">
+<span id="_CPPv3N13StateEffector16setPropName_m_SCENSt6stringE"></span><span id="_CPPv2N13StateEffector16setPropName_m_SCENSt6stringE"></span><span id="StateEffector::setPropName_m_SC__ss"></span><span class="target" id="class_state_effector_1aacf45ae40b04c57da66a05bb02e8ac41"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_m_SC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector16setPropName_m_SCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a45680c8d8bf94749b41737cfa3194fc3"><span class="std std-ref"><span class="pre">propName_m_SC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector16getPropName_m_SCEv">
+<span id="_CPPv3NK13StateEffector16getPropName_m_SCEv"></span><span id="_CPPv2NK13StateEffector16getPropName_m_SCEv"></span><span id="StateEffector::getPropName_m_SCC"></span><span class="target" id="class_state_effector_1a494839606e734a8848f8fd6f218fe01e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_m_SC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector16getPropName_m_SCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a45680c8d8bf94749b41737cfa3194fc3"><span class="std std-ref"><span class="pre">propName_m_SC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19setPropName_mDot_SCENSt6stringE">
+<span id="_CPPv3N13StateEffector19setPropName_mDot_SCENSt6stringE"></span><span id="_CPPv2N13StateEffector19setPropName_mDot_SCENSt6stringE"></span><span id="StateEffector::setPropName_mDot_SC__ss"></span><span class="target" id="class_state_effector_1a57729253e39bc8a7db8e883c6b4157ac"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_mDot_SC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector19setPropName_mDot_SCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1aef6af34142cfc3d99a33cf41bf3fba25"><span class="std std-ref"><span class="pre">propName_mDot_SC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector19getPropName_mDot_SCEv">
+<span id="_CPPv3NK13StateEffector19getPropName_mDot_SCEv"></span><span id="_CPPv2NK13StateEffector19getPropName_mDot_SCEv"></span><span id="StateEffector::getPropName_mDot_SCC"></span><span class="target" id="class_state_effector_1a50a0ab1cbe70d0e650d401ac6211b4a9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_mDot_SC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector19getPropName_mDot_SCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1aef6af34142cfc3d99a33cf41bf3fba25"><span class="std std-ref"><span class="pre">propName_mDot_SC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26setPropName_centerOfMassSCENSt6stringE">
+<span id="_CPPv3N13StateEffector26setPropName_centerOfMassSCENSt6stringE"></span><span id="_CPPv2N13StateEffector26setPropName_centerOfMassSCENSt6stringE"></span><span id="StateEffector::setPropName_centerOfMassSC__ss"></span><span class="target" id="class_state_effector_1afcbce2cae52637aefa0a490d9d64be60"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_centerOfMassSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector26setPropName_centerOfMassSCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac89662f3c8d23173a7903613df1ea13a"><span class="std std-ref"><span class="pre">propName_centerOfMassSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector26getPropName_centerOfMassSCEv">
+<span id="_CPPv3NK13StateEffector26getPropName_centerOfMassSCEv"></span><span id="_CPPv2NK13StateEffector26getPropName_centerOfMassSCEv"></span><span id="StateEffector::getPropName_centerOfMassSCC"></span><span class="target" id="class_state_effector_1a49aeec73573e7c740c9b2b57d05a12f5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_centerOfMassSC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector26getPropName_centerOfMassSCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac89662f3c8d23173a7903613df1ea13a"><span class="std std-ref"><span class="pre">propName_centerOfMassSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector21setPropName_inertiaSCENSt6stringE">
+<span id="_CPPv3N13StateEffector21setPropName_inertiaSCENSt6stringE"></span><span id="_CPPv2N13StateEffector21setPropName_inertiaSCENSt6stringE"></span><span id="StateEffector::setPropName_inertiaSC__ss"></span><span class="target" id="class_state_effector_1a26cf7bbf5cb4497b557725d27862ffc4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertiaSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector21setPropName_inertiaSCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1aa638b1966a1d8607e4630c17adaa7746"><span class="std std-ref"><span class="pre">propName_inertiaSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector21getPropName_inertiaSCEv">
+<span id="_CPPv3NK13StateEffector21getPropName_inertiaSCEv"></span><span id="_CPPv2NK13StateEffector21getPropName_inertiaSCEv"></span><span id="StateEffector::getPropName_inertiaSCC"></span><span class="target" id="class_state_effector_1afb5d92de4264dfe24f5efa0463a31feb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertiaSC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector21getPropName_inertiaSCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1aa638b1966a1d8607e4630c17adaa7746"><span class="std std-ref"><span class="pre">propName_inertiaSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26setPropName_inertiaPrimeSCENSt6stringE">
+<span id="_CPPv3N13StateEffector26setPropName_inertiaPrimeSCENSt6stringE"></span><span id="_CPPv2N13StateEffector26setPropName_inertiaPrimeSCENSt6stringE"></span><span id="StateEffector::setPropName_inertiaPrimeSC__ss"></span><span class="target" id="class_state_effector_1af028b20fdb4208234a46fe48f54651ba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertiaPrimeSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector26setPropName_inertiaPrimeSCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1af5fc4204d13c29f300cb5e2d3c6b7525"><span class="std std-ref"><span class="pre">propName_inertiaPrimeSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector26getPropName_inertiaPrimeSCEv">
+<span id="_CPPv3NK13StateEffector26getPropName_inertiaPrimeSCEv"></span><span id="_CPPv2NK13StateEffector26getPropName_inertiaPrimeSCEv"></span><span id="StateEffector::getPropName_inertiaPrimeSCC"></span><span class="target" id="class_state_effector_1a5ed01fa7f1d0869603b10929094e13ea"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertiaPrimeSC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector26getPropName_inertiaPrimeSCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1af5fc4204d13c29f300cb5e2d3c6b7525"><span class="std std-ref"><span class="pre">propName_inertiaPrimeSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector31setPropName_centerOfMassPrimeSCENSt6stringE">
+<span id="_CPPv3N13StateEffector31setPropName_centerOfMassPrimeSCENSt6stringE"></span><span id="_CPPv2N13StateEffector31setPropName_centerOfMassPrimeSCENSt6stringE"></span><span id="StateEffector::setPropName_centerOfMassPrimeSC__ss"></span><span class="target" id="class_state_effector_1a104af048a0abe8611b020ce0d5826f5d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_centerOfMassPrimeSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector31setPropName_centerOfMassPrimeSCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a80ada97ac823c8b25f9dd6206bd79694"><span class="std std-ref"><span class="pre">propName_centerOfMassPrimeSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector31getPropName_centerOfMassPrimeSCEv">
+<span id="_CPPv3NK13StateEffector31getPropName_centerOfMassPrimeSCEv"></span><span id="_CPPv2NK13StateEffector31getPropName_centerOfMassPrimeSCEv"></span><span id="StateEffector::getPropName_centerOfMassPrimeSCC"></span><span class="target" id="class_state_effector_1ad25acdba923b17e843bb23ac667c01c3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_centerOfMassPrimeSC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector31getPropName_centerOfMassPrimeSCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a80ada97ac823c8b25f9dd6206bd79694"><span class="std std-ref"><span class="pre">propName_centerOfMassPrimeSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector29setPropName_centerOfMassDotSCENSt6stringE">
+<span id="_CPPv3N13StateEffector29setPropName_centerOfMassDotSCENSt6stringE"></span><span id="_CPPv2N13StateEffector29setPropName_centerOfMassDotSCENSt6stringE"></span><span id="StateEffector::setPropName_centerOfMassDotSC__ss"></span><span class="target" id="class_state_effector_1a38e6c3d010a07d6afb01b4a7644f962f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_centerOfMassDotSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector29setPropName_centerOfMassDotSCENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a9b54cedfb4f544e12788de25cbbe8b29"><span class="std std-ref"><span class="pre">propName_centerOfMassDotSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector29getPropName_centerOfMassDotSCEv">
+<span id="_CPPv3NK13StateEffector29getPropName_centerOfMassDotSCEv"></span><span id="_CPPv2NK13StateEffector29getPropName_centerOfMassDotSCEv"></span><span id="StateEffector::getPropName_centerOfMassDotSCC"></span><span class="target" id="class_state_effector_1af41276286220a7c6a1b7128425d0957e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_centerOfMassDotSC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector29getPropName_centerOfMassDotSCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a9b54cedfb4f544e12788de25cbbe8b29"><span class="std std-ref"><span class="pre">propName_centerOfMassDotSC</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector28setPropName_inertialPositionENSt6stringE">
+<span id="_CPPv3N13StateEffector28setPropName_inertialPositionENSt6stringE"></span><span id="_CPPv2N13StateEffector28setPropName_inertialPositionENSt6stringE"></span><span id="StateEffector::setPropName_inertialPosition__ss"></span><span class="target" id="class_state_effector_1afcb6d9ebd8148cc866392e39c4394d43"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector28setPropName_inertialPositionENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a3af2fee12664662d3b4037e24d2d6358"><span class="std std-ref"><span class="pre">propName_inertialPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector28getPropName_inertialPositionEv">
+<span id="_CPPv3NK13StateEffector28getPropName_inertialPositionEv"></span><span id="_CPPv2NK13StateEffector28getPropName_inertialPositionEv"></span><span id="StateEffector::getPropName_inertialPositionC"></span><span class="target" id="class_state_effector_1a227fb4663bfd056603ac68c67ab6f835"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialPosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector28getPropName_inertialPositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a3af2fee12664662d3b4037e24d2d6358"><span class="std std-ref"><span class="pre">propName_inertialPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector28setPropName_inertialVelocityENSt6stringE">
+<span id="_CPPv3N13StateEffector28setPropName_inertialVelocityENSt6stringE"></span><span id="_CPPv2N13StateEffector28setPropName_inertialVelocityENSt6stringE"></span><span id="StateEffector::setPropName_inertialVelocity__ss"></span><span class="target" id="class_state_effector_1acb4eba257254100f1bacd3e1c9140da9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector28setPropName_inertialVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a99703cff8bc4ea3865776251386a8225"><span class="std std-ref"><span class="pre">propName_inertialVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector28getPropName_inertialVelocityEv">
+<span id="_CPPv3NK13StateEffector28getPropName_inertialVelocityEv"></span><span id="_CPPv2NK13StateEffector28getPropName_inertialVelocityEv"></span><span id="StateEffector::getPropName_inertialVelocityC"></span><span class="target" id="class_state_effector_1a81cea3a1de9f368fe429a069693fda6d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector28getPropName_inertialVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a99703cff8bc4ea3865776251386a8225"><span class="std std-ref"><span class="pre">propName_inertialVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26setPropName_vehicleGravityENSt6stringE">
+<span id="_CPPv3N13StateEffector26setPropName_vehicleGravityENSt6stringE"></span><span id="_CPPv2N13StateEffector26setPropName_vehicleGravityENSt6stringE"></span><span id="StateEffector::setPropName_vehicleGravity__ss"></span><span class="target" id="class_state_effector_1afc9e413d8a3c83ce0cb1708531b2f6f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_vehicleGravity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector26setPropName_vehicleGravityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a7b2842c4939251529ad9691954f7d86b"><span class="std std-ref"><span class="pre">propName_vehicleGravity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector26getPropName_vehicleGravityEv">
+<span id="_CPPv3NK13StateEffector26getPropName_vehicleGravityEv"></span><span id="_CPPv2NK13StateEffector26getPropName_vehicleGravityEv"></span><span id="StateEffector::getPropName_vehicleGravityC"></span><span class="target" id="class_state_effector_1ae985161677e3972306f5abc9bb6bffaf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_vehicleGravity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector26getPropName_vehicleGravityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a7b2842c4939251529ad9691954f7d86b"><span class="std std-ref"><span class="pre">propName_vehicleGravity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector30setPropName_prescribedPositionENSt6stringE">
+<span id="_CPPv3N13StateEffector30setPropName_prescribedPositionENSt6stringE"></span><span id="_CPPv2N13StateEffector30setPropName_prescribedPositionENSt6stringE"></span><span id="StateEffector::setPropName_prescribedPosition__ss"></span><span class="target" id="class_state_effector_1aab076c32a4f4ca7dfa8b5061642fe6f2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector30setPropName_prescribedPositionENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a1eed0687f6c1127536f3c03238e18cbb"><span class="std std-ref"><span class="pre">propName_prescribedPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector30getPropName_prescribedPositionEv">
+<span id="_CPPv3NK13StateEffector30getPropName_prescribedPositionEv"></span><span id="_CPPv2NK13StateEffector30getPropName_prescribedPositionEv"></span><span id="StateEffector::getPropName_prescribedPositionC"></span><span class="target" id="class_state_effector_1af734c75411280f7cd61406e1007543dc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedPosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector30getPropName_prescribedPositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a1eed0687f6c1127536f3c03238e18cbb"><span class="std std-ref"><span class="pre">propName_prescribedPosition</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector30setPropName_prescribedVelocityENSt6stringE">
+<span id="_CPPv3N13StateEffector30setPropName_prescribedVelocityENSt6stringE"></span><span id="_CPPv2N13StateEffector30setPropName_prescribedVelocityENSt6stringE"></span><span id="StateEffector::setPropName_prescribedVelocity__ss"></span><span class="target" id="class_state_effector_1a6e981d86e7833488be7d24ffac0de329"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector30setPropName_prescribedVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1afe5bbf81aabe359bcff793c6d71a0e8e"><span class="std std-ref"><span class="pre">propName_prescribedVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector30getPropName_prescribedVelocityEv">
+<span id="_CPPv3NK13StateEffector30getPropName_prescribedVelocityEv"></span><span id="_CPPv2NK13StateEffector30getPropName_prescribedVelocityEv"></span><span id="StateEffector::getPropName_prescribedVelocityC"></span><span class="target" id="class_state_effector_1a2cf048797169c68900efde50649ab8f6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector30getPropName_prescribedVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1afe5bbf81aabe359bcff793c6d71a0e8e"><span class="std std-ref"><span class="pre">propName_prescribedVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector34setPropName_prescribedAccelerationENSt6stringE">
+<span id="_CPPv3N13StateEffector34setPropName_prescribedAccelerationENSt6stringE"></span><span id="_CPPv2N13StateEffector34setPropName_prescribedAccelerationENSt6stringE"></span><span id="StateEffector::setPropName_prescribedAcceleration__ss"></span><span class="target" id="class_state_effector_1a98d7eb84d12fc288f6509244904bdd59"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedAcceleration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector34setPropName_prescribedAccelerationENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a2958af1a0a0ccd3801508c02a55f2087"><span class="std std-ref"><span class="pre">propName_prescribedAcceleration</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector34getPropName_prescribedAccelerationEv">
+<span id="_CPPv3NK13StateEffector34getPropName_prescribedAccelerationEv"></span><span id="_CPPv2NK13StateEffector34getPropName_prescribedAccelerationEv"></span><span id="StateEffector::getPropName_prescribedAccelerationC"></span><span class="target" id="class_state_effector_1a1b6214241bb2cf14ec8335615757d466"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedAcceleration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector34getPropName_prescribedAccelerationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a2958af1a0a0ccd3801508c02a55f2087"><span class="std std-ref"><span class="pre">propName_prescribedAcceleration</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector30setPropName_prescribedAttitudeENSt6stringE">
+<span id="_CPPv3N13StateEffector30setPropName_prescribedAttitudeENSt6stringE"></span><span id="_CPPv2N13StateEffector30setPropName_prescribedAttitudeENSt6stringE"></span><span id="StateEffector::setPropName_prescribedAttitude__ss"></span><span class="target" id="class_state_effector_1a485a45d2cfae10b5dfa443143ea3fc50"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedAttitude</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector30setPropName_prescribedAttitudeENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ab854a7fc671c2b183b91c23873b2786c"><span class="std std-ref"><span class="pre">propName_prescribedAttitude</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector30getPropName_prescribedAttitudeEv">
+<span id="_CPPv3NK13StateEffector30getPropName_prescribedAttitudeEv"></span><span id="_CPPv2NK13StateEffector30getPropName_prescribedAttitudeEv"></span><span id="StateEffector::getPropName_prescribedAttitudeC"></span><span class="target" id="class_state_effector_1a98ecfc279ea1437788d952b78a156b4f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedAttitude</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector30getPropName_prescribedAttitudeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ab854a7fc671c2b183b91c23873b2786c"><span class="std std-ref"><span class="pre">propName_prescribedAttitude</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector33setPropName_prescribedAngVelocityENSt6stringE">
+<span id="_CPPv3N13StateEffector33setPropName_prescribedAngVelocityENSt6stringE"></span><span id="_CPPv2N13StateEffector33setPropName_prescribedAngVelocityENSt6stringE"></span><span id="StateEffector::setPropName_prescribedAngVelocity__ss"></span><span class="target" id="class_state_effector_1a99399a57e3ed4663bffc1e3b0f065269"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedAngVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector33setPropName_prescribedAngVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a6bd14e8cc6fbda8646f5cf6e8334f124"><span class="std std-ref"><span class="pre">propName_prescribedAngVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector33getPropName_prescribedAngVelocityEv">
+<span id="_CPPv3NK13StateEffector33getPropName_prescribedAngVelocityEv"></span><span id="_CPPv2NK13StateEffector33getPropName_prescribedAngVelocityEv"></span><span id="StateEffector::getPropName_prescribedAngVelocityC"></span><span class="target" id="class_state_effector_1a5979c59db3be38a0680be0376ec2e4d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedAngVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector33getPropName_prescribedAngVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1a6bd14e8cc6fbda8646f5cf6e8334f124"><span class="std std-ref"><span class="pre">propName_prescribedAngVelocity</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector37setPropName_prescribedAngAccelerationENSt6stringE">
+<span id="_CPPv3N13StateEffector37setPropName_prescribedAngAccelerationENSt6stringE"></span><span id="_CPPv2N13StateEffector37setPropName_prescribedAngAccelerationENSt6stringE"></span><span id="StateEffector::setPropName_prescribedAngAcceleration__ss"></span><span class="target" id="class_state_effector_1a9336983ebc15b8e3bc8beb9af9cea5fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_prescribedAngAcceleration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector37setPropName_prescribedAngAccelerationENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac7e409454f5fefa9ad0e4fd3d6fb4905"><span class="std std-ref"><span class="pre">propName_prescribedAngAcceleration</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateEffector37getPropName_prescribedAngAccelerationEv">
+<span id="_CPPv3NK13StateEffector37getPropName_prescribedAngAccelerationEv"></span><span id="_CPPv2NK13StateEffector37getPropName_prescribedAngAccelerationEv"></span><span id="StateEffector::getPropName_prescribedAngAccelerationC"></span><span class="target" id="class_state_effector_1a5289ac56b0c9585d4eae5ed7d9998628"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_prescribedAngAcceleration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateEffector37getPropName_prescribedAngAccelerationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><a class="reference internal" href="#class_state_effector_1ac7e409454f5fefa9ad0e4fd3d6fb4905"><span class="std std-ref"><span class="pre">propName_prescribedAngAcceleration</span></span></a></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector13StateEffectorEv">
+<span id="_CPPv3N13StateEffector13StateEffectorEv"></span><span id="_CPPv2N13StateEffector13StateEffectorEv"></span><span id="StateEffector::StateEffector"></span><span class="target" id="class_state_effector_1abf137999e279af0434a83eb7d2b0baf4"></span><span class="sig-name descname"><span class="n"><span class="pre">StateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector13StateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Contructor. </p>
+<p>This is the constructor, just setting the variables to zero </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffectorD0Ev">
+<span id="_CPPv3N13StateEffectorD0Ev"></span><span id="_CPPv2N13StateEffectorD0Ev"></span><span id="StateEffector::~StateEffector"></span><span class="target" id="class_state_effector_1a00d8ed219b5a4eb18ce97742a2a93468"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~StateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+<p>This is the destructor, nothing to report here </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N13StateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N13StateEffector23updateEffectorMassPropsEd"></span><span id="StateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_state_effector_1aeb8497e3c43b12e78284a1bb5d34c514"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for stateEffector to give mass contributions. </p>
+<p>This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject. This allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N13StateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N13StateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="StateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_state_effector_1a5459a11ce83f7d925de4fabb392cc60c"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Back-sub contributions. </p>
+<p>This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector40addPrescribedMotionCouplingContributionsER15BackSubMatrices">
+<span id="_CPPv3N13StateEffector40addPrescribedMotionCouplingContributionsER15BackSubMatrices"></span><span id="_CPPv2N13StateEffector40addPrescribedMotionCouplingContributionsER15BackSubMatrices"></span><span id="StateEffector::addPrescribedMotionCouplingContributions__BackSubMatricesR"></span><span class="target" id="class_state_effector_1aca7c5aae496a55fb2d58e7e28e114fda"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPrescribedMotionCouplingContributions</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector40addPrescribedMotionCouplingContributionsER15BackSubMatrices" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for adding coupling contributions for state effector branching on prescribed motion. </p>
+<p>This method must be implemented to attach a state effector to a prescribed motion state effector. The additional coupling terms required to attach the state effector to the prescribed component are computed in this method. Similar to how the spacecraft module calls updateContributions for all its attached effectors, the prescribed motion module calls this method for all its attached state effectors. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N13StateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N13StateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="StateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_state_effector_1add699b5020d7da6effa54677c004a7e5"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Energy and momentum calculations. </p>
+<p>This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject. The analytical devlopement of these contributions can be seen in Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector12modifyStatesEd">
+<span id="_CPPv3N13StateEffector12modifyStatesEd"></span><span id="_CPPv2N13StateEffector12modifyStatesEd"></span><span id="StateEffector::modifyStates__double"></span><span class="target" id="class_state_effector_1a77ce78826ce7fcc8d5deb3907f4c82a4"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">modifyStates</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector12modifyStatesEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Modify state values after integration. </p>
+<p>This method allows for an individual stateEffector to modify their states after integration </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE">
+<span id="_CPPv3N13StateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE"></span><span id="_CPPv2N13StateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE"></span><span id="StateEffector::calcForceTorqueOnBody__double.Eigen::Vector3d"></span><span class="target" id="class_state_effector_1ae1e131d9dac6b6ab49eab538049d0df7"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcForceTorqueOnBody</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Force and torque on s/c due to stateEffector. </p>
+<p>This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N13StateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N13StateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="StateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_state_effector_1aa9f69447ca99b3d52138cbb7c9783e80"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write State Messages after integration. </p>
+<p>This method ensures that all dynamics states have their messages written after integation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N13StateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N13StateEffector14registerStatesER15DynParamManager"></span><span id="StateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_state_effector_1a3745fd088f1fbb5ac25f9204b66c85a6"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13StateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for stateEffectors to register states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18registerPropertiesER15DynParamManager">
+<span id="_CPPv3N13StateEffector18registerPropertiesER15DynParamManager"></span><span id="_CPPv2N13StateEffector18registerPropertiesER15DynParamManager"></span><span id="StateEffector::registerProperties__DynParamManagerR"></span><span class="target" id="class_state_effector_1a6a45da2f75e7d278647e52d9364f8ce7"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector18registerPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for stateEffectors to register properties. </p>
+<p>This method allows the effector to register its properties </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18addDynamicEffectorEP15DynamicEffectori">
+<span id="_CPPv3N13StateEffector18addDynamicEffectorEP15DynamicEffectori"></span><span id="_CPPv2N13StateEffector18addDynamicEffectorEP15DynamicEffectori"></span><span id="StateEffector::addDynamicEffector__DynamicEffectorP.i"></span><span class="target" id="class_state_effector_1afc476b8005f81518cd4561f632934fbe"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addDynamicEffector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newDynamicEffector</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector18addDynamicEffectorEP15DynamicEffectori" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to attach a dynamic effector. </p>
+<p>This method can only be called for a state effector with override definition set up to support attached dynamic effectors </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N13StateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N13StateEffector12linkInStatesER15DynParamManager"></span><span id="StateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_state_effector_1a117e24b8d78d31f1043da6077040fe78"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13StateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for stateEffectors to get other states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector32linkInPrescribedMotionPropertiesER15DynParamManager">
+<span id="_CPPv3N13StateEffector32linkInPrescribedMotionPropertiesER15DynParamManager"></span><span id="_CPPv2N13StateEffector32linkInPrescribedMotionPropertiesER15DynParamManager"></span><span id="StateEffector::linkInPrescribedMotionProperties__DynParamManagerR"></span><span class="target" id="class_state_effector_1a0ba8fe4707246c1057576fd2e8146367"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInPrescribedMotionProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">properties</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector32linkInPrescribedMotionPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for stateEffectors to access prescribed motion properties. </p>
+<p>This method allows the state effector to link in prescribed motion properties </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N13StateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N13StateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="StateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_state_effector_1a17f780a3e2eaf4f90279efd2bc41a2f4"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13StateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for each stateEffector to calculate derivatives. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector29prependSpacecraftNameToStatesEv">
+<span id="_CPPv3N13StateEffector29prependSpacecraftNameToStatesEv"></span><span id="_CPPv2N13StateEffector29prependSpacecraftNameToStatesEv"></span><span id="StateEffector::prependSpacecraftNameToStates"></span><span class="target" id="class_state_effector_1aa57f9697860dfcf9b63e1c35707369a2"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prependSpacecraftNameToStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector29prependSpacecraftNameToStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector27receiveMotherSpacecraftDataEN5Eigen8Vector3dEN5Eigen8Matrix3dE">
+<span id="_CPPv3N13StateEffector27receiveMotherSpacecraftDataEN5Eigen8Vector3dEN5Eigen8Matrix3dE"></span><span id="_CPPv2N13StateEffector27receiveMotherSpacecraftDataEN5Eigen8Vector3dEN5Eigen8Matrix3dE"></span><span id="StateEffector::receiveMotherSpacecraftData__Eigen::Vector3d.Eigen::Matrix3d"></span><span class="target" id="class_state_effector_1a2495dbcfc25237ef118a2fe4c3644211"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">receiveMotherSpacecraftData</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rSC_BP_P</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dcmSC_BP</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateEffector27receiveMotherSpacecraftDataEN5Eigen8Vector3dEN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26nameOfSpacecraftAttachedToE">
+<span id="_CPPv3N13StateEffector26nameOfSpacecraftAttachedToE"></span><span id="_CPPv2N13StateEffector26nameOfSpacecraftAttachedToE"></span><span id="StateEffector::nameOfSpacecraftAttachedTo__ss"></span><span class="target" id="class_state_effector_1a86bd3f9c9a1d2d9e0fc7df095ee7d17c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfSpacecraftAttachedTo</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector26nameOfSpacecraftAttachedToE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector20parentSpacecraftNameE">
+<span id="_CPPv3N13StateEffector20parentSpacecraftNameE"></span><span id="_CPPv2N13StateEffector20parentSpacecraftNameE"></span><span id="StateEffector::parentSpacecraftName__ss"></span><span class="target" id="class_state_effector_1a2fe1cb2f0d18b5aebd2f95a58f3a6332"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentSpacecraftName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector20parentSpacecraftNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>name of the spacecraft the state effector is attached to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector8effPropsE">
+<span id="_CPPv3N13StateEffector8effPropsE"></span><span id="_CPPv2N13StateEffector8effPropsE"></span><span id="StateEffector::effProps__EffectorMassProps"></span><span class="target" id="class_state_effector_1ab1eb41263c1288325f979b4382a7b6aa"></span><a class="reference internal" href="#_CPPv417EffectorMassProps" title="EffectorMassProps"><span class="n"><span class="pre">EffectorMassProps</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effProps</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector8effPropsE" title="Link to this definition"></a><br /></dt>
+<dd><p>stateEffectors instantiation of effector mass props </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector22stateDerivContributionE">
+<span id="_CPPv3N13StateEffector22stateDerivContributionE"></span><span id="_CPPv2N13StateEffector22stateDerivContributionE"></span><span id="StateEffector::stateDerivContribution__Eigen::VectorXd"></span><span class="target" id="class_state_effector_1afc2be2211f784c4b8582e2d5b4e47112"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateDerivContribution</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector22stateDerivContributionE" title="Link to this definition"></a><br /></dt>
+<dd><p>stateEffector contribution to another stateEffector to prevent double-counting </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector13forceOnBody_BE">
+<span id="_CPPv3N13StateEffector13forceOnBody_BE"></span><span id="_CPPv2N13StateEffector13forceOnBody_BE"></span><span id="StateEffector::forceOnBody_B__Eigen::Vector3d"></span><span class="target" id="class_state_effector_1a1f2f395a28391a7d92ae8e4432c61cbf"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOnBody_B</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector13forceOnBody_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] Force that the state effector applies to the s/c </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18torqueOnBodyPntB_BE">
+<span id="_CPPv3N13StateEffector18torqueOnBodyPntB_BE"></span><span id="_CPPv2N13StateEffector18torqueOnBodyPntB_BE"></span><span id="StateEffector::torqueOnBodyPntB_B__Eigen::Vector3d"></span><span class="target" id="class_state_effector_1ab7a2204f97b75cbe432aebffa6901606"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueOnBodyPntB_B</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector18torqueOnBodyPntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] Torque that the state effector applies to the body about point B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18torqueOnBodyPntC_BE">
+<span id="_CPPv3N13StateEffector18torqueOnBodyPntC_BE"></span><span id="_CPPv2N13StateEffector18torqueOnBodyPntC_BE"></span><span id="StateEffector::torqueOnBodyPntC_B__Eigen::Vector3d"></span><span class="target" id="class_state_effector_1ab73f300496a13a8ad88e86682af2f34e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueOnBodyPntC_B</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector18torqueOnBodyPntC_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] Torque that the state effector applies to the body about point B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector6r_BP_PE">
+<span id="_CPPv3N13StateEffector6r_BP_PE"></span><span id="_CPPv2N13StateEffector6r_BP_PE"></span><span id="StateEffector::r_BP_P__Eigen::Vector3d"></span><span class="target" id="class_state_effector_1a5b1d4ed95d416ef2d9ceace566a4a428"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector6r_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>position vector of the spacecraft mody frame origin B relative to the primary spacecraft body frame P. This is used in the SpacecraftSystem module where multiple spacecraft hubs can be a single spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector6dcm_BPE">
+<span id="_CPPv3N13StateEffector6dcm_BPE"></span><span id="_CPPv2N13StateEffector6dcm_BPE"></span><span id="StateEffector::dcm_BP__Eigen::Matrix3d"></span><span class="target" id="class_state_effector_1a3f453bbbbdfba52651c489dfc2370148"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BP</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector6dcm_BPE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM of the spacecraft body frame B relative to primary spacecraft body frame P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector9bskLoggerE">
+<span id="_CPPv3N13StateEffector9bskLoggerE"></span><span id="_CPPv2N13StateEffector9bskLoggerE"></span><span id="StateEffector::bskLogger__BSKLogger"></span><span class="target" id="class_state_effector_1a0ed248bd13ea11652cf6df51bcf6f8d0"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13StateEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19stateNameOfPositionE">
+<span id="_CPPv3N13StateEffector19stateNameOfPositionE"></span><span id="_CPPv2N13StateEffector19stateNameOfPositionE"></span><span id="StateEffector::stateNameOfPosition__ss"></span><span class="target" id="class_state_effector_1ad5f1a6b15fb96a65381b89c180d57fa5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfPosition</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector19stateNameOfPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector19stateNameOfVelocityE">
+<span id="_CPPv3N13StateEffector19stateNameOfVelocityE"></span><span id="_CPPv2N13StateEffector19stateNameOfVelocityE"></span><span id="StateEffector::stateNameOfVelocity__ss"></span><span class="target" id="class_state_effector_1a87d63badb33bed64c9291a82f32ebb2a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfVelocity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector19stateNameOfVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector16stateNameOfSigmaE">
+<span id="_CPPv3N13StateEffector16stateNameOfSigmaE"></span><span id="_CPPv2N13StateEffector16stateNameOfSigmaE"></span><span id="StateEffector::stateNameOfSigma__ss"></span><span class="target" id="class_state_effector_1ac3eb21e82d0be8f47b50268ba6107d89"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfSigma</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector16stateNameOfSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial attitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector16stateNameOfOmegaE">
+<span id="_CPPv3N13StateEffector16stateNameOfOmegaE"></span><span id="_CPPv2N13StateEffector16stateNameOfOmegaE"></span><span id="StateEffector::stateNameOfOmega__ss"></span><span class="target" id="class_state_effector_1a77d0c009d1b801deb4abdec97e2a0cc7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfOmega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector16stateNameOfOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial angular velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector13propName_m_SCE">
+<span id="_CPPv3N13StateEffector13propName_m_SCE"></span><span id="_CPPv2N13StateEffector13propName_m_SCE"></span><span id="StateEffector::propName_m_SC__ss"></span><span class="target" id="class_state_effector_1a45680c8d8bf94749b41737cfa3194fc3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_m_SC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector13propName_m_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of m_SC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector16propName_mDot_SCE">
+<span id="_CPPv3N13StateEffector16propName_mDot_SCE"></span><span id="_CPPv2N13StateEffector16propName_mDot_SCE"></span><span id="StateEffector::propName_mDot_SC__ss"></span><span class="target" id="class_state_effector_1aef6af34142cfc3d99a33cf41bf3fba25"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_mDot_SC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector16propName_mDot_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of mDot_SC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector23propName_centerOfMassSCE">
+<span id="_CPPv3N13StateEffector23propName_centerOfMassSCE"></span><span id="_CPPv2N13StateEffector23propName_centerOfMassSCE"></span><span id="StateEffector::propName_centerOfMassSC__ss"></span><span class="target" id="class_state_effector_1ac89662f3c8d23173a7903613df1ea13a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassSC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector23propName_centerOfMassSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector18propName_inertiaSCE">
+<span id="_CPPv3N13StateEffector18propName_inertiaSCE"></span><span id="_CPPv2N13StateEffector18propName_inertiaSCE"></span><span id="StateEffector::propName_inertiaSC__ss"></span><span class="target" id="class_state_effector_1aa638b1966a1d8607e4630c17adaa7746"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertiaSC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector18propName_inertiaSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertiaSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector23propName_inertiaPrimeSCE">
+<span id="_CPPv3N13StateEffector23propName_inertiaPrimeSCE"></span><span id="_CPPv2N13StateEffector23propName_inertiaPrimeSCE"></span><span id="StateEffector::propName_inertiaPrimeSC__ss"></span><span class="target" id="class_state_effector_1af5fc4204d13c29f300cb5e2d3c6b7525"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertiaPrimeSC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector23propName_inertiaPrimeSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertiaPrimeSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector28propName_centerOfMassPrimeSCE">
+<span id="_CPPv3N13StateEffector28propName_centerOfMassPrimeSCE"></span><span id="_CPPv2N13StateEffector28propName_centerOfMassPrimeSCE"></span><span id="StateEffector::propName_centerOfMassPrimeSC__ss"></span><span class="target" id="class_state_effector_1a80ada97ac823c8b25f9dd6206bd79694"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassPrimeSC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector28propName_centerOfMassPrimeSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassPrimeSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26propName_centerOfMassDotSCE">
+<span id="_CPPv3N13StateEffector26propName_centerOfMassDotSCE"></span><span id="_CPPv2N13StateEffector26propName_centerOfMassDotSCE"></span><span id="StateEffector::propName_centerOfMassDotSC__ss"></span><span class="target" id="class_state_effector_1a9b54cedfb4f544e12788de25cbbe8b29"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassDotSC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector26propName_centerOfMassDotSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassDotSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector25propName_inertialPositionE">
+<span id="_CPPv3N13StateEffector25propName_inertialPositionE"></span><span id="_CPPv2N13StateEffector25propName_inertialPositionE"></span><span id="StateEffector::propName_inertialPosition__ss"></span><span class="target" id="class_state_effector_1a3af2fee12664662d3b4037e24d2d6358"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialPosition</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector25propName_inertialPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialPosition </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector25propName_inertialVelocityE">
+<span id="_CPPv3N13StateEffector25propName_inertialVelocityE"></span><span id="_CPPv2N13StateEffector25propName_inertialVelocityE"></span><span id="StateEffector::propName_inertialVelocity__ss"></span><span class="target" id="class_state_effector_1a99703cff8bc4ea3865776251386a8225"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialVelocity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector25propName_inertialVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialVelocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector23propName_vehicleGravityE">
+<span id="_CPPv3N13StateEffector23propName_vehicleGravityE"></span><span id="_CPPv2N13StateEffector23propName_vehicleGravityE"></span><span id="StateEffector::propName_vehicleGravity__ss"></span><span class="target" id="class_state_effector_1a7b2842c4939251529ad9691954f7d86b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_vehicleGravity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector23propName_vehicleGravityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of vehicleGravity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector27propName_prescribedPositionE">
+<span id="_CPPv3N13StateEffector27propName_prescribedPositionE"></span><span id="_CPPv2N13StateEffector27propName_prescribedPositionE"></span><span id="StateEffector::propName_prescribedPosition__ss"></span><span class="target" id="class_state_effector_1a1eed0687f6c1127536f3c03238e18cbb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedPosition</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector27propName_prescribedPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedPosition </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector27propName_prescribedVelocityE">
+<span id="_CPPv3N13StateEffector27propName_prescribedVelocityE"></span><span id="_CPPv2N13StateEffector27propName_prescribedVelocityE"></span><span id="StateEffector::propName_prescribedVelocity__ss"></span><span class="target" id="class_state_effector_1afe5bbf81aabe359bcff793c6d71a0e8e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedVelocity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector27propName_prescribedVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedVelocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector31propName_prescribedAccelerationE">
+<span id="_CPPv3N13StateEffector31propName_prescribedAccelerationE"></span><span id="_CPPv2N13StateEffector31propName_prescribedAccelerationE"></span><span id="StateEffector::propName_prescribedAcceleration__ss"></span><span class="target" id="class_state_effector_1a2958af1a0a0ccd3801508c02a55f2087"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedAcceleration</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector31propName_prescribedAccelerationE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedAcceleration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector27propName_prescribedAttitudeE">
+<span id="_CPPv3N13StateEffector27propName_prescribedAttitudeE"></span><span id="_CPPv2N13StateEffector27propName_prescribedAttitudeE"></span><span id="StateEffector::propName_prescribedAttitude__ss"></span><span class="target" id="class_state_effector_1ab854a7fc671c2b183b91c23873b2786c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedAttitude</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector27propName_prescribedAttitudeE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedAttitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector30propName_prescribedAngVelocityE">
+<span id="_CPPv3N13StateEffector30propName_prescribedAngVelocityE"></span><span id="_CPPv2N13StateEffector30propName_prescribedAngVelocityE"></span><span id="StateEffector::propName_prescribedAngVelocity__ss"></span><span class="target" id="class_state_effector_1a6bd14e8cc6fbda8646f5cf6e8334f124"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedAngVelocity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector30propName_prescribedAngVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedAngVelocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector34propName_prescribedAngAccelerationE">
+<span id="_CPPv3N13StateEffector34propName_prescribedAngAccelerationE"></span><span id="_CPPv2N13StateEffector34propName_prescribedAngAccelerationE"></span><span id="StateEffector::propName_prescribedAngAcceleration__ss"></span><span class="target" id="class_state_effector_1ac7e409454f5fefa9ad0e4fd3d6fb4905"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_prescribedAngAcceleration</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N13StateEffector34propName_prescribedAngAccelerationE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of prescribedAngAcceleration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26prescribedPositionPropertyE">
+<span id="_CPPv3N13StateEffector26prescribedPositionPropertyE"></span><span id="_CPPv2N13StateEffector26prescribedPositionPropertyE"></span><span id="StateEffector::prescribedPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1af28651b3a8d1f773462fb97ad2cd2ff7"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedPositionProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector26prescribedPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_PB_B prescribed position relative to hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26prescribedVelocityPropertyE">
+<span id="_CPPv3N13StateEffector26prescribedVelocityPropertyE"></span><span id="_CPPv2N13StateEffector26prescribedVelocityPropertyE"></span><span id="StateEffector::prescribedVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1a8bed20c2807dfda16b8b4cd0e843cbfb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedVelocityProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector26prescribedVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] rPrime_PB_B prescribed velocity relative to hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector30prescribedAccelerationPropertyE">
+<span id="_CPPv3N13StateEffector30prescribedAccelerationPropertyE"></span><span id="_CPPv2N13StateEffector30prescribedAccelerationPropertyE"></span><span id="StateEffector::prescribedAccelerationProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1af15dacca4058c06a5b52f6218ed53b22"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedAccelerationProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector30prescribedAccelerationPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector26prescribedAttitudePropertyE">
+<span id="_CPPv3N13StateEffector26prescribedAttitudePropertyE"></span><span id="_CPPv2N13StateEffector26prescribedAttitudePropertyE"></span><span id="StateEffector::prescribedAttitudeProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1ae9f019a0ec26062c4ee68f373d91d345"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedAttitudeProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector26prescribedAttitudePropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>sigma_PB prescribed MRP attitude relative to hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector29prescribedAngVelocityPropertyE">
+<span id="_CPPv3N13StateEffector29prescribedAngVelocityPropertyE"></span><span id="_CPPv2N13StateEffector29prescribedAngVelocityPropertyE"></span><span id="StateEffector::prescribedAngVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1a3ef15cf3f506ccd12c4a7b8e56d6609d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedAngVelocityProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector29prescribedAngVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] omega_PB_P prescribed angular velocity relative to hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateEffector33prescribedAngAccelerationPropertyE">
+<span id="_CPPv3N13StateEffector33prescribedAngAccelerationPropertyE"></span><span id="_CPPv2N13StateEffector33prescribedAngAccelerationPropertyE"></span><span id="StateEffector::prescribedAngAccelerationProperty__Eigen::MatrixXdP"></span><span class="target" id="class_state_effector_1a171a69d4660eaf0353379c468ea49af7"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prescribedAngAccelerationProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N13StateEffector33prescribedAngAccelerationPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stateData.html" class="btn btn-neutral float-left" title="Module: stateData" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stateVecIntegrator.html" class="btn btn-neutral float-right" title="Module: stateVecIntegrator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

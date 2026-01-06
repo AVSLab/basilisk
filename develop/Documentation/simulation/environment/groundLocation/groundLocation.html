@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: groundLocation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="groundLocation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">groundLocation</a></li>
+      <li class="breadcrumb-item active">Module: groundLocation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/groundLocation/groundLocation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-groundlocation">
+<span id="groundlocation"></span><h1>Module: groundLocation<a class="headerlink" href="#module-groundlocation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module allows the user to specify a single celestial-body fixed ground location <span class="math notranslate nohighlight">\(L\)</span>.
+Reading in the planet’s ephemeris state the position of <span class="math notranslate nohighlight">\(L\)</span> relative to the planet origin and
+the inertial frame are evaluated at output as a message.</p>
+<p>Further, one or more spacecraft states can be added to this module to compute the spacecraft position
+relative to the ground location <span class="math notranslate nohighlight">\(L\)</span>.  The associated output access output message contains the relative
+position vector in terms the spherical coordinates range, azimuth and elevation angle, as well as in terms of
+South-East-Zenith (SEZ) coordinates.  Finally, the velocity of the spacecraft as seen by the <span class="math notranslate nohighlight">\(L\)</span> location
+is provided in terms of range, azimuth, elevation, south east and zenith rates.  Finally, this access message
+has a integer variable indicating if the spacecraft is above a minimum elevation angle of the <span class="math notranslate nohighlight">\(L\)</span> SEC frame.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This module assumes that the location is affixed to a spherical body with a constant radius.
+Elevation constraints are computed assuming
+a conical field of view around the normal vector from the body’s surface at the location.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>planetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) planet state input message. Default is a zero state for the planet.</p></td>
+</tr>
+<tr class="row-odd"><td><p>scStateInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of sc state input messages.  These are set through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>currentGroundStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#groundstatemsgpayload"><span class="std std-ref">GroundStateMsgPayload</span></a></p></td>
+<td><p>ground location output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>accessOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#accessmsgpayload"><span class="std std-ref">AccessMsgPayload</span></a></p></td>
+<td><p>vector of ground location access messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">groundLocation</span></code> module handles the following behavior:</p>
+<ol class="arabic simple">
+<li><p>Reads in the planet’s states using the <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> input message</p></li>
+<li><p>Conversion of latitude, longitude, altitude coordinates to planet-centered, planet-fixed coordinates</p></li>
+<li><p>Conversion of relative position vector in SEZ range, azimuth, elevation, south, east and zenith coordinates</p></li>
+<li><p>Determine the <span class="math notranslate nohighlight">\(L\)</span> relative spacecraft velocity as range, azimuth, elevation, south,
+east and zenith coordinate rates</p></li>
+<li><p>Computation of spacecraft visibility (i.e. access) considering range and ground location field-of-view constraints</p></li>
+<li><p>Support for multiple spacecraft given one groundLocation instance</p></li>
+</ol>
+<section id="determining-states">
+<h3>Determining States<a class="headerlink" href="#determining-states" title="Link to this heading"></a></h3>
+<p>The position of the spacecraft in the SEZ frame, relative to the ground station, is parameterized
+by the cartesian coordinates:</p>
+<div class="math notranslate nohighlight" id="equation-eq-sez-coords-1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-sez-coords-1" title="Link to this equation"></a></span>\[\mathbf{r}_{B/L} = x\hat{S} + y\hat{E} + z\hat{Z}\]</div>
+<p>The cartesian coordinates are converted to spherical coordinates, centered at the ground station position,
+which give the range (<span class="math notranslate nohighlight">\(\rho\)</span>), azimuth(<span class="math notranslate nohighlight">\(Az\)</span>), and elevation(<span class="math notranslate nohighlight">\(El\)</span>).</p>
+<div class="math notranslate nohighlight" id="equation-eq-rho-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-rho-2" title="Link to this equation"></a></span>\[\rho = \sqrt{x^2 + y^2 + z^2}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-az-3">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-az-3" title="Link to this equation"></a></span>\[Az = \tan{\frac{y}{x}}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-el-4">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-el-4" title="Link to this equation"></a></span>\[El = \tan{\frac{z}{\sqrt{x^2+y^2}}}\]</div>
+<figure class="align-center" id="id2">
+<span id="glazelsketch"></span><img alt="../../../../_images/AzEl_sketch.jpg" src="../../../../_images/AzEl_sketch.jpg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: Diagram of the Azimuth and Elevation, in the South-East-Zenith frame</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The spherical coordinate rates are computed by differentiating the range, azimuth, and elevation with respect to the rotating SEZ frame.</p>
+<div class="math notranslate nohighlight" id="equation-eq-sez-rhodot-5">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-sez-rhodot-5" title="Link to this equation"></a></span>\[\dot{\rho} = \frac{{}^L\text{d}}{\text{d}t} \rho = \frac{x\dot{x}+y\dot{y}+z\dot{z}}{\sqrt{x^2 + y^2 + z^2}}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-sez-azdot-6">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-sez-azdot-6" title="Link to this equation"></a></span>\[\dot{Az} = \frac{{}^L\text{d}}{\text{d}t} Az = \frac{1}{1+\frac{y^2}{x^2}} \bigg( \frac{y\dot{x}-x\dot{y}}{x^2} \bigg)\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-sez-eldot-7">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-sez-eldot-7" title="Link to this equation"></a></span>\[\dot{El} = \frac{{}^L\text{d}}{\text{d}t} El = \frac{1}{1+\frac{z^2}{x^2+y^2}} \bigg( \frac{\dot{z}}{\sqrt{x^2+y^2}} - \frac{z(x\dot{x}+y\dot{y})}{(x^2+y^2)^{3/2}} \bigg)\]</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>To use this module, instantiate the class and provide it with a body-fixed location (in either lat/long/altitude,
+via the specifyLocation method, or in
+planet-centered planet-fixed coordinates directly via the <code class="docutils literal notranslate"><span class="pre">r_LP_P_Init</span></code> attribute) and a planet position/attitude
+message (i.e., an instance of <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a>);
+to compute access, at least one <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a> message must be added to the module using the <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code> method.
+The first spacecraft is 0, the second is 1, and so on.</p>
+<p>A new instance of groundLocation, alongside necessary user-supplied parameters, can be created by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">groundTarget</span> <span class="o">=</span> <span class="n">groundLocation</span><span class="o">.</span><span class="n">GroundLocation</span><span class="p">()</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;groundTarget&quot;</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># Sets maximum range for visibility in meters</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span> <span class="c1">#   Sets necessary minimum elevation for visibility to 10 deg in radians</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">specifyLocation</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span> <span class="c1">#  Sets location in latitude, longitude, altitude coordinates</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">groundTarget</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">planetRadius</span></code> variable is optional and defaults to Earth’s radius.  Instead of specifying the ground location
+through the <code class="docutils literal notranslate"><span class="pre">specifyLocation()</span></code> method, you can also set the module variable <code class="docutils literal notranslate"><span class="pre">r_LP_P_Init</span></code> using the
+<code class="docutils literal notranslate"><span class="pre">specifyLocationPCPF()</span></code> method. Avoid setting the module variable <code class="docutils literal notranslate"><span class="pre">r_LP_P_Init</span></code> directly, as there are computations
+that occur within the <code class="docutils literal notranslate"><span class="pre">specifyLocation()</span></code> and <code class="docutils literal notranslate"><span class="pre">specifylocationPCPF()</span></code> methods that are important for access message
+states.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">maximumRange</span></code> variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have <code class="docutils literal notranslate"><span class="pre">hasAccess</span></code> output message variable depend on range.</p>
+<p>A groundLocation can be affixed to a specific planet by setting its <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> input message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">groundTarget</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Spacecraft can be added to the model by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">groundTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">groundTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc2</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+<span class="c1">#   log code</span>
+<span class="n">dataLog0</span> <span class="o">=</span> <span class="n">groundTarget</span><span class="o">.</span><span class="n">currentGroundStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">dataLog1</span> <span class="o">=</span> <span class="n">groundTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">dataLog2</span> <span class="o">=</span> <span class="n">groundTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414GroundLocation">
+<span id="_CPPv314GroundLocation"></span><span id="_CPPv214GroundLocation"></span><span id="GroundLocation"></span><span class="target" id="class_ground_location"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GroundLocation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv414GroundLocation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;groundLocation.h&gt;</em></div>
+<p>ground location class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation14GroundLocationEv">
+<span id="_CPPv3N14GroundLocation14GroundLocationEv"></span><span id="_CPPv2N14GroundLocation14GroundLocationEv"></span><span id="GroundLocation::GroundLocation"></span><span class="target" id="class_ground_location_1aac5505581b417e6904cda1a165388324"></span><span class="sig-name descname"><span class="n"><span class="pre">GroundLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation14GroundLocationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an instance of the <a class="reference internal" href="#class_ground_location"><span class="std std-ref">GroundLocation</span></a> class with a minimum elevation of 10 degrees,. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocationD0Ev">
+<span id="_CPPv3N14GroundLocationD0Ev"></span><span id="_CPPv2N14GroundLocationD0Ev"></span><span id="GroundLocation::~GroundLocation"></span><span class="target" id="class_ground_location_1a7746aece18157811555749e33a2a4dba"></span><span class="sig-name descname"><span class="n"><span class="pre">~GroundLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Empty destructor method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation11UpdateStateE8uint64_t">
+<span id="_CPPv3N14GroundLocation11UpdateStateE8uint64_t"></span><span id="_CPPv2N14GroundLocation11UpdateStateE8uint64_t"></span><span id="GroundLocation::UpdateState__uint64_t"></span><span class="target" id="class_ground_location_1a8a0197cfa96957ceb1a2615852949979"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>update module </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation5ResetE8uint64_t">
+<span id="_CPPv3N14GroundLocation5ResetE8uint64_t"></span><span id="_CPPv2N14GroundLocation5ResetE8uint64_t"></span><span id="GroundLocation::Reset__uint64_t"></span><span class="target" id="class_ground_location_1a8b78deca30557353977a796e75964bbd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets the internal position to the specified initial position. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation12ReadMessagesEv">
+<span id="_CPPv3N14GroundLocation12ReadMessagesEv"></span><span id="_CPPv2N14GroundLocation12ReadMessagesEv"></span><span id="GroundLocation::ReadMessages"></span><span class="target" id="class_ground_location_1abc8655b637320eb22ccb63f29ac48e7e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation12ReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation13WriteMessagesE8uint64_t">
+<span id="_CPPv3N14GroundLocation13WriteMessagesE8uint64_t"></span><span id="_CPPv2N14GroundLocation13WriteMessagesE8uint64_t"></span><span id="GroundLocation::WriteMessages__uint64_t"></span><span class="target" id="class_ground_location_1ac0c58d6959c092c616963e4bc9c10c28"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation13WriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>write module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N14GroundLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N14GroundLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="GroundLocation::addSpacecraftToModel__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_ground_location_1aa4f95fccc8c87aa1f807647eda6372e9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message output name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation15specifyLocationEddd">
+<span id="_CPPv3N14GroundLocation15specifyLocationEddd"></span><span id="_CPPv2N14GroundLocation15specifyLocationEddd"></span><span id="GroundLocation::specifyLocation__double.double.double"></span><span class="target" id="class_ground_location_1a90892b1b2dadfcbe6976be485b5ad58a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">specifyLocation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">longitude</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation15specifyLocationEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>Specifies the ground location from planet-centered latitude, longitude, altitude position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – </p></li>
+<li><p><strong>longitude</strong> – </p></li>
+<li><p><strong>alt</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation19specifyLocationPCPFERN5Eigen8Vector3dE">
+<span id="_CPPv3N14GroundLocation19specifyLocationPCPFERN5Eigen8Vector3dE"></span><span id="_CPPv2N14GroundLocation19specifyLocationPCPFERN5Eigen8Vector3dE"></span><span id="GroundLocation::specifyLocationPCPF__Eigen::Vector3dR"></span><span class="target" id="class_ground_location_1a1a70007255fde3f9ec5387dcece462fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">specifyLocationPCPF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">r_LP_P_Loc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation19specifyLocationPCPFERN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Specifies the ground location from planet-centered, planet-fixed coordinates </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r_LP_P_Loc</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation12planetRadiusE">
+<span id="_CPPv3N14GroundLocation12planetRadiusE"></span><span id="_CPPv2N14GroundLocation12planetRadiusE"></span><span id="GroundLocation::planetRadius__double"></span><span class="target" id="class_ground_location_1ad8a04c1ef00d921fa2575edf4a5b3f56"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetRadius</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation12planetRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Planet radius in meters. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation16minimumElevationE">
+<span id="_CPPv3N14GroundLocation16minimumElevationE"></span><span id="_CPPv2N14GroundLocation16minimumElevationE"></span><span id="GroundLocation::minimumElevation__double"></span><span class="target" id="class_ground_location_1ae6bdd767c820bc0fb637d37e99d43f8d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minimumElevation</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation16minimumElevationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 10 degrees equivalent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation12maximumRangeE">
+<span id="_CPPv3N14GroundLocation12maximumRangeE"></span><span id="_CPPv2N14GroundLocation12maximumRangeE"></span><span id="GroundLocation::maximumRange__double"></span><span class="target" id="class_ground_location_1a96d6920442e7c4d251c39b32dda91541"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maximumRange</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation12maximumRangeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] (optional) Maximum slant range to compute access for; defaults to -1, which represents no maximum range. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation11planetInMsgE">
+<span id="_CPPv3N14GroundLocation11planetInMsgE"></span><span id="_CPPv2N14GroundLocation11planetInMsgE"></span><span id="GroundLocation::planetInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_ground_location_1a6f73f8207cb41ce2a9222815c4c18d92"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation11planetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>planet state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation24currentGroundStateOutMsgE">
+<span id="_CPPv3N14GroundLocation24currentGroundStateOutMsgE"></span><span id="_CPPv2N14GroundLocation24currentGroundStateOutMsgE"></span><span id="GroundLocation::currentGroundStateOutMsg__Message:GroundStateMsgPayload:"></span><span class="target" id="class_ground_location_1ad4c89b667982eeac2495272ccf8eb477"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#_CPPv421GroundStateMsgPayload" title="GroundStateMsgPayload"><span class="n"><span class="pre">GroundStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentGroundStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation24currentGroundStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>ground location output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation13accessOutMsgsE">
+<span id="_CPPv3N14GroundLocation13accessOutMsgsE"></span><span id="_CPPv2N14GroundLocation13accessOutMsgsE"></span><span id="GroundLocation::accessOutMsgs__std::vector:Message:AccessMsgPayload:P:"></span><span class="target" id="class_ground_location_1a991a8eb4879fea3725024054bdf21a5a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation13accessOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of ground location access messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation13scStateInMsgsE">
+<span id="_CPPv3N14GroundLocation13scStateInMsgsE"></span><span id="_CPPv2N14GroundLocation13scStateInMsgsE"></span><span id="GroundLocation::scStateInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_ground_location_1a289e68daf2cbec9f11a7f2ccdbb52fd1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation13scStateInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of sc state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation11r_LP_P_InitE">
+<span id="_CPPv3N14GroundLocation11r_LP_P_InitE"></span><span id="_CPPv2N14GroundLocation11r_LP_P_InitE"></span><span id="GroundLocation::r_LP_P_Init__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a7a3a856e9876bc9b5662fc1444bfe798"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P_Init</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation11r_LP_P_InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation9bskLoggerE">
+<span id="_CPPv3N14GroundLocation9bskLoggerE"></span><span id="_CPPv2N14GroundLocation9bskLoggerE"></span><span id="GroundLocation::bskLogger__BSKLogger"></span><span class="target" id="class_ground_location_1ac4a11826ad84c0fa1d0ca71ccc6c2de5"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation23updateInertialPositionsEv">
+<span id="_CPPv3N14GroundLocation23updateInertialPositionsEv"></span><span id="_CPPv2N14GroundLocation23updateInertialPositionsEv"></span><span id="GroundLocation::updateInertialPositions"></span><span class="target" id="class_ground_location_1ad47ec6c5341536737fb75881fca39858"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateInertialPositions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation23updateInertialPositionsEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation13computeAccessEv">
+<span id="_CPPv3N14GroundLocation13computeAccessEv"></span><span id="_CPPv2N14GroundLocation13computeAccessEv"></span><span id="GroundLocation::computeAccess"></span><span class="target" id="class_ground_location_1aeca88f0758939c237ec9b77fd3e5367b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAccess</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14GroundLocation13computeAccessEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation15accessMsgBufferE">
+<span id="_CPPv3N14GroundLocation15accessMsgBufferE"></span><span id="_CPPv2N14GroundLocation15accessMsgBufferE"></span><span id="GroundLocation::accessMsgBuffer__std::vector:AccessMsgPayload:"></span><span class="target" id="class_ground_location_1ad7bcccf2a0c8ee51bf10b9284b7fc12b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation15accessMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of access output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation14scStatesBufferE">
+<span id="_CPPv3N14GroundLocation14scStatesBufferE"></span><span id="_CPPv2N14GroundLocation14scStatesBufferE"></span><span id="GroundLocation::scStatesBuffer__std::vector:SCStatesMsgPayload:"></span><span class="target" id="class_ground_location_1a5d6232bbeb80916ef45d3ba0e81cab8e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStatesBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation14scStatesBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of spacecraft states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation11planetStateE">
+<span id="_CPPv3N14GroundLocation11planetStateE"></span><span id="_CPPv2N14GroundLocation11planetStateE"></span><span id="GroundLocation::planetState__SpicePlanetStateMsgPayload"></span><span class="target" id="class_ground_location_1af91a261bb03af2be1d5c56d17a2139cc"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetState</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation11planetStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of planet data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation24currentGroundStateBufferE">
+<span id="_CPPv3N14GroundLocation24currentGroundStateBufferE"></span><span id="_CPPv2N14GroundLocation24currentGroundStateBufferE"></span><span id="GroundLocation::currentGroundStateBuffer__GroundStateMsgPayload"></span><span class="target" id="class_ground_location_1acf2e6f6164819f3238a5fcc6a7235c1e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#_CPPv421GroundStateMsgPayload" title="GroundStateMsgPayload"><span class="n"><span class="pre">GroundStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentGroundStateBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation24currentGroundStateBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of ground station output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6dcm_LPE">
+<span id="_CPPv3N14GroundLocation6dcm_LPE"></span><span id="_CPPv2N14GroundLocation6dcm_LPE"></span><span id="GroundLocation::dcm_LP__Eigen::Matrix3d"></span><span class="target" id="class_ground_location_1a6758c88fa0a49a92f66e30800c0b0a38"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_LP</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6dcm_LPE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rotation matrix from planet-centered, planet-fixed frame P to site-local topographic (SEZ) frame L coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6dcm_PNE">
+<span id="_CPPv3N14GroundLocation6dcm_PNE"></span><span id="_CPPv2N14GroundLocation6dcm_PNE"></span><span id="GroundLocation::dcm_PN__Eigen::Matrix3d"></span><span class="target" id="class_ground_location_1abe43d907694f3c997ce6874bea115d0d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6dcm_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation10dcm_PN_dotE">
+<span id="_CPPv3N14GroundLocation10dcm_PN_dotE"></span><span id="_CPPv2N14GroundLocation10dcm_PN_dotE"></span><span id="GroundLocation::dcm_PN_dot__Eigen::Matrix3d"></span><span class="target" id="class_ground_location_1a8715cfa723eaef405fe136ec302fb166"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN_dot</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation10dcm_PN_dotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rotation matrix derivative from inertial frame N to planet-centered to planet-fixed frame P. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation4w_PNE">
+<span id="_CPPv3N14GroundLocation4w_PNE"></span><span id="_CPPv2N14GroundLocation4w_PNE"></span><span id="GroundLocation::w_PN__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1aaa56b30ff79f6de51efd3e103cdf897c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w_PN</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation4w_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Angular velocity of planet-fixed frame P relative to inertial frame N. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6r_PN_NE">
+<span id="_CPPv3N14GroundLocation6r_PN_NE"></span><span id="_CPPv2N14GroundLocation6r_PN_NE"></span><span id="GroundLocation::r_PN_N__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a5c5d958a477ef8a046177b71289c2b26"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Planet position vector relative to inertial frame origin. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6r_LP_PE">
+<span id="_CPPv3N14GroundLocation6r_LP_PE"></span><span id="_CPPv2N14GroundLocation6r_LP_PE"></span><span id="GroundLocation::r_LP_P__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a8189e6db141392a100df99d674222a97"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6r_LP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Ground Location position vector relative to to planet origin vector in planet frame coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6r_LP_NE">
+<span id="_CPPv3N14GroundLocation6r_LP_NE"></span><span id="_CPPv2N14GroundLocation6r_LP_NE"></span><span id="GroundLocation::r_LP_N__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a2864a99707816eaade281d998691b58f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_N</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6r_LP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Gound Location position vector relative to planet origin vector in inertial coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation9rhat_LP_NE">
+<span id="_CPPv3N14GroundLocation9rhat_LP_NE"></span><span id="_CPPv2N14GroundLocation9rhat_LP_NE"></span><span id="GroundLocation::rhat_LP_N__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a7c9eaf4fcfeb609bdb49b9b11557c7f3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhat_LP_N</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation9rhat_LP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Surface normal vector from the target location in inertial coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation6r_LN_NE">
+<span id="_CPPv3N14GroundLocation6r_LN_NE"></span><span id="_CPPv2N14GroundLocation6r_LN_NE"></span><span id="GroundLocation::r_LN_N__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1a60de76f07661c4d14a1ac977a134dc02"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LN_N</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation6r_LN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Ground Location position vector relative to inertial frame origin in inertial coordinates. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14GroundLocation9r_North_NE">
+<span id="_CPPv3N14GroundLocation9r_North_NE"></span><span id="_CPPv2N14GroundLocation9r_North_NE"></span><span id="GroundLocation::r_North_N__Eigen::Vector3d"></span><span class="target" id="class_ground_location_1aa419754ad3559d7e93682d97c0728d41"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_North_N</span></span></span><a class="headerlink" href="#_CPPv4N14GroundLocation9r_North_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Inertial 3rd axis, defined internally as “North”. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="groundLocation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

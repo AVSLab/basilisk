@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: eclipse &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="eclipse" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">eclipse</a></li>
+      <li class="breadcrumb-item active">Module: eclipse</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/eclipse/eclipse.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-eclipse">
+<span id="eclipse"></span><h1>Module: eclipse<a class="headerlink" href="#module-eclipse" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The eclipse module is responsible for determining whether or not a spacecraft is experiencing a solar eclipse and
+how much of it is occluded. The module works on a list of spacecraft state messages, as well as a list of planets.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sunInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>sun ephemeris input message name</p></td>
+</tr>
+<tr class="row-odd"><td><p>planetInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>A vector of planet incoming state message names ordered by the sequence in which planet are added to the module</p></td>
+</tr>
+<tr class="row-even"><td><p>positionInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of msgs for each spacecraft position state for which to evaluate eclipse conditions</p></td>
+</tr>
+<tr class="row-odd"><td><p>eclipseOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
+<td><p>vector of eclipse output msg names</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body’s position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a shadow factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.</p>
+<p>To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are read in. The planets desired to be used in the module are specified through the python method <code class="docutils literal notranslate"><span class="pre">addPlanetToModel()</span></code>, where the planet spice state message is the input.  If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.  The figure below illustrates how the states are represented and will be identified in the mathematical model. Calculations in this model are taken from Montenbruck and Gill’s text <a class="reference external" href="http://doi.org/10.1007/978-3-642-58351-3">Satellite Orbits Models, Methods and Applications</a>.</p>
+<figure class="align-center" id="id2">
+<span id="conshad"></span><img alt="../../../../_images/conical_shadow.svg" src="../../../../_images/conical_shadow.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: Illustration of the Planet’s Umbra and Penumbra Regions</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="determining-states">
+<h3>Determining States<a class="headerlink" href="#determining-states" title="Link to this heading"></a></h3>
+<p>The initial step in the eclipse module is to obtain the celestial bodies’ state data and transform them into usable terms. The relationships shown below remove the dependency on relating position to the inertial frame <span class="math notranslate nohighlight">\(N\)</span> and instead utilize the planet <span class="math notranslate nohighlight">\(P\)</span>, spacecraft body <span class="math notranslate nohighlight">\(B\)</span>, and helio <span class="math notranslate nohighlight">\(H\)</span> frames.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-elipse-1" title="Link to this equation"></a></span>\[\mathbf{s}_{P/H} = \mathbf{r}_{N/H} - \mathbf{r}_{N/P}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-elipse-2" title="Link to this equation"></a></span>\[\mathbf{r}_{B/H} = \mathbf{r}_{N/H} - \mathbf{r}_{N/B}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-3">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-elipse-3" title="Link to this equation"></a></span>\[\mathbf{s}_{P/B} = \mathbf{r}_{N/B} - \mathbf{r}_{N/P}\]</div>
+<p>The previous three equations provide coordinates for the sun with respect to both the occulting planet and occulted spacecraft as well as the spacecraft’s position with respect to the planet, respectively. The parameters on the right side of these equations come from the input state data where <span class="math notranslate nohighlight">\(\mathbf{r}_{N/H}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{r}_{N/P}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{r}_{N/B}\)</span> are the sun, planet, and spacecraft positions in the inertial frame.</p>
+<p>This module supports the use of multiple occulting bodies, so it is important to analyze only the planet with the highest potential to cause an eclipse. Thus, the closest planet is determined by comparing the magnitude of each planet’s distance to the spacecraft, <span class="math notranslate nohighlight">\(|\mathbf{s}_{P/B}|\)</span>. Note that if the spacecraft is closer to the sun than the planet, i.e. <span class="math notranslate nohighlight">\(|\mathbf{r}_{B/H}| &lt; |\mathbf{s}_{P/H}|\)</span>, an eclipse is not possible and the shadow fraction is immediately set to 1.0.</p>
+</section>
+<section id="eclipse-conditions">
+<h3>Eclipse Conditions<a class="headerlink" href="#eclipse-conditions" title="Link to this heading"></a></h3>
+<p>When analyzing the conical shadow model, there are critical distances and conical dimensions that must be considered. These parameters are determined by first knowing the planet’s equatorial radius <span class="math notranslate nohighlight">\(r_P\)</span>, which is used to solve for the angles of the shadow cones. Angles <span class="math notranslate nohighlight">\(f_1\)</span> and <span class="math notranslate nohighlight">\(f_2\)</span> are computed as shown below, where the subscript 1 relates to the cone of the penumbra and 2 relates to the umbra.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-7">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-elipse-7" title="Link to this equation"></a></span>\[f_1 = \arcsin\left(\frac{r_H + r_P}{| \mathbf{s}_{P/H}|} \right)\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-8">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-elipse-8" title="Link to this equation"></a></span>\[f_2 = \arcsin\left(\frac{r_H - r_P}{| \mathbf{s}_{P/H}|} \right)\]</div>
+<p>Here <span class="math notranslate nohighlight">\(r_H\)</span> indicates the equatorial radius of the sun, which is 695000 km. Both the sun and planet radii must be input in terms of meters.</p>
+<p>As shown by <a class="reference internal" href="#conshad"><span class="std std-ref">Figure 1: Illustration of the Planet’s Umbra and Penumbra Regions</span></a>, the fundamental plane is perpendicular to the shadow axis and coincident with the spacecraft body. The distance between the plane-axis intersection and the center of the planet is given by <span class="math notranslate nohighlight">\(s_0\)</span> as shown by Eq. <a class="reference internal" href="#equation-eq-elipse-9">(6)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-9">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-elipse-9" title="Link to this equation"></a></span>\[s_0 = \frac{-\mathbf{s}_{P/B} \cdot \mathbf{s}_{P/H}}{| \mathbf{s}_{P/H}|}\]</div>
+<p>This distance and the shadow cone angles can now be used to determine the distances, <span class="math notranslate nohighlight">\(c_1\)</span> and <span class="math notranslate nohighlight">\(c_2\)</span>, between the fundamental plane and the cones’ vertices <span class="math notranslate nohighlight">\(V_1\)</span> and <span class="math notranslate nohighlight">\(V_2\)</span>. These are calculated as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-10">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-elipse-10" title="Link to this equation"></a></span>\[c_1 = s_0 + \frac{r_P}{\sin(f_1)}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-11">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-elipse-11" title="Link to this equation"></a></span>\[c_2 = s_0 - \frac{r_P}{\sin(f_2)}\]</div>
+<p>As shown in Eq. <a class="reference internal" href="#equation-eq-elipse-12">(9)</a> and <a class="reference internal" href="#equation-eq-elipse-13">(10)</a>, these are then used to find the radii, <span class="math notranslate nohighlight">\(l_1\)</span> and <span class="math notranslate nohighlight">\(l_2\)</span>, of the shadow cones in the fundamental plane.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-12">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-elipse-12" title="Link to this equation"></a></span>\[l_1 = c_1 \tan(f_1)\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-13">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-elipse-13" title="Link to this equation"></a></span>\[l_2 = c_2 \tan(f_2)\]</div>
+<p>Finding these parameters provides insight into the type of eclipse that the spacecraft is experiencing. To determine the type, it is useful to compare the cone radii to the distance between the spacecraft and the shadow axis, which is given by <span class="math notranslate nohighlight">\(l\)</span>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-14">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-elipse-14" title="Link to this equation"></a></span>\[l = \sqrt{|\mathbf{s}_{P/B}|^2 - s^2_0}\]</div>
+<p>Total and annular eclipses both require the spacecraft to be relatively close to the shadow axis, where <span class="math notranslate nohighlight">\(|l|&lt;| l_2|\)</span>. The difference between these two types is that the planet is closer to the spacecraft for a total eclipse (<span class="math notranslate nohighlight">\(c_2 &lt; 0\)</span>) than during an annular eclipse (<span class="math notranslate nohighlight">\(c_2 &gt; 0\)</span>). If the spacecraft is further from the shadow axis but still within a cone radius (<span class="math notranslate nohighlight">\(|l|&lt;| l_1|\)</span>), it is experiencing a partial eclipse.</p>
+</section>
+<section id="percent-shadow">
+<h3>Percent Shadow<a class="headerlink" href="#percent-shadow" title="Link to this heading"></a></h3>
+<p>With the eclipse type determined, the shadow fraction can now be found. To find the shadow fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> in the equations below.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-15">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-elipse-15" title="Link to this equation"></a></span>\[a = \arcsin(\frac{r_H}{| \mathbf{r}_{B/H}|})\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-16">
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-elipse-16" title="Link to this equation"></a></span>\[b = \arcsin(\frac{r_P}{| \mathbf{s}_{P/B}|})\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-17">
+<span class="eqno">(14)<a class="headerlink" href="#equation-eq-elipse-17" title="Link to this equation"></a></span>\[c = \arccos(\frac{-\mathbf{s}_{P/B} \cdot \mathbf{r}_{B/H}}{| \mathbf{s}_{P/B}| | \mathbf{r}_{B/H}|})\]</div>
+<p><a class="reference internal" href="#figdisk"><span class="std std-ref">Figure 2: Occultation Disk Model</span></a> below illustrates the overlapping disk model that represents the occultation, where the solid orange line indicates the sun and the dotted blue line indicates the planet.</p>
+<figure class="align-center" id="id3">
+<span id="figdisk"></span><img alt="../../../../_images/diskModel.svg" src="../../../../_images/diskModel.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 2: Occultation Disk Model</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="total-eclipse-c-b-a">
+<h4>Total Eclipse (<span class="math notranslate nohighlight">\(c &lt; b-a\)</span>)<a class="headerlink" href="#total-eclipse-c-b-a" title="Link to this heading"></a></h4>
+<p>This type assumes that the apparent radius of the planet is larger than that of the sun (<span class="math notranslate nohighlight">\(b&gt;a\)</span>). A total eclipse produces a total shadow, so the shadow fraction is 0.0.</p>
+</section>
+<section id="annular-eclipse-c-a-b">
+<h4>Annular Eclipse ($c &lt; a-b$)<a class="headerlink" href="#annular-eclipse-c-a-b" title="Link to this heading"></a></h4>
+<p>This type assumes the apparent radius of the sun is larger than that of the planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>). Use the equation for a circular area, <span class="math notranslate nohighlight">\(A = \pi r^2\)</span>, to find the area of the sun and planet faces, replacing <span class="math notranslate nohighlight">\(r\)</span> with the corresponding apparent radius. The shadow fraction is then just the ratio of the planet’s area to the sun’s area.
+begin{equation} label{eq:18}
+Shadow Fraction = frac{A_P}{A_H}
+end{equation}</p>
+</section>
+<section id="partial-eclipse-c-a-b">
+<h4>Partial Eclipse ($c &lt; a+ b$)<a class="headerlink" href="#partial-eclipse-c-a-b" title="Link to this heading"></a></h4>
+<p>For a partial eclipse, the occulted area is given by Eq. <a class="reference internal" href="#equation-eq-elipse-19">(15)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-19">
+<span class="eqno">(15)<a class="headerlink" href="#equation-eq-elipse-19" title="Link to this equation"></a></span>\[A = a^2 \arccos(\frac{x}{a}) + b^2 \arccos(\frac{c-x}{b}) - cy\]</div>
+<p>Parameters <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> are those calculated previously in Eq. <a class="reference internal" href="#equation-eq-elipse-15">(12)</a>, <a class="reference internal" href="#equation-eq-elipse-16">(13)</a>, and <a class="reference internal" href="#equation-eq-elipse-17">(14)</a>. The values <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are given by the following equations.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-20">
+<span class="eqno">(16)<a class="headerlink" href="#equation-eq-elipse-20" title="Link to this equation"></a></span>\[x = \frac{c^2 + a^2 - b^2}{2c}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-21">
+<span class="eqno">(17)<a class="headerlink" href="#equation-eq-elipse-21" title="Link to this equation"></a></span>\[y = \sqrt{a^2 - x^2}\]</div>
+<p>Like with the annular partial eclipse, the shadow factor for this type is the ratio between the occulted area and the sun’s apparent area. This is given by the equation below.</p>
+<div class="math notranslate nohighlight" id="equation-eq-elipse-22">
+<span class="eqno">(18)<a class="headerlink" href="#equation-eq-elipse-22" title="Link to this equation"></a></span>\[\text{Shadow Fraction} = 1 - \frac{A}{\pi a^2}\]</div>
+</section>
+</section>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Occultation Model:</strong> Since the apparent radius of the sun is relatively small, the occultation can be modeled as
+overlapping disks.</p></li>
+<li><p><strong>No Eclipse:</strong> If the spacecraft is closer to the sun than the planet, an eclipse is not possible.</p></li>
+<li><p><strong>Planets:</strong> The allowed Spice planet names for use as occulting bodies are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mercury</span></code>, <code class="docutils literal notranslate"><span class="pre">venus</span></code>, <code class="docutils literal notranslate"><span class="pre">earth</span></code>, <code class="docutils literal notranslate"><span class="pre">mars</span></code>, <code class="docutils literal notranslate"><span class="pre">mars</span> <span class="pre">barycenter</span></code>, <code class="docutils literal notranslate"><span class="pre">jupiter</span> <span class="pre">barycenter</span></code>, <code class="docutils literal notranslate"><span class="pre">saturn</span></code>,
+<code class="docutils literal notranslate"><span class="pre">neptune</span></code>, <code class="docutils literal notranslate"><span class="pre">uranus</span></code>, <code class="docutils literal notranslate"><span class="pre">custom</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Custom Body:</strong> This module allows for the use of a single custom body, defined by the name <code class="docutils literal notranslate"><span class="pre">custom</span></code>. The name of
+the <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a> must be set to <code class="docutils literal notranslate"><span class="pre">custom</span></code>, and the variable <code class="docutils literal notranslate"><span class="pre">rEqCustom</span></code> must be set to
+some positive value in meters.</p></li>
+<li><p><strong>Sun and Planet States:</strong> The data defining the sun and planet states is obtained through an external Spice package.
+Errors may be derived from this package but will be small.</p></li>
+<li><p><strong>Spacecraft States:</strong> Spacecraft states must be input as Cartesian vectors. In the test, a conversion from orbital
+elements is performed.</p></li>
+<li><p><strong>Apparent Radii:</strong> When determining the type of eclipse, assume that the apparent separation <span class="math notranslate nohighlight">\(c \geq 0\)</span>.</p>
+<ul>
+<li><p><strong>Total Eclipse</strong> (<span class="math notranslate nohighlight">\(c&lt;b-a\)</span>): Assume the apparent radius of the planet is greater than that of
+the sun (<span class="math notranslate nohighlight">\(b&gt;a\)</span>).</p></li>
+<li><p><strong>Annular Eclipse</strong> (<span class="math notranslate nohighlight">\(c&lt;a-b\)</span>): Assume the apparent radius of the sun is greater than that of the
+planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="setting-the-spacecraft-state-input-messages">
+<h3>Setting The Spacecraft State Input Messages<a class="headerlink" href="#setting-the-spacecraft-state-input-messages" title="Link to this heading"></a></h3>
+<p>The spacecrat state messages are read in by the <code class="docutils literal notranslate"><span class="pre">eclipse</span></code> module to determine where the spacecraft is relative to the sun and the planet(s).  The module can handle a list of input messages, however, these are not set directly.  Rather, use the method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The spacecraft state message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a>.</p>
+</section>
+<section id="setting-the-planet-state-input-messages">
+<h3>Setting The Planet State Input Messages<a class="headerlink" href="#setting-the-planet-state-input-messages" title="Link to this heading"></a></h3>
+<p>The planet state input message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a>.  To add this as an input connection to <code class="docutils literal notranslate"><span class="pre">eclipse</span></code>, use the method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>At least one planet must be specified.  If there are multiple planets, then the shadow factor is only computed relative to the closest planet.</p>
+</section>
+<section id="setting-the-sun-state-input-message-optional">
+<h3>Setting the Sun State Input Message (Optional)<a class="headerlink" href="#setting-the-sun-state-input-message-optional" title="Link to this heading"></a></h3>
+<p>To connect to a sun state input message use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="eclipse-output-messages">
+<h3>Eclipse Output Messages<a class="headerlink" href="#eclipse-output-messages" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">eclipse</span></code> module will output a series of messages of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a> corresponding to the number of spacecraft provided.  The names of these output messages are auto-generated as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">0</span></code> indicates the first spacecraft shadow factor messages, etc.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv47Eclipse">
+<span id="_CPPv37Eclipse"></span><span id="_CPPv27Eclipse"></span><span id="Eclipse"></span><span class="target" id="class_eclipse"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Eclipse</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv47Eclipse" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;eclipse.h&gt;</em></div>
+<p>eclipse model class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse7EclipseEv">
+<span id="_CPPv3N7Eclipse7EclipseEv"></span><span id="_CPPv2N7Eclipse7EclipseEv"></span><span id="Eclipse::Eclipse"></span><span class="target" id="class_eclipse_1ad0271c0160fcc785b9cd312359bf2cf9"></span><span class="sig-name descname"><span class="n"><span class="pre">Eclipse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse7EclipseEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7EclipseD0Ev">
+<span id="_CPPv3N7EclipseD0Ev"></span><span id="_CPPv2N7EclipseD0Ev"></span><span id="Eclipse::~Eclipse"></span><span class="target" id="class_eclipse_1af6a4ae78355cdf993adb9dd878557edb"></span><span class="sig-name descname"><span class="n"><span class="pre">~Eclipse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7EclipseD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse5ResetE8uint64_t">
+<span id="_CPPv3N7Eclipse5ResetE8uint64_t"></span><span id="_CPPv2N7Eclipse5ResetE8uint64_t"></span><span id="Eclipse::Reset__uint64_t"></span><span class="target" id="class_eclipse_1a668407ee40ed5900ae91d90f0b13c84b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrenSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the module to origina configuration values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse11UpdateStateE8uint64_t">
+<span id="_CPPv3N7Eclipse11UpdateStateE8uint64_t"></span><span id="_CPPv2N7Eclipse11UpdateStateE8uint64_t"></span><span id="Eclipse::UpdateState__uint64_t"></span><span class="target" id="class_eclipse_1ae9a70ffc8407c2bd4ab9a5ba230baa81"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method governs the calculation and checking for eclipse conditions. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current clock time for the simulation </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N7Eclipse19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N7Eclipse19writeOutputMessagesE8uint64_t"></span><span id="Eclipse::writeOutputMessages__uint64_t"></span><span class="target" id="class_eclipse_1a8f3dfc3408704b88c75527a68c7812b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the computed shadow factors and outputs them to the messaging system. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N7Eclipse20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N7Eclipse20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="Eclipse::addSpacecraftToModel__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_eclipse_1a8204ee7b5db464e55a25ec2d1fe86038"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds spacecraft state data message names to a vector, creates a new unique output message for the eclipse data message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpScMsg</strong> – The state output message for the spacecraft for which to compute the eclipse data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE">
+<span id="_CPPv3N7Eclipse16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="_CPPv2N7Eclipse16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="Eclipse::addPlanetToModel__Message:SpicePlanetStateMsgPayload:P"></span><span class="target" id="class_eclipse_1a1d7465ba323cccaf836f3767b2fd6f2f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpSpMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds planet state data message names to a vector. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpSpMsg</strong> – The planet name </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse8sunInMsgE">
+<span id="_CPPv3N7Eclipse8sunInMsgE"></span><span id="_CPPv2N7Eclipse8sunInMsgE"></span><span id="Eclipse::sunInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_eclipse_1a6f2979e531b6652a850301c7624b98d4"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsg</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse8sunInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sun ephemeris input message name </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse12planetInMsgsE">
+<span id="_CPPv3N7Eclipse12planetInMsgsE"></span><span id="_CPPv2N7Eclipse12planetInMsgsE"></span><span id="Eclipse::planetInMsgs__std::vector:ReadFunctor:SpicePlanetStateMsgPayload::"></span><span class="target" id="class_eclipse_1abe458c27fe1316e0dc86503eb5d834c6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse12planetInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>A vector of planet incoming state message names ordered by the sequence in which planet are added to the module. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse14positionInMsgsE">
+<span id="_CPPv3N7Eclipse14positionInMsgsE"></span><span id="_CPPv2N7Eclipse14positionInMsgsE"></span><span id="Eclipse::positionInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_eclipse_1a3c55d4bc949012f10d89c1b34cfa6954"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">positionInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse14positionInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of msgs for each spacecraft position state for which to evaluate eclipse conditions. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse14eclipseOutMsgsE">
+<span id="_CPPv3N7Eclipse14eclipseOutMsgsE"></span><span id="_CPPv2N7Eclipse14eclipseOutMsgsE"></span><span id="Eclipse::eclipseOutMsgs__std::vector:Message:EclipseMsgPayload:P:"></span><span class="target" id="class_eclipse_1a09c50ca4afdd26d60a1b0571e5f6715e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse14eclipseOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of eclispe output msg names </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse9bskLoggerE">
+<span id="_CPPv3N7Eclipse9bskLoggerE"></span><span id="_CPPv2N7Eclipse9bskLoggerE"></span><span id="Eclipse::bskLogger__BSKLogger"></span><span class="target" id="class_eclipse_1ac2f105f763f3ce76754c6e6963750a31"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse9rEqCustomE">
+<span id="_CPPv3N7Eclipse9rEqCustomE"></span><span id="_CPPv2N7Eclipse9rEqCustomE"></span><span id="Eclipse::rEqCustom__double"></span><span class="target" id="class_eclipse_1a46077b2bd5889655329331117e298d53"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEqCustom</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse9rEqCustomE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Custom radius </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse17readInputMessagesEv">
+<span id="_CPPv3N7Eclipse17readInputMessagesEv"></span><span id="_CPPv2N7Eclipse17readInputMessagesEv"></span><span id="Eclipse::readInputMessages"></span><span class="target" id="class_eclipse_1a8af83faba7c8ce2d7629ad0ecee17742"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the spacecraft state, spice planet states and the sun position from the messaging system. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Eclipse::computePercentShadow__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_eclipse_1a1148d555d37f2b6cecd0461732cbb7f2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePercentShadow</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetRadius</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_HB_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s_BP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the fraction of sunlight given an eclipse. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetRadius</strong> – </p></li>
+<li><p><strong>r_HB_N</strong> – </p></li>
+<li><p><strong>s_BP_N</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double fractionShadow The eclipse shadow fraction. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse25getPlanetEquatorialRadiusENSt6stringE">
+<span id="_CPPv3N7Eclipse25getPlanetEquatorialRadiusENSt6stringE"></span><span id="_CPPv2N7Eclipse25getPlanetEquatorialRadiusENSt6stringE"></span><span id="Eclipse::getPlanetEquatorialRadius__ss"></span><span class="target" id="class_eclipse_1a76ec200fceeab97e376c8302e2a79acc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPlanetEquatorialRadius</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetSpiceName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse25getPlanetEquatorialRadiusENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method return planet radii. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>planetSpiceName</strong> – The planet name according to the spice NAIF Integer ID codes. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double The equatorial radius in metres associated with the given planet name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse11planetRadiiE">
+<span id="_CPPv3N7Eclipse11planetRadiiE"></span><span id="_CPPv2N7Eclipse11planetRadiiE"></span><span id="Eclipse::planetRadii__std::vector:float:"></span><span class="target" id="class_eclipse_1a24195d579673f2969b74869416006e19"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">float</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetRadii</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse11planetRadiiE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] A vector of planet radii ordered by the sequence in which planet names are added to the module </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse13scStateBufferE">
+<span id="_CPPv3N7Eclipse13scStateBufferE"></span><span id="_CPPv2N7Eclipse13scStateBufferE"></span><span id="Eclipse::scStateBuffer__std::vector:SCStatesMsgPayload:"></span><span class="target" id="class_eclipse_1abecd685e7749d51d9de1a0e3ca42c023"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateBuffer</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse13scStateBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of the spacecraft state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse12planetBufferE">
+<span id="_CPPv3N7Eclipse12planetBufferE"></span><span id="_CPPv2N7Eclipse12planetBufferE"></span><span id="Eclipse::planetBuffer__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_eclipse_1a02410f40b4a4f8b54193da6a4fba0524"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetBuffer</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse12planetBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of the spacecraft state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse13sunInMsgStateE">
+<span id="_CPPv3N7Eclipse13sunInMsgStateE"></span><span id="_CPPv2N7Eclipse13sunInMsgStateE"></span><span id="Eclipse::sunInMsgState__SpicePlanetStateMsgPayload"></span><span class="target" id="class_eclipse_1a4e55911b19862e59f60e3bbc5d3e13b6"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsgState</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse13sunInMsgStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>copy of sun input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse20eclipseShadowFactorsE">
+<span id="_CPPv3N7Eclipse20eclipseShadowFactorsE"></span><span id="_CPPv2N7Eclipse20eclipseShadowFactorsE"></span><span id="Eclipse::eclipseShadowFactors__std::vector:double:"></span><span class="target" id="class_eclipse_1a64de16c3fc3f2d76a8e9087c05157e2d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseShadowFactors</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse20eclipseShadowFactorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of shadow factor output values </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="eclipse" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

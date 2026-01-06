@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: autoCModule &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="autoCModule" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">moduleTemplates</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#general-purpose">General Purpose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#usage-of-template-folders">Usage of Template Folders</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#usage-of-makedraftmodules-py">Usage of <code class="docutils literal notranslate"><span class="pre">makeDraftModules.py</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">autoCModule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoCppModule/index.html">autoCppModule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cModuleTemplate/index.html">cModuleTemplate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cppModuleTemplate/index.html">cppModuleTemplate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">moduleTemplates</a></li>
+          <li class="breadcrumb-item"><a href="index.html">autoCModule</a></li>
+      <li class="breadcrumb-item active">Module: autoCModule</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/moduleTemplates/autoCModule/autoCModule.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocmodule">
+<span id="autocmodule"></span><h1>Module: autoCModule<a class="headerlink" href="#module-autocmodule" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This is an auto-created sample C module.  The description is included with the module class definition</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>someInMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>input msg description</p></td>
+</tr>
+<tr class="row-odd"><td><p>some2InMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>input msg description</p></td>
+</tr>
+<tr class="row-even"><td><p>anotherInMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/CSSConfigMsgPayload.html#cssconfigmsgpayload"><span class="std std-ref">CSSConfigMsgPayload</span></a></p></td>
+<td><p>input msg description</p></td>
+</tr>
+<tr class="row-odd"><td><p>some2OutMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>output msg description</p></td>
+</tr>
+<tr class="row-even"><td><p>someOutMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>output msg description</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420SelfInit_autoCModuleP17autoCModuleConfig7int64_t">
+<span id="_CPPv320SelfInit_autoCModuleP17autoCModuleConfig7int64_t"></span><span id="_CPPv220SelfInit_autoCModuleP17autoCModuleConfig7int64_t"></span><span id="SelfInit_autoCModule__autoCModuleConfigP.int64_t"></span><span class="target" id="auto_c_module_8h_1a0f7df3e1b2c09676dffdf1889a71aa9c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_autoCModule</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417autoCModuleConfig" title="autoCModuleConfig"><span class="n"><span class="pre">autoCModuleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420SelfInit_autoCModuleP17autoCModuleConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418Update_autoCModuleP17autoCModuleConfig8uint64_t7int64_t">
+<span id="_CPPv318Update_autoCModuleP17autoCModuleConfig8uint64_t7int64_t"></span><span id="_CPPv218Update_autoCModuleP17autoCModuleConfig8uint64_t7int64_t"></span><span id="Update_autoCModule__autoCModuleConfigP.uint64_t.int64_t"></span><span class="target" id="auto_c_module_8h_1ac9dd0c0624826fb666ba18826e7c0c68"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_autoCModule</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417autoCModuleConfig" title="autoCModuleConfig"><span class="n"><span class="pre">autoCModuleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418Update_autoCModuleP17autoCModuleConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a description of what this main Update() routine does for this module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417Reset_autoCModuleP17autoCModuleConfig8uint64_t7int64_t">
+<span id="_CPPv317Reset_autoCModuleP17autoCModuleConfig8uint64_t7int64_t"></span><span id="_CPPv217Reset_autoCModuleP17autoCModuleConfig8uint64_t7int64_t"></span><span id="Reset_autoCModule__autoCModuleConfigP.uint64_t.int64_t"></span><span class="target" id="auto_c_module_8h_1ab082f2741001638df4ee1c2a17d0071e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_autoCModule</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417autoCModuleConfig" title="autoCModuleConfig"><span class="n"><span class="pre">autoCModuleConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417Reset_autoCModuleP17autoCModuleConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. Check if required input messages are connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417autoCModuleConfig">
+<span id="_CPPv317autoCModuleConfig"></span><span id="_CPPv217autoCModuleConfig"></span><span id="autoCModuleConfig"></span><span class="target" id="structauto_c_module_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">autoCModuleConfig</span></span></span><a class="headerlink" href="#_CPPv417autoCModuleConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;autoCModule.h&gt;</em></div>
+<p>This is an auto-created sample C module. The description is included with the module class definition. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig9someInMsgE">
+<span id="_CPPv3N17autoCModuleConfig9someInMsgE"></span><span id="_CPPv2N17autoCModuleConfig9someInMsgE"></span><span id="autoCModuleConfig::someInMsg__AttRefMsg_C"></span><span class="target" id="structauto_c_module_config_1a867a77e405a37be187b198e67f718cc2"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">someInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig9someInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig10some2InMsgE">
+<span id="_CPPv3N17autoCModuleConfig10some2InMsgE"></span><span id="_CPPv2N17autoCModuleConfig10some2InMsgE"></span><span id="autoCModuleConfig::some2InMsg__AttRefMsg_C"></span><span class="target" id="structauto_c_module_config_1a45ee3714accc8d31ed735e3b78bf61ab"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">some2InMsg</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig10some2InMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig12anotherInMsgE">
+<span id="_CPPv3N17autoCModuleConfig12anotherInMsgE"></span><span id="_CPPv2N17autoCModuleConfig12anotherInMsgE"></span><span id="autoCModuleConfig::anotherInMsg__CSSConfigMsg_C"></span><span class="target" id="structauto_c_module_config_1a93a2f720ef13f8e0e914e7e119b1ea6f"></span><span class="n"><span class="pre">CSSConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">anotherInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig12anotherInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig11some2OutMsgE">
+<span id="_CPPv3N17autoCModuleConfig11some2OutMsgE"></span><span id="_CPPv2N17autoCModuleConfig11some2OutMsgE"></span><span id="autoCModuleConfig::some2OutMsg__AttRefMsg_C"></span><span class="target" id="structauto_c_module_config_1a85a7330de5c3b589c78fdc5f013b04eb"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">some2OutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig11some2OutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig10someOutMsgE">
+<span id="_CPPv3N17autoCModuleConfig10someOutMsgE"></span><span id="_CPPv2N17autoCModuleConfig10someOutMsgE"></span><span id="autoCModuleConfig::someOutMsg__SCStatesMsg_C"></span><span class="target" id="structauto_c_module_config_1a9715afc69e9d88fe4134b1a12316a927"></span><span class="n"><span class="pre">SCStatesMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">someOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig10someOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig9varDoubleE">
+<span id="_CPPv3N17autoCModuleConfig9varDoubleE"></span><span id="_CPPv2N17autoCModuleConfig9varDoubleE"></span><span id="autoCModuleConfig::varDouble__double"></span><span class="target" id="structauto_c_module_config_1ab0b36bf395b64ac020bbf09b9974503c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">varDouble</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig9varDoubleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[units] variable description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig6varIntE">
+<span id="_CPPv3N17autoCModuleConfig6varIntE"></span><span id="_CPPv2N17autoCModuleConfig6varIntE"></span><span id="autoCModuleConfig::varInt__i"></span><span class="target" id="structauto_c_module_config_1a8978bdd86c1aaa2d9ac54d54d2929ffe"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">varInt</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig6varIntE" title="Link to this definition"></a><br /></dt>
+<dd><p>[units] variable description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17autoCModuleConfig9bskLoggerE">
+<span id="_CPPv3N17autoCModuleConfig9bskLoggerE"></span><span id="_CPPv2N17autoCModuleConfig9bskLoggerE"></span><span id="autoCModuleConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structauto_c_module_config_1adbdfe3a3229109fc754785654d8f83b8"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N17autoCModuleConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="autoCModule" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

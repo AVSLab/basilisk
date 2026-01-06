@@ -1,0 +1,606 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: vizInterface &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="vizInterface" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">vizard</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dataFileToViz/index.html">dataFileToViz</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">vizInterface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">vizard</a></li>
+          <li class="breadcrumb-item"><a href="index.html">vizInterface</a></li>
+      <li class="breadcrumb-item active">Module: vizInterface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/vizard/vizInterface/vizInterface.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-vizinterface">
+<span id="vizinterface"></span><h1>Module: vizInterface<a class="headerlink" href="#module-vizinterface" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module provides an interface to package up Basilisk messages and pass them onto the <a class="reference internal" href="../../../../Vizard/Vizard.html#vizard"><span class="std std-ref">Vizard</span></a>
+application.  This allows for the Basilisk simulation data to be recorded to a file for play-back, or for
+live streaming of the simulation data.  It is possible to record the simulation data of a single spacecraft or a
+multitude of spacecraft.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The module is only able to read Basilisk simulation state messages that are accessable from the task group that
+is calling <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following messages are set directly within <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>.  Additional messages are set within the
+<code class="docutils literal notranslate"><span class="pre">VizSpacecraftData</span></code> data structures for each spacecraft.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>opnavImageOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#cameraimagemsgpayload"><span class="std std-ref">CameraImageMsgPayload</span></a></p></td>
+<td><p>(optional) vector of Image output messages, the corresponding camera configuration input message is setup
+through <code class="docutils literal notranslate"><span class="pre">vizInterface.addCamMsgToModule(msg)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>epochInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a></p></td>
+<td><p>(optional) simulation epoch date/time input msg</p></td>
+</tr>
+<tr class="row-even"><td><p>spiceInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) vector of input messages of planet Spice data</p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">VizSpacecraftData</span></code> structure, defined in <a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#vizstructures"><span class="std std-ref">Module: vizStructures</span></a>, contains a range of input messages for each spacecraft added.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">VizSpacecraftData</span></code> input messages per spacecraft</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>msg of incoming spacecraft state data</p></td>
+</tr>
+<tr class="row-odd"><td><p>rwInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#rwconfiglogmsgpayload"><span class="std std-ref">RWConfigLogMsgPayload</span></a></p></td>
+<td><p>(optional) Vector of incoming RW state messages</p></td>
+</tr>
+<tr class="row-even"><td><p>thrInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#throutputmsgpayload"><span class="std std-ref">THROutputMsgPayload</span></a></p></td>
+<td><p>(optional) vector of thruster input messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>cssInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.html#cssconfiglogmsgpayload"><span class="std std-ref">CSSConfigLogMsgPayload</span></a></p></td>
+<td><p>(optional) Vector of CSS config log messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="handshaking-protocol">
+<h2>Handshaking Protocol<a class="headerlink" href="#handshaking-protocol" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> facilitates the port configuration and handshaking process between BSK and Vizard. The current implementation of this protocol is defined here for developers, for use if an alternate visualization destination is desired.</p>
+<p>BSK instantiates the broadcast socket using <code class="docutils literal notranslate"><span class="pre">zmq_bind</span></code>, and the 2-way socket using <code class="docutils literal notranslate"><span class="pre">zmq_connect</span></code>. Vizard joins these sockets using reciprocal <code class="docutils literal notranslate"><span class="pre">connect</span></code> and <code class="docutils literal notranslate"><span class="pre">bind</span></code> structure where appropriate.</p>
+<p>The remaining complexity is with the 2-way socket, which couples BSK and Vizard in lockstep. After instantiation, <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> empties the socket and sends “PING” to start communication. When sending a sim update, <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> first sends the string “SIM_UPDATE”, followed by 2 empty messages, followed by the serialized message protobuffer. It then listens for the response “OK”. Periodic “PING” messages may be sent to keep the socket alive. To receive user input from Vizard, <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> sends the string “REQUEST_INPUT”. It then collects the user input message, followed by a status string. The string “VIZARD_INPUT” signifies a successful send, while “ERROR” signifies an issue during transmission. When using <code class="docutils literal notranslate"><span class="pre">opNav</span></code>, the string “REQUEST_IMAGE_” is sent to request for an image from configured onboard cameras.</p>
+<p>For more specifics in message packaging and handling, see the source code for this module.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> module can be directly configured, or setup using the helper methods in <a class="reference internal" href="../../../utilities/vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a>.
+More information can be found in <a class="reference internal" href="../../../../Vizard/vizardAdvanced/vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a> page.  The <a class="reference internal" href="../../../../examples/scenarioFormationBasic.html#scenarioformationbasic"><span class="std std-ref">scenarioFormationBasic</span></a> illustrates and
+discusses how to configure <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> for use with multiple satellites.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.VIZ_MAX_SIZE">
+<span class="target" id="viz_interface_8h_1ae540100819aefd506d006c067ad2ec8a"></span><span class="sig-name descname"><span class="n"><span class="pre">VIZ_MAX_SIZE</span></span></span><a class="headerlink" href="#c.VIZ_MAX_SIZE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412VizInterface">
+<span id="_CPPv312VizInterface"></span><span id="_CPPv212VizInterface"></span><span id="VizInterface"></span><span class="target" id="class_viz_interface"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VizInterface</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv412VizInterface" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;vizInterface.h&gt;</em></div>
+<p>Defines a data structure for the spacecraft state messages and ID’s. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12VizInterfaceEv">
+<span id="_CPPv3N12VizInterface12VizInterfaceEv"></span><span id="_CPPv2N12VizInterface12VizInterfaceEv"></span><span id="VizInterface::VizInterface"></span><span class="target" id="class_viz_interface_1a4d214298d640bc95db6c09022094084e"></span><span class="sig-name descname"><span class="n"><span class="pre">VizInterface</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface12VizInterfaceEv" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_viz_interface"><span class="std std-ref">VizInterface</span></a> Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterfaceD0Ev">
+<span id="_CPPv3N12VizInterfaceD0Ev"></span><span id="_CPPv2N12VizInterfaceD0Ev"></span><span id="VizInterface::~VizInterface"></span><span class="target" id="class_viz_interface_1af2ab1230fbf1d676e4d861fe4855e76f"></span><span class="sig-name descname"><span class="n"><span class="pre">~VizInterface</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterfaceD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_viz_interface"><span class="std std-ref">VizInterface</span></a> Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface5ResetE8uint64_t">
+<span id="_CPPv3N12VizInterface5ResetE8uint64_t"></span><span id="_CPPv2N12VizInterface5ResetE8uint64_t"></span><span id="VizInterface::Reset__uint64_t"></span><span class="target" id="class_viz_interface_1a910b7b767ce6c34165b3215cc8da7b1f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>A Reset method to put the module back into a clean state </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface11UpdateStateE8uint64_t">
+<span id="_CPPv3N12VizInterface11UpdateStateE8uint64_t"></span><span id="_CPPv2N12VizInterface11UpdateStateE8uint64_t"></span><span id="VizInterface::UpdateState__uint64_t"></span><span class="target" id="class_viz_interface_1ae683ac5b032d3384e9b7efe10b58e35c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update this module at the task rate </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface15ReadBSKMessagesEv">
+<span id="_CPPv3N12VizInterface15ReadBSKMessagesEv"></span><span id="_CPPv2N12VizInterface15ReadBSKMessagesEv"></span><span id="VizInterface::ReadBSKMessages"></span><span class="target" id="class_viz_interface_1a643259d05c3aa1f97c3654796613c2ad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadBSKMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface15ReadBSKMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>A method in which the module reads the content of all available bsk messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16WriteProtobufferE8uint64_t">
+<span id="_CPPv3N12VizInterface16WriteProtobufferE8uint64_t"></span><span id="_CPPv2N12VizInterface16WriteProtobufferE8uint64_t"></span><span id="VizInterface::WriteProtobuffer__uint64_t"></span><span class="target" id="class_viz_interface_1aaea5c6391400b8a23aa6638ce14bc4dd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteProtobuffer</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface16WriteProtobufferE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>The method in which the vizInterface writes a protobuffer with the information from the simulation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface17addCamMsgToModuleEP7MessageI22CameraConfigMsgPayloadE">
+<span id="_CPPv3N12VizInterface17addCamMsgToModuleEP7MessageI22CameraConfigMsgPayloadE"></span><span id="_CPPv2N12VizInterface17addCamMsgToModuleEP7MessageI22CameraConfigMsgPayloadE"></span><span id="VizInterface::addCamMsgToModule__Message:CameraConfigMsgPayload:P"></span><span class="target" id="class_viz_interface_1a0e78609a3efcc0081d0c367caf2ab85b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addCamMsgToModule</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#_CPPv422CameraConfigMsgPayload" title="CameraConfigMsgPayload"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface17addCamMsgToModuleEP7MessageI22CameraConfigMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to add a Vizard instrument camera module to vizInterface </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpMsg</strong> – Camera configuration msg </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface6scDataE">
+<span id="_CPPv3N12VizInterface6scDataE"></span><span id="_CPPv2N12VizInterface6scDataE"></span><span id="VizInterface::scData__std::vector:VizSpacecraftData:"></span><span class="target" id="class_viz_interface_1a74bacd24d6d7c5a224844290eec8254d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv417VizSpacecraftData" title="VizSpacecraftData"><span class="n"><span class="pre">VizSpacecraftData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scData</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface6scDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft data containers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface11spiceInMsgsE">
+<span id="_CPPv3N12VizInterface11spiceInMsgsE"></span><span id="_CPPv2N12VizInterface11spiceInMsgsE"></span><span id="VizInterface::spiceInMsgs__std::vector:ReadFunctor:SpicePlanetStateMsgPayload::"></span><span class="target" id="class_viz_interface_1a9c2769cd57c37adf7a02af7314f44879"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spiceInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface11spiceInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of input messages of planet Spice data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface9locationsE">
+<span id="_CPPv3N12VizInterface9locationsE"></span><span id="_CPPv2N12VizInterface9locationsE"></span><span id="VizInterface::locations__std::vector:LocationPbMsg:"></span><span class="target" id="class_viz_interface_1a0695fa347e95a0f9d9f828acf8d96550"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413LocationPbMsg" title="LocationPbMsg"><span class="n"><span class="pre">LocationPbMsg</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">locations</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface9locationsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of ground or spacecraft locations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface8quadMapsE">
+<span id="_CPPv3N12VizInterface8quadMapsE"></span><span id="_CPPv2N12VizInterface8quadMapsE"></span><span id="VizInterface::quadMaps__std::vector:QuadMapP:"></span><span class="target" id="class_viz_interface_1abf3f9645e12299427c889d8b62a3e214"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv47QuadMap" title="QuadMap"><span class="n"><span class="pre">QuadMap</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">quadMaps</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface8quadMapsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of QuadMap regions </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface19gravBodyInformationE">
+<span id="_CPPv3N12VizInterface19gravBodyInformationE"></span><span id="_CPPv2N12VizInterface19gravBodyInformationE"></span><span id="VizInterface::gravBodyInformation__std::vector:GravBodyInfo:"></span><span class="target" id="class_viz_interface_1a4a254f5993e7fbeb99338041fc72b2cb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv412GravBodyInfo" title="GravBodyInfo"><span class="n"><span class="pre">GravBodyInfo</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravBodyInformation</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface19gravBodyInformationE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of gravitational body info </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface17opnavImageOutMsgsE">
+<span id="_CPPv3N12VizInterface17opnavImageOutMsgsE"></span><span id="_CPPv2N12VizInterface17opnavImageOutMsgsE"></span><span id="VizInterface::opnavImageOutMsgs__std::vector:Message:CameraImageMsgPayload:P:"></span><span class="target" id="class_viz_interface_1a9e1787bbf28639aaaa0fd1c74a96e8c2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#_CPPv421CameraImageMsgPayload" title="CameraImageMsgPayload"><span class="n"><span class="pre">CameraImageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opnavImageOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface17opnavImageOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of vizard instrument camera output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface8saveFileE">
+<span id="_CPPv3N12VizInterface8saveFileE"></span><span id="_CPPv2N12VizInterface8saveFileE"></span><span id="VizInterface::saveFile__b"></span><span class="target" id="class_viz_interface_1a8fbbc2a0f3ac99764ebd2d4ce427c2ea"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveFile</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface8saveFileE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Bool] Set True if Vizard should save a file of the data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface10liveStreamE">
+<span id="_CPPv3N12VizInterface10liveStreamE"></span><span id="_CPPv2N12VizInterface10liveStreamE"></span><span id="VizInterface::liveStream__b"></span><span class="target" id="class_viz_interface_1a617d0e92955ff1422be5b42945f573b5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">liveStream</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface10liveStreamE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Bool] Set True if Vizard should receive a live stream of BSK data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface15broadcastStreamE">
+<span id="_CPPv3N12VizInterface15broadcastStreamE"></span><span id="_CPPv2N12VizInterface15broadcastStreamE"></span><span id="VizInterface::broadcastStream__b"></span><span class="target" id="class_viz_interface_1a968fcc0b2b694809e3449b7ba9260a0b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">broadcastStream</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface15broadcastStreamE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Bool] Set True if messages should be broadcast for listener Vizards to pick up. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface9noDisplayE">
+<span id="_CPPv3N12VizInterface9noDisplayE"></span><span id="_CPPv2N12VizInterface9noDisplayE"></span><span id="VizInterface::noDisplay__b"></span><span class="target" id="class_viz_interface_1a011b8c519bfcaded06b23d6627de8bd4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noDisplay</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface9noDisplayE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Bool] Set True if Vizard should run performance opNav (no Vizard display) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12bskImagePtrsE">
+<span id="_CPPv3N12VizInterface12bskImagePtrsE"></span><span id="_CPPv2N12VizInterface12bskImagePtrsE"></span><span id="VizInterface::bskImagePtrs__std::vector:voidP:"></span><span class="target" id="class_viz_interface_1a6fe642e32afed61da818259ec28cc1ce"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskImagePtrs</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface12bskImagePtrsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[RUN] vector of permanent pointers for the images to be used in BSK without relying on ZMQ because ZMQ will free it (whenever, who knows) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16cameraConfInMsgsE">
+<span id="_CPPv3N12VizInterface16cameraConfInMsgsE"></span><span id="_CPPv2N12VizInterface16cameraConfInMsgsE"></span><span id="VizInterface::cameraConfInMsgs__std::vector:ReadFunctor:CameraConfigMsgPayload::"></span><span class="target" id="class_viz_interface_1a3cecc0766af698bf3e0cbd8a2850cb61"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#_CPPv422CameraConfigMsgPayload" title="CameraConfigMsgPayload"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface16cameraConfInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of incoming camera data messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface19cameraConfMsgStatusE">
+<span id="_CPPv3N12VizInterface19cameraConfMsgStatusE"></span><span id="_CPPv2N12VizInterface19cameraConfMsgStatusE"></span><span id="VizInterface::cameraConfMsgStatus__std::vector:MsgCurrStatus:"></span><span class="target" id="class_viz_interface_1a440e64d83ba761f16919bf18cdb8ea1e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413MsgCurrStatus" title="MsgCurrStatus"><span class="n"><span class="pre">MsgCurrStatus</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfMsgStatus</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface19cameraConfMsgStatusE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of msg status of incoming camera data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface19cameraConfigBuffersE">
+<span id="_CPPv3N12VizInterface19cameraConfigBuffersE"></span><span id="_CPPv2N12VizInterface19cameraConfigBuffersE"></span><span id="VizInterface::cameraConfigBuffers__std::vector:CameraConfigMsgPayload:"></span><span class="target" id="class_viz_interface_1ab8b357870b3847c2367158aebecc4257"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#_CPPv422CameraConfigMsgPayload" title="CameraConfigMsgPayload"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfigBuffers</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface19cameraConfigBuffersE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of Camera config buffers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface11FrameNumberE">
+<span id="_CPPv3N12VizInterface11FrameNumberE"></span><span id="_CPPv2N12VizInterface11FrameNumberE"></span><span id="VizInterface::FrameNumber__int64_t"></span><span class="target" id="class_viz_interface_1a87cd02b3f412e837d68f8e629ffc77f3"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FrameNumber</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface11FrameNumberE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of frames that have been updated for TimeStamp message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface13protoFilenameE">
+<span id="_CPPv3N12VizInterface13protoFilenameE"></span><span id="_CPPv2N12VizInterface13protoFilenameE"></span><span id="VizInterface::protoFilename__ss"></span><span class="target" id="class_viz_interface_1abfe511d219043fa9d7fe6026c527f38a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">protoFilename</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface13protoFilenameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Filename for where to save the protobuff message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface8settingsE">
+<span id="_CPPv3N12VizInterface8settingsE"></span><span id="_CPPv2N12VizInterface8settingsE"></span><span id="VizInterface::settings__VizSettings"></span><span class="target" id="class_viz_interface_1a183ed123306b2454672602b0729a3346"></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv411VizSettings" title="VizSettings"><span class="n"><span class="pre">VizSettings</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">settings</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface8settingsE" title="Link to this definition"></a><br /></dt>
+<dd><p>container for the Viz settings that can be specified from BSK </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12liveSettingsE">
+<span id="_CPPv3N12VizInterface12liveSettingsE"></span><span id="_CPPv2N12VizInterface12liveSettingsE"></span><span id="VizInterface::liveSettings__LiveVizSettings"></span><span class="target" id="class_viz_interface_1a41d80d777698b3de879b5fa5081aa588"></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv415LiveVizSettings" title="LiveVizSettings"><span class="n"><span class="pre">LiveVizSettings</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">liveSettings</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface12liveSettingsE" title="Link to this definition"></a><br /></dt>
+<dd><p>container for Viz settings that are updated on each time step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface15vizEventDialogsE">
+<span id="_CPPv3N12VizInterface15vizEventDialogsE"></span><span id="_CPPv2N12VizInterface15vizEventDialogsE"></span><span id="VizInterface::vizEventDialogs__std::vector:VizEventDialogP:"></span><span class="target" id="class_viz_interface_1ae51a21b825f951549de718eb002819ae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv414VizEventDialog" title="VizEventDialog"><span class="n"><span class="pre">VizEventDialog</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vizEventDialogs</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12VizInterface15vizEventDialogsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of dialog boxes to show </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface14reqComProtocolE">
+<span id="_CPPv3N12VizInterface14reqComProtocolE"></span><span id="_CPPv2N12VizInterface14reqComProtocolE"></span><span id="VizInterface::reqComProtocol__ss"></span><span class="target" id="class_viz_interface_1a92f6e5722aab1eb58f0368dfc8d6bfe9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reqComProtocol</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface14reqComProtocolE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication protocol to use when connecting to 2-way Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface13reqComAddressE">
+<span id="_CPPv3N12VizInterface13reqComAddressE"></span><span id="_CPPv2N12VizInterface13reqComAddressE"></span><span id="VizInterface::reqComAddress__ss"></span><span class="target" id="class_viz_interface_1a70d89d5f8a9ab1f1e688049a0bc4d4b0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reqComAddress</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface13reqComAddressE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication address to use when connecting to 2-way Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface13reqPortNumberE">
+<span id="_CPPv3N12VizInterface13reqPortNumberE"></span><span id="_CPPv2N12VizInterface13reqPortNumberE"></span><span id="VizInterface::reqPortNumber__ss"></span><span class="target" id="class_viz_interface_1a617cdaadc8d1cd8bc09f83c499ed98e0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reqPortNumber</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface13reqPortNumberE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication port number to use when connecting to 2-way Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface14pubComProtocolE">
+<span id="_CPPv3N12VizInterface14pubComProtocolE"></span><span id="_CPPv2N12VizInterface14pubComProtocolE"></span><span id="VizInterface::pubComProtocol__ss"></span><span class="target" id="class_viz_interface_1adae015d25a60c2fc6d298be260bef887"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pubComProtocol</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface14pubComProtocolE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication protocol to use when connecting to broadcast Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface13pubComAddressE">
+<span id="_CPPv3N12VizInterface13pubComAddressE"></span><span id="_CPPv2N12VizInterface13pubComAddressE"></span><span id="VizInterface::pubComAddress__ss"></span><span class="target" id="class_viz_interface_1a6d7f7ae4bea01614b425f596f76ee6af"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pubComAddress</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface13pubComAddressE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication address to use when connecting to broadcast Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface13pubPortNumberE">
+<span id="_CPPv3N12VizInterface13pubPortNumberE"></span><span id="_CPPv2N12VizInterface13pubPortNumberE"></span><span id="VizInterface::pubPortNumber__ss"></span><span class="target" id="class_viz_interface_1a1b3af161c2b84a6a2f537401f6f1e26e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pubPortNumber</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface13pubPortNumberE" title="Link to this definition"></a><br /></dt>
+<dd><p>Communication port number to use when connecting to broadcast Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface26broadcastSettingsSendDelayE">
+<span id="_CPPv3N12VizInterface26broadcastSettingsSendDelayE"></span><span id="_CPPv2N12VizInterface26broadcastSettingsSendDelayE"></span><span id="VizInterface::broadcastSettingsSendDelay__double"></span><span class="target" id="class_viz_interface_1a013014375fc3e2061e3e1ba50199408f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">broadcastSettingsSendDelay</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface26broadcastSettingsSendDelayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Real-time delay between sending Viz settings to broadcast socket. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface10epochInMsgE">
+<span id="_CPPv3N12VizInterface10epochInMsgE"></span><span id="_CPPv2N12VizInterface10epochInMsgE"></span><span id="VizInterface::epochInMsg__ReadFunctor:EpochMsgPayload:"></span><span class="target" id="class_viz_interface_1a8efce09bb854482528890049bb5e936c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#_CPPv415EpochMsgPayload" title="EpochMsgPayload"><span class="n"><span class="pre">EpochMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface10epochInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>simulation epoch date/time input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface14epochMsgStatusE">
+<span id="_CPPv3N12VizInterface14epochMsgStatusE"></span><span id="_CPPv2N12VizInterface14epochMsgStatusE"></span><span id="VizInterface::epochMsgStatus__MsgCurrStatus"></span><span class="target" id="class_viz_interface_1a97de5232648b2ae8133892ccbd9ebe15"></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413MsgCurrStatus" title="MsgCurrStatus"><span class="n"><span class="pre">MsgCurrStatus</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochMsgStatus</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface14epochMsgStatusE" title="Link to this definition"></a><br /></dt>
+<dd><p>ID of the epoch msg. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface14epochMsgBufferE">
+<span id="_CPPv3N12VizInterface14epochMsgBufferE"></span><span id="_CPPv2N12VizInterface14epochMsgBufferE"></span><span id="VizInterface::epochMsgBuffer__EpochMsgPayload"></span><span class="target" id="class_viz_interface_1a01e4eeadfddb0b736030846ad4bd33d6"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#_CPPv415EpochMsgPayload" title="EpochMsgPayload"><span class="n"><span class="pre">EpochMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface14epochMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>epoch msg data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12userInputMsgE">
+<span id="_CPPv3N12VizInterface12userInputMsgE"></span><span id="_CPPv2N12VizInterface12userInputMsgE"></span><span id="VizInterface::userInputMsg__Message:VizUserInputMsgPayload:"></span><span class="target" id="class_viz_interface_1a5d506e9d2759b2edd986cfda1a703f3e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/VizUserInputMsgPayload.html#_CPPv422VizUserInputMsgPayload" title="VizUserInputMsgPayload"><span class="n"><span class="pre">VizUserInputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">userInputMsg</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface12userInputMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>User input from Vizard. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface9bskLoggerE">
+<span id="_CPPv3N12VizInterface9bskLoggerE"></span><span id="_CPPv2N12VizInterface9bskLoggerE"></span><span id="VizInterface::bskLogger__BSKLogger"></span><span class="target" id="class_viz_interface_1a0734c1cb18037769d73dc8f9a1892274"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging object. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16receiveUserInputE8uint64_t">
+<span id="_CPPv3N12VizInterface16receiveUserInputE8uint64_t"></span><span id="_CPPv2N12VizInterface16receiveUserInputE8uint64_t"></span><span id="VizInterface::receiveUserInput__uint64_t"></span><span class="target" id="class_viz_interface_1aaea8e74171cb2511b09e7c718e3a42aa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">receiveUserInput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface16receiveUserInputE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>request user input from Vizard, save as </p>
+<p>During liveStream mode, ask Vizard for any user inputs recorded since the last timestep. Parse and package into VizUserInputMsgPayload for handling in Python. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12requestImageE6size_t8uint64_t">
+<span id="_CPPv3N12VizInterface12requestImageE6size_t8uint64_t"></span><span id="_CPPv2N12VizInterface12requestImageE6size_t8uint64_t"></span><span id="VizInterface::requestImage__s.uint64_t"></span><span class="target" id="class_viz_interface_1ac78418dd1843f2502a4c467346185c77"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">requestImage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">camCounter</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12VizInterface12requestImageE6size_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>request image from Vizard and store it in output img msg </p>
+<p>Requests an image from Vizard and stores it in the image output message </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface17requester_contextE">
+<span id="_CPPv3N12VizInterface17requester_contextE"></span><span id="_CPPv2N12VizInterface17requester_contextE"></span><span id="VizInterface::requester_context__voidP"></span><span class="target" id="class_viz_interface_1a239f9cb104518a9ca885a5f9d692095e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">requester_context</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface17requester_contextE" title="Link to this definition"></a><br /></dt>
+<dd><p>2-way context pointer (container for socket management) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16requester_socketE">
+<span id="_CPPv3N12VizInterface16requester_socketE"></span><span id="_CPPv2N12VizInterface16requester_socketE"></span><span id="VizInterface::requester_socket__voidP"></span><span class="target" id="class_viz_interface_1af8cf4081fd9bca646789723d972b83f0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">requester_socket</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface16requester_socketE" title="Link to this definition"></a><br /></dt>
+<dd><p>2-way socket pointer (ZMQ_REQ) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface17publisher_contextE">
+<span id="_CPPv3N12VizInterface17publisher_contextE"></span><span id="_CPPv2N12VizInterface17publisher_contextE"></span><span id="VizInterface::publisher_context__voidP"></span><span class="target" id="class_viz_interface_1a6b16bf367416fcfe492ac3ae6dacbc40"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">publisher_context</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface17publisher_contextE" title="Link to this definition"></a><br /></dt>
+<dd><p>Broadcast context pointer (container for socket management). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16publisher_socketE">
+<span id="_CPPv3N12VizInterface16publisher_socketE"></span><span id="_CPPv2N12VizInterface16publisher_socketE"></span><span id="VizInterface::publisher_socket__voidP"></span><span class="target" id="class_viz_interface_1a4fef866536a11a715199f0f0d53b34b3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">publisher_socket</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface16publisher_socketE" title="Link to this definition"></a><br /></dt>
+<dd><p>Broadcast socket pointer (ZMQ_PUB). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface9firstPassE">
+<span id="_CPPv3N12VizInterface9firstPassE"></span><span id="_CPPv2N12VizInterface9firstPassE"></span><span id="VizInterface::firstPass__i"></span><span class="target" id="class_viz_interface_1a3d8deffebd115f379c74b01e989c8134"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstPass</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface9firstPassE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag to intialize the viz at first timestep. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface16spiceInMsgStatusE">
+<span id="_CPPv3N12VizInterface16spiceInMsgStatusE"></span><span id="_CPPv2N12VizInterface16spiceInMsgStatusE"></span><span id="VizInterface::spiceInMsgStatus__std::vector:MsgCurrStatus:"></span><span class="target" id="class_viz_interface_1a1340306716bb6a5aff085afb9a1e68fd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413MsgCurrStatus" title="MsgCurrStatus"><span class="n"><span class="pre">MsgCurrStatus</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spiceInMsgStatus</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface16spiceInMsgStatusE" title="Link to this definition"></a><br /></dt>
+<dd><p>status of the incoming planets’ spice data messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12spiceMessageE">
+<span id="_CPPv3N12VizInterface12spiceMessageE"></span><span id="_CPPv2N12VizInterface12spiceMessageE"></span><span id="VizInterface::spiceMessage__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_viz_interface_1a127a33125379839659339faaf28b9f58"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spiceMessage</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface12spiceMessageE" title="Link to this definition"></a><br /></dt>
+<dd><p>Spice message copies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface12outputStreamE">
+<span id="_CPPv3N12VizInterface12outputStreamE"></span><span id="_CPPv2N12VizInterface12outputStreamE"></span><span id="VizInterface::outputStream__std::ofstreamP"></span><span class="target" id="class_viz_interface_1a76fa7521d0b7ab17a3f784df81d99b1f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ofstream</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">outputStream</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface12outputStreamE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output file stream opened in reset. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface3nowE">
+<span id="_CPPv3N12VizInterface3nowE"></span><span id="_CPPv2N12VizInterface3nowE"></span><span id="VizInterface::now__int64_t"></span><span class="target" id="class_viz_interface_1a59d00989046e2bfe4382488b38e61a32"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">now</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface3nowE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current system time stamp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12VizInterface20lastSettingsSendTimeE">
+<span id="_CPPv3N12VizInterface20lastSettingsSendTimeE"></span><span id="_CPPv2N12VizInterface20lastSettingsSendTimeE"></span><span id="VizInterface::lastSettingsSendTime__int64_t"></span><span class="target" id="class_viz_interface_1aefbce084763ee4fbea7818d1e7f3d03b"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lastSettingsSendTime</span></span></span><a class="headerlink" href="#_CPPv4N12VizInterface20lastSettingsSendTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>System time stamp when settings message was last sent to broadcast socket. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="vizInterface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

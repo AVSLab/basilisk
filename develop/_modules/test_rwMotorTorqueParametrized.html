@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_rwMotorTorqueParametrized &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_rwMotorTorqueParametrized</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_rwMotorTorqueParametrized</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        rwMotorTorque</span>
+<span class="c1">#   Author:             Hanspeter Schaub</span>
+<span class="c1">#   Creation Date:      July 4, 2016</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+
+
+
+<span class="c1"># Import all of the modules that we are going to be called in this simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rwMotorTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Support</span><span class="w"> </span><span class="kn">import</span> <span class="n">results_rwMotorTorque</span>
+
+<span class="c1"># Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># Uncomment this line if this test has an expected failure, adjust message as needed.</span>
+<span class="c1"># @pytest.mark.xfail(conditionstring)</span>
+<span class="c1"># Provide a unique test method name, starting with &#39;test_&#39;.</span>
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1">#   of the multiple test runs for this test.</span>
+<div class="viewcode-block" id="test_rwMotorTorque">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/rwMotorTorque/_UnitTest/test_rwMotorTorqueParametrized.html#test_rwMotorTorqueParametrized.test_rwMotorTorque">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;numControlAxes&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;numWheels&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MAX_EFF_CNT</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;RWAvailMsg&quot;</span><span class="p">,[</span><span class="s2">&quot;NO&quot;</span><span class="p">,</span> <span class="s2">&quot;ON&quot;</span><span class="p">,</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="s2">&quot;MIXED&quot;</span><span class="p">])</span>
+
+
+<span class="c1"># update &quot;module&quot; in this function name to reflect the module name</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rwMotorTorque</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numControlAxes</span><span class="p">,</span> <span class="n">numWheels</span><span class="p">,</span> <span class="n">RWAvailMsg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">rwMotorTorqueTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numControlAxes</span><span class="p">,</span> <span class="n">numWheels</span><span class="p">,</span> <span class="n">RWAvailMsg</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rwMotorTorqueTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numControlAxes</span><span class="p">,</span> <span class="n">numWheels</span><span class="p">,</span> <span class="n">RWAvailMsg</span><span class="p">):</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>                       <span class="c1"># create empty array to store test log messages</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>               <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>         <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>     <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+
+    <span class="c1"># Construct algorithm and associated C++ container</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+
+
+    <span class="c1"># Initialize module variables</span>
+    <span class="k">if</span> <span class="n">numControlAxes</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">numControlAxes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+             <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+            <span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">numControlAxes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+
+    <span class="c1"># attControl message</span>
+    <span class="n">inputMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">()</span>  <span class="c1"># Create a structure for the input message</span>
+    <span class="n">requestedTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span> <span class="c1"># Set up a list as a 3-vector</span>
+    <span class="n">inputMessageData</span><span class="o">.</span><span class="n">torqueRequestBody</span> <span class="o">=</span> <span class="n">requestedTorque</span> <span class="c1"># write torque request to input message</span>
+    <span class="n">cmdTorqueInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">inputMessageData</span><span class="p">)</span>
+
+    <span class="c1"># wheelConfigData message</span>
+    <span class="n">rwConfigParams</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWArrayConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">MAX_EFF_CNT</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MAX_EFF_CNT</span>
+
+    <span class="k">if</span> <span class="n">numWheels</span> <span class="o">==</span> <span class="n">MAX_EFF_CNT</span><span class="p">:</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.4835867893995201</span><span class="p">,</span> <span class="mf">0.7025829597277155</span><span class="p">,</span> <span class="mf">0.5220354411517549</span><span class="p">,</span>
+            <span class="mf">0.6274167231454653</span><span class="p">,</span> <span class="mf">0.4634123147571517</span><span class="p">,</span> <span class="mf">0.6257773422303058</span><span class="p">,</span>
+            <span class="mf">0.4927675437195689</span><span class="p">,</span> <span class="mf">0.3909468277672152</span><span class="p">,</span> <span class="mf">0.7773935462269635</span><span class="p">,</span>
+            <span class="mf">0.2791305379092009</span><span class="p">,</span> <span class="mf">0.20278639222840245</span><span class="p">,</span> <span class="mf">0.9385967301954065</span><span class="p">,</span>
+            <span class="mf">0.1742148051521812</span><span class="p">,</span> <span class="mf">0.9353106472878886</span><span class="p">,</span> <span class="mf">0.3079662233682429</span><span class="p">,</span>
+            <span class="mf">0.7408864742367625</span><span class="p">,</span> <span class="mf">0.30733781515416325</span><span class="p">,</span> <span class="mf">0.5971856492492805</span><span class="p">,</span>
+            <span class="mf">0.49166240509756476</span><span class="p">,</span> <span class="mf">0.11024265612126483</span><span class="p">,</span> <span class="mf">0.863779275153674</span><span class="p">,</span>
+            <span class="mf">0.08522980139648922</span><span class="p">,</span> <span class="mf">0.5635691254043687</span><span class="p">,</span> <span class="mf">0.8216603445736381</span><span class="p">,</span>
+            <span class="mf">0.5169183283391889</span><span class="p">,</span> <span class="mf">0.6482094982986043</span><span class="p">,</span> <span class="mf">0.5591242153068406</span><span class="p">,</span>
+            <span class="mf">0.5539478507672101</span><span class="p">,</span> <span class="mf">0.4352935184619988</span><span class="p">,</span> <span class="mf">0.7096910112262675</span><span class="p">,</span>
+            <span class="mf">0.08177103922211226</span><span class="p">,</span> <span class="mf">0.7185493168899821</span><span class="p">,</span> <span class="mf">0.6906521384470449</span><span class="p">,</span>
+            <span class="mf">0.5424303480563135</span><span class="p">,</span> <span class="mf">0.8034905566669417</span><span class="p">,</span> <span class="mf">0.24530031156636306</span><span class="p">,</span>
+            <span class="mf">0.6791649825098244</span><span class="p">,</span> <span class="mf">0.25103926707369056</span><span class="p">,</span> <span class="mf">0.6897203874901293</span><span class="p">,</span>
+            <span class="mf">0.6662787689368599</span><span class="p">,</span> <span class="mf">0.6695372377111813</span><span class="p">,</span> <span class="mf">0.32831766535181106</span><span class="p">,</span>
+            <span class="mf">0.28428078464167594</span><span class="p">,</span> <span class="mf">0.5440295499812461</span><span class="p">,</span> <span class="mf">0.7894404880867942</span><span class="p">,</span>
+            <span class="mf">0.8881073966834958</span><span class="p">,</span> <span class="mf">0.007176386091829566</span><span class="p">,</span> <span class="mf">0.4595799728433832</span><span class="p">,</span>
+            <span class="mf">0.7043700914244455</span><span class="p">,</span> <span class="mf">0.20398698108861654</span><span class="p">,</span> <span class="mf">0.6798912308987893</span><span class="p">,</span>
+            <span class="mf">0.5913513581668906</span><span class="p">,</span> <span class="mf">0.7154722881784563</span><span class="p">,</span> <span class="mf">0.3720255045596441</span><span class="p">,</span>
+            <span class="mf">0.5353927164036736</span><span class="p">,</span> <span class="mf">0.8292977052562882</span><span class="p">,</span> <span class="mf">0.1600623480977027</span><span class="p">,</span>
+            <span class="mf">0.5626385603464779</span><span class="p">,</span> <span class="mf">0.5530980227747188</span><span class="p">,</span> <span class="mf">0.6144269099038059</span><span class="p">,</span>
+            <span class="mf">0.8047402627946283</span><span class="p">,</span> <span class="mf">0.5179828986694456</span><span class="p">,</span> <span class="mf">0.2899772855298006</span><span class="p">,</span>
+            <span class="mf">0.6435726414836709</span><span class="p">,</span> <span class="mf">0.49863310510036174</span><span class="p">,</span> <span class="mf">0.5806714059015666</span><span class="p">,</span>
+            <span class="mf">0.2533767502100278</span><span class="p">,</span> <span class="mf">0.8066673674024603</span><span class="p">,</span> <span class="mf">0.533936307831739</span><span class="p">,</span>
+            <span class="mf">0.051675625147813466</span><span class="p">,</span> <span class="mf">0.741898369799065</span><span class="p">,</span> <span class="mf">0.6685180914942186</span><span class="p">,</span>
+            <span class="mf">0.6705007071467579</span><span class="p">,</span> <span class="mf">0.243658731626882</span><span class="p">,</span> <span class="mf">0.700756180292173</span><span class="p">,</span>
+            <span class="mf">0.6124322825812726</span><span class="p">,</span> <span class="mf">0.6044312394389204</span><span class="p">,</span> <span class="mf">0.5094993386086216</span><span class="p">,</span>
+            <span class="mf">0.5025822950964116</span><span class="p">,</span> <span class="mf">0.49662160344788164</span><span class="p">,</span> <span class="mf">0.7076567103083798</span><span class="p">,</span>
+            <span class="mf">0.4875326918964735</span><span class="p">,</span> <span class="mf">0.8575174427431412</span><span class="p">,</span> <span class="mf">0.16424283766253403</span><span class="p">,</span>
+            <span class="mf">0.3659744927810267</span><span class="p">,</span> <span class="mf">0.8415919620749859</span><span class="p">,</span> <span class="mf">0.39722240622155974</span><span class="p">,</span>
+            <span class="mf">0.6205921515961875</span><span class="p">,</span> <span class="mf">0.5508152351685801</span><span class="p">,</span> <span class="mf">0.5580931446303532</span><span class="p">,</span>
+            <span class="mf">0.20125257120061574</span><span class="p">,</span> <span class="mf">0.7022636474963218</span><span class="p">,</span> <span class="mf">0.6828785924235018</span><span class="p">,</span>
+            <span class="mf">0.4318909377763495</span><span class="p">,</span> <span class="mf">0.6786025351852008</span><span class="p">,</span> <span class="mf">0.5941117883924572</span><span class="p">,</span>
+            <span class="mf">0.6839787443692367</span><span class="p">,</span> <span class="mf">0.6598940110591041</span><span class="p">,</span> <span class="mf">0.31098709204629277</span><span class="p">,</span>
+            <span class="mf">0.35743175000357147</span><span class="p">,</span> <span class="mf">0.8343049491885353</span><span class="p">,</span> <span class="mf">0.4197353878920623</span><span class="p">,</span>
+            <span class="mf">0.8124751056450826</span><span class="p">,</span> <span class="mf">0.35669421673672336</span><span class="p">,</span> <span class="mf">0.46114362020262967</span><span class="p">,</span>
+            <span class="mf">0.04721328350343224</span><span class="p">,</span> <span class="mf">0.8901899787392832</span><span class="p">,</span> <span class="mf">0.45313652204714083</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="mf">0.5773502691896258</span><span class="p">,</span> <span class="mf">0.5773502691896258</span><span class="p">,</span> <span class="mf">0.5773502691896258</span>
+        <span class="p">]</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">JsList</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]</span><span class="o">*</span><span class="n">numWheels</span>
+
+    <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">numRW</span> <span class="o">=</span> <span class="n">numWheels</span>
+    <span class="n">rwConfigInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWArrayConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rwConfigParams</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">RWAvailMsg</span> <span class="o">!=</span> <span class="s2">&quot;NO&quot;</span><span class="p">:</span>
+        <span class="n">rwAvailabilityMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWAvailabilityMsgPayload</span><span class="p">()</span>
+
+        <span class="n">avail</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">UNAVAILABLE</span><span class="p">]</span> <span class="o">*</span> <span class="n">numWheels</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numWheels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">RWAvailMsg</span> <span class="o">==</span> <span class="s2">&quot;ON&quot;</span><span class="p">:</span>
+                <span class="n">avail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span>
+            <span class="k">elif</span> <span class="n">RWAvailMsg</span> <span class="o">==</span> <span class="s2">&quot;OFF&quot;</span><span class="p">:</span>
+                <span class="n">avail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">UNAVAILABLE</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">numWheels</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">avail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span>
+
+        <span class="n">rwAvailabilityMessage</span><span class="o">.</span><span class="n">wheelAvailability</span> <span class="o">=</span> <span class="n">avail</span>
+
+        <span class="n">rwAvailInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWAvailabilityMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rwAvailabilityMessage</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">rwAvailInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwAvailInMsg</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">avail</span> <span class="o">=</span> <span class="p">[</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">AVAILABLE</span><span class="p">]</span> <span class="o">*</span> <span class="n">numWheels</span>  <span class="c1"># this is used purely for the python level solution</span>
+
+    <span class="c1"># Setup logging on the test module output message so that we get all the writes to it</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># connect messages</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdTorqueInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwConfigInMsg</span><span class="p">)</span>
+
+    <span class="c1"># Need to call the self-init and cross-init methods</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set the simulation time.</span>
+    <span class="c1"># NOTE: the total simulation time may be longer than this value. The</span>
+    <span class="c1"># simulation is stopped at the next logging event on or after the</span>
+    <span class="c1"># simulation end time.</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>        <span class="c1"># seconds to stop simulation</span>
+
+    <span class="c1"># Begin the simulation time run set above</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># This pulls the actual data log from the simulation run.</span>
+    <span class="c1"># Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)</span>
+    <span class="n">moduleOutput</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">motorTorque</span>
+
+    <span class="n">trueVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">MAX_EFF_CNT</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">MAX_EFF_CNT</span>
+    <span class="p">])</span>
+
+    <span class="c1"># set the output truth states</span>
+    <span class="n">trueVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">results_rwMotorTorque</span><span class="o">.</span><span class="n">computeTorqueU</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">controlAxes_B</span><span class="p">),</span>
+                                                                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span>
+                                                                       <span class="mi">3</span><span class="p">,</span> <span class="n">MAX_EFF_CNT</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">),</span>
+                                                                   <span class="n">requestedTorque</span><span class="p">,</span>
+                                                                   <span class="n">avail</span><span class="p">)</span>
+    <span class="n">trueVector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">trueVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># compare the module results to the truth values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArrayND</span><span class="p">(</span><span class="n">trueVector</span><span class="p">,</span> <span class="n">moduleOutput</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorques&quot;</span><span class="p">,</span>
+                                                                 <span class="n">MAX_EFF_CNT</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+
+    <span class="n">GsMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span><span class="p">,</span> <span class="p">(</span><span class="n">MAX_EFF_CNT</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">))</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">moduleOutput</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">receivedTorque</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">GsMatrix</span><span class="p">,</span><span class="n">F</span><span class="p">)])</span>
+    <span class="n">receivedTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">receivedTorque</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">numWheels</span> <span class="o">&gt;=</span> <span class="n">numControlAxes</span> <span class="ow">and</span> <span class="n">numControlAxes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">avail</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">avail</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">numControlAxes</span><span class="p">:</span>
+            <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArrayND</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">requestedTorque</span><span class="p">]),</span>
+                                                                         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">receivedTorque</span><span class="p">]),</span> <span class="n">accuracy</span><span class="p">,</span>
+                                                                         <span class="s2">&quot;CompareTorques&quot;</span><span class="p">,</span>
+                                                                         <span class="n">numControlAxes</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="n">snippetName</span> <span class="o">=</span> <span class="s2">&quot;LrBReq_LrBRec_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">numControlAxes</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">numWheels</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">RWAvailMsg</span>
+    <span class="n">requestedTex</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">requestedTorque</span><span class="p">)</span>
+    <span class="n">receivedTex</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">receivedTorque</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">snippetTex</span> <span class="o">=</span> <span class="s2">&quot;Requested:</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">requestedTex</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">snippetTex</span> <span class="o">+=</span> <span class="s2">&quot;Received:</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">receivedTex</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetTex</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="c1">#   print out success message if no error were found</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="s1">&#39;toleranceValue&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">snippentName</span> <span class="o">=</span> <span class="s2">&quot;passFail_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">numControlAxes</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">numWheels</span><span class="p">)</span> <span class="o">+</span> <span class="n">RWAvailMsg</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;ForestGreen&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;PASSED&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;Red&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;Failed&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippentName</span><span class="p">,</span> <span class="n">passedText</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unitTestScript can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_rwMotorTorque</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span>
+                <span class="mi">3</span><span class="p">,</span>      <span class="c1"># numControlAxes</span>
+                <span class="mi">36</span><span class="p">,</span>      <span class="c1"># numWheels</span>
+                <span class="s2">&quot;NO&quot;</span>    <span class="c1"># RWAvailMsg (&quot;NO&quot;, &quot;ON&quot;, &quot;OFF&quot;)</span>
+               <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

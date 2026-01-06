@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioBasicOrbit &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioBasicOrbit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioBasicOrbit</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. raw:: html</span>
+
+<span class="sd">    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/71ZFeameBcU&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order</span>
+<span class="sd">approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the</span>
+<span class="sd">Basilisk components are interconnected.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioBasicOrbit.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioBasicOrbit.py</span>
+
+<span class="sd">.. important:: This scenario is currently the most minimal example available. It doesn&#39;t make sense consider</span>
+<span class="sd">                   returning to the :ref:`examples` before moving on.</span>
+
+
+<span class="sd">Making a Copy of the Example Basilisk Scenario Script</span>
+<span class="sd">-----------------------------------------------------</span>
+
+<span class="sd">To play with any scenario scripts as tutorials, you should make a copy of</span>
+<span class="sd">them into a custom folder outside of the Basilisk directory.</span>
+
+<span class="sd">To copy them, first find the location of the Basilisk installation. After installing, you can find the</span>
+<span class="sd">installed location of Basilisk by opening a python interpreter and running the commands:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">   import Basilisk</span>
+<span class="sd">   basiliskPath = Basilisk.__path__[0]</span>
+<span class="sd">   print basiliskPath</span>
+
+<span class="sd">Copy the folder ``{basiliskPath}/examples`` into a new folder in a different directory.</span>
+<span class="sd">Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.</span>
+
+
+<span class="sd">Enable Terminal Bar to Show Simulation Progress</span>
+<span class="sd">-----------------------------------------------</span>
+
+<span class="sd">To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationBaseClass to true.</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">     scSim = SimulationBaseClass.SimBaseClass()</span>
+<span class="sd">     scSim.SetProgressBar(True)</span>
+
+<span class="sd">Method ``SetProgressBar`` should be used to set variable ``showProgressBar`` as True with the above statement. After</span>
+<span class="sd">enabling the progress bar, all the simulation run by ``scSim.ExecuteSimulation()`` will show the progress bar in the</span>
+<span class="sd">terminal.</span>
+
+
+<span class="sd">Vizard Visualization Option</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">If you wish to transmit the simulation data to the United based `Vizard &lt;vizard&gt;`_ Visualization application,</span>
+<span class="sd">then uncomment</span>
+<span class="sd">the following line from the python scenario script. This will cause the BSK simulation data</span>
+<span class="sd">to be stored in a binary file inside the _VizFiles sub-folder with the scenario folder. This file can be read in by</span>
+<span class="sd">`Vizard &lt;vizard&gt;`_ and played back after running the BSK simulation. ::</span>
+
+<span class="sd">    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)</span>
+
+<span class="sd">The vizInterface module must be built into BSK. This is done if the correct `CMake options &lt;cmakeOptions&gt;`_</span>
+<span class="sd">are selected. The default</span>
+<span class="sd">CMake will include this vizInterface module in the BSK build. See the BSK HTML documentation on more</span>
+<span class="sd">information of CMake options. By using the gravFactory support class to create and add planetary bodies</span>
+<span class="sd">the vizInterface module will automatically be able to find the correct celestial body ephemeris names.</span>
+<span class="sd">If these names are changed, then the vizSupport.py support library has to be customized. Currently Vizard</span>
+<span class="sd">supports playback of stored simulation data files, as well as streaming the data directly to Vizard.</span>
+<span class="sd">By default the Viz is running in realtime mode with a 1x</span>
+<span class="sd">speed up factor of the data playback. On the bottom right of the Vizard GUI this can be increased or decreased.</span>
+<span class="sd">Further, some display elements such as thruster or reaction wheel panels are only visible if such devices are</span>
+<span class="sd">being simulated in BSK.</span>
+
+<span class="sd">While Vizard has many visualization features that can be customized from within the application, many</span>
+<span class="sd">Vizard settings can also be scripted from the Basilisk python script.</span>
+<span class="sd">A complete discussion on these options and features can be found the the `Vizard Settings &lt;vizardSettings&gt;`_ page.</span>
+
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The following images illustrate the expected simulation run returns for a range of script configurations.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, orbitCase=&#39;LEO&#39;, useSphericalHarmonics=False, planetCase=&#39;Earth&#39;</span>
+
+<span class="sd">This scenario places the spacecraft about the Earth in a LEO orbit and without considering gravitational</span>
+<span class="sd">spherical harmonics.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit3LEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, orbitCase=&#39;GTO&#39;, useSphericalHarmonics=False, planetCase=&#39;Earth&#39;</span>
+
+<span class="sd">This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit inclination.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit3GTO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, orbitCase=&#39;GEO&#39;, useSphericalHarmonics=False, planetCase=&#39;Earth&#39;</span>
+
+<span class="sd">This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit inclination.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit3GEO0Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, orbitCase=&#39;LEO&#39;, useSphericalHarmonics=True, planetCase=&#39;Earth&#39;</span>
+
+<span class="sd">This case illustrates a circular LEO with a non-zero orbit inclination.</span>
+<span class="sd">In this case the Earth&#39;s spherical harmonics are turned on.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, orbitCase=&#39;LEO&#39;, useSphericalHarmonics=True, planetCase=&#39;Mars&#39;</span>
+
+<span class="sd">This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit inclination.</span>
+<span class="sd">In this simulation setup the planet&#39;s spherical harmonics are turned on.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioBasicOrbit3LEO0Mars.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates</span>
+<span class="c1">#           a 3-DOV spacecraft on a range of orbit types.</span>
+<span class="c1"># Author:   Hanspeter Schaub</span>
+<span class="c1"># Creation Date:  Nov. 26, 2016</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder</span>
+<span class="c1"># outside of the Basilisk directory.</span>
+<span class="c1">#</span>
+<span class="c1"># To copy them, first find the location of the Basilisk installation.</span>
+<span class="c1"># After installing, you can find the installed location of Basilisk by opening a python interpreter and</span>
+<span class="c1"># running the commands:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Copy the folder `{basiliskPath}/examples` into a new folder in a different directory.</span>
+<span class="c1"># Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.</span>
+
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+
+<span class="c1"># general support file with common unit test functions</span>
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimulationBaseClass</span><span class="p">,</span>
+    <span class="n">macros</span><span class="p">,</span>
+    <span class="n">orbitalMotion</span><span class="p">,</span>
+    <span class="n">simIncludeGravBody</span><span class="p">,</span>
+    <span class="n">unitTestSupport</span><span class="p">,</span>
+    <span class="n">vizSupport</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="c1"># always import the Basilisk messaging support</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioBasicOrbit.html#scenarioBasicOrbit.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">orbitCase</span><span class="p">,</span> <span class="n">useSphericalHarmonics</span><span class="p">,</span> <span class="n">planetCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    At the end of the python script you can specify the following example parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        orbitCase (str):</span>
+
+<span class="sd">            ======  ============================</span>
+<span class="sd">            String  Definition</span>
+<span class="sd">            ======  ============================</span>
+<span class="sd">            &#39;LEO&#39;   Low Earth Orbit</span>
+<span class="sd">            &#39;GEO&#39;   Geosynchronous Orbit</span>
+<span class="sd">            &#39;GTO&#39;   Geostationary Transfer Orbit</span>
+<span class="sd">            ======  ============================</span>
+
+<span class="sd">        useSphericalHarmonics (Bool): False to use first order gravity approximation: :math:`\\frac{GMm}{r^2}`</span>
+
+<span class="sd">        planetCase (str): {&#39;Earth&#39;, &#39;Mars&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># (Optional) If you want to see a simulation progress bar in the terminal window, the</span>
+    <span class="c1"># use the following SetProgressBar(True) statement</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1">#  create the simulation process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># setup the simulation tasks/objects</span>
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="c1"># The dynamics simulation is setup using a Spacecraft() module.</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># setup Gravity Body</span>
+    <span class="c1"># The first step to adding gravity objects is to create the gravity body factor class.  Note that</span>
+    <span class="c1"># this call will create an empty gravitational body list each time this script is called.  Thus, there</span>
+    <span class="c1"># is not need to clear any prior list of gravitational bodies.</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># To attach an Earth or Mars gravity model to this spacecraft, the following macros  invoked.</span>
+    <span class="c1"># The gravFactor() class stores the Earth gravitational object within the class, but it also returns a</span>
+    <span class="c1"># handler to this gravitational object as a convenience.  The celestial object position and velocity</span>
+    <span class="c1"># vectors are all defaulted to zero values.  If non-zero values are required, this can be manually</span>
+    <span class="c1"># overridden.  If multiple bodies are simulated, then their positions can be</span>
+    <span class="c1"># dynamically updated.  See scenarioOrbitMultiBody.py to learn how this is</span>
+    <span class="c1"># done via a SPICE object.</span>
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Mars&quot;</span><span class="p">:</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMarsBarycenter</span><span class="p">()</span>
+        <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+        <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+            <span class="n">ggm2b_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM2BData</span><span class="p">)</span>
+            <span class="n">planet</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm2b_path</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Earth</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+        <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+        <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+            <span class="c1"># If extra customization is required, see the createEarth() macro to change additional values.</span>
+            <span class="c1"># For example, the spherical harmonics are turned off by default.  To engage them, the following code</span>
+            <span class="c1"># is used</span>
+            <span class="n">ggm03s_j2_only_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S_J2_only</span><span class="p">)</span>
+            <span class="n">planet</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s_j2_only_path</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># The value 2 indicates that the first two harmonics, excluding the 0th order harmonic,</span>
+            <span class="c1"># are included.  This harmonics data file only includes a zeroth order and J2 term.</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># Finally, the gravitational body must be connected to the spacecraft object.  This is done with</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="c1"># Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if</span>
+    <span class="c1"># it is only one body like Earth or Mars, or a list of multiple bodies.</span>
+
+    <span class="c1"># Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If</span>
+    <span class="c1"># alternate position or velocity vectors are required, this can be done by creating the planet ephemeris message</span>
+    <span class="c1"># that is connected to the gravity effector input message `planetBodyInMsg`.</span>
+    <span class="c1"># If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages</span>
+    <span class="c1"># the planet&#39;s default ephemeris would be replaced with the desired custom values.</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">rGEO</span> <span class="o">=</span> <span class="mf">42000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="k">if</span> <span class="n">orbitCase</span> <span class="o">==</span> <span class="s2">&quot;GEO&quot;</span><span class="p">:</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rGEO</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.00001</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="k">elif</span> <span class="n">orbitCase</span> <span class="o">==</span> <span class="s2">&quot;GTO&quot;</span><span class="p">:</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">rLEO</span> <span class="o">+</span> <span class="n">rGEO</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">rLEO</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># LEO case, default case 0</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span>
+    <span class="p">)</span>  <span class="c1"># this stores consistent initial orbit elements</span>
+    <span class="c1"># with circular or equatorial orbit, some angles are arbitrary</span>
+
+    <span class="c1"># To set the spacecraft initial conditions, the following initial position and velocity variables are set:</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_BN_N</span>
+
+    <span class="c1"># These vectors specify the inertial position and velocity vectors relative to the planet of the</span>
+    <span class="c1"># spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always</span>
+    <span class="c1"># specifies the spacecraft center of mass location with the above code.  If the simulation output should be</span>
+    <span class="c1"># about another body fixed point B, this can be done as well.  This is useful in particular with more challenging</span>
+    <span class="c1"># dynamics where the center of mass moves relative to the body.  The following vector would specify the location of</span>
+    <span class="c1"># the spacecraft hub center of mass (Bc) relative to this body fixed point, as in</span>
+    <span class="c1">#</span>
+    <span class="c1">#    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub</span>
+    <span class="c1"># is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecraft contains</span>
+    <span class="c1"># state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points</span>
+    <span class="c1"># Bc and C would not be the same.  Thus, in this simple simulation the body fixed point B and</span>
+    <span class="c1"># spacecraft center of mass are identical.</span>
+
+    <span class="c1"># set the simulation time</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+        <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span>
+
+    <span class="c1"># Setup data logging before the simulation is initialized</span>
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span><span class="p">:</span>
+        <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">400</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="c1"># The msg recorder can be told to sample at an with a minimum hold period in nano-seconds.</span>
+    <span class="c1"># If no argument is provided, i.e. msg.recorder(), then a default 0ns minimum time period is used</span>
+    <span class="c1"># which causes the msg to be recorded on every task update rate.</span>
+    <span class="c1"># The recorder can be put onto a separate task with its own update rate.  However, this can be</span>
+    <span class="c1"># trickier to do as the recording timing must be carefully balanced with the module msg writing</span>
+    <span class="c1"># to avoid recording an older message.</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span>
+        <span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span>
+    <span class="p">)</span>
+    <span class="c1"># create a logging task object of the spacecraft output message at the desired down sampling ratio</span>
+    <span class="n">dataRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+
+    <span class="c1"># Vizard Visualization Option</span>
+    <span class="c1"># ---------------------------</span>
+    <span class="c1"># If you wish to transmit the simulation data to the United based Vizard Visualization application,</span>
+    <span class="c1"># then uncomment the following</span>
+    <span class="c1"># line from the python scenario script.  This will cause the BSK simulation data to</span>
+    <span class="c1"># be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by</span>
+    <span class="c1"># Vizard and played back after running the BSK simulation.</span>
+    <span class="c1"># To enable this, uncomment this line:</span>
+
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span>
+                                                  <span class="c1"># saveFile=__file__</span>
+                                                  <span class="c1"># liveStream=True</span>
+                                                  <span class="p">)</span>
+
+    <span class="c1"># The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.</span>
+    <span class="c1"># The default CMake will include this vizInterface module in the BSK build.  See the BSK HTML documentation on</span>
+    <span class="c1"># more information of CMake options.</span>
+
+    <span class="c1"># By using the gravFactory support class to create and add planetary bodies the vizInterface module will</span>
+    <span class="c1"># automatically be able to find the correct celestial body ephemeris names.  If these names are changed, then the</span>
+    <span class="c1"># vizSupport.py support library has to be customized.</span>
+    <span class="c1"># Currently Vizard supports playback of stored simulation data files as well as live streaming.</span>
+    <span class="c1"># Further, some display elements such as thruster or reaction wheel panels are only visible if</span>
+    <span class="c1"># such devices are being simulated in BSK.</span>
+
+    <span class="c1"># While Vizard has many visualization features that can be customized from within the application, many Vizard</span>
+    <span class="c1"># settings can also be scripted from the Basilisk python script.  A complete discussion on these options and</span>
+    <span class="c1"># features can be found the the Vizard documentation pages.</span>
+
+    <span class="c1"># Before the simulation is ready to run, it must be initialized.  The following code uses a</span>
+    <span class="c1"># convenient macro routine</span>
+    <span class="c1"># which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.</span>
+
+    <span class="c1">#   initialize Simulation:  This function runs the self_init()</span>
+    <span class="c1">#   and reset() routines on each module.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="c1"># Note that this module simulates both the translational and rotational motion of the spacecraft.</span>
+    <span class="c1"># In this scenario only the translational (i.e. orbital) motion is tracked.  This means the rotational motion</span>
+    <span class="c1"># remains at a default inertial frame orientation in this scenario.  There is no appreciable speed hit to</span>
+    <span class="c1"># simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios</span>
+    <span class="c1"># the rotational motion is engaged by specifying rotational initial conditions, as well as rotation</span>
+    <span class="c1"># related effectors.  In this simple scenario only translational motion is setup and tracked.</span>
+    <span class="c1"># Further, the default spacecraft parameters, such as the unit mass and the principle inertia values are</span>
+    <span class="c1"># just fine for this orbit simulation as they don&#39;t impact the orbital dynamics in this case.</span>
+    <span class="c1"># This is true for all gravity force only orbital simulations. Later</span>
+    <span class="c1"># tutorials, such as scenarioAttitudeFeedback.py,</span>
+    <span class="c1"># illustrate how to over-ride default values with desired simulation values.</span>
+
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1"># the data is stored inside dataLog variable.  The time axis is stored separately from the data vector and</span>
+    <span class="c1"># can be access through dataLog.times().  The message data is access directly through the message</span>
+    <span class="c1"># variable names.</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1"># When the simulation completes 2 plots are shown for each case.  One plot always shows</span>
+    <span class="c1"># the inertial position vector components, while the second plot either shows a planar</span>
+    <span class="c1"># orbit view relative to the peri-focal frame (no spherical harmonics), or the</span>
+    <span class="c1"># semi-major axis time history plot (with spherical harmonics turned on).</span>
+    <span class="n">figureList</span><span class="p">,</span> <span class="n">finalDiff</span> <span class="o">=</span> <span class="n">plotOrbits</span><span class="p">(</span>
+        <span class="n">dataRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span>
+        <span class="n">posData</span><span class="p">,</span>
+        <span class="n">velData</span><span class="p">,</span>
+        <span class="n">oe</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">,</span>
+        <span class="n">P</span><span class="p">,</span>
+        <span class="n">orbitCase</span><span class="p">,</span>
+        <span class="n">useSphericalHarmonics</span><span class="p">,</span>
+        <span class="n">planetCase</span><span class="p">,</span>
+        <span class="n">planet</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">finalDiff</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotOrbits</span><span class="p">(</span>
+    <span class="n">timeAxis</span><span class="p">,</span>
+    <span class="n">posData</span><span class="p">,</span>
+    <span class="n">velData</span><span class="p">,</span>
+    <span class="n">oe</span><span class="p">,</span>
+    <span class="n">mu</span><span class="p">,</span>
+    <span class="n">P</span><span class="p">,</span>
+    <span class="n">orbitCase</span><span class="p">,</span>
+    <span class="n">useSphericalHarmonics</span><span class="p">,</span>
+    <span class="n">planetCase</span><span class="p">,</span>
+    <span class="n">planet</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># draw the inertial position vector components</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">)</span>
+    <span class="n">finalDiff</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="n">P</span><span class="p">,</span>
+            <span class="n">posData</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$r_{BN,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}$&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [orbits]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Inertial Position [km]&quot;</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="n">orbitCase</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useSphericalHarmonics</span><span class="p">))</span> <span class="o">+</span> <span class="n">planetCase</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useSphericalHarmonics</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="c1"># draw orbit in perifocal frame</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">))</span> <span class="o">*</span> <span class="mf">4.75</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">rApoap</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">rPeriap</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">)</span>
+        <span class="c1"># draw the planet</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Mars&quot;</span><span class="p">:</span>
+            <span class="n">planetColor</span> <span class="o">=</span> <span class="s2">&quot;#884400&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">planetColor</span> <span class="o">=</span> <span class="s2">&quot;#008800&quot;</span>
+        <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+        <span class="c1"># draw the actual orbit</span>
+        <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">fData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span><span class="p">)</span>
+            <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#aa0000&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># draw the full osculating orbit from the initial conditions</span>
+        <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+            <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$i_e$ Cord. [km]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$i_p$ Cord. [km]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">)</span>
+        <span class="n">Deltar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">M0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">))</span>
+        <span class="n">oe2</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">oe</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">M0</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">timeAxis</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+            <span class="n">Et</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">oe2</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span><span class="n">Et</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">rv</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe2</span><span class="p">)</span>
+            <span class="n">Deltar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Deltar</span><span class="p">,</span> <span class="p">[</span><span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">rv</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="n">P</span><span class="p">,</span>
+                <span class="n">Deltar</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta r_{BN,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}$&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [orbits]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Trajectory Differences [m]&quot;</span><span class="p">)</span>
+        <span class="n">pltName</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span> <span class="o">+</span> <span class="n">orbitCase</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useSphericalHarmonics</span><span class="p">))</span> <span class="o">+</span> <span class="n">planetCase</span>
+        <span class="p">)</span>
+        <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">finalDiff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Deltar</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">)</span>
+        <span class="n">smaData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">smaData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">timeAxis</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="n">P</span><span class="p">,</span>
+            <span class="n">smaData</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#aa0000&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [orbits]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;SMA [km]&quot;</span><span class="p">)</span>
+
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span> <span class="o">+</span> <span class="n">orbitCase</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useSphericalHarmonics</span><span class="p">))</span> <span class="o">+</span> <span class="n">planetCase</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">figureList</span><span class="p">,</span> <span class="n">finalDiff</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="s2">&quot;LEO&quot;</span><span class="p">,</span>  <span class="c1"># orbit Case (LEO, GTO, GEO)</span>
+        <span class="kc">False</span><span class="p">,</span>  <span class="c1"># useSphericalHarmonics</span>
+        <span class="s2">&quot;Earth&quot;</span><span class="p">,</span>  <span class="c1"># planetCase (Earth, Mars)</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

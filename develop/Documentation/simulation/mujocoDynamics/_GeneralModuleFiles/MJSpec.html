@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: MJSpec &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: MJUtils" href="MJUtils.html" />
+    <link rel="prev" title="Module: MJSite" href="MJSite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: MJSpec</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mjspec">
+<span id="mjspec"></span><h1>Module: MJSpec<a class="headerlink" href="#module-mjspec" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-variables">Variables</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4I0E15dependent_false">
+<span id="_CPPv3I0E15dependent_false"></span><span id="_CPPv2I0E15dependent_false"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="_m_j_spec_8h_1a10bb30a701ab034872fb59c5ef53b14d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dependent_false</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4I0E15dependent_false" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46MJSpec">
+<span id="_CPPv36MJSpec"></span><span id="_CPPv26MJSpec"></span><span id="MJSpec"></span><span class="target" id="class_m_j_spec"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJSpec</span></span></span><a class="headerlink" href="#_CPPv46MJSpec" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJSpec.h&gt;</em></div>
+<p>A wrapper for a MuJoCo <code class="docutils literal notranslate"><span class="pre">mjSpec</span></code>, which represents a high-level model specification. </p>
+<p>The <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> class manages a pair of MuJoCo models and data objects, for which it supports recompilation.</p>
+<p>This class keeps tracks of Basilisk wrappers for the MuJoCo bodies, actuators, and equalities of an <code class="docutils literal notranslate"><a class="reference internal" href="MJScene.html#class_m_j_scene"><span class="std std-ref"><span class="pre">MJScene</span></span></a></code>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec6MJSpecER7MJSceneNSt6stringERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N6MJSpec6MJSpecER7MJSceneNSt6stringERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N6MJSpec6MJSpecER7MJSceneNSt6stringERKNSt6vectorINSt6stringEEE"></span><span id="MJSpec::MJSpec__MJSceneR.ss.std::vector:ss:CR"></span><span class="target" id="class_m_j_spec_1aba5c720f4e23bc0bef699a61051781b9"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSpec</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="MJScene.html#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scene</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">xmlString</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">files</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec6MJSpecER7MJSceneNSt6stringERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> object. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scene</strong> – Reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJScene.html#class_m_j_scene"><span class="std std-ref"><span class="pre">MJScene</span></span></a></code> managing this spec. </p></li>
+<li><p><strong>xmlString</strong> – The XML string defining the MuJoCo model. </p></li>
+<li><p><strong>files</strong> – Optional list of additional files to load. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec6MJSpecERK6MJSpec">
+<span id="_CPPv3N6MJSpec6MJSpecERK6MJSpec"></span><span id="_CPPv2N6MJSpec6MJSpecERK6MJSpec"></span><span id="MJSpec::MJSpec__MJSpecCR"></span><span class="target" id="class_m_j_spec_1ac9cac5a354d8f61863d6fe059c4223a8"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSpec</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N6MJSpec6MJSpecERK6MJSpec" title="MJSpec::MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSpec6MJSpecERK6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec6MJSpecERR6MJSpec">
+<span id="_CPPv3N6MJSpec6MJSpecERR6MJSpec"></span><span id="_CPPv2N6MJSpec6MJSpecERR6MJSpec"></span><span id="MJSpec::MJSpec__MJSpecRR"></span><span class="target" id="class_m_j_spec_1a4d8aee0df3dc8adcb8dd944d35dbfee4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJSpec</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6MJSpec6MJSpecERR6MJSpec" title="MJSpec::MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSpec6MJSpecERR6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpecaSERK6MJSpec">
+<span id="_CPPv3N6MJSpecaSERK6MJSpec"></span><span id="_CPPv2N6MJSpecaSERK6MJSpec"></span><span id="MJSpec::assign-operator__MJSpecCR"></span><span class="target" id="class_m_j_spec_1a9726308151fe113bd6e1cd8e8fd18bdc"></span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSpecaSERK6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpecaSERR6MJSpec">
+<span id="_CPPv3N6MJSpecaSERR6MJSpec"></span><span id="_CPPv2N6MJSpecaSERR6MJSpec"></span><span id="MJSpec::assign-operator__MJSpecRR"></span><span class="target" id="class_m_j_spec_1a80f64f1714306f1c65f9e5670bf19ff6"></span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJSpecaSERR6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec8getSceneEv">
+<span id="_CPPv3N6MJSpec8getSceneEv"></span><span id="_CPPv2N6MJSpec8getSceneEv"></span><span id="MJSpec::getScene"></span><span class="target" id="class_m_j_spec_1a8474bc588ce35cb54cea3b94c527aa86"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="MJScene.html#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getScene</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec8getSceneEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the scene that this model specification represents. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJScene.html#class_m_j_scene"><span class="std std-ref"><span class="pre">MJScene</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec29markAsNeedingToRecompileModelEv">
+<span id="_CPPv3N6MJSpec29markAsNeedingToRecompileModelEv"></span><span id="_CPPv2N6MJSpec29markAsNeedingToRecompileModelEv"></span><span id="MJSpec::markAsNeedingToRecompileModel"></span><span class="target" id="class_m_j_spec_1af906fdede4e2da67fadc983a56e70d40"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">markAsNeedingToRecompileModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec29markAsNeedingToRecompileModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Declares that the <code class="docutils literal notranslate"><span class="pre">mjModel</span></code> should recompiled because we performed an action that rendered the current <code class="docutils literal notranslate"><span class="pre">mjModel</span></code> stale. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec14getMujocoModelEv">
+<span id="_CPPv3N6MJSpec14getMujocoModelEv"></span><span id="_CPPv2N6MJSpec14getMujocoModelEv"></span><span id="MJSpec::getMujocoModel"></span><span class="target" id="class_m_j_spec_1aa6477b6409cd757c42fae719ee50caf8"></span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMujocoModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec14getMujocoModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the MuJoCo model (<code class="docutils literal notranslate"><span class="pre">mjModel</span></code> object). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the MuJoCo model. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec13getMujocoDataEv">
+<span id="_CPPv3N6MJSpec13getMujocoDataEv"></span><span id="_CPPv2N6MJSpec13getMujocoDataEv"></span><span id="MJSpec::getMujocoData"></span><span class="target" id="class_m_j_spec_1a8dd5f2bbb2a2b818561f1f0e7d95875e"></span><span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMujocoData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec13getMujocoDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the MuJoCo data (<code class="docutils literal notranslate"><span class="pre">mjData</span></code> object). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the MuJoCo data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec13getMujocoSpecEv">
+<span id="_CPPv3N6MJSpec13getMujocoSpecEv"></span><span id="_CPPv2N6MJSpec13getMujocoSpecEv"></span><span id="MJSpec::getMujocoSpec"></span><span class="target" id="class_m_j_spec_1adf4760700a926ea8d683314bf6a05dad"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">mjSpec</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMujocoSpec</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec13getMujocoSpecEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the raw MuJoCo model specification (<code class="docutils literal notranslate"><span class="pre">mjSpec</span></code> object). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the MuJoCo specification. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec17recompileIfNeededEv">
+<span id="_CPPv3N6MJSpec17recompileIfNeededEv"></span><span id="_CPPv2N6MJSpec17recompileIfNeededEv"></span><span id="MJSpec::recompileIfNeeded"></span><span class="target" id="class_m_j_spec_1ac2b3c98670cbb0b31c31bfbf94140fd6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">recompileIfNeeded</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec17recompileIfNeededEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Recompiles the model if needed. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if recompilation occurred, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec9configureEv">
+<span id="_CPPv3N6MJSpec9configureEv"></span><span id="_CPPv2N6MJSpec9configureEv"></span><span id="MJSpec::configure"></span><span class="target" id="class_m_j_spec_1a6a9cb7d343089a799ff81f061f5b88f7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">configure</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec9configureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Configures all bodies, actuators, and equalities with the current model. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec9getBodiesEv">
+<span id="_CPPv3N6MJSpec9getBodiesEv"></span><span id="_CPPv2N6MJSpec9getBodiesEv"></span><span id="MJSpec::getBodies"></span><span class="target" id="class_m_j_spec_1a7a0a1f53540f81102b6372bd9998c20a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getBodies</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec9getBodiesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the list of all bodies in the simulation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the list of <code class="docutils literal notranslate"><a class="reference internal" href="MJBody.html#class_m_j_body"><span class="std std-ref"><span class="pre">MJBody</span></span></a></code> objects. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec12getActuatorsEv">
+<span id="_CPPv3N6MJSpec12getActuatorsEv"></span><span id="_CPPv2N6MJSpec12getActuatorsEv"></span><span id="MJSpec::getActuators"></span><span class="target" id="class_m_j_spec_1a632c88f58ed6d83ffd459e441bd6e8bc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJActuator.html#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getActuators</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec12getActuatorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the list of all actuators in the simulation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the vector of unique pointers to <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_actuator"><span class="std std-ref"><span class="pre">MJActuator</span></span></a></code> objects. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec13getEqualitiesEv">
+<span id="_CPPv3N6MJSpec13getEqualitiesEv"></span><span id="_CPPv2N6MJSpec13getEqualitiesEv"></span><span id="MJSpec::getEqualities"></span><span class="target" id="class_m_j_spec_1ad474a2aa21fae3a9a8279b6d0cc23648"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJEquality.html#_CPPv410MJEquality" title="MJEquality"><span class="n"><span class="pre">MJEquality</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getEqualities</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec13getEqualitiesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the list of equalities in the simulation. </p>
+<p>Note that this not include constraint equalities automatically created for all scalar joints in the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the list of <code class="docutils literal notranslate"><a class="reference internal" href="MJEquality.html#class_m_j_equality"><span class="std std-ref"><span class="pre">MJEquality</span></span></a></code> objects. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec11hasActuatorERKNSt6stringE">
+<span id="_CPPv3N6MJSpec11hasActuatorERKNSt6stringE"></span><span id="_CPPv2N6MJSpec11hasActuatorERKNSt6stringE"></span><span id="MJSpec::hasActuator__ssCR"></span><span class="target" id="class_m_j_spec_1a59139d5cc41800696748d344b41f7365"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hasActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec11hasActuatorERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks if an actuator exists with the given name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the actuator exists, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN6MJSpec11getActuatorER1TRKNSt6stringE">
+<span id="_CPPv3I0EN6MJSpec11getActuatorERKNSt6stringE"></span><span id="_CPPv2I0EN6MJSpec11getActuatorERKNSt6stringE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_m_j_spec_1a060f3d846e6986f21397a4764ed5ccbe"></span><a class="reference internal" href="#_CPPv4I0EN6MJSpec11getActuatorER1TRKNSt6stringE" title="MJSpec::getActuator::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN6MJSpec11getActuatorER1TRKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves an actuator by name and casts it to the specified type. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The expected type of the actuator. </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the actuator does not exist or has a different type. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the actuator of type <code class="docutils literal notranslate"><span class="pre">T</span></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec22addJointSingleActuatorERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N6MJSpec22addJointSingleActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N6MJSpec22addJointSingleActuatorERKNSt6stringERKNSt6stringE"></span><span id="MJSpec::addJointSingleActuator__ssCR.ssCR"></span><span class="target" id="class_m_j_spec_1a4ba038af02cd6491ab1df10f16ab1f10"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addJointSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">joint</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec22addJointSingleActuatorERKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator acting on a joint (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>joint</strong> – The joint to attach the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE">
+<span id="_CPPv3N6MJSpec17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE"></span><span id="_CPPv2N6MJSpec17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE"></span><span id="MJSpec::addSingleActuator__ssCR.ssCR.Eigen::Vector6dCR"></span><span class="target" id="class_m_j_spec_1a84410c54867e56a8e64437eeb352a463"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N5Eigen8Vector6dE" title="Eigen::Vector6d"><span class="n"><span class="pre">Vector6d</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gear</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given site.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">gear</span></code> argument defines how the single input of the actuator (the control value of this actuator is a single value) maps into a force and/or torque. For example:</p>
+<p><ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,0,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,1,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame and 10 Nm of torque along the Y-axis of the same reference frame.</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site to attach the actuator. </p></li>
+<li><p><strong>gear</strong> – The gear parameters for the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN6MJSpec20addCompositeActuatorER1TRKNSt6stringERKNSt6stringE">
+<span id="_CPPv3I0EN6MJSpec20addCompositeActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2I0EN6MJSpec20addCompositeActuatorERKNSt6stringERKNSt6stringE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_m_j_spec_1a141b1e5e9fa04607f589fdd5946a5e72"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN6MJSpec20addCompositeActuatorER1TRKNSt6stringERKNSt6stringE" title="MJSpec::addCompositeActuator::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addCompositeActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN6MJSpec20addCompositeActuatorER1TRKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a composite actuator to the specification. </p>
+<p>Composite actuators are those composed by more than one single actuator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The type of composite actuator to add. Supported types are <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site to attach the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the created actuator of type <code class="docutils literal notranslate"><span class="pre">T</span></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec10loadBodiesEv">
+<span id="_CPPv3N6MJSpec10loadBodiesEv"></span><span id="_CPPv2N6MJSpec10loadBodiesEv"></span><span id="MJSpec::loadBodies"></span><span class="target" id="class_m_j_spec_1adf21c43bd5f30b163a250dc6d7e39cb8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadBodies</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec10loadBodiesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Load bodies in spec into <a class="reference internal" href="MJBody.html#class_m_j_body"><span class="std std-ref">MJBody</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec13loadActuatorsEv">
+<span id="_CPPv3N6MJSpec13loadActuatorsEv"></span><span id="_CPPv2N6MJSpec13loadActuatorsEv"></span><span id="MJSpec::loadActuators"></span><span class="target" id="class_m_j_spec_1a9e2cefda6f46cbdc40ac0d0e06ec1b4d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadActuators</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec13loadActuatorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Load actuators in spec into <a class="reference internal" href="MJActuator.html#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec14loadEqualitiesEv">
+<span id="_CPPv3N6MJSpec14loadEqualitiesEv"></span><span id="_CPPv2N6MJSpec14loadEqualitiesEv"></span><span id="MJSpec::loadEqualities"></span><span class="target" id="class_m_j_spec_1ac2a14eaef127c3acc068a423287b7db0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadEqualities</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec14loadEqualitiesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Load equalities in spec into <a class="reference internal" href="MJEquality.html#class_m_j_equality"><span class="std std-ref">MJEquality</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN6MJSpec14createActuatorENSt10unique_ptrI1TEERKNSt6stringERKNSt6stringERNSt13unordered_mapINSt6stringE16MJActuatorObjectEE">
+<span id="_CPPv3I0EN6MJSpec14createActuatorERKNSt6stringERKNSt6stringERNSt13unordered_mapINSt6stringE16MJActuatorObjectEE"></span><span id="_CPPv2I0EN6MJSpec14createActuatorERKNSt6stringERKNSt6stringERNSt13unordered_mapINSt6stringE16MJActuatorObjectEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_m_j_spec_1a143f556783b3a2927cc87e7f910d6322"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN6MJSpec14createActuatorENSt10unique_ptrI1TEERKNSt6stringERKNSt6stringERNSt13unordered_mapINSt6stringE16MJActuatorObjectEE" title="MJSpec::createActuator::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">createActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">siteHint</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="MJActuator.html#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">existingActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN6MJSpec14createActuatorENSt10unique_ptrI1TEERKNSt6stringERKNSt6stringERNSt13unordered_mapINSt6stringE16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an actuator of type <code class="docutils literal notranslate"><span class="pre">T</span></code>, where <code class="docutils literal notranslate"><span class="pre">T</span></code> must be one of: <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>, or <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>.</p>
+<p>The actuator will be composed of a collection of the <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> given in <code class="docutils literal notranslate"><span class="pre">existingActuators</span></code>, if they are available. Otherwise, new <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> will be created at the given site.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The type of actuator to add. Supported types are <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>siteHint</strong> – The site to attach the actuator. </p></li>
+<li><p><strong>existingActuators</strong> – Colleciton of existing <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> to use. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the created actuator of type <code class="docutils literal notranslate"><span class="pre">T</span></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec4specE">
+<span id="_CPPv3N6MJSpec4specE"></span><span id="_CPPv2N6MJSpec4specE"></span><span id="MJSpec::spec__std::unique_ptr:mjSpec.MJBasilisk::detail::mjSpecDeleter:"></span><span class="target" id="class_m_j_spec_1a4acb079bff9817b0dc195f2426fae9e1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjSpec</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="MJUtils.html#_CPPv410MJBasilisk" title="MJBasilisk"><span class="n"><span class="pre">MJBasilisk</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detailE" title="MJBasilisk::detail"><span class="n"><span class="pre">detail</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detail13mjSpecDeleterE" title="MJBasilisk::detail::mjSpecDeleter"><span class="n"><span class="pre">mjSpecDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spec</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec4specE" title="Link to this definition"></a><br /></dt>
+<dd><p>MuJoCo spec. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec5modelE">
+<span id="_CPPv3N6MJSpec5modelE"></span><span id="_CPPv2N6MJSpec5modelE"></span><span id="MJSpec::model__std::unique_ptr:mjModel.MJBasilisk::detail::mjModelDeleter:"></span><span class="target" id="class_m_j_spec_1a836f1d7b5a6cee66e828fdc3f67729a5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjModel</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="MJUtils.html#_CPPv410MJBasilisk" title="MJBasilisk"><span class="n"><span class="pre">MJBasilisk</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detailE" title="MJBasilisk::detail"><span class="n"><span class="pre">detail</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detail14mjModelDeleterE" title="MJBasilisk::detail::mjModelDeleter"><span class="n"><span class="pre">mjModelDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">model</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec5modelE" title="Link to this definition"></a><br /></dt>
+<dd><p>MuJoCo model. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec4dataE">
+<span id="_CPPv3N6MJSpec4dataE"></span><span id="_CPPv2N6MJSpec4dataE"></span><span id="MJSpec::data__std::unique_ptr:mjData.MJBasilisk::detail::mjDataDeleter:"></span><span class="target" id="class_m_j_spec_1a12d195e3a0e60d36056c16ef890e01b5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjData</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="MJUtils.html#_CPPv410MJBasilisk" title="MJBasilisk"><span class="n"><span class="pre">MJBasilisk</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detailE" title="MJBasilisk::detail"><span class="n"><span class="pre">detail</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detail13mjDataDeleterE" title="MJBasilisk::detail::mjDataDeleter"><span class="n"><span class="pre">mjDataDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec4dataE" title="Link to this definition"></a><br /></dt>
+<dd><p>MuJoCo data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec17virtualFileSystemE">
+<span id="_CPPv3N6MJSpec17virtualFileSystemE"></span><span id="_CPPv2N6MJSpec17virtualFileSystemE"></span><span id="MJSpec::virtualFileSystem__std::unique_ptr:mjVFS.MJBasilisk::detail::mjVFSDeleter:"></span><span class="target" id="class_m_j_spec_1a7b982fd9d4adf0622f1b7768957d8b2c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjVFS</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="MJUtils.html#_CPPv410MJBasilisk" title="MJBasilisk"><span class="n"><span class="pre">MJBasilisk</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detailE" title="MJBasilisk::detail"><span class="n"><span class="pre">detail</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJUtils.html#_CPPv4N10MJBasilisk6detail12mjVFSDeleterE" title="MJBasilisk::detail::mjVFSDeleter"><span class="n"><span class="pre">mjVFSDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">virtualFileSystem</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec17virtualFileSystemE" title="Link to this definition"></a><br /></dt>
+<dd><p>MuJoCo virtual file system. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec5sceneE">
+<span id="_CPPv3N6MJSpec5sceneE"></span><span id="_CPPv2N6MJSpec5sceneE"></span><span id="MJSpec::scene__MJSceneR"></span><span class="target" id="class_m_j_spec_1a3ba4747d1b17fac07638ab9615db6c61"></span><a class="reference internal" href="MJScene.html#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">scene</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec5sceneE" title="Link to this definition"></a><br /></dt>
+<dd><p>Reference to the associated scene. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec9actuatorsE">
+<span id="_CPPv3N6MJSpec9actuatorsE"></span><span id="_CPPv2N6MJSpec9actuatorsE"></span><span id="MJSpec::actuators__std::vector:std::unique_ptr:MJActuator::"></span><span class="target" id="class_m_j_spec_1abcec2cad3f90d584139cae95bfaf6166"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJActuator.html#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">actuators</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec9actuatorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of actuators. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec6bodiesE">
+<span id="_CPPv3N6MJSpec6bodiesE"></span><span id="_CPPv2N6MJSpec6bodiesE"></span><span id="MJSpec::bodies__std::list:MJBody:"></span><span class="target" id="class_m_j_spec_1ad6fc23bc410606c56446423d547830f4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bodies</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec6bodiesE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of bodies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec10equalitiesE">
+<span id="_CPPv3N6MJSpec10equalitiesE"></span><span id="_CPPv2N6MJSpec10equalitiesE"></span><span id="MJSpec::equalities__std::list:MJEquality:"></span><span class="target" id="class_m_j_spec_1a57003e1ef813dce0ac3cbaaa5f4935ac"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJEquality.html#_CPPv410MJEquality" title="MJEquality"><span class="n"><span class="pre">MJEquality</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equalities</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec10equalitiesE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of equalities. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec15shouldRecompileE">
+<span id="_CPPv3N6MJSpec15shouldRecompileE"></span><span id="_CPPv2N6MJSpec15shouldRecompileE"></span><span id="MJSpec::shouldRecompile__b"></span><span class="target" id="class_m_j_spec_1a31e426ec603e2209dd1d6d759d7277fc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shouldRecompile</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N6MJSpec15shouldRecompileE" title="Link to this definition"></a><br /></dt>
+<dd><p>A number of operations on the mjSpec (like adding elements) will require that we recompile the mjModel. If this flag is true when <a class="reference internal" href="#class_m_j_spec_1aa6477b6409cd757c42fae719ee50caf8"><span class="std std-ref">getMujocoModel()</span></a>/getMujocoData() is called, then they will be recompiled before returning. However, also read the docstring for shouldRecompileWhenAsked. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec24shouldRecompileWhenAskedE">
+<span id="_CPPv3N6MJSpec24shouldRecompileWhenAskedE"></span><span id="_CPPv2N6MJSpec24shouldRecompileWhenAskedE"></span><span id="MJSpec::shouldRecompileWhenAsked__b"></span><span class="target" id="class_m_j_spec_1a9f48b4296f3b1cde940d3ed3496b8f3f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shouldRecompileWhenAsked</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N6MJSpec24shouldRecompileWhenAskedE" title="Link to this definition"></a><br /></dt>
+<dd><p>If we are going to make a series of operations that should trigger a recompile, but we want to avoid having to recompile until they are all done, then we can switch this flag, which will prevent any recompilation when calling <a class="reference internal" href="#class_m_j_spec_1aa6477b6409cd757c42fae719ee50caf8"><span class="std std-ref">getMujocoModel()</span></a>/getMujocoData(). </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec16NoRecompileGuardE">
+<span id="_CPPv3N6MJSpec16NoRecompileGuardE"></span><span id="_CPPv2N6MJSpec16NoRecompileGuardE"></span><span id="MJSpec::NoRecompileGuard"></span><span class="target" id="struct_m_j_spec_1_1_no_recompile_guard"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NoRecompileGuard</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec16NoRecompileGuardE" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJSpec.h&gt;</em></div>
+<p>Guard to temporarily disable model recompilation. </p>
+<p>Disables automatic recompilation of the MuJoCo model during its lifetime. Can be used when one wants to take one or several actions that would normally trigger a model recompilation, but for efficiency recompilation is supressed until a later moment. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec16NoRecompileGuard16NoRecompileGuardER6MJSpec">
+<span id="_CPPv3N6MJSpec16NoRecompileGuard16NoRecompileGuardER6MJSpec"></span><span id="_CPPv2N6MJSpec16NoRecompileGuard16NoRecompileGuardER6MJSpec"></span><span id="MJSpec::NoRecompileGuard::NoRecompileGuard__MJSpecR"></span><span class="target" id="struct_m_j_spec_1_1_no_recompile_guard_1ac8f2598d0f7fe03f571e42e4bd531512"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NoRecompileGuard</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec16NoRecompileGuard16NoRecompileGuardER6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs the guard and disables recompilation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>spec</strong> – Reference to the <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> object. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec16NoRecompileGuardD0Ev">
+<span id="_CPPv3N6MJSpec16NoRecompileGuardD0Ev"></span><span id="_CPPv2N6MJSpec16NoRecompileGuardD0Ev"></span><span id="MJSpec::NoRecompileGuard::~NoRecompileGuard"></span><span class="target" id="struct_m_j_spec_1_1_no_recompile_guard_1a5e03e96120d9df3475402b90995b0c62"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~NoRecompileGuard</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJSpec16NoRecompileGuardD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Restores the previous recompilation flag state. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec16NoRecompileGuard4specE">
+<span id="_CPPv3N6MJSpec16NoRecompileGuard4specE"></span><span id="_CPPv2N6MJSpec16NoRecompileGuard4specE"></span><span id="MJSpec::NoRecompileGuard::spec__MJSpecR"></span><span class="target" id="struct_m_j_spec_1_1_no_recompile_guard_1a1c816abe26b55e917aedf0b2bbbed334"></span><a class="reference internal" href="#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">spec</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec16NoRecompileGuard4specE" title="Link to this definition"></a><br /></dt>
+<dd><p>Reference to the <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> object. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJSpec16NoRecompileGuard28prevShouldRecompileWhenAskedE">
+<span id="_CPPv3N6MJSpec16NoRecompileGuard28prevShouldRecompileWhenAskedE"></span><span id="_CPPv2N6MJSpec16NoRecompileGuard28prevShouldRecompileWhenAskedE"></span><span id="MJSpec::NoRecompileGuard::prevShouldRecompileWhenAsked__b"></span><span class="target" id="struct_m_j_spec_1_1_no_recompile_guard_1af547f316450750d5e7c9ba4fbdfb0e0b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevShouldRecompileWhenAsked</span></span></span><a class="headerlink" href="#_CPPv4N6MJSpec16NoRecompileGuard28prevShouldRecompileWhenAskedE" title="Link to this definition"></a><br /></dt>
+<dd><p>Previous state of recompilation flag. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv45Eigen">
+<span id="_CPPv35Eigen"></span><span id="_CPPv25Eigen"></span><span id="Eigen"></span><span class="target" id="namespace_eigen"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Eigen</span></span></span><a class="headerlink" href="#_CPPv45Eigen" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N5Eigen8Vector6dE">
+<span id="_CPPv3N5Eigen8Vector6dE"></span><span id="_CPPv2N5Eigen8Vector6dE"></span><span class="target" id="_m_j_spec_8h_1a1f27c5179666010c77723922ade1d8a5"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Vector6d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">6</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N5Eigen8Vector6dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJSite.html" class="btn btn-neutral float-left" title="Module: MJSite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MJUtils.html" class="btn btn-neutral float-right" title="Module: MJUtils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

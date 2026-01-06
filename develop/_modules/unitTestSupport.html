@@ -1,0 +1,867 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>unitTestSupport &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">unitTestSupport</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for unitTestSupport</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskUtilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;xtick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;ytick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">5.75</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">))</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;axes&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;legend&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">autolayout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">max_open_warning</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;legend&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">colors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cmx</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span> <span class="k">as</span> <span class="n">T</span>
+
+    <span class="c1"># &#39;&#39;&#39;</span>
+    <span class="c1"># del(T.LATEX_ESCAPE_RULES[&#39;$&#39;])</span>
+    <span class="c1"># del(T.LATEX_ESCAPE_RULES[&#39;\\&#39;])</span>
+    <span class="c1"># del(T.LATEX_ESCAPE_RULES[&#39;_&#39;])</span>
+    <span class="c1"># del(T.LATEX_ESCAPE_RULES[&#39;{&#39;])</span>
+    <span class="c1"># del(T.LATEX_ESCAPE_RULES[&#39;}&#39;])</span>
+    <span class="c1"># &#39;&#39;&#39;</span>
+
+    <span class="k">del</span> <span class="n">T</span><span class="o">.</span><span class="n">LATEX_ESCAPE_RULES</span><span class="p">[</span><span class="s2">&quot;$&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">T</span><span class="o">.</span><span class="n">LATEX_ESCAPE_RULES</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">T</span><span class="o">.</span><span class="n">LATEX_ESCAPE_RULES</span><span class="p">[</span><span class="s2">&quot;_&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">T</span><span class="o">.</span><span class="n">LATEX_ESCAPE_RULES</span><span class="p">[</span><span class="s2">&quot;{&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">T</span><span class="o">.</span><span class="n">LATEX_ESCAPE_RULES</span><span class="p">[</span><span class="s2">&quot;}&quot;</span><span class="p">]</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="isVectorEqual">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isVectorEqual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isVectorEqual</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;function to check if a 3D vector is the same as the truth values&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">result</span> <span class="o">-</span> <span class="n">truth</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the array&#39;s are not equal</span>
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the two array&#39;s are equal</span></div>
+
+
+
+<div class="viewcode-block" id="isArrayEqual">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isArrayEqual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isArrayEqual</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;function to check if an array of values is the same as the truth values&quot;&quot;&quot;</span>
+    <span class="c1"># the result array is of dimension dim, no time stamp</span>
+    <span class="c1"># the truth array is of dimesion dim, no time stamp</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incorrect array dimension &quot;</span> <span class="o">+</span> <span class="n">dim</span> <span class="o">+</span> <span class="s2">&quot; sent to isArrayEqual&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result array was empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Truth array was empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">truth</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the array&#39;s are not equal</span>
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the two array&#39;s are equal</span></div>
+
+
+
+<div class="viewcode-block" id="isArrayEqualRelative">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isArrayEqualRelative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isArrayEqualRelative</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare relative accuracy of two arrays&quot;&quot;&quot;</span>
+    <span class="c1"># the result array is of dimension dim, no time stamp</span>
+    <span class="c1"># the truth array is of dimesion dim, no time stamp</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incorrect array dimension &quot;</span> <span class="o">+</span> <span class="n">dim</span> <span class="o">+</span> <span class="s2">&quot; sent to isArrayEqual&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result array was empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Truth array was empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">truth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Truth array contains zero&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">truth</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">truth</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the array&#39;s are not equal</span>
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the two array&#39;s are equal</span></div>
+
+
+
+<div class="viewcode-block" id="isArrayZero">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isArrayZero">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isArrayZero</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;function to check if an array of values are zero&quot;&quot;&quot;</span>
+    <span class="c1"># the result array is of dimension dim</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incorrect array dimension &quot;</span> <span class="o">+</span> <span class="n">dim</span> <span class="o">+</span> <span class="s2">&quot; sent to isArrayEqual&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result array was empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the array&#39;s are not equal</span>
+
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the two array&#39;s are equal</span></div>
+
+
+
+<div class="viewcode-block" id="compareVector">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareVector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareVector</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">,</span> <span class="n">ExpectedResult</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two vector size and values and check absolute accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">isVectorEqual</span><span class="p">(</span><span class="n">dataStates</span><span class="p">,</span> <span class="n">trueStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ExpectedResult</span><span class="p">:</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\n&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareArray">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareArray">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareArray</span><span class="p">(</span><span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two arrays size and values and check absolute accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isArrayEqual</span><span class="p">(</span><span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareArrayND">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareArrayND">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareArrayND</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two arrays of size N for size and values and check absolute accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">trueValue</span> <span class="o">=</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">trueValue</span> <span class="o">=</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isArrayEqual</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">trueValue</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareArrayRelative">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareArrayRelative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareArrayRelative</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether the relative distance between elements of a pullMessageLogData-derived array and a</span>
+<span class="sd">    truth array is below a provided accuracy, and return an error if not.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        trueStates: iterable of size (m,n);</span>
+<span class="sd">        dataStates: iterable of size (m,n)</span>
+<span class="sd">        accuracy: Relative accuracy boundary</span>
+<span class="sd">        msg:</span>
+<span class="sd">        testFailCount:</span>
+<span class="sd">        testMessages:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;FAILED: &quot;</span>
+                    <span class="o">+</span> <span class="n">msg</span>
+                    <span class="o">+</span> <span class="s2">&quot; at t=&quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;sec\n&quot;</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="isDoubleEqual">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isDoubleEqual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isDoubleEqual</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;function to check if a double equals a truth value&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">result</span> <span class="o">-</span> <span class="n">truth</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the doubles are not equal</span>
+
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the doubles are equal</span></div>
+
+
+
+<div class="viewcode-block" id="isDoubleEqualRelative">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.isDoubleEqualRelative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">isDoubleEqualRelative</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;function to check if a double equals a truth value with relative tolerance&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">truth</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">foundNAN</span><span class="p">(</span><span class="n">accuracy</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">truth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;truth is zero, cannot compare&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="n">truth</span> <span class="o">-</span> <span class="n">result</span><span class="p">)</span> <span class="o">/</span> <span class="n">truth</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># return 0 to indicate the doubles are not equal</span>
+
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate the doubles are equal</span></div>
+
+
+
+<div class="viewcode-block" id="compareDoubleArrayRelative">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareDoubleArrayRelative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareDoubleArrayRelative</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two arrays of doubles for size and values and check relative accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareDoubleArray">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareDoubleArray">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareDoubleArray</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two arrays of doubles for size and values and check absolute accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)):</span>
+            <span class="c1"># check a vector values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">dataStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueStates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareListRelative">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareListRelative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareListRelative</span><span class="p">(</span>
+    <span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two row lists of values and check relative accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">trueStates</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">dataStates</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="compareList">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.compareList">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compareList</span><span class="p">(</span><span class="n">trueStates</span><span class="p">,</span> <span class="n">dataStates</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two row lists of values and check relative accuracy&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; unequal data array sizes\n&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataStates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot; data had empty arrays\n&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">trueStates</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">dataStates</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+
+<div class="viewcode-block" id="writeTableLaTeX">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.writeTableLaTeX">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeTableLaTeX</span><span class="p">(</span><span class="n">tableName</span><span class="p">,</span> <span class="n">tableHeaders</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Take a list and return equivalent LaTeX table code&quot;&quot;&quot;</span>
+
+    <span class="n">texFileName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../_Documentation/AutoTeX/&quot;</span> <span class="o">+</span> <span class="n">tableName</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Guard against race condition</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">texFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">texTable</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">tabulate</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">tableHeaders</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\begin</span><span class="si">{table}</span><span class="s2">[htbp]&quot;</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\caption{&quot;</span> <span class="o">+</span> <span class="n">caption</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\label{tbl:&quot;</span> <span class="o">+</span> <span class="n">tableName</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\centering&quot;</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\end</span><span class="si">{table}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">texTable</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="writeTeXSnippet">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.writeTeXSnippet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">texSnippet</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a LaTeX snippet to a file&quot;&quot;&quot;</span>
+
+    <span class="n">texFileName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../_Documentation/AutoTeX/&quot;</span> <span class="o">+</span> <span class="n">snippetName</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Guard against race condition</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">texFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fileHandler</span><span class="p">:</span>
+        <span class="n">fileHandler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">texSnippet</span><span class="p">)</span>
+        <span class="n">fileHandler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="saveScenarioFigure">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.saveScenarioFigure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saveScenarioFigure</span><span class="p">(</span><span class="n">figureName</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.svg&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;save a python scenario result into the documentation image folder&quot;&quot;&quot;</span>
+    <span class="n">imgFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">path</span><span class="p">,</span>
+        <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_images&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Scenarios&quot;</span><span class="p">,</span>
+        <span class="n">figureName</span> <span class="o">+</span> <span class="n">extension</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">imgFileName</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">imgFileName</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Guard against race condition</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgFileName</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="saveFigurePDF">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.saveFigurePDF">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saveFigurePDF</span><span class="p">(</span><span class="n">figureName</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a Figure as a PDF&quot;&quot;&quot;</span>
+    <span class="n">figFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">figureName</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">figFileName</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">figFileName</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Guard against race condition</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figFileName</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="writeFigureLaTeX">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.writeFigureLaTeX">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeFigureLaTeX</span><span class="p">(</span><span class="n">figureName</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a figure and associated TeX code snippet&quot;&quot;&quot;</span>
+    <span class="n">texFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;_Documentation&quot;</span><span class="p">,</span> <span class="s2">&quot;AutoTeX&quot;</span><span class="p">,</span> <span class="n">figureName</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">texFileName</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Guard against race condition</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">texFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">texFigure</span><span class="p">:</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\begin</span><span class="si">{figure}</span><span class="s2">[htbp]&quot;</span><span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\centerline{&quot;</span><span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;\includegraphics[&quot;</span> <span class="o">+</span> <span class="nb">format</span> <span class="o">+</span> <span class="s2">&quot;]{AutoTeX/&quot;</span> <span class="o">+</span> <span class="n">figureName</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}}&quot;</span>
+        <span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\caption{&quot;</span> <span class="o">+</span> <span class="n">caption</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\label{fig:&quot;</span> <span class="o">+</span> <span class="n">figureName</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\end</span><span class="si">{figure}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">texFigure</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">texFileName</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../_Documentation/AutoTeX/&quot;</span> <span class="o">+</span> <span class="n">figureName</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">texFileName</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="foundNAN">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.foundNAN">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">foundNAN</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;check if an array contains NAN values&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">array</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: found NaN value.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># return 1 to indicate a NaN value was found</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="getLineColor">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.getLineColor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">maxNum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;pick a nicer color pattern to plot 3 vector components&quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxNum</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">colorMap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;gist_earth&quot;</span><span class="p">)</span>
+    <span class="n">cNorm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">colorMap</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="np2EigenMatrix3d">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.np2EigenMatrix3d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">np2EigenMatrix3d</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert 3D numpy matrix to Eigen matrix&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+        <span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span>
+        <span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="mi">8</span><span class="p">]],</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="np2EigenVectorXd">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.np2EigenVectorXd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">np2EigenVectorXd</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert numpy to Eigen vector&quot;&quot;&quot;</span>
+    <span class="n">npVec</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">vec</span><span class="p">:</span>
+        <span class="n">npVec</span><span class="o">.</span><span class="n">extend</span><span class="p">([[</span><span class="n">item</span><span class="p">]])</span>
+
+    <span class="k">return</span> <span class="n">npVec</span></div>
+
+
+
+<div class="viewcode-block" id="npList2EigenXdVector">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.npList2EigenXdVector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">npList2EigenXdVector</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Conver a list of arrays to a list of eigen values&quot;&quot;&quot;</span>
+    <span class="n">eigenList</span> <span class="o">=</span> <span class="n">bskUtilities</span><span class="o">.</span><span class="n">Eigen3dVector</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">eigenList</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eigenList</span></div>
+
+
+
+<div class="viewcode-block" id="EigenVector3d2np">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.EigenVector3d2np">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">EigenVector3d2np</span><span class="p">(</span><span class="n">eig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert Eigen vector3d to numpy&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">eig</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">eig</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">eig</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="flattenList">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.flattenList">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flattenList</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    returns a flattened list</span>
+<span class="sd">    Args:</span>
+<span class="sd">        matrix: list of list</span>
+
+<span class="sd">    Returns: flattened list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flat_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">:</span>
+        <span class="n">flat_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flat_list</span></div>
+
+
+
+<div class="viewcode-block" id="EigenVector3d2list">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.EigenVector3d2list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">EigenVector3d2list</span><span class="p">(</span><span class="n">eig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert Eigen vector3d to list&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="pullVectorSetFromData">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.pullVectorSetFromData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pullVectorSetFromData</span><span class="p">(</span><span class="n">inpMat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;extract the vector data set from a data matrix where the 1st column is the time information&quot;&quot;&quot;</span>
+    <span class="n">outMat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">inpMat</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">outMat</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="addTimeColumn">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.addTimeColumn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addTimeColumn</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a time column to the data set&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([[</span><span class="n">time</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">)]))</span></div>
+
+
+
+<div class="viewcode-block" id="decimalYearToDateTime">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.decimalYearToDateTime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decimalYearToDateTime</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert a decimal Year format to a regular dataTime object&quot;&quot;&quot;</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">rem</span> <span class="o">=</span> <span class="n">start</span> <span class="o">-</span> <span class="n">year</span>
+
+    <span class="n">base</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span>
+        <span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">base</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">*</span> <span class="n">rem</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="timeStringToGregorianUTCMsg">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.timeStringToGregorianUTCMsg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timeStringToGregorianUTCMsg</span><span class="p">(</span><span class="n">DateSpice</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert a general time/date string to a gregoarian UTC msg object&quot;&quot;&quot;</span>
+    <span class="c1"># set the data path</span>
+    <span class="k">if</span> <span class="s2">&quot;dataPath&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">dataPath</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dataPath&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataPath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataPath must be a string argument&quot;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataPath</span> <span class="o">=</span> <span class="n">bskPath</span> <span class="o">+</span> <span class="s2">&quot;/supportData/EphemerisData/&quot;</span>  <span class="c1"># default value</span>
+
+    <span class="c1"># load spice kernel and convert the string into a UTC date/time string</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">et</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">str2et_c</span><span class="p">(</span><span class="n">DateSpice</span><span class="p">,</span> <span class="n">et</span><span class="p">)</span>
+    <span class="n">etEpoch</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ep1</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">et2utc_c</span><span class="p">(</span><span class="n">etEpoch</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="s2">&quot;Yo&quot;</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># convert UTC string to datetime object</span>
+        <span class="n">datetime_object</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ep1</span><span class="p">,</span> <span class="s2">&quot;%Y %b </span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate month is in range 1-12</span>
+        <span class="k">if</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">month</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">month</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid month value: </span><span class="si">{</span><span class="n">datetime_object</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># populate the epochMsg with the gregorian UTC date/time information</span>
+        <span class="n">epochMsgStructure</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="p">()</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">month</span> <span class="o">=</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">month</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">day</span> <span class="o">=</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">day</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">hours</span> <span class="o">=</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">hour</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">minutes</span> <span class="o">=</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">minute</span>
+        <span class="n">epochMsgStructure</span><span class="o">.</span><span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">datetime_object</span><span class="o">.</span><span class="n">second</span> <span class="o">+</span> <span class="n">datetime_object</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mf">1e6</span>
+        <span class="p">)</span>
+
+        <span class="n">epochMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">epochMsgStructure</span><span class="p">)</span>
+
+        <span class="c1"># Store the message in a global registry to prevent garbage collection</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">timeStringToGregorianUTCMsg</span><span class="p">,</span> <span class="s2">&quot;_msg_registry&quot;</span><span class="p">):</span>
+            <span class="n">timeStringToGregorianUTCMsg</span><span class="o">.</span><span class="n">_msg_registry</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">timeStringToGregorianUTCMsg</span><span class="o">.</span><span class="n">_msg_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">epochMsg</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing date string &#39;</span><span class="si">{</span><span class="n">ep1</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original input string was: </span><span class="si">{</span><span class="n">DateSpice</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span></div>
+
+
+
+<div class="viewcode-block" id="columnToRowList">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.columnToRowList">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">columnToRowList</span><span class="p">(</span><span class="nb">set</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loop through a column list and return a row list&quot;&quot;&quot;</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">:</span>
+        <span class="n">ans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ans</span></div>
+
+
+
+<div class="viewcode-block" id="checkMethodKeyword">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.checkMethodKeyword">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">checkMethodKeyword</span><span class="p">(</span><span class="n">karglist</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;loop through list of method keyword arguments and make sure that an approved keyword is used.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">karglist</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;ERROR: you tried to use an incorrect keyword &quot;</span>
+                <span class="o">+</span> <span class="n">key</span>
+                <span class="o">+</span> <span class="s2">&quot;. Options include:&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">karglist</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="removeTimeFromData">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.removeTimeFromData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">removeTimeFromData</span><span class="p">(</span><span class="n">dataList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;pull out the time column out of a 4xN data list&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dataList</span><span class="o">.</span><span class="n">transpose</span><span class="p">()[</span><span class="mi">1</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataList</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="samplingTime">
+<a class="viewcode-back" href="../Documentation/utilities/unitTestSupport.html#unitTestSupport.samplingTime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">samplingTime</span><span class="p">(</span><span class="n">simTime</span><span class="p">,</span> <span class="n">baseTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a simulation duration, this routine returns</span>
+<span class="sd">    a sampling time that yields the closest integer match to a desired number of sampling points</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        simTime: [ns] total simulation duration</span>
+<span class="sd">        baseTimeStep: [ns] baseline sampling period</span>
+<span class="sd">        numDataPoints: nominal desired number of data points over the simulation duration</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">deltaTime</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">simTime</span> <span class="o">/</span> <span class="n">baseTimeStep</span> <span class="o">/</span> <span class="p">(</span><span class="n">numDataPoints</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">baseTimeStep</span>
+    <span class="k">if</span> <span class="n">deltaTime</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">deltaTime</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">deltaTime</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

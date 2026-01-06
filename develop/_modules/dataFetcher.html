@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dataFetcher &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dataFetcher</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dataFetcher</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pooch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.registrySnippet</span><span class="w"> </span><span class="kn">import</span> <span class="n">REGISTRY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+
+<span class="n">pooch_logger</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
+<span class="n">pooch_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="c1"># Override URLs for large NAIF kernels (not in GitHub repo)</span>
+<span class="n">EXTERNAL_KERNEL_URLS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;supportData/EphemerisData/de430.bsp&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/EphemerisData/naif0012.tls&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/EphemerisData/pck00010.tpc&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/EphemerisData/de-403-masses.tpc&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/de-403-masses.tpc&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/EphemerisData/hst_edited.bsp&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/EphemerisData/nh_pred_od077.bsp&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Do not set hashes for files fetched from external URLs such as JPL NAIF as</span>
+<span class="c1"># they may change without notice.</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EXTERNAL_KERNEL_URLS</span><span class="p">:</span>
+    <span class="n">REGISTRY</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">DATA_VERSION</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">ALBEDO_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;AlbedoData/&quot;</span>
+<span class="n">ATMOSPHERE_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;AtmosphereData/&quot;</span>
+<span class="n">DENTON_GEO_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;DentonGEO/&quot;</span>
+<span class="n">EPHEMERIS_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;EphemerisData/&quot;</span>
+<span class="n">LOCAL_GRAV_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;LocalGravData/&quot;</span>
+<span class="n">MAGNETIC_FIELD_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;MagneticField/&quot;</span>
+
+
+<div class="viewcode-block" id="tag_exists">
+<a class="viewcode-back" href="../Documentation/utilities/supportDataTools/dataFetcher.html#dataFetcher.tag_exists">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tag_exists</span><span class="p">(</span><span class="n">tag_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if the given GitHub tag URL exists.</span>
+
+<span class="sd">    Cached so repeated calls never trigger additional network requests.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">tag_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="find_local_support_data">
+<a class="viewcode-back" href="../Documentation/utilities/supportDataTools/dataFetcher.html#dataFetcher.find_local_support_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_local_support_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the path to the local ``supportData`` directory if running</span>
+<span class="sd">    from a cloned repo in editable mode, otherwise return ``None``.</span>
+
+<span class="sd">    Editable installs place modules under ``dist3/Basilisk/``, while the</span>
+<span class="sd">    repo&#39;s ``supportData`` directory lives at the project root.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">repo_root</span> <span class="o">=</span> <span class="n">module_path</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">support_data</span> <span class="o">=</span> <span class="n">repo_root</span> <span class="o">/</span> <span class="s2">&quot;supportData&quot;</span>
+    <span class="k">return</span> <span class="n">support_data</span> <span class="k">if</span> <span class="n">support_data</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<span class="c1"># Compute the base GitHub URL once at import time.</span>
+<span class="c1"># With the caching on `tag_exists` this avoids repeated network calls during</span>
+<span class="c1"># file fetches.</span>
+<span class="n">LOCAL_SUPPORT</span> <span class="o">=</span> <span class="n">find_local_support_data</span><span class="p">()</span>
+<span class="n">BASE_URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/AVSLab/basilisk/</span><span class="si">{</span><span class="n">DATA_VERSION</span><span class="si">}</span><span class="s2">/&quot;</span>
+<span class="n">POOCH</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;bsk_support_data&quot;</span><span class="p">),</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">,</span>
+    <span class="n">registry</span><span class="o">=</span><span class="n">REGISTRY</span><span class="p">,</span>
+    <span class="n">urls</span><span class="o">=</span><span class="n">EXTERNAL_KERNEL_URLS</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_local_rel</span><span class="p">(</span><span class="n">rel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a registry-style key into a path relative to LOCAL_SUPPORT.&quot;&quot;&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;supportData/&quot;</span>
+    <span class="k">return</span> <span class="n">rel</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">rel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">else</span> <span class="n">rel</span>
+
+
+<div class="viewcode-block" id="get_path">
+<a class="viewcode-back" href="../Documentation/utilities/supportDataTools/dataFetcher.html#dataFetcher.get_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_path</span><span class="p">(</span><span class="n">file_enum</span><span class="p">:</span> <span class="n">Enum</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a filesystem path for the requested supportData file.</span>
+
+<span class="sd">    If running from a local Basilisk repo, the file is returned directly from</span>
+<span class="sd">    ``supportData/``. Otherwise, it is fetched or retrieved from the Pooch</span>
+<span class="sd">    cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rel</span> <span class="o">=</span> <span class="n">relpath</span><span class="p">(</span><span class="n">file_enum</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">LOCAL_SUPPORT</span><span class="p">:</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="n">LOCAL_SUPPORT</span> <span class="o">/</span> <span class="n">_local_rel</span><span class="p">(</span><span class="n">rel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">local</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Support data file not found: </span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">POOCH</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">rel</span><span class="p">))</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DataFile</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">AlbedoData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">Earth_ALB_2018_CERES_All_1x1</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_All_1x1.csv&quot;</span>
+        <span class="n">Earth_ALB_2018_CERES_All_5x5</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_All_5x5.csv&quot;</span>
+        <span class="n">Earth_ALB_2018_CERES_All_10x10</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_All_10x10.csv&quot;</span>
+        <span class="n">Earth_ALB_2018_CERES_Clear_1x1</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_Clear_1x1.csv&quot;</span>
+        <span class="n">Earth_ALB_2018_CERES_Clear_5x5</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_Clear_5x5.csv&quot;</span>
+        <span class="n">Earth_ALB_2018_CERES_Clear_10x10</span> <span class="o">=</span> <span class="s2">&quot;Earth_ALB_2018_CERES_Clear_10x10.csv&quot;</span>
+        <span class="n">earthReflectivityMean_1p25x1</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityMean_1p25x1.dat&quot;</span>
+        <span class="n">earthReflectivityMean_5x5</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityMean_5x5.dat&quot;</span>
+        <span class="n">earthReflectivityMean_10x10</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityMean_10x10.dat&quot;</span>
+        <span class="n">earthReflectivityStd_1p25x1</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityStd_1p25x1.dat&quot;</span>
+        <span class="n">earthReflectivityStd_5x5</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityStd_5x5.dat&quot;</span>
+        <span class="n">earthReflectivityStd_10x10</span> <span class="o">=</span> <span class="s2">&quot;earthReflectivityStd_10x10.dat&quot;</span>
+        <span class="n">Mars_ALB_TES_1x1</span> <span class="o">=</span> <span class="s2">&quot;Mars_ALB_TES_1x1.csv&quot;</span>
+        <span class="n">Mars_ALB_TES_5x5</span> <span class="o">=</span> <span class="s2">&quot;Mars_ALB_TES_5x5.csv&quot;</span>
+        <span class="n">Mars_ALB_TES_10x10</span> <span class="o">=</span> <span class="s2">&quot;Mars_ALB_TES_10x10.csv&quot;</span>
+        <span class="n">marsReflectivityMean_1p25x1</span> <span class="o">=</span> <span class="s2">&quot;marsReflectivityMean_1p25x1.dat&quot;</span>
+        <span class="n">marsReflectivityMean_5x5</span> <span class="o">=</span> <span class="s2">&quot;marsReflectivityMean_5x5.dat&quot;</span>
+        <span class="n">marsReflectivityMean_10x10</span> <span class="o">=</span> <span class="s2">&quot;marsReflectivityMean_10x10.dat&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">AtmosphereData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="c1"># You’re currently missing these three in the enum but they’re in REGISTRY:</span>
+        <span class="n">EarthGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;EarthGRAMNominal.txt&quot;</span>
+        <span class="n">MarsGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;MarsGRAMNominal.txt&quot;</span>
+        <span class="n">NRLMSISE00Nominal</span> <span class="o">=</span> <span class="s2">&quot;NRLMSISE00Nominal.txt&quot;</span>
+
+        <span class="n">JupiterGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;JupiterGRAMNominal.csv&quot;</span>
+        <span class="n">NeptuneGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;NeptuneGRAMNominal.csv&quot;</span>
+        <span class="n">TitanGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;TitanGRAMNominal.csv&quot;</span>
+        <span class="n">UranusGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;UranusGRAMNominal.csv&quot;</span>
+        <span class="n">USStandardAtmosphere1976</span> <span class="o">=</span> <span class="s2">&quot;USStandardAtmosphere1976.csv&quot;</span>
+        <span class="n">VenusGRAMNominal</span> <span class="o">=</span> <span class="s2">&quot;VenusGRAMNominal.csv&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">DentonGEOData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">model_e_array_all</span> <span class="o">=</span> <span class="s2">&quot;model_e_array_all.txt&quot;</span>
+        <span class="n">model_e_array_high</span> <span class="o">=</span> <span class="s2">&quot;model_e_array_high.txt&quot;</span>
+        <span class="n">model_e_array_low</span> <span class="o">=</span> <span class="s2">&quot;model_e_array_low.txt&quot;</span>
+        <span class="n">model_e_array_mid</span> <span class="o">=</span> <span class="s2">&quot;model_e_array_mid.txt&quot;</span>
+        <span class="n">model_i_array_all</span> <span class="o">=</span> <span class="s2">&quot;model_i_array_all.txt&quot;</span>
+        <span class="n">model_i_array_high</span> <span class="o">=</span> <span class="s2">&quot;model_i_array_high.txt&quot;</span>
+        <span class="n">model_i_array_low</span> <span class="o">=</span> <span class="s2">&quot;model_i_array_low.txt&quot;</span>
+        <span class="n">model_i_array_mid</span> <span class="o">=</span> <span class="s2">&quot;model_i_array_mid.txt&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">EphemerisData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">de_403_masses</span> <span class="o">=</span> <span class="s2">&quot;de-403-masses.tpc&quot;</span>
+        <span class="n">de430</span> <span class="o">=</span> <span class="s2">&quot;de430.bsp&quot;</span>
+        <span class="n">hst_edited</span> <span class="o">=</span> <span class="s2">&quot;hst_edited.bsp&quot;</span>
+        <span class="n">MVN_SCLKSCET_00000</span> <span class="o">=</span> <span class="s2">&quot;MVN_SCLKSCET.00000.tsc&quot;</span>
+        <span class="n">naif0011</span> <span class="o">=</span> <span class="s2">&quot;naif0011.tls&quot;</span>
+        <span class="n">naif0012</span> <span class="o">=</span> <span class="s2">&quot;naif0012.tls&quot;</span>
+        <span class="n">nh_pred_od077</span> <span class="o">=</span> <span class="s2">&quot;nh_pred_od077.bsp&quot;</span>
+        <span class="n">pck00010</span> <span class="o">=</span> <span class="s2">&quot;pck00010.tpc&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">LocalGravData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">eros007790</span> <span class="o">=</span> <span class="s2">&quot;eros007790.tab&quot;</span>
+        <span class="n">GGM2BData</span> <span class="o">=</span> <span class="s2">&quot;GGM2BData.txt&quot;</span>
+        <span class="n">GGM03S_J2_only</span> <span class="o">=</span> <span class="s2">&quot;GGM03S-J2-only.txt&quot;</span>
+        <span class="n">GGM03S</span> <span class="o">=</span> <span class="s2">&quot;GGM03S.txt&quot;</span>
+        <span class="n">VESTA20H</span> <span class="o">=</span> <span class="s2">&quot;VESTA20H.txt&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">MagneticFieldData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">WMM</span> <span class="o">=</span> <span class="s2">&quot;WMM.COF&quot;</span>
+
+
+<span class="n">CATEGORY_BASE_PATHS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;AlbedoData&quot;</span><span class="p">:</span> <span class="n">ALBEDO_DATA_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;AtmosphereData&quot;</span><span class="p">:</span> <span class="n">ATMOSPHERE_DATA_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;DentonGEOData&quot;</span><span class="p">:</span> <span class="n">DENTON_GEO_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;EphemerisData&quot;</span><span class="p">:</span> <span class="n">EPHEMERIS_DATA_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;LocalGravData&quot;</span><span class="p">:</span> <span class="n">LOCAL_GRAV_DATA_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;MagneticFieldData&quot;</span><span class="p">:</span> <span class="n">MAGNETIC_FIELD_BASE_PATH</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">relpath</span><span class="p">(</span><span class="n">file_enum</span><span class="p">:</span> <span class="n">Enum</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">category_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">file_enum</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">CATEGORY_BASE_PATHS</span><span class="p">[</span><span class="n">category_name</span><span class="p">]</span>
+        <span class="n">rel</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">file_enum</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="s2">&quot;supportData/&quot;</span> <span class="o">+</span> <span class="n">rel</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown supportData category: </span><span class="si">{</span><span class="n">category_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

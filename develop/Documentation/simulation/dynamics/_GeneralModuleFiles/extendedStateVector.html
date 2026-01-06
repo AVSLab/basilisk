@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: extendedStateVector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: fuelSlosh" href="fuelSlosh.html" />
+    <link rel="prev" title="Module: dynamicObject" href="dynamicObject.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: extendedStateVector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/extendedStateVector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-extendedstatevector">
+<span id="extendedstatevector"></span><h1>Module: extendedStateVector<a class="headerlink" href="#module-extendedstatevector" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv415ExtendedStateId">
+<span id="_CPPv315ExtendedStateId"></span><span id="_CPPv215ExtendedStateId"></span><span class="target" id="extended_state_vector_8h_1af65894a901c61e0e72d940b2e6dcf6df"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ExtendedStateId</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv415ExtendedStateId" title="Link to this definition"></a><br /></dt>
+<dd><p>Because two different DynamicObjects can have states with the same name, ExtendedStateId is used to give a unique identifier to every state. The first item is the index of the <a class="reference internal" href="dynamicObject.html#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> in the integrator’s dynPtrs vector. The second item in the pair is the name of the state. </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419ExtendedStateIdHash">
+<span id="_CPPv319ExtendedStateIdHash"></span><span id="_CPPv219ExtendedStateIdHash"></span><span id="ExtendedStateIdHash"></span><span class="target" id="struct_extended_state_id_hash"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ExtendedStateIdHash</span></span></span><a class="headerlink" href="#_CPPv419ExtendedStateIdHash" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;extendedStateVector.h&gt;</em></div>
+<p><a class="reference internal" href="#struct_extended_state_id_hash"><span class="std std-ref">ExtendedStateIdHash</span></a> is required to make ExtendedStateId hashable (usable as a key in a map) </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateIdHashclERK15ExtendedStateId">
+<span id="_CPPv3NK19ExtendedStateIdHashclERK15ExtendedStateId"></span><span id="_CPPv2NK19ExtendedStateIdHashclERK15ExtendedStateId"></span><span id="ExtendedStateIdHash::call-operator__ExtendedStateIdCRC"></span><span class="target" id="struct_extended_state_id_hash_1afe0d033f117bddd3ff9ccae7361c212d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415ExtendedStateId" title="ExtendedStateId"><span class="n"><span class="pre">ExtendedStateId</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateIdHashclERK15ExtendedStateId" title="Link to this definition"></a><br /></dt>
+<dd><p>Generates a hash value (integer) from an ExtendedStateId object </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv419ExtendedStateVector">
+<span id="_CPPv319ExtendedStateVector"></span><span id="_CPPv219ExtendedStateVector"></span><span id="ExtendedStateVector"></span><span class="target" id="class_extended_state_vector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ExtendedStateVector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv415ExtendedStateId" title="ExtendedStateId"><span class="n"><span class="pre">ExtendedStateId</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateIdHash" title="ExtendedStateIdHash"><span class="n"><span class="pre">ExtendedStateIdHash</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv419ExtendedStateVector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;extendedStateVector.h&gt;</em></div>
+<p>Conceptually similar to <a class="reference internal" href="dynParamManager.html#class_state_vector"><span class="std std-ref">StateVector</span></a>, this class allows us to handle the states of multiple <a class="reference internal" href="dynamicObject.html#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> with a single object.</p>
+<p>It also supports several utility functions. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVector3mapENSt8functionIFN5Eigen8MatrixXdERK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE">
+<span id="_CPPv3NK19ExtendedStateVector3mapENSt8functionIFN5Eigen8MatrixXdERK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE"></span><span id="_CPPv2NK19ExtendedStateVector3mapENSt8functionIFN5Eigen8MatrixXdERK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE"></span><span class="target" id="class_extended_state_vector_1a740442ebfb8c8ad84fd18a9f340a0a83"></span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">map</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">(</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">functor</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVector3mapENSt8functionIFN5Eigen8MatrixXdERK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method will call the given std::function for every state in the <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a>. The arguments to the functor are the index of the <a class="reference internal" href="dynamicObject.html#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> corresponding to the state, the name of the state, and the value of the state stored in <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a>. A new <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a> is built from the results of each call of the functor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVector5applyENSt8functionIFvRK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE">
+<span id="_CPPv3NK19ExtendedStateVector5applyENSt8functionIFvRK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE"></span><span id="_CPPv2NK19ExtendedStateVector5applyENSt8functionIFvRK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE"></span><span class="target" id="class_extended_state_vector_1adcf63d1503aec1940c312896948b8a4c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">apply</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">(</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">functor</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVector5applyENSt8functionIFvRK6size_tRKNSt6stringERKN5Eigen8MatrixXdEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Similar to the map method, except that no <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a> is returned because the given functor does not produce any values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19ExtendedStateVector6modifyENSt8functionIFvRK6size_tRKNSt6stringERN5Eigen8MatrixXdEEEE">
+<span id="_CPPv3N19ExtendedStateVector6modifyENSt8functionIFvRK6size_tRKNSt6stringERN5Eigen8MatrixXdEEEE"></span><span id="_CPPv2N19ExtendedStateVector6modifyENSt8functionIFvRK6size_tRKNSt6stringERN5Eigen8MatrixXdEEEE"></span><span class="target" id="class_extended_state_vector_1a01a050cbaf03b6ecaac6dac86b2a1d4f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">modify</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">(</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">functor</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ExtendedStateVector6modifyENSt8functionIFvRK6size_tRKNSt6stringERN5Eigen8MatrixXdEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Modifies each Eigen::MatrixXd stored in this object according to the given functor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19ExtendedStateVectorpLERK19ExtendedStateVector">
+<span id="_CPPv3N19ExtendedStateVectorpLERK19ExtendedStateVector"></span><span id="_CPPv2N19ExtendedStateVectorpLERK19ExtendedStateVector"></span><span id="ExtendedStateVector::add-assign-operator__ExtendedStateVectorCR"></span><span class="target" id="class_extended_state_vector_1a0023fb1d3a0bc38f2944c7487311e550"></span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ExtendedStateVectorpLERK19ExtendedStateVector" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds the values of <code class="docutils literal notranslate"><span class="pre">rhs</span></code> to this</p>
+<p>This functions as a state-wise addition operation. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVectormiERK19ExtendedStateVector">
+<span id="_CPPv3NK19ExtendedStateVectormiERK19ExtendedStateVector"></span><span id="_CPPv2NK19ExtendedStateVectormiERK19ExtendedStateVector"></span><span id="ExtendedStateVector::sub-operator__ExtendedStateVectorCRC"></span><span class="target" id="class_extended_state_vector_1a8d88943f54b13cf8d369da8e178b427f"></span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVectormiERK19ExtendedStateVector" title="Link to this definition"></a><br /></dt>
+<dd><p>Subtracts the values of <code class="docutils literal notranslate"><span class="pre">rhs</span></code> to from this</p>
+<p>This functions as a state-wise subtraction operation. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVectormlEKd">
+<span id="_CPPv3NK19ExtendedStateVectormlEKd"></span><span id="_CPPv2NK19ExtendedStateVectormlEKd"></span><span id="ExtendedStateVector::mul-operator__doubleCC"></span><span class="target" id="class_extended_state_vector_1a69226a43e8356d1b590bd309717f45a5"></span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVectormlEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a new <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a> that is the result of multiplying each state by a constant </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVector9setStatesERNSt6vectorIP13DynamicObjectEE">
+<span id="_CPPv3NK19ExtendedStateVector9setStatesERNSt6vectorIP13DynamicObjectEE"></span><span id="_CPPv2NK19ExtendedStateVector9setStatesERNSt6vectorIP13DynamicObjectEE"></span><span id="ExtendedStateVector::setStates__std::vector:DynamicObjectP:RC"></span><span class="target" id="class_extended_state_vector_1a4c85ff51b5ec2be545d8658fb07d46ce"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStates</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynPtrs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVector9setStatesERNSt6vectorIP13DynamicObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Calls <a class="reference internal" href="stateData.html#class_state_data_1ac15afb78420f106083b2f1bfe45db13e"><span class="std std-ref">StateData::setState</span></a> for every entry in this </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19ExtendedStateVector14setDerivativesERNSt6vectorIP13DynamicObjectEE">
+<span id="_CPPv3NK19ExtendedStateVector14setDerivativesERNSt6vectorIP13DynamicObjectEE"></span><span id="_CPPv2NK19ExtendedStateVector14setDerivativesERNSt6vectorIP13DynamicObjectEE"></span><span id="ExtendedStateVector::setDerivatives__std::vector:DynamicObjectP:RC"></span><span class="target" id="class_extended_state_vector_1afdd4b19d0bccf426a812c4d280d1734d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDerivatives</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynPtrs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19ExtendedStateVector14setDerivativesERNSt6vectorIP13DynamicObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Calls <a class="reference internal" href="stateData.html#class_state_data_1a84e48adf7374c0a03caf5332a8fa5dc7"><span class="std std-ref">StateData::setDerivative</span></a> for every entry in this </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19ExtendedStateVector10fromStatesERKNSt6vectorIP13DynamicObjectEE">
+<span id="_CPPv3N19ExtendedStateVector10fromStatesERKNSt6vectorIP13DynamicObjectEE"></span><span id="_CPPv2N19ExtendedStateVector10fromStatesERKNSt6vectorIP13DynamicObjectEE"></span><span id="ExtendedStateVector::fromStates__std::vector:DynamicObjectP:CR"></span><span class="target" id="class_extended_state_vector_1ade96a207c9dd26eab2714b6abc36e04f"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fromStates</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynPtrs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ExtendedStateVector10fromStatesERKNSt6vectorIP13DynamicObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds a <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a> from all states in the given dynamic objects </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19ExtendedStateVector15fromStateDerivsERKNSt6vectorIP13DynamicObjectEE">
+<span id="_CPPv3N19ExtendedStateVector15fromStateDerivsERKNSt6vectorIP13DynamicObjectEE"></span><span id="_CPPv2N19ExtendedStateVector15fromStateDerivsERKNSt6vectorIP13DynamicObjectEE"></span><span id="ExtendedStateVector::fromStateDerivs__std::vector:DynamicObjectP:CR"></span><span class="target" id="class_extended_state_vector_1a1f9ff2051c9ba398c5293d93d59e8638"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fromStateDerivs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynPtrs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ExtendedStateVector15fromStateDerivsERKNSt6vectorIP13DynamicObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds a <a class="reference internal" href="#class_extended_state_vector"><span class="std std-ref">ExtendedStateVector</span></a> from the derivatives of all states in the given dynamic objects </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-functions">Private Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19ExtendedStateVector13fromStateDataERKNSt6vectorIP13DynamicObjectEENSt8functionIFN5Eigen8MatrixXdERK9StateDataEEE">
+<span id="_CPPv3N19ExtendedStateVector13fromStateDataERKNSt6vectorIP13DynamicObjectEENSt8functionIFN5Eigen8MatrixXdERK9StateDataEEE"></span><span id="_CPPv2N19ExtendedStateVector13fromStateDataERKNSt6vectorIP13DynamicObjectEENSt8functionIFN5Eigen8MatrixXdERK9StateDataEEE"></span><span class="target" id="class_extended_state_vector_1a5e8fef27aaf64e234472768b49c490f2"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fromStateData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dynPtrs</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">(</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ExtendedStateVector13fromStateDataERKNSt6vectorIP13DynamicObjectEENSt8functionIFN5Eigen8MatrixXdERK9StateDataEEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynamicObject.html" class="btn btn-neutral float-left" title="Module: dynamicObject" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fuelSlosh.html" class="btn btn-neutral float-right" title="Module: fuelSlosh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

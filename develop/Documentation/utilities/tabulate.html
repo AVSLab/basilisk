@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tabulate &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="tleHandling" href="tleHandling.html" />
+    <link rel="prev" title="simulationProgessBar" href="simulationProgessBar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tabulate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tabulate.simple_separated_format"><code class="docutils literal notranslate"><span class="pre">simple_separated_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabulate.tabulate"><code class="docutils literal notranslate"><span class="pre">tabulate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">tabulate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/tabulate.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tabulate">
+<span id="id1"></span><h1>tabulate<a class="headerlink" href="#tabulate" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-tabulate">Pretty-print tabular data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tabulate.simple_separated_format">
+<span class="sig-prename descclassname"><span class="pre">tabulate.</span></span><span class="sig-name descname"><span class="pre">simple_separated_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">separator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tabulate.html#simple_separated_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tabulate.simple_separated_format" title="Link to this definition"></a></dt>
+<dd><p>Construct a simple TableFormat with columns separated by a separator.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tsv</span> <span class="o">=</span> <span class="n">simple_separated_format</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">;</span>         <span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="n">tsv</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;foo </span><span class="se">\t</span><span class="s1"> 1</span><span class="se">\n</span><span class="s1">spam</span><span class="se">\t</span><span class="s1">23&#39;</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tabulate.tabulate">
+<span class="sig-prename descclassname"><span class="pre">tabulate.</span></span><span class="sig-name descname"><span class="pre">tabulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tabular_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tablefmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'simple'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floatfmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'g'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numalign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'decimal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stralign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missingval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tabulate.html#tabulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tabulate.tabulate" title="Link to this definition"></a></dt>
+<dd><p>Format a fixed width table for pretty printing.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.34</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">56</span><span class="p">,</span> <span class="s2">&quot;8.999&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;10001&quot;</span><span class="p">]]))</span>
+<span class="go">---  ---------</span>
+<span class="go">  1      2.34</span>
+<span class="go">-56      8.999</span>
+<span class="go">  2  10001</span>
+<span class="go">---  ---------</span>
+</pre></div>
+</div>
+<p>The first required argument (<cite>tabular_data</cite>) can be a
+list-of-lists (or another iterable of iterables), a list of named
+tuples, a dictionary of iterables, an iterable of dictionaries,
+a two-dimensional NumPy array, NumPy record array, or a Pandas’
+dataframe.</p>
+<p><strong>Table headers</strong></p>
+<p>To print nice column headers, supply the second argument (<cite>headers</cite>):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>headers</cite> can be an explicit list of column headers</p></li>
+<li><p>if <cite>headers=”firstrow”</cite>, then the first row of data is used</p></li>
+<li><p>if <cite>headers=”keys”</cite>, then dictionary keys or column indices are used</p></li>
+</ul>
+</div></blockquote>
+<p>Otherwise a headerless table is produced.</p>
+<p>If the number of headers is less than the number of columns, they
+are supposed to be names of the last columns. This is consistent
+with the plain-text format of R and Pandas’ dataframes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span><span class="s2">&quot;age&quot;</span><span class="p">],[</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="mi">24</span><span class="p">],[</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span><span class="s2">&quot;M&quot;</span><span class="p">,</span><span class="mi">19</span><span class="p">]],</span>
+<span class="gp">... </span>      <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span><span class="p">))</span>
+<span class="go">       sex      age</span>
+<span class="go">-----  -----  -----</span>
+<span class="go">Alice  F         24</span>
+<span class="go">Bob    M         19</span>
+</pre></div>
+</div>
+<p><strong>Column alignment</strong></p>
+<p><cite>tabulate</cite> tries to detect column types automatically, and aligns
+the values properly. By default it aligns decimal points of the
+numbers (or flushes integer numbers to the right), and flushes
+everything else to the left. Possible column alignments
+(<cite>numalign</cite>, <cite>stralign</cite>) are: “right”, “center”, “left”, “decimal”
+(only for <cite>numalign</cite>), and None (to disable alignment).</p>
+<p><strong>Table formats</strong></p>
+<p><cite>floatfmt</cite> is a format specification used for columns which
+contain numeric data with a decimal point.</p>
+<p><cite>None</cite> values are replaced with a <cite>missingval</cite> string:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="s2">&quot;other&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">]],</span> <span class="n">missingval</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">))</span>
+<span class="go">-----  --  ----</span>
+<span class="go">spam    1  ?</span>
+<span class="go">eggs   42  3.14</span>
+<span class="go">other   ?  2.7</span>
+<span class="go">-----  --  ----</span>
+</pre></div>
+</div>
+<p>Various plain-text table formats (<cite>tablefmt</cite>) are supported:
+‘plain’, ‘simple’, ‘grid’, ‘pipe’, ‘orgtbl’, ‘rst’, ‘mediawiki’,
+‘latex’, and ‘latex_booktabs’. Variable <cite>tabulate_formats</cite> contains the list of
+currently supported formats.</p>
+<p>“plain” format doesn’t use any pseudographics to draw tables,
+it separates columns with a double space:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;plain&quot;</span><span class="p">))</span>
+<span class="go">strings      numbers</span>
+<span class="go">spam         41.9999</span>
+<span class="go">eggs        451</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">))</span>
+<span class="go">spam   41.9999</span>
+<span class="go">eggs  451</span>
+</pre></div>
+</div>
+<p>“simple” format is like Pandoc simple_tables:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;simple&quot;</span><span class="p">))</span>
+<span class="go">strings      numbers</span>
+<span class="go">---------  ---------</span>
+<span class="go">spam         41.9999</span>
+<span class="go">eggs        451</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">))</span>
+<span class="go">----  --------</span>
+<span class="go">spam   41.9999</span>
+<span class="go">eggs  451</span>
+<span class="go">----  --------</span>
+</pre></div>
+</div>
+<p>“grid” is similar to tables produced by Emacs table.el package or
+Pandoc grid_tables:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;grid&quot;</span><span class="p">))</span>
+<span class="go">+-----------+-----------+</span>
+<span class="go">| strings   |   numbers |</span>
+<span class="go">+===========+===========+</span>
+<span class="go">| spam      |   41.9999 |</span>
+<span class="go">+-----------+-----------+</span>
+<span class="go">| eggs      |  451      |</span>
+<span class="go">+-----------+-----------+</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">))</span>
+<span class="go">+------+----------+</span>
+<span class="go">| spam |  41.9999 |</span>
+<span class="go">+------+----------+</span>
+<span class="go">| eggs | 451      |</span>
+<span class="go">+------+----------+</span>
+</pre></div>
+</div>
+<p>“fancy_grid” draws a grid using box-drawing characters:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;fancy_grid&quot;</span><span class="p">))</span>
+<span class="go">╒═══════════╤═══════════╕</span>
+<span class="go">│ strings   │   numbers │</span>
+<span class="go">╞═══════════╪═══════════╡</span>
+<span class="go">│ spam      │   41.9999 │</span>
+<span class="go">├───────────┼───────────┤</span>
+<span class="go">│ eggs      │  451      │</span>
+<span class="go">╘═══════════╧═══════════╛</span>
+</pre></div>
+</div>
+<p>“pipe” is like tables in PHP Markdown Extra extension or Pandoc
+pipe_tables:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;pipe&quot;</span><span class="p">))</span>
+<span class="go">| strings   |   numbers |</span>
+<span class="go">|:----------|----------:|</span>
+<span class="go">| spam      |   41.9999 |</span>
+<span class="go">| eggs      |  451      |</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pipe&quot;</span><span class="p">))</span>
+<span class="go">|:-----|---------:|</span>
+<span class="go">| spam |  41.9999 |</span>
+<span class="go">| eggs | 451      |</span>
+</pre></div>
+</div>
+<p>“orgtbl” is like tables in Emacs org-mode and orgtbl-mode. They
+are slightly different from “pipe” format by not using colons to
+define column alignment, and using a “+” sign to indicate line
+intersections:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;orgtbl&quot;</span><span class="p">))</span>
+<span class="go">| strings   |   numbers |</span>
+<span class="go">|-----------+-----------|</span>
+<span class="go">| spam      |   41.9999 |</span>
+<span class="go">| eggs      |  451      |</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;orgtbl&quot;</span><span class="p">))</span>
+<span class="go">| spam |  41.9999 |</span>
+<span class="go">| eggs | 451      |</span>
+</pre></div>
+</div>
+<p>“rst” is like a simple table format from reStructuredText; please
+note that reStructuredText accepts also “grid” tables:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="s2">&quot;rst&quot;</span><span class="p">))</span>
+<span class="go">=========  =========</span>
+<span class="go">strings      numbers</span>
+<span class="go">=========  =========</span>
+<span class="go">spam         41.9999</span>
+<span class="go">eggs        451</span>
+<span class="go">=========  =========</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;rst&quot;</span><span class="p">))</span>
+<span class="go">====  ========</span>
+<span class="go">spam   41.9999</span>
+<span class="go">eggs  451</span>
+<span class="go">====  ========</span>
+</pre></div>
+</div>
+<p>“mediawiki” produces a table markup used in Wikipedia and on other
+MediaWiki-based sites:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;mediawiki&quot;</span><span class="p">))</span>
+<span class="go">{| class=&quot;wikitable&quot; style=&quot;text-align: left;&quot;</span>
+<span class="go">|+ &lt;!-- caption --&gt;</span>
+<span class="go">|-</span>
+<span class="go">! strings   !! align=&quot;right&quot;|   numbers</span>
+<span class="go">|-</span>
+<span class="go">| spam      || align=&quot;right&quot;|   41.9999</span>
+<span class="go">|-</span>
+<span class="go">| eggs      || align=&quot;right&quot;|  451</span>
+<span class="go">|}</span>
+</pre></div>
+</div>
+<p>“html” produces HTML markup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;strings&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">))</span>
+<span class="go">&lt;table&gt;</span>
+<span class="go">&lt;tr&gt;&lt;th&gt;strings  &lt;/th&gt;&lt;th style=&quot;text-align: right;&quot;&gt;  numbers&lt;/th&gt;&lt;/tr&gt;</span>
+<span class="go">&lt;tr&gt;&lt;td&gt;spam     &lt;/td&gt;&lt;td style=&quot;text-align: right;&quot;&gt;  41.9999&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="go">&lt;tr&gt;&lt;td&gt;eggs     &lt;/td&gt;&lt;td style=&quot;text-align: right;&quot;&gt; 451     &lt;/td&gt;&lt;/tr&gt;</span>
+<span class="go">&lt;/table&gt;</span>
+</pre></div>
+</div>
+<p>“latex” produces a tabular environment of LaTeX document markup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;latex&quot;</span><span class="p">))</span>
+<span class="go">\begin{tabular}{lr}</span>
+<span class="go">\hline</span>
+<span class="go"> spam &amp;  41.9999 \\</span>
+<span class="go"> eggs &amp; 451      \\</span>
+<span class="go">\hline</span>
+<span class="go">\end{tabular}</span>
+</pre></div>
+</div>
+<p>“latex_booktabs” produces a tabular environment of LaTeX document markup
+using the booktabs.sty package:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s2">&quot;spam&quot;</span><span class="p">,</span> <span class="mf">41.9999</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;451.0&quot;</span><span class="p">]],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;latex_booktabs&quot;</span><span class="p">))</span>
+<span class="go">\begin{tabular}{lr}</span>
+<span class="go">\toprule</span>
+<span class="go"> spam &amp;  41.9999 \\</span>
+<span class="go"> eggs &amp; 451      \\</span>
+<span class="go">\bottomrule</span>
+<span class="go">\end{tabular}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simulationProgessBar.html" class="btn btn-neutral float-left" title="simulationProgessBar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tleHandling.html" class="btn btn-neutral float-right" title="tleHandling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

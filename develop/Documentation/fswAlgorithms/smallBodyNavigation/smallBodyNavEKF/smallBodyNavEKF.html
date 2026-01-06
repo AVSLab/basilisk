@@ -1,0 +1,910 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: smallBodyNavEKF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="smallBodyNavEKF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">smallBodyNavigation</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">smallBodyNavEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smallBodyNavUKF/index.html">smallBodyNavUKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">smallBodyNavigation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">smallBodyNavEKF</a></li>
+      <li class="breadcrumb-item active">Module: smallBodyNavEKF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/smallBodyNavigation/smallBodyNavEKF/smallBodyNavEKF.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-smallbodynavekf">
+<span id="smallbodynavekf"></span><h1>Module: smallBodyNavEKF<a class="headerlink" href="#module-smallbodynavekf" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module provides a navigation solution for a spacecraft about a small body. A hybrid extended Kalman filter
+estimates relative spacecraft position and velocity with respect to the small body and the attitude and attitude rate of
+the asteroid’s body frame with respect to the inertial frame.</p>
+<p>This module is only meant to provide a somewhat representative autonomous small body proximity operations navigation solution
+for POMDP solvers. Therefore, realistic measurement modules do not exist to support this module, and
+not every source of uncertainty in the problem is an estimated parameter. Future work will build upon this filter.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-smallbodynavekf"></span><img alt="../../../../_images/moduleIOSmallBodyNavigation.svg" src="../../../../_images/moduleIOSmallBodyNavigation.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">smallBodyNavEKF()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output
+messages end with the usual <code class="docutils literal notranslate"><span class="pre">...OutMsg</span></code>.  The C wrapped output messages have the same payload type, but end
+with <code class="docutils literal notranslate"><span class="pre">...OutMsgC</span></code>.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>Translational nav input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>navAttInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>Attitude nav input message</p></td>
+</tr>
+<tr class="row-even"><td><p>asteroidEphemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>Small body ephemeris input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>sunEphemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>Sun ephemeris input message</p></td>
+</tr>
+<tr class="row-even"><td><p>thrusterInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#throutputmsgpayload"><span class="std std-ref">THROutputMsgPayload</span></a></p></td>
+<td><p>Vector of thruster input messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmdForceBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#cmdforcebodymsgpayload"><span class="std std-ref">CmdForceBodyMsgPayload</span></a></p></td>
+<td><p>Commanded force input</p></td>
+</tr>
+<tr class="row-even"><td><p>navTransOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>Translational nav output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>navTransOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>C-wrapped translational nav output message</p></td>
+</tr>
+<tr class="row-even"><td><p>smallBodyNavOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SmallBodyNavMsgPayload.html#smallbodynavmsgpayload"><span class="std std-ref">SmallBodyNavMsgPayload</span></a></p></td>
+<td><p>Small body nav output msg - states and covariances</p></td>
+</tr>
+<tr class="row-odd"><td><p>smallBodyNavOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SmallBodyNavMsgPayload.html#smallbodynavmsgpayload"><span class="std std-ref">SmallBodyNavMsgPayload</span></a></p></td>
+<td><p>C-wrapped small body nav output msg - states and covariances</p></td>
+</tr>
+<tr class="row-even"><td><p>asteroidEphemerisOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>Small body ephemeris output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>asteroidEphemerisOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>C-wrapped small body ephemeris output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="general-function">
+<h3>General Function<a class="headerlink" href="#general-function" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">smallBodyNavEKF()</span></code> module provides a state estimate for a spacecraft in proximity of a small body. The
+relative spacecraft position and velocity and small body attitude and rate are estimated
+by the filter. The filter assumes full observability of each state. The “measurements” are typically messages written
+out by <a class="reference internal" href="../../../simulation/navigation/simpleNav/simpleNav.html#simplenav"><span class="std std-ref">Module: simpleNav</span></a> and <a class="reference internal" href="../../../simulation/navigation/planetNav/planetNav.html#planetnav"><span class="std std-ref">Module: planetNav</span></a> modules. However, future developers can implement measurement models
+that adhere to the required I/O format. The full state vector may be found below:</p>
+<div class="math notranslate nohighlight" id="equation-eq-x-hat">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-x-hat" title="Link to this equation"></a></span>\[\begin{split}\mathbf{X} =
+\begin{bmatrix}
+\mathbf{x}_1\\
+\mathbf{x}_2\\
+\mathbf{x}_3\\
+\mathbf{x}_4
+\end{bmatrix}=
+\begin{bmatrix}
+{}^O\mathbf{r}_{S/O} \\
+{}^O\dot{\mathbf{r}}_{S/O} \\
+\boldsymbol{\sigma}_{AN} \\
+{}^A\boldsymbol{\omega}_{AN}
+\end{bmatrix}\end{split}\]</div>
+<p>The associated frame definitions may be found in the following table.</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Frame Definitions</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Frame Description</p></th>
+<th class="head"><p>Frame Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Small Body Hill Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(O: \{\hat{\mathbf{o}}_1, \hat{\mathbf{o}}_2, \hat{\mathbf{o}}_3\}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Small Body Body Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(A: \{\hat{\mathbf{a}}_1, \hat{\mathbf{a}}_2, \hat{\mathbf{a}}_3\}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Spacecraft Body Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(B: \{\hat{\mathbf{b}}_1, \hat{\mathbf{b}}_2, \hat{\mathbf{b}}_3\}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>J2000 Inertial Frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(N: \{\hat{\mathbf{n}}_1, \hat{\mathbf{n}}_2, \hat{\mathbf{n}}_3\}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="initialization">
+<h3>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h3>
+</section>
+<section id="algorithm">
+<h3>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h3>
+<p>This module employs a hybrid extended Kalman filter (EKF) to estimate the relevant states. First, <span class="math notranslate nohighlight">\(\hat{\mathbf{x}}_0\)</span>
+and <span class="math notranslate nohighlight">\(P_0\)</span> are initialized by the user. The dynamics matrix <span class="math notranslate nohighlight">\(A_0\)</span> is initialized to identity by the module.</p>
+<div class="math notranslate nohighlight" id="equation-eq-init-x">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-init-x" title="Link to this equation"></a></span>\[\hat{\mathbf{x}}_k = \hat{\mathbf{x}}_0\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-init-covar">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-init-covar" title="Link to this equation"></a></span>\[P_k = P_0\]</div>
+<p>The apriori state estimate <span class="math notranslate nohighlight">\(\hat{\mathbf{x}}_{k+1}^-\)</span> and STM <span class="math notranslate nohighlight">\(\Phi(k+1,k)\)</span> are propagated using the equations below:</p>
+<div class="math notranslate nohighlight" id="equation-eq-predict-state">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-predict-state" title="Link to this equation"></a></span>\[\dot{\hat{\mathbf{x}}}_{k} = f(\hat{\mathbf{x}}_k, \mathbf{u}_k, w_k, t_k)\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-stm-dot">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-stm-dot" title="Link to this equation"></a></span>\[\dot{\Phi}(k+1,k) = A_{k+1}\Phi(k+1,k)\]</div>
+<p>The apriori estimation error covariance <span class="math notranslate nohighlight">\(P_{k+1}^-\)</span> is then computed by propagating the equations below:</p>
+<div class="math notranslate nohighlight" id="equation-eq-predict-covar">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-predict-covar" title="Link to this equation"></a></span>\[P_{k+1}^- = \Phi(k+1, k) P_k^+ \Phi(k+1, k)^T + L_kQ_kL_k^T\]</div>
+<p>The measurements are read into the module and the state and covariance are updated using the equation below. If no
+new measurements are present, the filter skips this step and writes out the apriori state estimate and covariance.</p>
+<div class="math notranslate nohighlight" id="equation-eq-kalman-gain">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-kalman-gain" title="Link to this equation"></a></span>\[K_{k+1} = P_{k+1}^-H_{k+1}^T(H_{k+1}P_{k+1}^-H_{k+1}^T + M_{k+1}R_{k+1}M_{k+1}^T)^{-1}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-update-state">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-update-state" title="Link to this equation"></a></span>\[\hat{\mathbf{x}}_{k+1}^+ = \hat{\mathbf{x}}_{k+1}^- + K_{k+1}[y_{k+1} - h(\hat{\mathbf{x}}_{k+1}^-, v_{k+1}, t_{k+1})]\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-update-covar">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-update-covar" title="Link to this equation"></a></span>\[P_{k+1}^+ = (I-K_{k+1}H_{k+1})P_{k+1}^-(I-K_{k+1}H_{k+1})^T+K_{k+1}M_{k+1}R_{k+1}M_{k+1}^TK_{k+1}^T\]</div>
+<p>The dynamics for each element of <span class="math notranslate nohighlight">\(f(\hat{\mathbf{x}}_k, \mathbf{u}_k, w_k, t_k)\)</span> may  be found below. The relative
+position and velocity dynamics are described in detail by <a class="reference external" href="https://doi.org/10.2514/1.G005733">Takahashi</a> and
+<a class="reference external" href="http://dx.doi.org/10.2514/1.57247">Scheeres</a>. The equations for attitude dynamics are described in detail in Chapters 3 and 4
+of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>. We assume that the small body rotates at a
+constant rate.</p>
+<div class="math notranslate nohighlight" id="equation-eq-smn-x-dot-1">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-smn-x-dot-1" title="Link to this equation"></a></span>\[\dot{\mathbf{x}}_1 = ^O\dot{\mathbf{r}}_{S/O} = \mathbf{x}_2\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-smn-x-dot-2">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-smn-x-dot-2" title="Link to this equation"></a></span>\[\begin{split}\begin{split}
+\dot{\mathbf{x}}_2 = ^O\ddot{\mathbf{r}}_{S/O} = -\ddot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1 - 2\dot{F}[\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_2 - \dot{F}^2[\tilde{\hat{\mathbf{o}}}_3][\tilde{\hat{\mathbf{o}}}_3]\mathbf{x}_1- \dfrac{\mu_a \mathbf{x}_1}{||\mathbf{x}_1||^3} + \dfrac{\mu_s(3{}^O\hat{\mathbf{d}}{}^O\hat{\mathbf{d}}^T-[I_{3 \times 3}])\mathbf{x}_1}{d^3} \\
++ C_{SRP}\dfrac{P_0(1+\rho)A_{sc}}{M_{sc}}\dfrac{(1\text{AU})^2}{d^2}\hat{\mathbf{o}}_1 + \sum_i^I\dfrac{{}^O\mathbf{F}_i}{M_{sc}} + \sum_j^J\dfrac{{}^O\mathbf{F}_j}{M_{sc}}
+\end{split}\end{split}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-smn-x-dot-3">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-smn-x-dot-3" title="Link to this equation"></a></span>\[\dot{\mathbf{x}}_3 = \dot{\boldsymbol{\sigma}}_{A/N} = \dfrac{1}{4} \Bigr [ \Bigr ( 1-||\mathbf{x}_3||^2 \Bigr ) [I_{3 \times 3}] + 2[\tilde{\mathbf{x}}_3] + 2\mathbf{x}_3\mathbf{x}_3^T \Bigr]\mathbf{x}_4\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-smn-x-dot-4">
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-smn-x-dot-4" title="Link to this equation"></a></span>\[\dot{\mathbf{x}}_4 = {}^A\dot{\boldsymbol{\omega}}_{A/N} = \mathbf{0}\]</div>
+<p>Note that the MRP switching is checked following the procedure outlined in <a class="reference external" href="https://link.springer.com/content/pdf/10.1007/BF03321529.pdf">Karlgaard</a>.</p>
+<p>The derivation of the state dynamics matrix <span class="math notranslate nohighlight">\(A\)</span> is not shown here for brevity.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h3>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h3>
+<p>The module assumptions and limitations are listed below:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The spacecraft’s attitude and rate are perfectly known</p></li>
+<li><p>The small body’s position and velocity in the inertial frame are perfectly known</p></li>
+<li><p>Please refer to the cited works for specific assumptions about the filter dynamics</p></li>
+<li><p>The matrix <span class="math notranslate nohighlight">\(H_{k+1}\)</span> is identity</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="user-guide">
+<h3>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h3>
+<p>The user then must set the following module variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">A_sc</span></code>, the area of the spacecraft in <span class="math notranslate nohighlight">\(\text{m}^2\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M_sc</span></code>, the mass of the spacecraft in kg</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu_ast</span></code>, the gravitational constant of the small body in <span class="math notranslate nohighlight">\(\text{m}^3/\text{s}^2\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span></code>, the process noise covariances</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">R</span></code>, the measurement noise covariance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x_hat_k</span></code> to initialize <span class="math notranslate nohighlight">\(x_0\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">P_k</span></code> to initialize <span class="math notranslate nohighlight">\(P_0\)</span></p></li>
+</ul>
+<p>The user must connect to each input message described in Table 1.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415SmallBodyNavEKF">
+<span id="_CPPv315SmallBodyNavEKF"></span><span id="_CPPv215SmallBodyNavEKF"></span><span id="SmallBodyNavEKF"></span><span class="target" id="class_small_body_nav_e_k_f"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SmallBodyNavEKF</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv415SmallBodyNavEKF" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;smallBodyNavEKF.h&gt;</em></div>
+<p>This module estimates relative spacecraft position and velocity with respect to the body and attitude and attitude rate of the body wrt. the inertial frame. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF15SmallBodyNavEKFEv">
+<span id="_CPPv3N15SmallBodyNavEKF15SmallBodyNavEKFEv"></span><span id="_CPPv2N15SmallBodyNavEKF15SmallBodyNavEKFEv"></span><span id="SmallBodyNavEKF::SmallBodyNavEKF"></span><span class="target" id="class_small_body_nav_e_k_f_1abb18e175799a34e5bbe6850a47290829"></span><span class="sig-name descname"><span class="n"><span class="pre">SmallBodyNavEKF</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF15SmallBodyNavEKFEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKFD0Ev">
+<span id="_CPPv3N15SmallBodyNavEKFD0Ev"></span><span id="_CPPv2N15SmallBodyNavEKFD0Ev"></span><span id="SmallBodyNavEKF::~SmallBodyNavEKF"></span><span class="target" id="class_small_body_nav_e_k_f_1ab317545113b845f9bd8b02d771922c91"></span><span class="sig-name descname"><span class="n"><span class="pre">~SmallBodyNavEKF</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKFD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF8SelfInitEv">
+<span id="_CPPv3N15SmallBodyNavEKF8SelfInitEv"></span><span id="_CPPv2N15SmallBodyNavEKF8SelfInitEv"></span><span id="SmallBodyNavEKF::SelfInit"></span><span class="target" id="class_small_body_nav_e_k_f_1ad738750d3255dd9c793696f464781da8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Self initialization for C-wrapped messages. </p>
+<p>Initialize C-wrapped output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF5ResetE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF5ResetE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF5ResetE8uint64_t"></span><span id="SmallBodyNavEKF::Reset__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a06b47d20db9f571ea563b9bf3e513a8a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets module. </p>
+<p>This method is used to reset the module and checks that required input messages are connect. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF11UpdateStateE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF11UpdateStateE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF11UpdateStateE8uint64_t"></span><span id="SmallBodyNavEKF::UpdateState__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a5bffa58adedadd607cf2555e8aefb5e5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates state. </p>
+<p>This is the main method that gets called every time the module is updated. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF19addThrusterToFilterEP7MessageI19THROutputMsgPayloadE">
+<span id="_CPPv3N15SmallBodyNavEKF19addThrusterToFilterEP7MessageI19THROutputMsgPayloadE"></span><span id="_CPPv2N15SmallBodyNavEKF19addThrusterToFilterEP7MessageI19THROutputMsgPayloadE"></span><span id="SmallBodyNavEKF::addThrusterToFilter__Message:THROutputMsgPayload:P"></span><span class="target" id="class_small_body_nav_e_k_f_1a9e6bcb0abad3656a2425c7f2eb1372a1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addThrusterToFilter</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpThrusterMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF19addThrusterToFilterEP7MessageI19THROutputMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds thruster message. </p>
+<p>This method is used to add a thruster to the filter. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF13navTransInMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF13navTransInMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF13navTransInMsgE"></span><span id="SmallBodyNavEKF::navTransInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1aaf235778bf84fb787d1bee6de6a5532c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF13navTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Translational nav input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF11navAttInMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF11navAttInMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF11navAttInMsgE"></span><span id="SmallBodyNavEKF::navAttInMsg__ReadFunctor:NavAttMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1ae45c20cc36ae1db1031f4ce94c72add5"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF11navAttInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Attitude nav input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF22asteroidEphemerisInMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF22asteroidEphemerisInMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF22asteroidEphemerisInMsgE"></span><span id="SmallBodyNavEKF::asteroidEphemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1afd3ea5454542504121cc41c72a10e019"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF22asteroidEphemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Small body ephemeris input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF17sunEphemerisInMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF17sunEphemerisInMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF17sunEphemerisInMsgE"></span><span id="SmallBodyNavEKF::sunEphemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1a07c57eb98e3f2fa8b6733497d56e943f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEphemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF17sunEphemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sun ephemeris input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF17cmdForceBodyInMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF17cmdForceBodyInMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF17cmdForceBodyInMsgE"></span><span id="SmallBodyNavEKF::cmdForceBodyInMsg__ReadFunctor:CmdForceBodyMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1a7d23362def4c17fe7b6d7a121e879b75"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#_CPPv422CmdForceBodyMsgPayload" title="CmdForceBodyMsgPayload"><span class="n"><span class="pre">CmdForceBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdForceBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF17cmdForceBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Command force body in message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF14thrusterInMsgsE">
+<span id="_CPPv3N15SmallBodyNavEKF14thrusterInMsgsE"></span><span id="_CPPv2N15SmallBodyNavEKF14thrusterInMsgsE"></span><span id="SmallBodyNavEKF::thrusterInMsgs__std::vector:ReadFunctor:THROutputMsgPayload::"></span><span class="target" id="class_small_body_nav_e_k_f_1a1e0aa0e34c79567a23fea5dc2eeba886"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF14thrusterInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>thruster input msg vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF14navTransOutMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF14navTransOutMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF14navTransOutMsgE"></span><span id="SmallBodyNavEKF::navTransOutMsg__Message:NavTransMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1a300dbeb4994b914b3aa25e8e0aa2aeb2"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF14navTransOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Translational nav output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF18smallBodyNavOutMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF18smallBodyNavOutMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF18smallBodyNavOutMsgE"></span><span id="SmallBodyNavEKF::smallBodyNavOutMsg__Message:SmallBodyNavMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1abbd20ee6e388853b27ab6c82952bf5a8"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SmallBodyNavMsgPayload.html#_CPPv422SmallBodyNavMsgPayload" title="SmallBodyNavMsgPayload"><span class="n"><span class="pre">SmallBodyNavMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">smallBodyNavOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF18smallBodyNavOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Small body nav output msg - states and covariances. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF23asteroidEphemerisOutMsgE">
+<span id="_CPPv3N15SmallBodyNavEKF23asteroidEphemerisOutMsgE"></span><span id="_CPPv2N15SmallBodyNavEKF23asteroidEphemerisOutMsgE"></span><span id="SmallBodyNavEKF::asteroidEphemerisOutMsg__Message:EphemerisMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1aa42936de07c8d2cdcd12c38b15f148d8"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF23asteroidEphemerisOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Small body ephemeris output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF15navTransOutMsgCE">
+<span id="_CPPv3N15SmallBodyNavEKF15navTransOutMsgCE"></span><span id="_CPPv2N15SmallBodyNavEKF15navTransOutMsgCE"></span><span id="SmallBodyNavEKF::navTransOutMsgC__NavTransMsg_C"></span><span class="target" id="class_small_body_nav_e_k_f_1ab8e6b56a1dc63aa0214550cc82a6a11a"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF15navTransOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped Translational nav output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF19smallBodyNavOutMsgCE">
+<span id="_CPPv3N15SmallBodyNavEKF19smallBodyNavOutMsgCE"></span><span id="_CPPv2N15SmallBodyNavEKF19smallBodyNavOutMsgCE"></span><span id="SmallBodyNavEKF::smallBodyNavOutMsgC__SmallBodyNavMsg_C"></span><span class="target" id="class_small_body_nav_e_k_f_1a5158e25d652305f53e7691b2f6b2870f"></span><span class="n"><span class="pre">SmallBodyNavMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">smallBodyNavOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF19smallBodyNavOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped Small body nav output msg - states and covariances. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF24asteroidEphemerisOutMsgCE">
+<span id="_CPPv3N15SmallBodyNavEKF24asteroidEphemerisOutMsgCE"></span><span id="_CPPv2N15SmallBodyNavEKF24asteroidEphemerisOutMsgCE"></span><span id="SmallBodyNavEKF::asteroidEphemerisOutMsgC__EphemerisMsg_C"></span><span class="target" id="class_small_body_nav_e_k_f_1afe280ece1a6a2b0ba9b2e2215f6463e3"></span><span class="n"><span class="pre">EphemerisMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF24asteroidEphemerisOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped Small body ephemeris output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF9bskLoggerE">
+<span id="_CPPv3N15SmallBodyNavEKF9bskLoggerE"></span><span id="_CPPv2N15SmallBodyNavEKF9bskLoggerE"></span><span id="SmallBodyNavEKF::bskLogger__BSKLogger"></span><span class="target" id="class_small_body_nav_e_k_f_1a3e8a1d4e9743b73f301232fe76ecb005"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF5C_SRPE">
+<span id="_CPPv3N15SmallBodyNavEKF5C_SRPE"></span><span id="_CPPv2N15SmallBodyNavEKF5C_SRPE"></span><span id="SmallBodyNavEKF::C_SRP__double"></span><span class="target" id="class_small_body_nav_e_k_f_1abdcfa80a061f555cc9e7e1b0122f5a00"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C_SRP</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF5C_SRPE" title="Link to this definition"></a><br /></dt>
+<dd><p>SRP scaling coefficient. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF3P_0E">
+<span id="_CPPv3N15SmallBodyNavEKF3P_0E"></span><span id="_CPPv2N15SmallBodyNavEKF3P_0E"></span><span id="SmallBodyNavEKF::P_0__double"></span><span class="target" id="class_small_body_nav_e_k_f_1ae22fc1b01603c50ba2db12f9b45cc5c5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_0</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF3P_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>SRP at 1 AU. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF3rhoE">
+<span id="_CPPv3N15SmallBodyNavEKF3rhoE"></span><span id="_CPPv2N15SmallBodyNavEKF3rhoE"></span><span id="SmallBodyNavEKF::rho__double"></span><span class="target" id="class_small_body_nav_e_k_f_1a3ae9742b5ebf8a17bcea75d5baf1fb10"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rho</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF3rhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>Surface reflectivity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF4A_scE">
+<span id="_CPPv3N15SmallBodyNavEKF4A_scE"></span><span id="_CPPv2N15SmallBodyNavEKF4A_scE"></span><span id="SmallBodyNavEKF::A_sc__double"></span><span class="target" id="class_small_body_nav_e_k_f_1ae5ae48becc8ffc08ec37ddba4bea0c1c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A_sc</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF4A_scE" title="Link to this definition"></a><br /></dt>
+<dd><p>Surface area of the spacecraft. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF4M_scE">
+<span id="_CPPv3N15SmallBodyNavEKF4M_scE"></span><span id="_CPPv2N15SmallBodyNavEKF4M_scE"></span><span id="SmallBodyNavEKF::M_sc__double"></span><span class="target" id="class_small_body_nav_e_k_f_1a4f2e0834f68ac63a056c1e03439fc573"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">M_sc</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF4M_scE" title="Link to this definition"></a><br /></dt>
+<dd><p>Mass of the spacecraft. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6mu_astE">
+<span id="_CPPv3N15SmallBodyNavEKF6mu_astE"></span><span id="_CPPv2N15SmallBodyNavEKF6mu_astE"></span><span id="SmallBodyNavEKF::mu_ast__double"></span><span class="target" id="class_small_body_nav_e_k_f_1a2fe29356c37b01ffb0f6dda2841ad4ba"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu_ast</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6mu_astE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gravitational constant of the asteroid. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF1QE">
+<span id="_CPPv3N15SmallBodyNavEKF1QE"></span><span id="_CPPv2N15SmallBodyNavEKF1QE"></span><span id="SmallBodyNavEKF::Q__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a012f054fa34856423221de6d376ee8b3"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Q</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF1QE" title="Link to this definition"></a><br /></dt>
+<dd><p>Process Noise. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF1RE">
+<span id="_CPPv3N15SmallBodyNavEKF1RE"></span><span id="_CPPv2N15SmallBodyNavEKF1RE"></span><span id="SmallBodyNavEKF::R__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a07ea49428124faf01a90250debe2866d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF1RE" title="Link to this definition"></a><br /></dt>
+<dd><p>Measurement Noise. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF7x_hat_kE">
+<span id="_CPPv3N15SmallBodyNavEKF7x_hat_kE"></span><span id="_CPPv2N15SmallBodyNavEKF7x_hat_kE"></span><span id="SmallBodyNavEKF::x_hat_k__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a325b0505a1de3a43106f0c3b123567ed"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x_hat_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF7x_hat_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current state estimate. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF3P_kE">
+<span id="_CPPv3N15SmallBodyNavEKF3P_kE"></span><span id="_CPPv2N15SmallBodyNavEKF3P_kE"></span><span id="SmallBodyNavEKF::P_k__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a011a47814f3192756326857c5942bb2a"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF3P_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current estimation error covariance. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF12readMessagesE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF12readMessagesE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF12readMessagesE8uint64_t"></span><span id="SmallBodyNavEKF::readMessages__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a0f78c53562f5892621c5d1a817189a4c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF12readMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads input messages. </p>
+<p>This method is used to read the input messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF13writeMessagesE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF13writeMessagesE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF13writeMessagesE8uint64_t"></span><span id="SmallBodyNavEKF::writeMessages__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a6310a4bbc59014ea89c00dba8c443da2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes output messages. </p>
+<p>This method writes the output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF7predictE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF7predictE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF7predictE8uint64_t"></span><span id="SmallBodyNavEKF::predict__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a78ce78bea668ca8d6152f7cf2430eb3e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">predict</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF7predictE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Prediction step of Kalman filter. </p>
+<p>This method performs the KF prediction step </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF12aprioriStateE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF12aprioriStateE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF12aprioriStateE8uint64_t"></span><span id="SmallBodyNavEKF::aprioriState__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1aa5d1df5444747391220e5891a736b5f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aprioriState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF12aprioriStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the apriori state. </p>
+<p>This method computes the apriori state estimate using RK4 integration </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF12aprioriCovarE8uint64_t">
+<span id="_CPPv3N15SmallBodyNavEKF12aprioriCovarE8uint64_t"></span><span id="_CPPv2N15SmallBodyNavEKF12aprioriCovarE8uint64_t"></span><span id="SmallBodyNavEKF::aprioriCovar__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1abcebc570b736839dc5e78fc5947451a8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aprioriCovar</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF12aprioriCovarE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the apriori covariance. </p>
+<p>This method compute the apriori estimation error covariance through euler integration </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF17checkMRPSwitchingEv">
+<span id="_CPPv3N15SmallBodyNavEKF17checkMRPSwitchingEv"></span><span id="_CPPv2N15SmallBodyNavEKF17checkMRPSwitchingEv"></span><span id="SmallBodyNavEKF::checkMRPSwitching"></span><span class="target" id="class_small_body_nav_e_k_f_1aeb52e623520a17dc8253a2c462c49180"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">checkMRPSwitching</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF17checkMRPSwitchingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks the MRPs for switching. </p>
+<p>This method checks the propagated MRP states to see if they exceed a norm of 1. If they do, the appropriate states are transferred to the shadow set and the covariance is updated. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF21computeDynamicsMatrixEN5Eigen8VectorXdE">
+<span id="_CPPv3N15SmallBodyNavEKF21computeDynamicsMatrixEN5Eigen8VectorXdE"></span><span id="_CPPv2N15SmallBodyNavEKF21computeDynamicsMatrixEN5Eigen8VectorXdE"></span><span id="SmallBodyNavEKF::computeDynamicsMatrix__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ae4bb2c73f14f7ebdc19ae3093acd35a6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDynamicsMatrix</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x_hat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF21computeDynamicsMatrixEN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the new dynamics matrix, A_k. </p>
+<p>This method computes the state dynamics matrix, A, for the next iteration </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF17measurementUpdateEv">
+<span id="_CPPv3N15SmallBodyNavEKF17measurementUpdateEv"></span><span id="_CPPv2N15SmallBodyNavEKF17measurementUpdateEv"></span><span id="SmallBodyNavEKF::measurementUpdate"></span><span class="target" id="class_small_body_nav_e_k_f_1a91991cd2e37723e19cf41e05b3451f16"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">measurementUpdate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF17measurementUpdateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the measurement update for the EKF. </p>
+<p>This method performs the KF measurement update step </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF24computeEquationsOfMotionEN5Eigen8VectorXdEN5Eigen8MatrixXdE">
+<span id="_CPPv3N15SmallBodyNavEKF24computeEquationsOfMotionEN5Eigen8VectorXdEN5Eigen8MatrixXdE"></span><span id="_CPPv2N15SmallBodyNavEKF24computeEquationsOfMotionEN5Eigen8VectorXdEN5Eigen8MatrixXdE"></span><span id="SmallBodyNavEKF::computeEquationsOfMotion__Eigen::VectorXd.Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ac5361301bb7c16f044f8d44f272420c5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEquationsOfMotion</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x_hat</span></span>, <a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Phi</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF24computeEquationsOfMotionEN5Eigen8VectorXdEN5Eigen8MatrixXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the EOMs of the state and state transition matrix. </p>
+<p>This method calculates the EOMs of the state vector and state transition matrix </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_hat</strong> – </p></li>
+<li><p><strong>Phi</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF19navTransInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF19navTransInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF19navTransInMsgBufferE"></span><span id="SmallBodyNavEKF::navTransInMsgBuffer__NavTransMsgPayload"></span><span class="target" id="class_small_body_nav_e_k_f_1ad1db740dcfa1fc086aa68a92369a701e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF19navTransInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message buffer for input translational nav message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF17navAttInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF17navAttInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF17navAttInMsgBufferE"></span><span id="SmallBodyNavEKF::navAttInMsgBuffer__NavAttMsgPayload"></span><span class="target" id="class_small_body_nav_e_k_f_1af08b0c3b2e2d4f6140d292525d50b6e8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF17navAttInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message buffer for input attitude nav message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF28asteroidEphemerisInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF28asteroidEphemerisInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF28asteroidEphemerisInMsgBufferE"></span><span id="SmallBodyNavEKF::asteroidEphemerisInMsgBuffer__EphemerisMsgPayload"></span><span class="target" id="class_small_body_nav_e_k_f_1a1d961d57fc279dde0595b09b3e3f8361"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">asteroidEphemerisInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF28asteroidEphemerisInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message buffer for asteroid ephemeris. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF23sunEphemerisInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF23sunEphemerisInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF23sunEphemerisInMsgBufferE"></span><span id="SmallBodyNavEKF::sunEphemerisInMsgBuffer__EphemerisMsgPayload"></span><span class="target" id="class_small_body_nav_e_k_f_1ac71dd444b8b247ad32778d75bbbaefd2"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEphemerisInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF23sunEphemerisInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message buffer for sun ephemeris. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF19thrusterInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF19thrusterInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF19thrusterInMsgBufferE"></span><span id="SmallBodyNavEKF::thrusterInMsgBuffer__std::vector:THROutputMsgPayload:"></span><span class="target" id="class_small_body_nav_e_k_f_1a098f87221c5f1cbf2a52a688f57cb76a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF19thrusterInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Buffer for thruster force and torques. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF23cmdForceBodyInMsgBufferE">
+<span id="_CPPv3N15SmallBodyNavEKF23cmdForceBodyInMsgBufferE"></span><span id="_CPPv2N15SmallBodyNavEKF23cmdForceBodyInMsgBufferE"></span><span id="SmallBodyNavEKF::cmdForceBodyInMsgBuffer__CmdForceBodyMsgPayload"></span><span class="target" id="class_small_body_nav_e_k_f_1a41d72a2069b6286f3f13613251c27b09"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceBodyMsgPayload.html#_CPPv422CmdForceBodyMsgPayload" title="CmdForceBodyMsgPayload"><span class="n"><span class="pre">CmdForceBodyMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdForceBodyInMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF23cmdForceBodyInMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Buffer for the commanded force input. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF8prevTimeE">
+<span id="_CPPv3N15SmallBodyNavEKF8prevTimeE"></span><span id="_CPPv2N15SmallBodyNavEKF8prevTimeE"></span><span id="SmallBodyNavEKF::prevTime__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1ae6a38669355d8ff71706e56e8b2f0429"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevTime</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF8prevTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Previous time, ns. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF9numStatesE">
+<span id="_CPPv3N15SmallBodyNavEKF9numStatesE"></span><span id="_CPPv2N15SmallBodyNavEKF9numStatesE"></span><span id="SmallBodyNavEKF::numStates__uint64_t"></span><span class="target" id="class_small_body_nav_e_k_f_1a5724ee22c005e0657b6f244b89539ec3"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF8thrust_BE">
+<span id="_CPPv3N15SmallBodyNavEKF8thrust_BE"></span><span id="_CPPv2N15SmallBodyNavEKF8thrust_BE"></span><span id="SmallBodyNavEKF::thrust_B__Eigen::Vector3d"></span><span class="target" id="class_small_body_nav_e_k_f_1a7089016b925cf75f3aae18d851528de0"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrust_B</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF8thrust_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>Thrust expressed in body-frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF10cmdForce_BE">
+<span id="_CPPv3N15SmallBodyNavEKF10cmdForce_BE"></span><span id="_CPPv2N15SmallBodyNavEKF10cmdForce_BE"></span><span id="SmallBodyNavEKF::cmdForce_B__Eigen::Vector3d"></span><span class="target" id="class_small_body_nav_e_k_f_1a4361eaa7cd8eabf55cfacc5944dd73e6"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdForce_B</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF10cmdForce_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>External force expressed in body-frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF11x_hat_dot_kE">
+<span id="_CPPv3N15SmallBodyNavEKF11x_hat_dot_kE"></span><span id="_CPPv2N15SmallBodyNavEKF11x_hat_dot_kE"></span><span id="SmallBodyNavEKF::x_hat_dot_k__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1adc5c847b9f218b3f520ed5f84eb64997"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x_hat_dot_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF11x_hat_dot_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rate of change of state estimate. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF9x_hat_k1_E">
+<span id="_CPPv3N15SmallBodyNavEKF9x_hat_k1_E"></span><span id="_CPPv2N15SmallBodyNavEKF9x_hat_k1_E"></span><span id="SmallBodyNavEKF::x_hat_k1___Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a41f3d855860c2c6f39c6fb6fa1fbdc63"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x_hat_k1_</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF9x_hat_k1_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Apriori state estimate for time k+1. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF8x_hat_k1E">
+<span id="_CPPv3N15SmallBodyNavEKF8x_hat_k1E"></span><span id="_CPPv2N15SmallBodyNavEKF8x_hat_k1E"></span><span id="SmallBodyNavEKF::x_hat_k1__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a363b81743941a27beb31e73aca0115fe"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x_hat_k1</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF8x_hat_k1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Update state estimate for time k+1. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF7P_dot_kE">
+<span id="_CPPv3N15SmallBodyNavEKF7P_dot_kE"></span><span id="_CPPv2N15SmallBodyNavEKF7P_dot_kE"></span><span id="SmallBodyNavEKF::P_dot_k__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ac9edf48b4f9e90d77f7ada00d023138f"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_dot_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF7P_dot_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rate of change of estimation error covariance. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF5P_k1_E">
+<span id="_CPPv3N15SmallBodyNavEKF5P_k1_E"></span><span id="_CPPv2N15SmallBodyNavEKF5P_k1_E"></span><span id="SmallBodyNavEKF::P_k1___Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1aaca1c1517a7216eab91c72403e3ca567"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_k1_</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF5P_k1_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Apriori estimation error covariance. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF4P_k1E">
+<span id="_CPPv3N15SmallBodyNavEKF4P_k1E"></span><span id="_CPPv2N15SmallBodyNavEKF4P_k1E"></span><span id="SmallBodyNavEKF::P_k1__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a6fe205d21ed9f8944646e592a8596c89"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_k1</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF4P_k1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Updated estimation error covariance. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF3A_kE">
+<span id="_CPPv3N15SmallBodyNavEKF3A_kE"></span><span id="_CPPv2N15SmallBodyNavEKF3A_kE"></span><span id="SmallBodyNavEKF::A_k__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a1632887fb1464861b23ec70f3148fd82"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF3A_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>State dynamics matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF5Phi_kE">
+<span id="_CPPv3N15SmallBodyNavEKF5Phi_kE"></span><span id="_CPPv2N15SmallBodyNavEKF5Phi_kE"></span><span id="SmallBodyNavEKF::Phi_k__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a1e8b514fba493eebb320960fa532ecd3"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Phi_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF5Phi_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>State transition matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF9Phi_dot_kE">
+<span id="_CPPv3N15SmallBodyNavEKF9Phi_dot_kE"></span><span id="_CPPv2N15SmallBodyNavEKF9Phi_dot_kE"></span><span id="SmallBodyNavEKF::Phi_dot_k__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1abf80468a9ae16901a3e909be7872249d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Phi_dot_k</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF9Phi_dot_kE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rate of change of STM. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF1LE">
+<span id="_CPPv3N15SmallBodyNavEKF1LE"></span><span id="_CPPv2N15SmallBodyNavEKF1LE"></span><span id="SmallBodyNavEKF::L__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a68fe56bb2e58820bcc54d97f7a637c42"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF1LE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF1ME">
+<span id="_CPPv3N15SmallBodyNavEKF1ME"></span><span id="_CPPv2N15SmallBodyNavEKF1ME"></span><span id="SmallBodyNavEKF::M__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a2423141aad1a53541d37ab286ae5c139"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">M</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF1ME" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF4H_k1E">
+<span id="_CPPv3N15SmallBodyNavEKF4H_k1E"></span><span id="_CPPv2N15SmallBodyNavEKF4H_k1E"></span><span id="SmallBodyNavEKF::H_k1__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ac64d666ea7ce609d57249437f240532d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">H_k1</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF4H_k1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Jacobian of measurement model. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6I_fullE">
+<span id="_CPPv3N15SmallBodyNavEKF6I_fullE"></span><span id="_CPPv2N15SmallBodyNavEKF6I_fullE"></span><span id="SmallBodyNavEKF::I_full__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a46f2239d4532db9b6817d3de73671343"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I_full</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6I_fullE" title="Link to this definition"></a><br /></dt>
+<dd><p>numStates x numStates identity matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF2k1E">
+<span id="_CPPv3N15SmallBodyNavEKF2k1E"></span><span id="_CPPv2N15SmallBodyNavEKF2k1E"></span><span id="SmallBodyNavEKF::k1__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1abd09258e9aa62b53a984cd1787f88a31"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k1</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF2k1E" title="Link to this definition"></a><br /></dt>
+<dd><p>k1 constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF2k2E">
+<span id="_CPPv3N15SmallBodyNavEKF2k2E"></span><span id="_CPPv2N15SmallBodyNavEKF2k2E"></span><span id="SmallBodyNavEKF::k2__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1acb7dbdae12a36e357969ec3b5faefaf7"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k2</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF2k2E" title="Link to this definition"></a><br /></dt>
+<dd><p>k2 constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF2k3E">
+<span id="_CPPv3N15SmallBodyNavEKF2k3E"></span><span id="_CPPv2N15SmallBodyNavEKF2k3E"></span><span id="SmallBodyNavEKF::k3__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a8fe0b292988f422b83e234260f2fa9eb"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k3</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF2k3E" title="Link to this definition"></a><br /></dt>
+<dd><p>k3 constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF2k4E">
+<span id="_CPPv3N15SmallBodyNavEKF2k4E"></span><span id="_CPPv2N15SmallBodyNavEKF2k4E"></span><span id="SmallBodyNavEKF::k4__Eigen::VectorXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ac737bd137ad5877ea3abd6f4527596e7"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k4</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF2k4E" title="Link to this definition"></a><br /></dt>
+<dd><p>k4 constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6k1_phiE">
+<span id="_CPPv3N15SmallBodyNavEKF6k1_phiE"></span><span id="_CPPv2N15SmallBodyNavEKF6k1_phiE"></span><span id="SmallBodyNavEKF::k1_phi__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a3a04124bfe73cd9689354d347e7d992b"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k1_phi</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6k1_phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>k1 STM constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6k2_phiE">
+<span id="_CPPv3N15SmallBodyNavEKF6k2_phiE"></span><span id="_CPPv2N15SmallBodyNavEKF6k2_phiE"></span><span id="SmallBodyNavEKF::k2_phi__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ab05599ced9cb745eba81cccf89559acd"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k2_phi</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6k2_phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>k2 STM constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6k3_phiE">
+<span id="_CPPv3N15SmallBodyNavEKF6k3_phiE"></span><span id="_CPPv2N15SmallBodyNavEKF6k3_phiE"></span><span id="SmallBodyNavEKF::k3_phi__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a2adb323a73321a49f99440721bd0fcea"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k3_phi</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6k3_phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>k3 STM constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6k4_phiE">
+<span id="_CPPv3N15SmallBodyNavEKF6k4_phiE"></span><span id="_CPPv2N15SmallBodyNavEKF6k4_phiE"></span><span id="SmallBodyNavEKF::k4_phi__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1a2163e781f8ed18bfde6aeef0efa0d837"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k4_phi</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6k4_phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>k4 STM constant for RK4 integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF15newMeasurementsE">
+<span id="_CPPv3N15SmallBodyNavEKF15newMeasurementsE"></span><span id="_CPPv2N15SmallBodyNavEKF15newMeasurementsE"></span><span id="SmallBodyNavEKF::newMeasurements__b"></span><span class="target" id="class_small_body_nav_e_k_f_1aa94eeb616b4cf8f485f3d0d95aa40086"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">newMeasurements</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF15newMeasurementsE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6mu_sunE">
+<span id="_CPPv3N15SmallBodyNavEKF6mu_sunE"></span><span id="_CPPv2N15SmallBodyNavEKF6mu_sunE"></span><span id="SmallBodyNavEKF::mu_sun__double"></span><span class="target" id="class_small_body_nav_e_k_f_1a7e8b83490cc4919fb8359326d005a742"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu_sun</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6mu_sunE" title="Link to this definition"></a><br /></dt>
+<dd><p>Keeps track of whether or not new measurements have been written. </p>
+<p>Gravitational parameter of the sun </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF13o_hat_3_tildeE">
+<span id="_CPPv3N15SmallBodyNavEKF13o_hat_3_tildeE"></span><span id="_CPPv2N15SmallBodyNavEKF13o_hat_3_tildeE"></span><span id="SmallBodyNavEKF::o_hat_3_tilde__Eigen::Matrix3d"></span><span class="target" id="class_small_body_nav_e_k_f_1afe65e43aff17563db6ccf510d5b0462d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">o_hat_3_tilde</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF13o_hat_3_tildeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Tilde matrix of the third asteroid orbit frame base vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF7o_hat_1E">
+<span id="_CPPv3N15SmallBodyNavEKF7o_hat_1E"></span><span id="_CPPv2N15SmallBodyNavEKF7o_hat_1E"></span><span id="SmallBodyNavEKF::o_hat_1__Eigen::Vector3d"></span><span class="target" id="class_small_body_nav_e_k_f_1aac0a7ef1cfea134281099eb97635f5c8"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">o_hat_1</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF7o_hat_1E" title="Link to this definition"></a><br /></dt>
+<dd><p>First asteroid orbit frame base vector. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF1IE">
+<span id="_CPPv3N15SmallBodyNavEKF1IE"></span><span id="_CPPv2N15SmallBodyNavEKF1IE"></span><span id="SmallBodyNavEKF::I__Eigen::MatrixXd"></span><span class="target" id="class_small_body_nav_e_k_f_1ac91f75d6fba7b5c5f749da94745ca8bc"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF1IE" title="Link to this definition"></a><br /></dt>
+<dd><p>3 x 3 identity matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6oe_astE">
+<span id="_CPPv3N15SmallBodyNavEKF6oe_astE"></span><span id="_CPPv2N15SmallBodyNavEKF6oe_astE"></span><span id="SmallBodyNavEKF::oe_ast__ClassicElements"></span><span class="target" id="class_small_body_nav_e_k_f_1a5abc17c154bcd32bb5759c1d4e98e840"></span><a class="reference internal" href="../../../architecture/utilities/orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oe_ast</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6oe_astE" title="Link to this definition"></a><br /></dt>
+<dd><p>Orbital elements of the asteroid. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF5F_dotE">
+<span id="_CPPv3N15SmallBodyNavEKF5F_dotE"></span><span id="_CPPv2N15SmallBodyNavEKF5F_dotE"></span><span id="SmallBodyNavEKF::F_dot__double"></span><span class="target" id="class_small_body_nav_e_k_f_1ae060cb39c36a7c02d98f8963526235d5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_dot</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF5F_dotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Time rate of change of true anomaly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6F_ddotE">
+<span id="_CPPv3N15SmallBodyNavEKF6F_ddotE"></span><span id="_CPPv2N15SmallBodyNavEKF6F_ddotE"></span><span id="SmallBodyNavEKF::F_ddot__double"></span><span class="target" id="class_small_body_nav_e_k_f_1a7d6ead2b5797e9f68bb032c8dcb30b3b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_ddot</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6F_ddotE" title="Link to this definition"></a><br /></dt>
+<dd><p>Second time derivative of true anomaly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6dcm_ONE">
+<span id="_CPPv3N15SmallBodyNavEKF6dcm_ONE"></span><span id="_CPPv2N15SmallBodyNavEKF6dcm_ONE"></span><span id="SmallBodyNavEKF::dcm_ON__Eigen::Matrix3d"></span><span class="target" id="class_small_body_nav_e_k_f_1ac190a0a4a2bb9470954fdfbe6baad243"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_ON</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6dcm_ONE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the inertial frame to the small-body’s hill frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SmallBodyNavEKF6r_SO_OE">
+<span id="_CPPv3N15SmallBodyNavEKF6r_SO_OE"></span><span id="_CPPv2N15SmallBodyNavEKF6r_SO_OE"></span><span id="SmallBodyNavEKF::r_SO_O__Eigen::Vector3d"></span><span class="target" id="class_small_body_nav_e_k_f_1a346761b5b050498cda9fde68f0d708d2"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SO_O</span></span></span><a class="headerlink" href="#_CPPv4N15SmallBodyNavEKF6r_SO_OE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector from the small body’s origin to the inertial frame origin in small-body hill frame components. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="smallBodyNavEKF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: thrusterStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="thrusterStateEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Thrusters</a></li>
+          <li class="breadcrumb-item"><a href="index.html">thrusterStateEffector</a></li>
+      <li class="breadcrumb-item active">Module: thrusterStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-thrusterstateeffector">
+<span id="thrusterstateeffector"></span><h1>Module: thrusterStateEffector<a class="headerlink" href="#module-thrusterstateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module provides an implementation of the behavior of thrusters. Thrusters are modeled dynamically using a first-order ordinary differential equation, which is compatible with variable time step integrators.
+With this module, there are now two different thruster implementations. See <a class="reference internal" href="../thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a> for the previous version, which implemented thrusters using on and off-ramps, although not compatible with variable time step integrators.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cmdsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#thrarrayontimecmdmsgpayload"><span class="std std-ref">THRArrayOnTimeCmdMsgPayload</span></a></p></td>
+<td><p>(optional) input message with thruster commands. If not connected the thruster commands are set to zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>thrusterOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#throutputmsgpayload"><span class="std std-ref">THROutputMsgPayload</span></a></p></td>
+<td><p>output message vector for thruster data</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="thruster-modeling">
+<h3>Thruster Modeling<a class="headerlink" href="#thruster-modeling" title="Link to this heading"></a></h3>
+<p>The functionalities of this thruster implementation are identical to the ones seen in <a class="reference internal" href="../thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>. For a general description of the thruster implementation in Basilisk, namely how the forces and torques are computed, see that module’s documentation.</p>
+<p>The main difference between the two thruster implementations comes from how the <code class="docutils literal notranslate"><span class="pre">thrustFactor</span></code> is computed and updated at each timestep. The <code class="docutils literal notranslate"><span class="pre">thrustFactor</span></code> is a parameter specific to each thruster and ranges from 0 to 1. It defines what the current magnitude of the thrust is: at 0 the thruster is off, and at 1 the thruster is at <code class="docutils literal notranslate"><span class="pre">maxThrust</span></code>. While the previous thruster module computed the <code class="docutils literal notranslate"><span class="pre">thrustFactor</span></code> using on and off-ramps at the beginning and end of the thrusting maneuver, respectively, with a constant steady-state value of 1 in-between, this module updates that value through a first-order ordinary differential equation.</p>
+<p>The state variable used in this state effector is <span class="math notranslate nohighlight">\(\kappa\)</span>, which is a vector of <code class="docutils literal notranslate"><span class="pre">thrustFactors</span></code> for each thruster. As with <a class="reference internal" href="../thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>, the <code class="docutils literal notranslate"><span class="pre">addThruster()</span></code> method augments the vector of thruster inside the module. However, for this module the state vector <span class="math notranslate nohighlight">\(\kappa\)</span> is also augmented in this method.</p>
+<p>Let <span class="math notranslate nohighlight">\(\kappa_i\)</span> correspond to the <code class="docutils literal notranslate"><span class="pre">thrustFactor</span></code> of the i-th thruster. It has two governing differential equations, depending on whether a thrust command is present or not. The differential equation when thrusting is given by</p>
+<div class="math notranslate nohighlight">
+\[\dot{\kappa_i} = \omega(1-\kappa_i)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\omega\)</span>, in rad/s, corresponds to the cutoff frequency of the first-order filter, and is thruster-specific. The differential equation when not thrusting is given by</p>
+<div class="math notranslate nohighlight">
+\[\dot{\kappa_i} = -\omega\kappa_i\]</div>
+<p>While the value of <span class="math notranslate nohighlight">\(\kappa_i\)</span> for each thruster is computed numerically by integrating these ODEs, there are closed-form solutions to these equations that are used for validation and verification purposes. The solutions to each of these differential equations are given, respectively, by</p>
+<div class="math notranslate nohighlight">
+\[\kappa_i(t) = 1 + (\kappa_{0,i}-1)e^{-\omega t}, \qquad \kappa_i(t) = \kappa_{0,i}e^{-\omega t}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa_{0,i}\)</span> corresponds to the initial conditions of the <code class="docutils literal notranslate"><span class="pre">thrusterFactor</span></code> variable for the i-th particular thruster.</p>
+</section>
+<section id="adding-thrusters-to-auxiliary-bodies">
+<h3>Adding Thrusters to Auxiliary Bodies<a class="headerlink" href="#adding-thrusters-to-auxiliary-bodies" title="Link to this heading"></a></h3>
+<p>This thruster effector does not have to only be attached to the primary spacecraft body <span class="math notranslate nohighlight">\(B\)</span>.
+Rather, it is possible to attach this to a rigid body sub-component of the spacecraft where
+now the thruster location and orientations vary with time with respect to the <span class="math notranslate nohighlight">\(B\)</span> frame.
+However, note that currently attaching a thruster to a sub-component just determines where the
+thruster location and thrust direction are.  The thrust does not impact the dynamics of a hinged
+panel, for example.  Currently there is one-way coupling here where the sub-component states
+impact the location and orientation of the thruster, but firing the thruster does not impact
+the effector.</p>
+<p>Let <span class="math notranslate nohighlight">\(F\)</span> be the body-fixed frame of the rigid body sub-component, such as
+<a class="reference internal" href="../../prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">Module: prescribedMotionStateEffector</span></a>.  With this effector case it is ok that the thruster
+does not impact the effector as the effector motion is prescribed.
+If the thruster is added to an auxiliary body <span class="math notranslate nohighlight">\(F\)</span>
+which is connected to the main spacecraft body <span class="math notranslate nohighlight">\(B\)</span>, then this is accomplished using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thrusterSet</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">thruster1</span><span class="p">,</span> <span class="n">bodyStatesMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">thruster1</span></code> is the thruster being added, and <code class="docutils literal notranslate"><span class="pre">bodyStatesMsg</span></code> is the state output message of
+the platform <span class="math notranslate nohighlight">\(F\)</span>.  In the <code class="docutils literal notranslate"><span class="pre">Update()</span></code> routine the position of the platform <span class="math notranslate nohighlight">\(F\)</span> relative
+to <span class="math notranslate nohighlight">\(B\)</span> is recomputed each time step.</p>
+<p>The thruster state output message contains variables that end with <code class="docutils literal notranslate"><span class="pre">_B</span></code>.  These vectors are always
+written with spacecraft body frame <span class="math notranslate nohighlight">\(B\)</span> vector components.  However, the output message
+states <code class="docutils literal notranslate"><span class="pre">thrusterDirection</span></code> and <code class="docutils literal notranslate"><span class="pre">thrusterLocation</span></code> don’t contain the <code class="docutils literal notranslate"><span class="pre">_B</span></code> suffix because
+they are written in either <span class="math notranslate nohighlight">\(B\)</span> frame components if the thruster is attached to the body
+frame <span class="math notranslate nohighlight">\(B\)</span>, and in the sub-component frame <span class="math notranslate nohighlight">\(F\)</span> if attached to an auxiliary spacecraft
+component.</p>
+</section>
+</section>
+<section id="model-assumptions-and-limitations">
+<h2>Model Assumptions and Limitations<a class="headerlink" href="#model-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<section id="assumptions">
+<h3>Assumptions<a class="headerlink" href="#assumptions" title="Link to this heading"></a></h3>
+<p>The model assumes that the behavior of a thruster is represented by a first-order filter. Therefore, due to the simplicity of the model, some real-world behaviors cannot be simulated, such as overshoot or
+damping.</p>
+<p>The thruster module also assumes that the thruster always thrusts along its thrust directions axis. No dispersion is added to the thrust axis with respect to the nominal thruster axis.</p>
+</section>
+<section id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h3>
+<p>One of the limitations of this model relates to the dynamic nature of this thruster implementation. The thrust is simulated through the thrust factor, which is updated by integrating a differencial equation. This means that it is not possible to reproduce on-off behavior, where the thruster goes from not thrusting to being at maximum thrust or vice-versa. Using this dynamic model, we would have to use infinite derivatives to
+reproduce this behavior, which is not numerically feasible. To replicate this behavior, the user should use the older version of the thruster effector (<a class="reference internal" href="../thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>) with both on or off-ramps disabled.</p>
+<p>Another limitation is that the <span class="math notranslate nohighlight">\(I_{sp}\)</span> used is constant throughout the simulation. This means that the mass flow rate of the thruster is constant - the thruster will lose mass as soon as the valve is open, independent of how much thrust force is being produced. If the user needs to change the <span class="math notranslate nohighlight">\(I_{sp}\)</span> value of any of the thrusters, the simulation needs to be stop and restarted.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The dynamic behaviour of this module is governed by the <code class="docutils literal notranslate"><span class="pre">cutoffFrequency</span></code> variable inside <a class="reference internal" href="../../_GeneralModuleFiles/THRSimConfig.html#thrsimconfig"><span class="std std-ref">Module: THRSimConfig</span></a>. Its default value is equal to 10 rad/s. All variables related to on and off-ramps have no impact on this module and are instead supposed to be used to determine the dynamic behaviour within <a class="reference internal" href="../thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>.</p>
+</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section contains conceptual overviews of the code and clear examples for the prospective user.</p>
+<section id="module-setup">
+<h3>Module Setup<a class="headerlink" href="#module-setup" title="Link to this heading"></a></h3>
+<p>To use the thruster state effector module, the user first needs to create the thruster and populate it with the necessary information, such as thruster magnitude, minimum on time, etc. This can be done with the help
+of the <a class="reference internal" href="../../../../utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a> Basilisk Python library. The code to create a generic thruster is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+<span class="n">TH1</span> <span class="o">=</span> <span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;MOOG_Monarc_1&#39;</span><span class="p">,</span>
+                       <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># location in B-frame</span>
+                       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># thruster force direction in B-frame</span>
+                      <span class="p">)</span>
+</pre></div>
+</div>
+<p>The code above creates the generic thruster Monarc 1. To create the thruster effector and connect the thruster to it, the code below is used:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thrustersStateEffector</span> <span class="o">=</span> <span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">ThrusterStateEffector</span><span class="p">()</span>
+<span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="s2">&quot;Thrusters&quot;</span><span class="p">,</span>
+                          <span class="n">thrustersStateEffector</span><span class="p">,</span>
+                          <span class="n">scObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Assuming that the user has created a list of initial conditions called <code class="docutils literal notranslate"><span class="pre">initialConditions</span></code>, then setting the initial conditions for all thrusters is done with the code below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thrustersStateEffector</span><span class="o">.</span><span class="n">kappaInit</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span><span class="n">initialConditions</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv421ThrusterStateEffector">
+<span id="_CPPv321ThrusterStateEffector"></span><span id="_CPPv221ThrusterStateEffector"></span><span id="ThrusterStateEffector"></span><span class="target" id="class_thruster_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ThrusterStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv421ThrusterStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;thrusterStateEffector.h&gt;</em></div>
+<p>thruster dynamic effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector21ThrusterStateEffectorEv">
+<span id="_CPPv3N21ThrusterStateEffector21ThrusterStateEffectorEv"></span><span id="_CPPv2N21ThrusterStateEffector21ThrusterStateEffectorEv"></span><span id="ThrusterStateEffector::ThrusterStateEffector"></span><span class="target" id="class_thruster_state_effector_1a8720fa1a022d4c407497ef93a891746d"></span><span class="sig-name descname"><span class="n"><span class="pre">ThrusterStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector21ThrusterStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffectorD0Ev">
+<span id="_CPPv3N21ThrusterStateEffectorD0Ev"></span><span id="_CPPv2N21ThrusterStateEffectorD0Ev"></span><span id="ThrusterStateEffector::~ThrusterStateEffector"></span><span class="target" id="class_thruster_state_effector_1a0053e424af73bb482c5f570b6c2a1d01"></span><span class="sig-name descname"><span class="n"><span class="pre">~ThrusterStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>The destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N21ThrusterStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N21ThrusterStateEffector5ResetE8uint64_t"></span><span id="ThrusterStateEffector::Reset__uint64_t"></span><span class="target" id="class_thruster_state_effector_1a8ab3a1d7a9479d22c68fdaee495c10be"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector10ReadInputsEv">
+<span id="_CPPv3N21ThrusterStateEffector10ReadInputsEv"></span><span id="_CPPv2N21ThrusterStateEffector10ReadInputsEv"></span><span id="ThrusterStateEffector::ReadInputs"></span><span class="target" id="class_thruster_state_effector_1afdf1d44f6eaf6695bf150259a82b01ad"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector10ReadInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming command message and set the associated command structure for operating the thrusters. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N21ThrusterStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N21ThrusterStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="ThrusterStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_thruster_state_effector_1a63ab3def0bc3622b49aff6ed6da6b7b0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is here to write the output message structure into the specified message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N21ThrusterStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N21ThrusterStateEffector14registerStatesER15DynParamManager"></span><span id="ThrusterStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_thruster_state_effector_1a802c763ec7387367e5efacf78596fd5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Method for the effector to register its states </p>
+<p>This method allows the thruster state effector to register its state kappa with the dyn param manager </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N21ThrusterStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N21ThrusterStateEffector12linkInStatesER15DynParamManager"></span><span id="ThrusterStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_thruster_state_effector_1a91eb86adb2c8c9cf8a002d4af3a6a863"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Method for the effector to get access of other states </p>
+<p>This method is used to link the states to the thrusters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – The states to link </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N21ThrusterStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N21ThrusterStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="ThrusterStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_thruster_state_effector_1a25ff3b94c60df9aac63e50463af0b5aa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Method for each stateEffector to calculate derivatives </p>
+<p>This method is used to find the derivatives for the thruster stateEffector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE">
+<span id="_CPPv3N21ThrusterStateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE"></span><span id="_CPPv2N21ThrusterStateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE"></span><span id="ThrusterStateEffector::calcForceTorqueOnBody__double.Eigen::Vector3d"></span><span class="target" id="class_thruster_state_effector_1a32ea6d313bdd8c644336bf4b66fedf2f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcForceTorqueOnBody</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector21calcForceTorqueOnBodyEdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N21ThrusterStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N21ThrusterStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="ThrusterStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_thruster_state_effector_1a9db6692f54f945b8f9bffee00997f707"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to pass the forces and torques onto the hub. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N21ThrusterStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N21ThrusterStateEffector23updateEffectorMassPropsEd"></span><span id="ThrusterStateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_thruster_state_effector_1ac70d7acd14e72e67272dce8e81461b3f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N21ThrusterStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N21ThrusterStateEffector11UpdateStateE8uint64_t"></span><span id="ThrusterStateEffector::UpdateState__uint64_t"></span><span class="target" id="class_thruster_state_effector_1a885243358bddc800552339857b91185c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is the main cyclical call for the scheduled part of the thruster dynamics model. It reads the current commands array and sets the thruster configuration data based on that incoming command set. Note that the main dynamical method (ComputeDynamics()) is not called here and is intended to be called from the dynamics plant in the system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEE">
+<span id="_CPPv3N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEE"></span><span id="_CPPv2N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEE"></span><span id="ThrusterStateEffector::addThruster__std::shared_ptr:THRSimConfig:"></span><span class="target" id="class_thruster_state_effector_1a4829de876068c5225fada61fed7ae18e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addThruster</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../_GeneralModuleFiles/THRSimConfig.html#_CPPv412THRSimConfig" title="THRSimConfig"><span class="n"><span class="pre">THRSimConfig</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newThruster</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Add a new thruster to the thruster set </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEEP7MessageI18SCStatesMsgPayloadE"></span><span id="ThrusterStateEffector::addThruster__std::shared_ptr:THRSimConfig:.Message:SCStatesMsgPayload:P"></span><span class="target" id="class_thruster_state_effector_1ac2029aaf43216b11cb055133c60a0189"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addThruster</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../_GeneralModuleFiles/THRSimConfig.html#_CPPv412THRSimConfig" title="THRSimConfig"><span class="n"><span class="pre">THRSimConfig</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newThruster</span></span>, <a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bodyStateMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector11addThrusterENSt10shared_ptrI12THRSimConfigEEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; (overloaded) Add a new thruster to the thruster set connect to a body different than the hub </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector23ConfigureThrustRequestsEv">
+<span id="_CPPv3N21ThrusterStateEffector23ConfigureThrustRequestsEv"></span><span id="_CPPv2N21ThrusterStateEffector23ConfigureThrustRequestsEv"></span><span id="ThrusterStateEffector::ConfigureThrustRequests"></span><span class="target" id="class_thruster_state_effector_1a9665558063ba537c47268b9e7c82ee05"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConfigureThrustRequests</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector23ConfigureThrustRequestsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the new commands vector and set the thruster firings appropriately. It assumes that the ReadInputs method has already been run successfully. It honors all previous thruster firings if they are still active. Note that for unit testing purposes you can insert firings directly into NewThrustCmds. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector24UpdateThrusterPropertiesEv">
+<span id="_CPPv3N21ThrusterStateEffector24UpdateThrusterPropertiesEv"></span><span id="_CPPv2N21ThrusterStateEffector24UpdateThrusterPropertiesEv"></span><span id="ThrusterStateEffector::UpdateThrusterProperties"></span><span class="target" id="class_thruster_state_effector_1add85d2ae34d07db942599f2c11c43624"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateThrusterProperties</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector24UpdateThrusterPropertiesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to update the location and orientation of the thrusters at every UpdateState call when the thrusters are attached to a body other than the hub. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector9cmdsInMsgE">
+<span id="_CPPv3N21ThrusterStateEffector9cmdsInMsgE"></span><span id="_CPPv2N21ThrusterStateEffector9cmdsInMsgE"></span><span id="ThrusterStateEffector::cmdsInMsg__ReadFunctor:THRArrayOnTimeCmdMsgPayload:"></span><span class="target" id="class_thruster_state_effector_1ae6f5f1138443d218701b2d45d354bcf6"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#_CPPv427THRArrayOnTimeCmdMsgPayload" title="THRArrayOnTimeCmdMsgPayload"><span class="n"><span class="pre">THRArrayOnTimeCmdMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector9cmdsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; input message with thruster commands </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector15thrusterOutMsgsE">
+<span id="_CPPv3N21ThrusterStateEffector15thrusterOutMsgsE"></span><span id="_CPPv2N21ThrusterStateEffector15thrusterOutMsgsE"></span><span id="ThrusterStateEffector::thrusterOutMsgs__std::vector:Message:THROutputMsgPayload:P:"></span><span class="target" id="class_thruster_state_effector_1a65dd74a5ae489102b6354247628227cb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector15thrusterOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; output message vector for thruster data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector12thrusterDataE">
+<span id="_CPPv3N21ThrusterStateEffector12thrusterDataE"></span><span id="_CPPv2N21ThrusterStateEffector12thrusterDataE"></span><span id="ThrusterStateEffector::thrusterData__std::vector:std::shared_ptr:THRSimConfig::"></span><span class="target" id="class_thruster_state_effector_1a763a197208aa82013773871bb86a4f9b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../_GeneralModuleFiles/THRSimConfig.html#_CPPv412THRSimConfig" title="THRSimConfig"><span class="n"><span class="pre">THRSimConfig</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterData</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector12thrusterDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Thruster information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector13NewThrustCmdsE">
+<span id="_CPPv3N21ThrusterStateEffector13NewThrustCmdsE"></span><span id="_CPPv2N21ThrusterStateEffector13NewThrustCmdsE"></span><span id="ThrusterStateEffector::NewThrustCmds__std::vector:double:"></span><span class="target" id="class_thruster_state_effector_1a22a84e537ef921d8d299350b4682c323"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NewThrustCmds</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector13NewThrustCmdsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Incoming thrust commands </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector9kappaInitE">
+<span id="_CPPv3N21ThrusterStateEffector9kappaInitE"></span><span id="_CPPv2N21ThrusterStateEffector9kappaInitE"></span><span id="ThrusterStateEffector::kappaInit__std::vector:double:"></span><span class="target" id="class_thruster_state_effector_1a36ec399f236d4297cae4279fae5e1e79"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kappaInit</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector9kappaInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] Vector of initial thruster states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector16nameOfKappaStateE">
+<span id="_CPPv3N21ThrusterStateEffector16nameOfKappaStateE"></span><span id="_CPPv2N21ThrusterStateEffector16nameOfKappaStateE"></span><span id="ThrusterStateEffector::nameOfKappaState__ss"></span><span class="target" id="class_thruster_state_effector_1a928e885647c7a5e37dc2cbdf750656b7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfKappaState</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector16nameOfKappaStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Identifier for the kappa state data container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector8hubSigmaE">
+<span id="_CPPv3N21ThrusterStateEffector8hubSigmaE"></span><span id="_CPPv2N21ThrusterStateEffector8hubSigmaE"></span><span id="ThrusterStateEffector::hubSigma__StateDataP"></span><span class="target" id="class_thruster_state_effector_1a3e37afa1dfb92a8c6881336d1b2e9cba"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubSigma</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector8hubSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to hub attitude states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector8hubOmegaE">
+<span id="_CPPv3N21ThrusterStateEffector8hubOmegaE"></span><span id="_CPPv2N21ThrusterStateEffector8hubOmegaE"></span><span id="ThrusterStateEffector::hubOmega__StateDataP"></span><span class="target" id="class_thruster_state_effector_1aad91ae03e308d4d4ffe4a7e7dc01e5db"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubOmega</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector8hubOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to hub angular velocity states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector10kappaStateE">
+<span id="_CPPv3N21ThrusterStateEffector10kappaStateE"></span><span id="_CPPv2N21ThrusterStateEffector10kappaStateE"></span><span id="ThrusterStateEffector::kappaState__StateDataP"></span><span class="target" id="class_thruster_state_effector_1a8981de619b122fa774bcd2d0189b3843"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">kappaState</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector10kappaStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; state manager of theta for hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector24inertialPositionPropertyE">
+<span id="_CPPv3N21ThrusterStateEffector24inertialPositionPropertyE"></span><span id="_CPPv2N21ThrusterStateEffector24inertialPositionPropertyE"></span><span id="ThrusterStateEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_thruster_state_effector_1a807debc4839eec0c5fc85ccc42218ebe"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N inertial position relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector9bskLoggerE">
+<span id="_CPPv3N21ThrusterStateEffector9bskLoggerE"></span><span id="_CPPv2N21ThrusterStateEffector9bskLoggerE"></span><span id="ThrusterStateEffector::bskLogger__BSKLogger"></span><span class="target" id="class_thruster_state_effector_1aaac224ccd419d989ef7e516a9d6a8480"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector9mDotTotalE">
+<span id="_CPPv3N21ThrusterStateEffector9mDotTotalE"></span><span id="_CPPv2N21ThrusterStateEffector9mDotTotalE"></span><span id="ThrusterStateEffector::mDotTotal__double"></span><span class="target" id="class_thruster_state_effector_1ac8a2b6956a99be519a1657f76c2fd1e3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mDotTotal</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector9mDotTotalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/s] Current mass flow rate of thrusters </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector17thrusterOutBufferE">
+<span id="_CPPv3N21ThrusterStateEffector17thrusterOutBufferE"></span><span id="_CPPv2N21ThrusterStateEffector17thrusterOutBufferE"></span><span id="ThrusterStateEffector::thrusterOutBuffer__std::vector:THROutputMsgPayload:"></span><span class="target" id="class_thruster_state_effector_1adea86f8ac4a3af516adc17556b60013b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterOutBuffer</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector17thrusterOutBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Message buffer for thruster data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector17incomingCmdBufferE">
+<span id="_CPPv3N21ThrusterStateEffector17incomingCmdBufferE"></span><span id="_CPPv2N21ThrusterStateEffector17incomingCmdBufferE"></span><span id="ThrusterStateEffector::incomingCmdBuffer__THRArrayOnTimeCmdMsgPayload"></span><span class="target" id="class_thruster_state_effector_1a87dd729d7b621cce7602308d22c62cd0"></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#_CPPv427THRArrayOnTimeCmdMsgPayload" title="THRArrayOnTimeCmdMsgPayload"><span class="n"><span class="pre">THRArrayOnTimeCmdMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">incomingCmdBuffer</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector17incomingCmdBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; One-time allocation for savings </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector18attachedBodyInMsgsE">
+<span id="_CPPv3N21ThrusterStateEffector18attachedBodyInMsgsE"></span><span id="_CPPv2N21ThrusterStateEffector18attachedBodyInMsgsE"></span><span id="ThrusterStateEffector::attachedBodyInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_thruster_state_effector_1a9d10b802acf6bbb82976b0d7fd2a67fb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attachedBodyInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector18attachedBodyInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of body states message where the thrusters attach to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector18attachedBodyBufferE">
+<span id="_CPPv3N21ThrusterStateEffector18attachedBodyBufferE"></span><span id="_CPPv2N21ThrusterStateEffector18attachedBodyBufferE"></span><span id="ThrusterStateEffector::attachedBodyBuffer__SCStatesMsgPayload"></span><span class="target" id="class_thruster_state_effector_1a1245d0d1c9d5e72971e53c20fea5bc9a"></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attachedBodyBuffer</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector18attachedBodyBufferE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector13bodyToHubInfoE">
+<span id="_CPPv3N21ThrusterStateEffector13bodyToHubInfoE"></span><span id="_CPPv2N21ThrusterStateEffector13bodyToHubInfoE"></span><span id="ThrusterStateEffector::bodyToHubInfo__std::vector:BodyToHubInfo:"></span><span class="target" id="class_thruster_state_effector_1af36ed3523797a06bd25aed29de29afee"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../_GeneralModuleFiles/BodyToHubInfo.html#_CPPv413BodyToHubInfo" title="BodyToHubInfo"><span class="n"><span class="pre">BodyToHubInfo</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bodyToHubInfo</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector13bodyToHubInfoE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector15prevCommandTimeE">
+<span id="_CPPv3N21ThrusterStateEffector15prevCommandTimeE"></span><span id="_CPPv2N21ThrusterStateEffector15prevCommandTimeE"></span><span id="ThrusterStateEffector::prevCommandTime__double"></span><span class="target" id="class_thruster_state_effector_1acbe78b16cb5a9b7f60bf16d8830b62ed"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevCommandTime</span></span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector15prevCommandTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] &amp;#8212; Time for previous valid thruster firing </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21ThrusterStateEffector10effectorIDE">
+<span id="_CPPv3N21ThrusterStateEffector10effectorIDE"></span><span id="_CPPv2N21ThrusterStateEffector10effectorIDE"></span><span id="ThrusterStateEffector::effectorID__uint64_t"></span><span class="target" id="class_thruster_state_effector_1ad12c6b9d434b19c2248e853a87f2e74c"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N21ThrusterStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] ID number of this panel </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="thrusterStateEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1671 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vizSupport &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vizSupport</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vizSupport</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">quadMapSupport</span> <span class="k">as</span> <span class="n">qms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_color_like</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizInterface</span>
+
+    <span class="n">vizFound</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">vizFound</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">pauseFlag</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">endFlag</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">firstSpacecraftName</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+
+
+
+<div class="viewcode-block" id="assert_option">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.assert_option">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_option</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the value is in [low, high] inclusive.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">low</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">high</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value must be between </span><span class="si">{</span><span class="n">low</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">high</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="assert_trinary">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.assert_trinary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_trinary</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the value is in [-1, 0, 1] and map False to -1 or 0 depending on default.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="c1"># Map false to which isn&#39;t the default</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}[</span><span class="n">default</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Value must be -1, 0, or 1&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">toRGBA255</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># convert color name to 4D array of values with 0-255</span>
+        <span class="k">if</span> <span class="n">is_color_like</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">))</span> <span class="o">*</span> <span class="mi">255</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">answer</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;toRGBA255() was provided unknown color name &quot;</span> <span class="o">+</span> <span class="n">color</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ERROR: vizSupport: color must be a 4D array of integers&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ERROR: vizSupport: color values must be between [0,255]&quot;</span><span class="p">)</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">color</span>
+    <span class="k">return</span> <span class="n">answer</span>
+
+
+<div class="viewcode-block" id="setSprite">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.setSprite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setSprite</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to set the sprite shape and optional sprite color.</span>
+<span class="sd">    :param shape: Sprite shape, must be either &quot;CIRCLE&quot;, &quot;SQUARE&quot;, &quot;TRIANGLE&quot;, &quot;STAR&quot;, or &quot;bskSat&quot;</span>
+<span class="sd">    :param kwargs: RGBA color, can be either color name string or a 4D list of [0,255] values</span>
+<span class="sd">    :return: string of the protobuffer sprite setting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shapeList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CIRCLE&quot;</span><span class="p">,</span> <span class="s2">&quot;SQUARE&quot;</span><span class="p">,</span> <span class="s2">&quot;TRIANGLE&quot;</span><span class="p">,</span> <span class="s2">&quot;STAR&quot;</span><span class="p">,</span> <span class="s2">&quot;bskSat&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shapeList</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="s2">&quot;The setSprite() method was provided this unknown sprite shape primitive: &quot;</span>
+            <span class="o">+</span> <span class="n">shape</span>
+        <span class="p">)</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;bskSat&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot set a color for the bskSat sprite option&quot;</span><span class="p">)</span>
+
+        <span class="n">colorValues</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="n">answer</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">colorValues</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">answer</span></div>
+
+
+
+<div class="viewcode-block" id="lla2fixedframe">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.lla2fixedframe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lla2fixedframe</span><span class="p">(</span><span class="n">lla_GP</span><span class="p">,</span> <span class="n">radEquator</span><span class="p">,</span> <span class="n">radRatio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method receives a latitude/longitude/altitude point above a reference</span>
+<span class="sd">    ellipsoid with equatorial radius and flattening ratio, then converts to</span>
+<span class="sd">    body-fixed frame coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lla_GP:</span>
+<span class="sd">        [rad,rad,m] position vector of the location G relative to the parent body</span>
+<span class="sd">        in lat/lon/alt components</span>
+<span class="sd">    radEquator:</span>
+<span class="sd">        [m] equatorial radius of the parent body</span>
+<span class="sd">    radRatio:</span>
+<span class="sd">        ratio of polar radius to equatorial radius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    3-element list</span>
+<span class="sd">        [m] r_GP_P, position vector of the location G relative to parent body frame P in P frame components</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lla_GP</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lla_GP must be a list of three floats, not </span><span class="si">{</span><span class="n">lla_GP</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lla_GP</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">lla_GP</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Latitude must be between -pi/2 and pi/2 radians, not </span><span class="si">{</span><span class="n">lla_GP</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">lla_GP</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">lla_GP</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">alt</span> <span class="o">=</span> <span class="n">lla_GP</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">radEquator</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">radRatio</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">radRatio</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    <span class="n">r_GP_P</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">r_GP_P</span></div>
+
+
+
+<div class="viewcode-block" id="fixedframe2lla">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.fixedframe2lla">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fixedframe2lla</span><span class="p">(</span><span class="n">r_GP_P</span><span class="p">,</span> <span class="n">radEquator</span><span class="p">,</span> <span class="n">radRatio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method receives a cartesian point above a reference ellipsoid with</span>
+<span class="sd">    equatorial radius and flattening ratio, then converts to lat/lon/alt.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r_GP_P:</span>
+<span class="sd">        [m] position vector of the location G relative to the parent body</span>
+<span class="sd">    radEquator:</span>
+<span class="sd">        [m] equatorial radius of the parent body</span>
+<span class="sd">    radRatio:</span>
+<span class="sd">        ratio of polar radius to equatorial radius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    3-element list</span>
+<span class="sd">        [rad,rad,m] lla_GP, position vector of the location G relative to parent body frame P in lat/lon/alt</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">r_GP_P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">r_GP_P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">r_GP_P</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">radEquator</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">radEquator</span> <span class="o">*</span> <span class="n">radRatio</span>
+
+    <span class="n">e2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># First eccentricity squared</span>
+    <span class="n">ep2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># Second eccentricity squared</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Z</span> <span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">stheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">ctheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Z</span> <span class="o">+</span> <span class="n">ep2</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">stheta</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">r</span> <span class="o">-</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">ctheta</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">r</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">N</span>
+
+    <span class="n">lla_GP</span> <span class="o">=</span> <span class="p">[</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">lla_GP</span></div>
+
+
+
+<span class="n">locationDict</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="addLocation">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.addLocation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addLocation</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">stationName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">parentBodyName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">r_GP_P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">lla_GP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">gHat_P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fieldOfView</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">markerScale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">isHidden</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a Location instance on a parent body.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    stationName: str</span>
+<span class="sd">        Location text label</span>
+<span class="sd">    parentBodyName: str</span>
+<span class="sd">        Name of the parent body P (spacecraft or planet) on which the location G is positioned.</span>
+<span class="sd">    r_GP_P: 3-element double-list</span>
+<span class="sd">        Position of G relative to parent body frame P.</span>
+<span class="sd">        Required, if lla_GP not provided</span>
+<span class="sd">    lla_GP: 3-element double-list</span>
+<span class="sd">        Position of G relative to parent body in lat/lon/alt coordinates.</span>
+<span class="sd">        Required, if r_GP_P not provided</span>
+<span class="sd">    gHat_P: 3-element double-list</span>
+<span class="sd">        Location normal relative to parent body frame.</span>
+<span class="sd">    fieldOfView: double</span>
+<span class="sd">        [rad] FOV angle measured edge-to-edge.</span>
+<span class="sd">    color: int-list</span>
+<span class="sd">        Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    range: double</span>
+<span class="sd">        [m] Range of the ground Location.</span>
+<span class="sd">    markerScale: double</span>
+<span class="sd">        Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.</span>
+<span class="sd">    isHidden: bool</span>
+<span class="sd">        True to hide Location, false to show (vizDefault)</span>
+<span class="sd">    label: string</span>
+<span class="sd">        string to display on location label, if empty, then stationName is used. Send &quot;NOLABEL&quot; to delete label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">LocationPbMsg</span><span class="p">()</span>
+
+    <span class="c1"># Set location</span>
+    <span class="k">if</span> <span class="n">r_GP_P</span> <span class="ow">is</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">lla_GP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># xor</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either r_GP_P or lla_GP must be provided&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r_GP_P</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">r_GP_P</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">r_GP_P</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">lla_GP</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># find gravity body</span>
+        <span class="n">gravBody</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">viz</span><span class="o">.</span><span class="n">gravBodyInformation</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">bodyName</span> <span class="o">==</span> <span class="n">parentBodyName</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gravBody</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot use LLA to set location for </span><span class="si">{</span><span class="n">parentBodyName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert lat/lon/altitude to fixed frame</span>
+        <span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">lla2fixedframe</span><span class="p">(</span><span class="n">lla_GP</span><span class="p">,</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radEquator</span><span class="p">,</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radiusRatio</span><span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">r_GP_P</span>
+
+    <span class="k">if</span> <span class="n">gHat_P</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">gHat_P</span> <span class="o">=</span> <span class="n">r_GP_P</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_GP_P</span><span class="p">)</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">stationName</span> <span class="o">=</span> <span class="n">stationName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">parentBodyName</span> <span class="o">=</span> <span class="n">parentBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">gHat_P</span> <span class="o">=</span> <span class="n">gHat_P</span>
+
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="nb">range</span>
+    <span class="k">if</span> <span class="n">markerScale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">markerScale</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;markerScale must be a positive float&quot;</span><span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">markerScale</span> <span class="o">=</span> <span class="n">markerScale</span>
+    <span class="k">if</span> <span class="n">isHidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">isHidden</span> <span class="o">=</span> <span class="n">isHidden</span>
+    <span class="k">if</span> <span class="n">fieldOfView</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fieldOfView</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="ow">or</span> <span class="n">fieldOfView</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;fieldOfView must be a value between 0 and Pi, not </span><span class="si">{</span><span class="n">fieldOfView</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="n">fieldOfView</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="c1"># Pass to Vizard</span>
+    <span class="n">locationDict</span><span class="p">[</span><span class="n">vizElement</span><span class="o">.</span><span class="n">stationName</span><span class="p">]</span> <span class="o">=</span> <span class="n">vizElement</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="changeLocation">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.changeLocation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">changeLocation</span><span class="p">(</span>
+        <span class="n">viz</span><span class="p">,</span>
+        <span class="n">stationName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">parentBodyName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">r_GP_P</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lla_GP</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gHat_P</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fieldOfView</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">markerScale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">isHidden</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method changes the information of a Location instance.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    stationName: str</span>
+<span class="sd">        Location text label</span>
+<span class="sd">        Required</span>
+<span class="sd">    parentBodyName: str</span>
+<span class="sd">        Name of the parent body P (spacecraft or planet) on which the location G is positioned.</span>
+<span class="sd">    r_GP_P: 3-element double-list</span>
+<span class="sd">        Position of G relative to parent body frame P.</span>
+<span class="sd">        Required, if lla_GP not provided</span>
+<span class="sd">    lla_GP: 3-element double-list</span>
+<span class="sd">        Position of G relative to parent body in lat/lon/alt coordinates.</span>
+<span class="sd">        Required, if r_GP_P not provided</span>
+<span class="sd">    gHat_P: 3-element double-list</span>
+<span class="sd">        Location normal relative to parent body frame.</span>
+<span class="sd">    fieldOfView: double</span>
+<span class="sd">        [rad] FOV angle measured edge-to-edge.</span>
+<span class="sd">    color: int-list</span>
+<span class="sd">        Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    range: double</span>
+<span class="sd">        [m] Range of the ground Location.</span>
+<span class="sd">    markerScale: double</span>
+<span class="sd">        Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.</span>
+<span class="sd">    isHidden: bool</span>
+<span class="sd">        True to hide Location, false to show (vizDefault)</span>
+<span class="sd">    label: string</span>
+<span class="sd">        string to display on location label, if empty, then stationName is used. Send &quot;NOLABEL&quot; to delete label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">locationDict</span><span class="p">[</span><span class="n">stationName</span><span class="p">]</span>
+
+    <span class="c1"># Set location</span>
+    <span class="k">if</span> <span class="n">r_GP_P</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">r_GP_P</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">r_GP_P</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">lla_GP</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># find gravity body</span>
+        <span class="n">gravBody</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">viz</span><span class="o">.</span><span class="n">gravBodyInformation</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">bodyName</span> <span class="o">==</span> <span class="n">parentBodyName</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gravBody</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot use LLA to set location for </span><span class="si">{</span><span class="n">parentBodyName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert lat/lon/altitude to fixed frame</span>
+        <span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">lla2fixedframe</span><span class="p">(</span><span class="n">lla_GP</span><span class="p">,</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radEquator</span><span class="p">,</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radiusRatio</span><span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">r_GP_P</span> <span class="o">=</span> <span class="n">r_GP_P</span>
+
+    <span class="k">if</span> <span class="n">parentBodyName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">parentBodyName</span> <span class="o">=</span> <span class="n">parentBodyName</span>
+    <span class="k">if</span> <span class="n">gHat_P</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">gHat_P</span> <span class="o">=</span> <span class="n">gHat_P</span>
+
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="nb">range</span>
+    <span class="k">if</span> <span class="n">markerScale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">markerScale</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;markerScale must be a positive float&quot;</span><span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">markerScale</span> <span class="o">=</span> <span class="n">markerScale</span>
+    <span class="k">if</span> <span class="n">isHidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">isHidden</span> <span class="o">=</span> <span class="n">isHidden</span>
+    <span class="k">if</span> <span class="n">fieldOfView</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fieldOfView</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="ow">or</span> <span class="n">fieldOfView</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;fieldOfView must be a value between 0 and Pi, not </span><span class="si">{</span><span class="n">fieldOfView</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="n">fieldOfView</span>
+
+    <span class="c1"># add this location structure to the vector of locations to be transmitted to Vizard</span>
+    <span class="n">locationDict</span><span class="p">[</span><span class="n">stationName</span><span class="p">]</span> <span class="o">=</span> <span class="n">vizElement</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span></div>
+
+
+
+<span class="n">quadMapList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="addQuadMap">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.addQuadMap">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">ID</span><span class="p">,</span> <span class="n">parentBodyName</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">isHidden</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a QuadMap element for displaying shaded regions in Vizard.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    ID: int</span>
+<span class="sd">        The reference ID of the QuadMap instance. Once instantiated, can be used to change the QuadMap settings.</span>
+<span class="sd">    parentBodyName: str</span>
+<span class="sd">        Name of the parent body to draw the QuadMap in reference to.</span>
+<span class="sd">    vertices: single or double-list</span>
+<span class="sd">        Specifies the internal mesh coordinates of the QuadMap, in body-fixed frame.</span>
+<span class="sd">    color: int list</span>
+<span class="sd">        Color of the QuadMap.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    isHidden: bool</span>
+<span class="sd">        Flag if the QuadMap should be hidden (1) or shown (-1).</span>
+<span class="sd">        Optional. Default: 0 - if not provided, then the Vizard default settings are used.</span>
+<span class="sd">    label: str</span>
+<span class="sd">        Label to display in the center of QuadMap region.</span>
+<span class="sd">        Optional. Send &quot;NOLABEL&quot; to delete label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">QuadMap</span><span class="p">()</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="n">ID</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">parentBodyName</span> <span class="o">=</span> <span class="n">parentBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">toRGBA255</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">isHidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">isHidden</span> <span class="o">=</span> <span class="n">isHidden</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="n">quadMapList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">quadMaps</span><span class="p">[:]</span>  <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">quadMaps</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">QuadMapVector</span><span class="p">(</span><span class="n">quadMapList</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+
+<span class="n">pointLineList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="createPointLine">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createPointLine">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createPointLine</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">toBodyName</span><span class="p">,</span> <span class="n">lineColor</span><span class="p">,</span> <span class="n">fromBodyName</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a PointLine between two bodies.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    toBodyName: str</span>
+<span class="sd">        Body which the PointLine points to.</span>
+<span class="sd">    lineColor: int list</span>
+<span class="sd">        Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    fromBodyName: str</span>
+<span class="sd">        Body from which PointLine originates.</span>
+<span class="sd">        Optional, default selects ``firstSpacecraftName``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">PointLine</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">fromBodyName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">fromBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">toBodyName</span> <span class="o">=</span> <span class="n">toBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">lineColor</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">lineColor</span><span class="p">)</span>
+
+    <span class="n">pointLineList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">pointLineList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">pointLineList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">PointLineConfig</span><span class="p">(</span><span class="n">pointLineList</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="n">targetLineList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="createTargetLine">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createTargetLine">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createTargetLine</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">toBodyName</span><span class="p">,</span> <span class="n">lineColor</span><span class="p">,</span> <span class="n">fromBodyName</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a TargetLine between two bodies.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    toBodyName: str</span>
+<span class="sd">        Body which the PointLine points to.</span>
+<span class="sd">    lineColor: int list</span>
+<span class="sd">        Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    fromBodyName: str</span>
+<span class="sd">        Body from which PointLine originates.</span>
+<span class="sd">        Optional, default selects ``firstSpacecraftName``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">PointLine</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">fromBodyName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">fromBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">toBodyName</span> <span class="o">=</span> <span class="n">toBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">lineColor</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">lineColor</span><span class="p">)</span>
+
+    <span class="n">targetLineList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="n">updateTargetLineList</span><span class="p">(</span><span class="n">viz</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">updateTargetLineList</span><span class="p">(</span><span class="n">viz</span><span class="p">):</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">targetLineList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">targetLineList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">PointLineConfig</span><span class="p">(</span><span class="n">targetLineList</span><span class="p">)</span>
+    <span class="k">return</span>
+
+
+<span class="n">customModelList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="createCustomModel">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createCustomModel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createCustomModel</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">modelPath</span><span class="p">,</span>
+    <span class="n">simBodiesToModify</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">customTexturePath</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">normalMapPath</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">shader</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a CustomModel.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    modelPath: str</span>
+<span class="sd">        Path to model obj -OR- ``CUBE``, ``CYLINDER``, or ``SPHERE`` to use a primitive shape</span>
+<span class="sd">    simBodiesToModify: list</span>
+<span class="sd">        Which bodies in scene to replace with this model, use ``ALL_SPACECRAFT`` to apply custom model to all spacecraft in simulation</span>
+<span class="sd">        Optional, default modifies ``firstSpacecraftName``</span>
+<span class="sd">    offset: 3-element double-list</span>
+<span class="sd">        [m] Offset to use to draw the model</span>
+<span class="sd">        Optional, default is [0.0, 0.0, 0.0]</span>
+<span class="sd">    rotation: 3-element double-list</span>
+<span class="sd">        [rad] 3-2-1 Euler angles to rotate CAD about z, y, x axes</span>
+<span class="sd">        Optional, default is [0.0, 0.0, 0.0]</span>
+<span class="sd">    scale: 3-element double-list</span>
+<span class="sd">        Desired model scaling factor along the body x, y, z, axes in spacecraft CS</span>
+<span class="sd">        Optional, default is [1.0, 1.0, 1.0]</span>
+<span class="sd">    customTexturePath: str</span>
+<span class="sd">        Path to texture to apply to model (note that a custom model&#39;s .mtl will be automatically imported with its textures during custom model import)</span>
+<span class="sd">        Optional</span>
+<span class="sd">    normalMapPath: str</span>
+<span class="sd">        Path to the normal map for the customTexture</span>
+<span class="sd">    shader: int</span>
+<span class="sd">        Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader</span>
+<span class="sd">    color: int list</span>
+<span class="sd">        Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">CustomModel</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">rotation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rotation</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">simBodiesToModify</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">simBodiesToModify</span> <span class="o">=</span> <span class="p">[</span><span class="n">firstSpacecraftName</span><span class="p">]</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">modelPath</span> <span class="o">=</span> <span class="n">modelPath</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">rotation</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">customTexturePath</span> <span class="o">=</span> <span class="n">customTexturePath</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">normalMapPath</span> <span class="o">=</span> <span class="n">normalMapPath</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">shader</span> <span class="o">=</span> <span class="n">assert_option</span><span class="p">(</span><span class="n">shader</span><span class="p">,</span> <span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simBodiesToModify</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;simBodiesToModify must be a non-empty list of strings&quot;</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">simBodiesToModify</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">simBodiesToModify</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+    <span class="n">customModelList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">customModelList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">customModelList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">CustomModelConfig</span><span class="p">(</span><span class="n">customModelList</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="n">actuatorGuiSettingList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="setActuatorGuiSetting">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.setActuatorGuiSetting">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setActuatorGuiSetting</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">spacecraftName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">viewThrusterPanel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">viewThrusterHUD</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">viewRWPanel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">viewRWHUD</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">showThrusterLabels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">showRWLabels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method sets the actuator GUI properties for a particular spacecraft.  If no ``spacecraftName`` is</span>
+<span class="sd">    provided, then the name of the first spacecraft in the simulation is assumed.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    spacecraftName: str</span>
+<span class="sd">        The name of the spacecraft for which the actuator GUI options are set.</span>
+<span class="sd">        Default: If not provided, then the name of the first spacecraft in the simulation is used.</span>
+<span class="sd">    viewThrusterPanel: bool</span>
+<span class="sd">        flag if the GUI panel should be shown illustrating the thruster states</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+<span class="sd">    viewRWPanel: bool</span>
+<span class="sd">        flag if the GUI panel should be shown illustrating the reaction wheel states</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+<span class="sd">    viewThrusterHUD: bool</span>
+<span class="sd">        flag if the HUD visualization of the thruster states should be shown</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+<span class="sd">    viewRWHUD: bool</span>
+<span class="sd">        flag if the HUD visualization of the reaction wheel states should be shown</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showThrusterLabels: bool</span>
+<span class="sd">        flag if the thruster labels should be shown</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showRWLabels: bool</span>
+<span class="sd">        flag if the reaction wheel labels should be shown</span>
+<span class="sd">        Default: if not provided, then the Vizard default settings are used</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">ActuatorGuiSettings</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">spacecraftName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">spacecraftName</span>
+
+    <span class="k">if</span> <span class="n">viewThrusterPanel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">viewThrusterPanel</span> <span class="o">=</span> <span class="n">viewThrusterPanel</span>
+    <span class="k">if</span> <span class="n">viewThrusterHUD</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">viewThrusterHUD</span> <span class="o">=</span> <span class="n">viewThrusterHUD</span>
+    <span class="k">if</span> <span class="n">viewRWPanel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">viewRWPanel</span> <span class="o">=</span> <span class="n">viewRWPanel</span>
+    <span class="k">if</span> <span class="n">viewRWHUD</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">viewRWHUD</span> <span class="o">=</span> <span class="n">viewRWHUD</span>
+    <span class="k">if</span> <span class="n">showThrusterLabels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">showThrusterLabels</span> <span class="o">=</span> <span class="n">showThrusterLabels</span>
+    <span class="k">if</span> <span class="n">showRWLabels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vizElement</span><span class="o">.</span><span class="n">showRWLabels</span> <span class="o">=</span> <span class="n">showRWLabels</span>
+
+    <span class="n">actuatorGuiSettingList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">actuatorGuiSettingsList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">actuatorGuiSettingsList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">ActuatorGuiSettingsConfig</span><span class="p">(</span>
+        <span class="n">actuatorGuiSettingList</span>
+    <span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="n">instrumentGuiSettingList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="setInstrumentGuiSetting">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.setInstrumentGuiSetting">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setInstrumentGuiSetting</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">spacecraftName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">viewCSSPanel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">viewCSSCoverage</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">viewCSSBoresight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showCSSLabels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showGenericSensorLabels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showTransceiverLabels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showTransceiverFrustum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showTransceiverFrustrum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showGenericStoragePanel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">showMultiShapeLabels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method sets the instrument GUI properties for a particular spacecraft.  If no ``spacecraftName`` is</span>
+<span class="sd">    provided, then the name of the first spacecraft in the simulation is assumed.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    spacecraftName: str</span>
+<span class="sd">        The name of the spacecraft for which the actuator GUI options are set.</span>
+<span class="sd">        Default: 0 - If not provided, then the name of the first spacecraft in the simulation is used.</span>
+<span class="sd">    viewCSSPanel: int</span>
+<span class="sd">        flag if the GUI panel should be shown (1) or hidden (-1) illustrating the CSS states</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    viewCSSCoverage: int</span>
+<span class="sd">        flag if the HUD spherical coverage of the CSS states should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    viewCSSBoresight: int</span>
+<span class="sd">        flag if the HUD boresight axes of the CSS states should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showCSSLabels: int</span>
+<span class="sd">        flag if the CSS labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showGenericSensorLabels: int</span>
+<span class="sd">        flag if the generic sensor labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showTransceiverLabels: int</span>
+<span class="sd">        flag if the generic sensor labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showTransceiverFrustum: int</span>
+<span class="sd">        flag if the generic sensor labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showGenericStoragePanel: int</span>
+<span class="sd">        flag if the generic sensor labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    showMultiShapeLabels: int</span>
+<span class="sd">        flag if the generic sensor labels should be shown (1) or hidden (-1)</span>
+<span class="sd">        Default: 0 - if not provided, then the Vizard default settings are used</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">InstrumentGuiSettings</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">spacecraftName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">spacecraftName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">viewCSSPanel</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">viewCSSPanel</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">viewCSSCoverage</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">viewCSSCoverage</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">viewCSSBoresight</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">viewCSSBoresight</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showCSSLabels</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">showCSSLabels</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showGenericSensorLabels</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">showGenericSensorLabels</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showTransceiverLabels</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">showTransceiverLabels</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showTransceiverFrustum</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">showTransceiverFrustum</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">showTransceiverFrustrum</span><span class="p">:</span>
+        <span class="n">transceiverFrustrum</span><span class="p">(</span><span class="n">vizElement</span><span class="p">,</span> <span class="n">showTransceiverFrustrum</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showGenericStoragePanel</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">showGenericStoragePanel</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showMultiShapeLabels</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">showMultiShapeLabels</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">instrumentGuiSettingList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">instrumentGuiSettingsList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">instrumentGuiSettingsList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">InstrumentGuiSettingsConfig</span><span class="p">(</span>
+        <span class="n">instrumentGuiSettingList</span>
+    <span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2026/10/11&quot;</span><span class="p">,</span> <span class="s2">&quot;Use showTransceiverFrustum instead of showTransceiverFrustrum&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transceiverFrustrum</span><span class="p">(</span><span class="n">vizElement</span><span class="p">,</span> <span class="n">showTransceiverFrustrum</span><span class="p">):</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">showTransceiverFrustum</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">showTransceiverFrustrum</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+
+<span class="n">coneInOutList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="createConeInOut">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createConeInOut">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createConeInOut</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">toBodyName</span><span class="p">,</span>
+    <span class="n">coneColor</span><span class="p">,</span>
+    <span class="n">isKeepIn</span><span class="p">,</span>
+    <span class="n">normalVector_B</span><span class="p">,</span>
+    <span class="n">incidenceAngle</span><span class="p">,</span>
+    <span class="n">coneHeight</span><span class="p">,</span>
+    <span class="n">fromBodyName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">position_B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">coneName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a ``KeepOutInCone``.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    fromBodyName: str</span>
+<span class="sd">        Name of body to attach cone onto.</span>
+<span class="sd">        Optional, default selects ``firstSpacecraftName``</span>
+<span class="sd">    toBodyName: str</span>
+<span class="sd">        Detect changes if this body has impingement on cone.</span>
+<span class="sd">    coneColor: int list</span>
+<span class="sd">        Color of the KeepOutInCone.  Can be 4 RGBA integer value (0-255) or a color string.</span>
+<span class="sd">    isKeepIn: bool</span>
+<span class="sd">        True -&gt; keep-in cone created, False -&gt; keep-out cone created</span>
+<span class="sd">    position_B: 3-element double-list</span>
+<span class="sd">        [m] Cone start relative to from-body coordinate frame.</span>
+<span class="sd">        Optional, default [0.0, 0.0, 0.0]</span>
+<span class="sd">    normalVector_B: 3-element double-list</span>
+<span class="sd">        Cone normal direction vector</span>
+<span class="sd">    incidenceAngle: double</span>
+<span class="sd">        [rad] Cone incidence angle</span>
+<span class="sd">    coneHeight: double</span>
+<span class="sd">        [m] Sets height of visible cone (aesthetic only, does not impact function)</span>
+<span class="sd">    coneName: str</span>
+<span class="sd">        Cone name, if unspecified, viz will autogenerate name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">vizElement</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">KeepOutInCone</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">fromBodyName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+    <span class="k">if</span> <span class="n">position_B</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">position_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">fromBodyName</span> <span class="o">=</span> <span class="n">fromBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">toBodyName</span> <span class="o">=</span> <span class="n">toBodyName</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">coneColor</span> <span class="o">=</span> <span class="n">toRGBA255</span><span class="p">(</span><span class="n">coneColor</span><span class="p">)</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">isKeepIn</span> <span class="o">=</span> <span class="n">isKeepIn</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">position_B</span> <span class="o">=</span> <span class="n">position_B</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">normalVector_B</span> <span class="o">=</span> <span class="n">normalVector_B</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">incidenceAngle</span> <span class="o">=</span> <span class="n">incidenceAngle</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">coneHeight</span> <span class="o">=</span> <span class="n">coneHeight</span>
+    <span class="n">vizElement</span><span class="o">.</span><span class="n">coneName</span> <span class="o">=</span> <span class="n">coneName</span>
+
+    <span class="n">coneInOutList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vizElement</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">coneList</span><span class="p">[:]</span>  <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">coneList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">KeepOutInConeConfig</span><span class="p">(</span><span class="n">coneInOutList</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="n">stdCameraList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="createStandardCamera">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createStandardCamera">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createStandardCamera</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">spacecraftName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">setMode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">showHUDElementsInImage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">setView</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fieldOfView</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">bodyTarget</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">pointingVector_B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">position_B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">displayName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates a Standard Camera.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: camera instance</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    spacecraftName: str</span>
+<span class="sd">        Name of spacecraft to attach camera onto.</span>
+<span class="sd">        Optional, default selects ``firstSpacecraftName``</span>
+<span class="sd">    setMode: int</span>
+<span class="sd">        0 -&gt; body targeting, 1 -&gt; pointing vector (default).</span>
+<span class="sd">    showHUDElementsInImage: int</span>
+<span class="sd">        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true</span>
+<span class="sd">    setView: int</span>
+<span class="sd">        0 -&gt; nadir (default), 1 -&gt; orbit normal, 2 -&gt; along track. This is a setting for body targeting mode.</span>
+<span class="sd">    fieldOfView: double</span>
+<span class="sd">        [rad] FOV angle measured edge-to-edge, -1 to use viz default.</span>
+<span class="sd">    bodyTarget: str</span>
+<span class="sd">        Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.</span>
+<span class="sd">    pointingVector_B: 3-element double-list</span>
+<span class="sd">        Camera pointing vector in the spacecraft body frame.</span>
+<span class="sd">        Optional, default [1.0, 0.0, 0.0]</span>
+<span class="sd">    position_B: 3-element double-list</span>
+<span class="sd">        If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside the spacecraft along the pointing vector direction.</span>
+<span class="sd">        Optional, default [0.0, 0.0, 0.0]</span>
+<span class="sd">    displayName: str</span>
+<span class="sd">        Name of the standard camera panel.</span>
+<span class="sd">        Optional</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">cam</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">StdCameraSettings</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">spacecraftName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+    <span class="k">if</span> <span class="n">pointingVector_B</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pointingVector_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">position_B</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">position_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="n">cam</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">spacecraftName</span>
+    <span class="n">cam</span><span class="o">.</span><span class="n">showHUDElementsInImage</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span><span class="n">showHUDElementsInImage</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cam</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="n">fieldOfView</span>
+    <span class="n">cam</span><span class="o">.</span><span class="n">bodyTarget</span> <span class="o">=</span> <span class="n">bodyTarget</span>
+    <span class="n">cam</span><span class="o">.</span><span class="n">pointingVector_B</span> <span class="o">=</span> <span class="n">pointingVector_B</span>
+    <span class="n">cam</span><span class="o">.</span><span class="n">position_B</span> <span class="o">=</span> <span class="n">position_B</span>
+
+    <span class="k">if</span> <span class="n">setMode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cam</span><span class="o">.</span><span class="n">setMode</span> <span class="o">=</span> <span class="n">assert_option</span><span class="p">(</span><span class="n">setMode</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">setView</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cam</span><span class="o">.</span><span class="n">setView</span> <span class="o">=</span> <span class="n">assert_option</span><span class="p">(</span><span class="n">setView</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">displayName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cam</span><span class="o">.</span><span class="n">displayName</span> <span class="o">=</span> <span class="n">displayName</span>
+
+    <span class="n">stdCameraList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>
+    <span class="c1"># clear settings list to replace it with updated list</span>
+    <span class="k">del</span> <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">stdCameraList</span><span class="p">[:]</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">stdCameraList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">StdCameraConfig</span><span class="p">(</span><span class="n">stdCameraList</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cam</span></div>
+
+
+
+<div class="viewcode-block" id="createCameraConfigMsg">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.createCameraConfigMsg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createCameraConfigMsg</span><span class="p">(</span>
+    <span class="n">viz</span><span class="p">,</span>
+    <span class="n">cameraID</span><span class="p">,</span>
+    <span class="n">fieldOfView</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">,</span>
+    <span class="n">cameraPos_B</span><span class="p">,</span>
+    <span class="n">sigma_CB</span><span class="p">,</span>
+    <span class="n">parentName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">renderRate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">skyBox</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">postProcessingOn</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ppFocusDistance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ppAperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ppFocalLength</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ppMaxBlurSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">updateCameraParameters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">renderMode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">depthMapClippingPlanes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">showHUDElementsInImage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method configures camera settings.</span>
+
+<span class="sd">    :param viz: copy of the vizInterface module</span>
+<span class="sd">    :return: camera instance</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    cameraID: int</span>
+<span class="sd">        ID of the camera that took the snapshot.</span>
+<span class="sd">    parentName: str</span>
+<span class="sd">        Name of the parent body to which the camera should be attached</span>
+<span class="sd">        Optional, default is ``firstSpacecraftName``</span>
+<span class="sd">    fieldOfView: double</span>
+<span class="sd">        [rad] Camera FOV, edge-to-edge along camera y-axis.</span>
+<span class="sd">    resolution: 2-element int-list</span>
+<span class="sd">        Camera resolution, width/height in pixels.</span>
+<span class="sd">    renderRate: int</span>
+<span class="sd">        [ns] Frame time interval at which to capture images.</span>
+<span class="sd">    cameraPos_B: 3-element double-list</span>
+<span class="sd">        [m] Camera position in body frame.</span>
+<span class="sd">    sigma_CB: 3-element double-list</span>
+<span class="sd">        MRP defining the orientation of the camera frame relative to the body frame.</span>
+<span class="sd">    skyBox: str</span>
+<span class="sd">        String containing the star field preference.</span>
+<span class="sd">    postProcessingOn: int</span>
+<span class="sd">        Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default which is off, -1 for false, 1 for true.</span>
+<span class="sd">    ppFocusDistance: double</span>
+<span class="sd">        Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely.</span>
+<span class="sd">    ppAperature: double</span>
+<span class="sd">        Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely.</span>
+<span class="sd">    ppFocalLength: double</span>
+<span class="sd">        Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.</span>
+<span class="sd">    ppMaxBlurSize: int</span>
+<span class="sd">        Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.</span>
+<span class="sd">    updateCameraParameters: int</span>
+<span class="sd">        If true, commands camera to update Instrument Camera to current message&#39;s parameters.</span>
+<span class="sd">    renderMode: int</span>
+<span class="sd">        Value of 0 to render visual image (default), value of 1 to render depth buffer to image.</span>
+<span class="sd">    depthMapClippingPlanes: 2-element double-list</span>
+<span class="sd">        [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.</span>
+<span class="sd">    showHUDElementsInImage: int</span>
+<span class="sd">        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+    <span class="n">cameraConfigMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsgPayload</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">parentName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parentName</span> <span class="o">=</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">cameraID</span> <span class="o">=</span> <span class="n">cameraID</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">parentName</span> <span class="o">=</span> <span class="n">parentName</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="n">fieldOfView</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">cameraPos_B</span> <span class="o">=</span> <span class="n">cameraPos_B</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">sigma_CB</span> <span class="o">=</span> <span class="n">sigma_CB</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">skyBox</span> <span class="o">=</span> <span class="n">skyBox</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">postProcessingOn</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">postProcessingOn</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">updateCameraParameters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">updateCameraParameters</span><span class="p">)</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">renderMode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">renderMode</span><span class="p">)</span>
+    <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">showHUDElementsInImage</span> <span class="o">=</span> <span class="n">assert_trinary</span><span class="p">(</span>
+        <span class="n">showHUDElementsInImage</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">renderRate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># convert to nano-seconds</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">renderRate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">renderRate</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ppFocusDistance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ppFocusDistance</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ppFocusDistance</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ppFocusDistance must be 0 or greater than 0.1&quot;</span><span class="p">)</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">ppFocusDistance</span> <span class="o">=</span> <span class="n">ppFocusDistance</span>
+    <span class="k">if</span> <span class="n">ppAperature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ppAperature</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ppAperature</span> <span class="o">&lt;</span> <span class="mf">0.05</span> <span class="ow">or</span> <span class="n">ppAperature</span> <span class="o">&gt;</span> <span class="mi">32</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ppAperature must be 0 or within [0.05, 32]&quot;</span><span class="p">)</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">ppAperture</span> <span class="o">=</span> <span class="n">ppAperature</span>
+    <span class="k">if</span> <span class="n">ppFocalLength</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ppFocalLength</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ppFocalLength</span> <span class="o">&lt;</span> <span class="mf">0.001</span> <span class="ow">or</span> <span class="n">ppFocalLength</span> <span class="o">&gt;</span> <span class="mf">0.3</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ppFocalLength must be 0 or within [0.001, 0.3]&quot;</span><span class="p">)</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">ppFocalLength</span> <span class="o">=</span> <span class="n">ppFocalLength</span>
+    <span class="k">if</span> <span class="n">ppMaxBlurSize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">ppMaxBlurSize</span> <span class="o">=</span> <span class="n">assert_option</span><span class="p">(</span>
+            <span class="n">ppMaxBlurSize</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">depthMapClippingPlanes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">renderMode</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;depthMapClippingPlanes can only be set when renderMode is 1 (depthMap).&quot;</span>
+            <span class="p">)</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">depthMapClippingPlanes</span> <span class="o">=</span> <span class="n">depthMapClippingPlanes</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cameraConfigMsgPayload</span><span class="o">.</span><span class="n">depthMapClippingPlanes</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]</span>
+
+    <span class="n">cameraConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cameraConfigMsgPayload</span><span class="p">)</span>
+    <span class="c1"># need to add code to retain camera config msg in memory.  Below</span>
+    <span class="c1"># the function makes vizInterface subscribe to the pointer to this Msg object</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">addCamMsgToModule</span><span class="p">(</span><span class="n">cameraConfigMsg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cameraConfigMsgPayload</span><span class="p">,</span> <span class="n">cameraConfigMsg</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_correct_len_list</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># Allow lists of all None to pass through as long as they are the correct length</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">])</span>
+        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">==</span> <span class="n">length</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="nb">input</span>
+
+    <span class="n">current_depth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="nb">input</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">current_depth</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Skip over Nones when checking shapes at a given level</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">level</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">current_depth</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">!=</span> <span class="n">length</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;List length should be </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">input</span>
+
+
+<div class="viewcode-block" id="enableUnityVisualization">
+<a class="viewcode-back" href="../Documentation/utilities/vizSupport.html#vizSupport.enableUnityVisualization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enableUnityVisualization</span><span class="p">(</span>
+    <span class="n">scSim</span><span class="p">,</span>
+    <span class="n">simTaskName</span><span class="p">,</span>
+    <span class="n">scList</span><span class="p">,</span>
+    <span class="n">saveFile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rwEffectorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">thrEffectorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">thrColors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">cssList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">genericSensorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ellipsoidList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">lightList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">genericStorageList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">transceiverList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spriteList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">modelDictionaryKeyList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">logoTextureList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">oscOrbitColorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">trueOrbitColorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">groundTrackColorList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">msmInfoList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">trueOrbitColorInMsgList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">groundTrackBodyNameList</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">liveStream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">broadcastStream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">noDisplay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method creates an instance of the vizInterface() modules and sets up associated Vizard</span>
+<span class="sd">    configuration setting messages.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scSim:</span>
+<span class="sd">        variable with the simulationBaseClass copy</span>
+<span class="sd">    simTaskName:</span>
+<span class="sd">        task to which to add the vizInterface module</span>
+<span class="sd">    scList:</span>
+<span class="sd">        :ref:`spacecraft` objects.  Can be a single object or list of objects</span>
+
+<span class="sd">    Keyword Args</span>
+<span class="sd">    ------------</span>
+<span class="sd">    saveFile: str</span>
+<span class="sd">        can be a single python file name, or a full path + file name. In both cases a local results are stored</span>
+<span class="sd">        in a local sub-folder called ``_VizFiles``.</span>
+<span class="sd">        If a data file name is provided directly (i.e. it ends with ``.bin``), then the</span>
+<span class="sd">        associated file path and name are used explicitly.</span>
+<span class="sd">        Default: empty string resulting in the data not being saved to a file</span>
+
+<span class="sd">    rwEffectorList: single or list of ``ReactionWheelStateEffector``</span>
+<span class="sd">        The list must have the same length ``scList``.  Each entry is the :ref:`ReactionWheelStateEffector` instance</span>
+<span class="sd">        for the spacecraft, or ``None`` if the spacecraft has no RW devices.</span>
+<span class="sd">    thrEffectorList: single or double-list of :ref:`ThrusterDynamicEffector`</span>
+<span class="sd">        The list must have the same length ``scList``.  Each entry is a list of :ref:`ReactionWheelStateEffector`</span>
+<span class="sd">        instances</span>
+<span class="sd">        for the spacecraft denoting a thruster cluster, or ``None`` if the spacecraft has no thruster devices.</span>
+<span class="sd">    thrColors: single or vector of int(4)</span>
+<span class="sd">        array of RGBA color values for each thruster set.  The list must have the same length as ``scList``.</span>
+<span class="sd">        Each list entry is a list of RGBA array values for each cluster set.</span>
+<span class="sd">    cssList:</span>
+<span class="sd">        list of lists of :ref:`CoarseSunSensor` objects.  The outer list length must match ``scList``.</span>
+<span class="sd">    genericSensorList:</span>
+<span class="sd">        list of lists of ``GenericSensor`` structures.  The outer list length must match ``scList``.</span>
+<span class="sd">    ellipsoidList:</span>
+<span class="sd">        list of lists of ``Ellipsoid`` structures.  The outer list length must match ``scList``.</span>
+<span class="sd">    lightList:</span>
+<span class="sd">        list of lists of ``Light`` structures.   The outer list length must match ``scList``.</span>
+<span class="sd">    genericStorageList:</span>
+<span class="sd">        list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.</span>
+<span class="sd">    transceiverList:</span>
+<span class="sd">        list of lists of ``Transceiver`` objects.  The outer list length must match ``scList``.</span>
+<span class="sd">    spriteList:</span>
+<span class="sd">        list of sprite information for each spacecraft.  The outer list length must match ``scList``.</span>
+<span class="sd">    modelDictionaryKeyList:</span>
+<span class="sd">        list of the spacecraft model dictionary.  The outer list length must match ``scList``.</span>
+<span class="sd">    logoTextureList:</span>
+<span class="sd">        list of the spacecraft logo texture file paths.  The outer list length must match ``scList``.</span>
+<span class="sd">    oscOrbitColorList:</span>
+<span class="sd">        list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255) or</span>
+<span class="sd">        ``None`` if default values should be used.  The array must be of the length of the spacecraft list</span>
+<span class="sd">    trueOrbitColorList:</span>
+<span class="sd">        list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255) or</span>
+<span class="sd">        ``None`` if default values should be used.  The array must be of the length of the spacecraft list</span>
+<span class="sd">    trueOrbitColorInMsgList:</span>
+<span class="sd">        list of color messages to read and provide the true orbit color at each time step.  This overwrites</span>
+<span class="sd">        the values set with trueOrbitColorList.</span>
+<span class="sd">    groundTrackColorList:</span>
+<span class="sd">        list of spacecraft ground track colors.  Can be 4 RGBA integer value (0-255) or</span>
+<span class="sd">        ``None`` if default values should be used.  The array must be of the length of the spacecraft list</span>
+<span class="sd">    groundTrackBodyNameList:</span>
+<span class="sd">        list of celestial bodies relative to which to draw ground track on.</span>
+<span class="sd">        If None the ground track will default to spacecraft&#39;s dominant grav body</span>
+<span class="sd">    msmInfoList:</span>
+<span class="sd">        list of MSM configuration messages</span>
+
+<span class="sd">    liveStream: bool</span>
+<span class="sd">        flag if live data streaming to Vizard should be used</span>
+<span class="sd">    broadcastStream: bool</span>
+<span class="sd">        flag if messages should be broadcast for listener Vizards to pick up.</span>
+<span class="sd">    noDisplay: bool</span>
+<span class="sd">        flag if Vizard should run performance opNav (no Vizard display)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :ref:`vizInterface` object</span>
+<span class="sd">        copy of the vizInterface instance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">vizFound</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BSK is built without vizInterface support.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># clear the list of point line elements</span>
+    <span class="k">del</span> <span class="n">pointLineList</span><span class="p">[:]</span>
+    <span class="k">del</span> <span class="n">actuatorGuiSettingList</span><span class="p">[:]</span>
+    <span class="k">del</span> <span class="n">coneInOutList</span><span class="p">[:]</span>
+    <span class="k">global</span> <span class="n">firstSpacecraftName</span>
+
+    <span class="c1"># set up the Vizard interface module</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizInterface</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizSettings</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;vizMessenger&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="p">)</span>
+
+    <span class="c1"># ensure the spacecraft object list is a list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scList</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">scList</span> <span class="o">=</span> <span class="p">[</span><span class="n">scList</span><span class="p">]</span>
+    <span class="n">scListLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scList</span><span class="p">)</span>
+
+    <span class="n">firstSpacecraftName</span> <span class="o">=</span> <span class="n">scList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span>
+
+    <span class="k">if</span> <span class="n">rwEffectorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rwEffectorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">rwEffectorList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">thrEffectorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">thrEffectorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">thrEffectorList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">thrColors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">thrColors</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">thrColors</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cssList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cssList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">cssList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">genericSensorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">genericSensorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">genericSensorList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ellipsoidList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ellipsoidList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">ellipsoidList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lightList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lightList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">lightList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">genericStorageList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">genericStorageList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">genericStorageList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">transceiverList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">transceiverList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">transceiverList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">spriteList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spriteList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">spriteList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">modelDictionaryKeyList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">modelDictionaryKeyList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">modelDictionaryKeyList</span><span class="p">,</span> <span class="n">scListLength</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">logoTextureList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logoTextureList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">logoTextureList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">oscOrbitColorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">oscOrbitColorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">oscOrbitColorList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">trueOrbitColorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">trueOrbitColorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">trueOrbitColorList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">trueOrbitColorInMsgList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">trueOrbitColorInMsgList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">trueOrbitColorInMsgList</span><span class="p">,</span> <span class="n">scListLength</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">groundTrackColorList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">groundTrackColorList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">groundTrackColorList</span><span class="p">,</span><span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">groundTrackBodyNameList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">groundTrackBodyNameList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span>
+            <span class="n">groundTrackBodyNameList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">msmInfoList</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msmInfoList</span> <span class="o">=</span> <span class="n">ensure_correct_len_list</span><span class="p">(</span><span class="n">msmInfoList</span><span class="p">,</span> <span class="n">scListLength</span><span class="p">)</span>
+
+    <span class="c1"># loop over all spacecraft to associated states and msg information</span>
+    <span class="n">planetNameList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">planetInfoList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">spiceMsgList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">spacecraftParentName</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">scList</span><span class="p">:</span>
+        <span class="c1"># create spacecraft information container</span>
+        <span class="n">scData</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizSpacecraftData</span><span class="p">()</span>
+
+        <span class="c1"># link to spacecraft state message</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">())):</span>
+            <span class="c1"># set spacecraft name</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">ModelTag</span>
+            <span class="n">spacecraftParentName</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">ModelTag</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+            <span class="c1"># link to celestial bodies information</span>
+            <span class="n">bodies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="s2">&quot;gravField&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s2">&quot;gravBodies&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+            <span class="k">if</span> <span class="n">bodies</span><span class="p">:</span>  <span class="c1"># only runs if gravField exists and has bodies</span>
+                <span class="c1"># get the existing dict of kept wrappers, or start fresh</span>
+                <span class="n">kept</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="s2">&quot;_kept_grav_bodies&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+                <span class="k">for</span> <span class="n">gravBody</span> <span class="ow">in</span> <span class="n">bodies</span><span class="p">:</span>
+                    <span class="c1"># use planetName as a unique key; you could also key by id(gravBody) if needed</span>
+                    <span class="k">if</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">:</span>
+                        <span class="n">kept</span><span class="p">[</span><span class="n">gravBody</span><span class="o">.</span><span class="n">planetName</span><span class="p">]</span> <span class="o">=</span> <span class="n">gravBody</span>
+
+                        <span class="n">planetNameList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gravBody</span><span class="o">.</span><span class="n">planetName</span><span class="p">)</span>
+                        <span class="n">planetInfo</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GravBodyInfo</span><span class="p">()</span>
+                        <span class="n">planetInfo</span><span class="o">.</span><span class="n">bodyName</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">gravBody</span><span class="p">,</span> <span class="s2">&quot;displayName&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">planetName</span>
+                        <span class="n">planetInfo</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">mu</span>
+                        <span class="n">planetInfo</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radEquator</span>
+                        <span class="n">planetInfo</span><span class="o">.</span><span class="n">radiusRatio</span> <span class="o">=</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">radiusRatio</span>
+                        <span class="n">planetInfo</span><span class="o">.</span><span class="n">modelDictionaryKey</span> <span class="o">=</span> <span class="n">gravBody</span><span class="o">.</span><span class="n">modelDictionaryKey</span>
+                        <span class="n">planetInfoList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">planetInfo</span><span class="p">)</span>
+                        <span class="n">spiceMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gravBody</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="p">)</span>
+
+                <span class="c1"># update the dict back onto scSim</span>
+                <span class="n">scSim</span><span class="o">.</span><span class="n">_kept_grav_bodies</span> <span class="o">=</span> <span class="n">kept</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># the scList object is an effector belonging to the parent spacecraft</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">parentSpacecraftName</span> <span class="o">=</span> <span class="n">spacecraftParentName</span>
+            <span class="n">ModelTag</span> <span class="o">=</span> <span class="n">sc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">effStateOutMsg</span> <span class="o">=</span> <span class="n">sc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">ModelTag</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">effStateOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># process RW effectors</span>
+        <span class="k">if</span> <span class="n">rwEffectorList</span><span class="p">:</span>
+            <span class="n">rwList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">rwEffectorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># RWs have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">rwLogMsg</span> <span class="ow">in</span> <span class="n">rwEffectorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">rwOutMsgs</span><span class="p">:</span>
+                    <span class="n">rwList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rwLogMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">rwInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWConfigLogMsgInMsgsVector</span><span class="p">(</span><span class="n">rwList</span><span class="p">)</span>
+
+        <span class="c1"># process THR effectors</span>
+        <span class="k">if</span> <span class="n">thrEffectorList</span><span class="p">:</span>
+            <span class="n">thrList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">thrInfo</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">thrEffectorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># THR clusters have been added to this spacecraft</span>
+                <span class="n">clusterCounter</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">thrEff</span> <span class="ow">in</span> <span class="n">thrEffectorList</span><span class="p">[</span>
+                    <span class="n">c</span>
+                <span class="p">]:</span>  <span class="c1"># loop over the THR effectors attached to this spacecraft</span>
+                    <span class="n">thSet</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+                    <span class="n">thSet</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">thrEff</span><span class="o">.</span><span class="n">ModelTag</span>
+                    <span class="p">)</span>  <span class="c1"># set the label for this cluster of THR devices</span>
+                    <span class="k">if</span> <span class="n">thrColors</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">thrColors</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">thSet</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">thrColors</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">clusterCounter</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">thrLogMsg</span> <span class="ow">in</span> <span class="p">(</span>
+                        <span class="n">thrEff</span><span class="o">.</span><span class="n">thrusterOutMsgs</span>
+                    <span class="p">):</span>  <span class="c1"># loop over the THR cluster log message</span>
+                        <span class="n">thrList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thrLogMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+                        <span class="n">thrInfo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thSet</span><span class="p">)</span>
+                    <span class="n">clusterCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">thrInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THROutputMsgInMsgsVector</span><span class="p">(</span><span class="n">thrList</span><span class="p">)</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">thrInfo</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">ThrClusterVector</span><span class="p">(</span><span class="n">thrInfo</span><span class="p">)</span>
+
+        <span class="c1"># process CSS information</span>
+        <span class="k">if</span> <span class="n">cssList</span><span class="p">:</span>
+            <span class="n">cssDeviceList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">cssList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># CSS list has been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">css</span> <span class="ow">in</span> <span class="n">cssList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">cssDeviceList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">css</span><span class="o">.</span><span class="n">cssConfigLogOutMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">cssInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigLogMsgInMsgsVector</span><span class="p">(</span><span class="n">cssDeviceList</span><span class="p">)</span>
+
+        <span class="c1"># process generic sensor HUD information</span>
+        <span class="k">if</span> <span class="n">genericSensorList</span><span class="p">:</span>
+            <span class="n">gsList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">genericSensorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># generic sensor(s) have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">gs</span> <span class="ow">in</span> <span class="n">genericSensorList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">gsList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gs</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">genericSensorList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericSensorVector</span><span class="p">(</span><span class="n">gsList</span><span class="p">)</span>
+
+        <span class="c1"># process spacecraft ellipsoids</span>
+        <span class="k">if</span> <span class="n">ellipsoidList</span><span class="p">:</span>
+            <span class="n">elList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">ellipsoidList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># generic sensor(s) have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">ellipsoidList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">elList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">ellipsoidList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">EllipsoidVector</span><span class="p">(</span><span class="n">elList</span><span class="p">)</span>
+
+        <span class="c1"># process spacecraft lights</span>
+        <span class="k">if</span> <span class="n">lightList</span><span class="p">:</span>
+            <span class="n">liList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">lightList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># light objects(s) have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="n">lightList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">liList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">lightList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">LightVector</span><span class="p">(</span><span class="n">liList</span><span class="p">)</span>
+
+        <span class="c1"># process generic storage HUD information</span>
+        <span class="k">if</span> <span class="n">genericStorageList</span><span class="p">:</span>
+            <span class="n">gsdList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">genericStorageList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># generic storage device(s) have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">gsd</span> <span class="ow">in</span> <span class="n">genericStorageList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gsd</span><span class="o">.</span><span class="n">color</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gsd</span><span class="o">.</span><span class="n">color</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gsd</span><span class="o">.</span><span class="n">thresholds</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="s2">&quot;ERROR: vizSupport: generic storage &quot;</span>
+                                <span class="o">+</span> <span class="n">gsd</span><span class="o">.</span><span class="n">label</span>
+                                <span class="o">+</span> <span class="s2">&quot; threshold list does not have the correct dimension.  &quot;</span>
+                                <span class="s2">&quot;It should be 1 smaller than the list of colors.&quot;</span>
+                            <span class="p">)</span>
+                            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gsd</span><span class="o">.</span><span class="n">thresholds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="s2">&quot;ERROR: vizSupport: generic storage &quot;</span>
+                                <span class="o">+</span> <span class="n">gsd</span><span class="o">.</span><span class="n">label</span>
+                                <span class="o">+</span> <span class="s2">&quot; threshold list is set, but no multiple of colors are provided.&quot;</span>
+                            <span class="p">)</span>
+                            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">gsdList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gsd</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">genericStorageList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericStorageVector</span><span class="p">(</span><span class="n">gsdList</span><span class="p">)</span>
+
+        <span class="c1"># process transceiver HUD information</span>
+        <span class="k">if</span> <span class="n">transceiverList</span><span class="p">:</span>
+            <span class="n">tcList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">transceiverList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># transceiver(s) have been added to this spacecraft</span>
+                <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">transceiverList</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">tcList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">transceiverList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">TransceiverVector</span><span class="p">(</span><span class="n">tcList</span><span class="p">)</span>
+
+        <span class="c1"># process sprite information</span>
+        <span class="k">if</span> <span class="n">spriteList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">spriteList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">spacecraftSprite</span> <span class="o">=</span> <span class="n">spriteList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="c1"># process modelDictionaryKey information</span>
+        <span class="k">if</span> <span class="n">modelDictionaryKeyList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modelDictionaryKeyList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">modelDictionaryKey</span> <span class="o">=</span> <span class="n">modelDictionaryKeyList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="c1"># process logoTexture information</span>
+        <span class="k">if</span> <span class="n">logoTextureList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">logoTextureList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">logoTexture</span> <span class="o">=</span> <span class="n">logoTextureList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">oscOrbitColorList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">oscOrbitColorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">oscOrbitLineColor</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">oscOrbitColorList</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">trueOrbitColorList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">trueOrbitColorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">trueTrajectoryLineColor</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span>
+                    <span class="n">trueOrbitColorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">trueOrbitColorInMsgList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">trueOrbitColorInMsgList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">trueTrajectoryLineColorInMsg</span> <span class="o">=</span> <span class="n">trueOrbitColorInMsgList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">groundTrackColorList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">groundTrackColorList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">groundTrackLineColor</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">groundTrackColorList</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">groundTrackBodyNameList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">groundTrackBodyNameList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">groundTrackBodyName</span> <span class="o">=</span> <span class="n">groundTrackBodyNameList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+        <span class="c1"># process MSM information</span>
+        <span class="k">if</span> <span class="n">msmInfoList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msmInfoList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># MSM have been added to this spacecraft</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">msmInfo</span> <span class="o">=</span> <span class="n">msmInfoList</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">scData</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">gravBodyInformation</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GravBodyInfoVector</span><span class="p">(</span><span class="n">planetInfoList</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">spiceInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgInMsgsVector</span><span class="p">(</span><span class="n">spiceMsgList</span><span class="p">)</span>
+
+    <span class="c1"># note that the following logic can receive a single python file name, or a full path + file name.</span>
+    <span class="c1"># In both cases a local results are stored in a local sub-folder.</span>
+    <span class="c1"># If a &quot;*.bin&quot; file is provided, then the provided path and name are used to store the data.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">saveFile</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">saveFile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">saveFile</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.bin&quot;</span><span class="p">:</span>
+            <span class="c1"># here the provide file path, file name and file extension are used explicitly</span>
+            <span class="n">vizFileNamePath</span> <span class="o">=</span> <span class="n">saveFile</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># here the file path and name string are split into file path and a file name</span>
+            <span class="c1"># next, the `_VizFiles` folder is created, if needed, and the binary data file</span>
+            <span class="c1"># has the name of the provided file name with `_UnityViz.bin` appended</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">saveFile</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">filePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">saveFile</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filePath</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">filePath</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">filePath</span> <span class="o">+</span> <span class="s2">&quot;/_VizFiles&quot;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">filePath</span> <span class="o">+</span> <span class="s2">&quot;/_VizFiles&quot;</span><span class="p">)</span>
+            <span class="n">vizFileNamePath</span> <span class="o">=</span> <span class="n">filePath</span> <span class="o">+</span> <span class="s2">&quot;/_VizFiles/&quot;</span> <span class="o">+</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_UnityViz.bin&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">saveFile</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">protoFilename</span> <span class="o">=</span> <span class="n">vizFileNamePath</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">liveStream</span> <span class="ow">or</span> <span class="n">broadcastStream</span><span class="p">)</span> <span class="ow">and</span> <span class="n">noDisplay</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;noDisplay mode cannot be used with liveStream or broadcastStream.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">liveStream</span> <span class="o">=</span> <span class="n">liveStream</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">broadcastStream</span> <span class="o">=</span> <span class="n">broadcastStream</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span><span class="o">.</span><span class="n">noDisplay</span> <span class="o">=</span> <span class="n">noDisplay</span>
+
+    <span class="k">return</span> <span class="n">scSim</span><span class="o">.</span><span class="n">vizMessenger</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

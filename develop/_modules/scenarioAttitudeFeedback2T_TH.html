@@ -1,0 +1,867 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAttitudeFeedback2T_TH &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioAttitudeFeedback2T_TH</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioAttitudeFeedback2T_TH</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This example script demonstrates how to use thrusters to stabilize the tumble of a spacecraft orbiting the</span>
+<span class="sd">Earth, using two separate threads.</span>
+<span class="sd">This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to</span>
+<span class="sd">illustrate how a set of thrusters can be added to the rigid :ref:`spacecraft` hub, and what</span>
+<span class="sd">FSW modules are needed to control these thrusters. The simulation setup is performed with two</span>
+<span class="sd">processes, similarly to :ref:`scenarioAttitudeFeedback2T`,</span>
+<span class="sd">in which the dynamics and the FSW algorithms are run at different time steps.  The control setup is the same</span>
+<span class="sd">as in :ref:`scenarioAttitudeFeedbackRW`, but here the RW actuation is replaced with</span>
+<span class="sd">thruster based control torque solution.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioAttitudeFeedback2T_TH.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration. The two processes (SIM and FSW) are simulated</span>
+<span class="sd">and run at different time rates. Interface messages are shared across SIM and</span>
+<span class="sd">FSW message passing interfaces (MPIs).</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioAttitudeFeedback2T_TH.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">When the simulation completes several plots are shown for the MRP attitude history, the rate</span>
+<span class="sd">tracking errors, the requested torque, the requested forces for each thruster and the On-Time commands.</span>
+
+
+
+<span class="sd">Setup Changes to Simulate Thrusters Dynamic Effectors</span>
+<span class="sd">-----------------------------------------------------</span>
+
+<span class="sd">At the beginning of the script all the plot functions are declared. Then the fundamental simulation setup is the same</span>
+<span class="sd">as the one used in :ref:`scenarioAttitudeFeedback2T`.</span>
+<span class="sd">The dynamics simulation is setup using a :ref:`spacecraft` module to which an Earth gravity</span>
+<span class="sd">effector is attached.  The simple navigation module is still used to output the inertial attitude,</span>
+<span class="sd">angular rate, as well as position and velocity messages.</span>
+
+<span class="sd">The Thruster Dynamic Effector is added to the the rigid spacecraft hub, similarly to</span>
+<span class="sd">:ref:`scenarioAttitudeFeedbackRW`.  The support macro ``simIncludeThruster.py``</span>
+<span class="sd">provides several convenient tools to facilitate the setup process.  This script allows the user to</span>
+<span class="sd">readily create thrusters from a database of public specifications, customize them if needed, and add</span>
+<span class="sd">them to the :ref:`spacecraft` module.</span>
+
+<span class="sd">The first thing to do is to create the (empty) set of thrusters that will later contain all the devices. Then</span>
+<span class="sd">a fresh instance of the thruster factory class ``thrusterFactory()`` is created.  This factory is able</span>
+<span class="sd">to create a list of thruster devices, and return copies that can easily be manipulated and customized if needed.</span>
+<span class="sd">The next step in this simulation setup is to use ``create()`` to include a particular thruster device.</span>
+<span class="sd">The ``thrusterFactory()`` class contains several</span>
+<span class="sd">public specifications of thruster devices which can be accessed by specifying their name. In our case we will consider</span>
+<span class="sd">``MOOG_Monarc_1`` for the ACS Thrusters configuration, and ``MOOG_Monarc_22_6`` for the DV Thrusters one.</span>
+<span class="sd">The  2nd and 3rd required arguments are respectively the location of the</span>
+<span class="sd">thruster :math:`\hat{\mathbf r}` and the direction of its force :math:`\hat{\mathbf g}_t`.  Both</span>
+<span class="sd">vectors are expressed in the :math:`\cal B`-frame.  The remaining arguments are all optional.</span>
+<span class="sd">The thrusters are generated by using the ``create()`` command inside a &#39;for&#39; loop, which has the</span>
+<span class="sd">job of assigning the respective location and direction arguments to each thruster, by cycling through the two</span>
+<span class="sd">pre-defined arrays &#39;`location`&#39; and &#39;`direction`&#39;.</span>
+
+<span class="sd">The following table provides a comprehensive list of all the optional arguments of the ``create()``</span>
+<span class="sd">command.  This table list the arguments, default values, as well as expected units.</span>
+
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">|  Argument           | Units | Type     | Description                            | Default            |</span>
+<span class="sd">+=====================+=======+==========+========================================+====================+</span>
+<span class="sd">| useMinPulseTime     |       | Bool     | flag if the thruster model should      | False              |</span>
+<span class="sd">|                     |       |          | use a minimum impulse time             |                    |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| areaNozzle          | m^2   | Float    | thruster nozzle exhaust cone exit area | 0.1                |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| steadyIsp           | s     | Float    | thruster fuel efficiency in Isp        | 100.0              |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| MaxThrust           | N     | Float    | maximum thruster force                 | 0.200              |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| thrusterMagDisp     | %     | Float    | thruster dispersion percentage         | 0.0                |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| MinOnTime           | s     | Float    | thruster minimum on time               | 0.020              |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+
+
+<span class="sd">The command ``addToSpacecraft()`` adds all the created thrusters to the :ref:`spacecraft` module.  The final step</span>
+<span class="sd">is to add the :ref:`thrusterDynamicEffector` to the list of simulation tasks.</span>
+
+
+<span class="sd">Flight Algorithm Changes to Control Thrusters</span>
+<span class="sd">---------------------------------------------</span>
+
+<span class="sd">The general flight algorithm setup is the same as in the earlier simulation scripts. Here we</span>
+<span class="sd">use again the :ref:`inertial3D` guidance module, the :ref:`attTrackingError` module to evaluate the</span>
+<span class="sd">tracking error states, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`</span>
+<span class="sd">control torque vector.  In addition, this time, we have to add two more modules: :ref:`thrForceMapping`</span>
+<span class="sd">and :ref:`thrFiringSchmitt`.</span>
+
+<span class="sd">The :ref:`thrForceMapping` module takes a commanded attitude control torque vector and determines a set of desired</span>
+<span class="sd">thruster force values to implement this torque. It is assumed that the nominal thruster configuration is such that</span>
+<span class="sd">pure torque solutions are possible. The module supports both on- and off-pulsing solutions, including</span>
+<span class="sd">cases where the thruster solutions are saturated due to a large commanded attitude control torque.</span>
+<span class="sd">The module set up is done in an analogous way as the previous ones. It can be noted that one of the inputs</span>
+<span class="sd">corresponds to the output of the :ref:`mrpFeedback`, being the commanded control torque. The other ones are the</span>
+<span class="sd">information on the thrusters configuration and spacecraft inertia, whose messages will be created later in the script.</span>
+<span class="sd">In addition, the control axes are specified using the full identity matrix for ACS thrusters, and its first</span>
+<span class="sd">two rows for the DV ones, since in the latter case we are not able to control one axis (z in our case),</span>
+<span class="sd">due to the geometrical configuration. The last value to specify is the ``thrForceSign``, which will have the</span>
+<span class="sd">value of -1 if off-pulsing DV thrusters are employed, and +1 with the on-pulsing ACS configuration.</span>
+
+<span class="sd">The last needed FSW module is :ref:`thrFiringSchmitt`. A Schmitt trigger logic is implemented to map a desired</span>
+<span class="sd">thruster force value into a thruster on command time. The module reads in the attitude control thruster</span>
+<span class="sd">force values for both on- and off-pulsing scenarios, and then maps this into a time which specifies how</span>
+<span class="sd">long a thruster should be on. Four values are specified: ``thrMinFireTime`` (minimum thruster on-time in seconds),</span>
+<span class="sd">``level_on`` (Upper duty cycle percentage threshold relative to t min to turn on thrusters), ``level_off``</span>
+<span class="sd">(upper duty cycle percentage threshold relative to t min to turn on thrusters), and ``baseThrustState`` (0 by default</span>
+<span class="sd">and set to 1 for DV thrusters). As expected, the thrusters force</span>
+<span class="sd">input is directly the output of ``thrForceMapping``, and also in this case we will need the thrusters configuration</span>
+<span class="sd">message. It can be noted how the output of this module ends up to be the input commands for the</span>
+<span class="sd">:ref:`thrusterDynamicEffector`.</span>
+
+<span class="sd">The flight algorithm needs to know how many thruster devices are on the spacecraft and what their</span>
+<span class="sd">location and direction are.  This is set through a flight software message that is read</span>
+<span class="sd">in by flight algorithm modules that need this info.  To write the required flight thrusters configuration message</span>
+<span class="sd">a separate support macros called ``fswSetupThrusters.py`` is used.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useDVThrusters = False</span>
+
+<span class="sd">The first scenario</span>
+<span class="sd">has the 8 ACS Thrusters.  By looking at the plots we can see how every axis is controlled, and</span>
+<span class="sd">the de-tumbling action is perfectly performed.</span>
+<span class="sd">We can also see how the requested force for each thruster (third plot) never reaches the 1 N limit (apart from during</span>
+<span class="sd">the initial transitory), which means that they are never saturated.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH10.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH20.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH30.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH40.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH50.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useDVThrusters = True</span>
+
+<span class="sd">In this setup we use the 6 DV Thrusters configuration. In this case, given the spacial configuration of the thrusters,</span>
+<span class="sd">it is impossible to control the third axis, so the result is a spacecraft attitude in which the x, y axes are</span>
+<span class="sd">controlled, but with a tumbling motion in the z axis.  In this setup it can be clearly seen</span>
+<span class="sd">how the control action is performed just on the x and y axes, leaving the</span>
+<span class="sd">spacecraft tumbling around the z one. Another important remark is that, since the default state of the DV thrusters</span>
+<span class="sd">is &#39;on&#39;, the requested thruster force is always negative, as it can be seen in the plot.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH11.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH21.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH31.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH41.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedback2T_TH51.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the spacecraft(), extForceTorque, simpleNav(), thrusterDynamicEffector() and</span>
+<span class="c1">#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit, while using thrusters</span>
+<span class="c1">#           to do the attitude control actuation.</span>
+<span class="c1"># Author: Giulio Napolitano</span>
+<span class="c1"># Creation Date:  June 26, 2019</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># The path to the location of Basilisk</span>
+<span class="c1"># Used to get the location of supporting data.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="c1"># import message declarations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">attTrackingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">inertial3D</span>
+<span class="c1"># import FSW Algorithm related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">thrFiringSchmitt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">thrForceMapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">thrusterDynamicEffector</span>
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">fswSetupThrusters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeThruster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>  <span class="c1"># general support file with common unit test functions</span>
+<span class="c1"># attempt to import vizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Plotting functions</span>
+<div class="viewcode-block" id="plot_attitude_error">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.plot_attitude_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_attitude_error</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the attitude errors.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Attitude Error $\sigma_{B/R}$&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rate_error">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.plot_rate_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rate_error</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the body angular velocity tracking errors.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_{BR,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate Tracking Error [rad/s] &#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_requested_torque">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.plot_requested_torque">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_requested_torque</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataLr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the commanded attitude control torque.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataLr</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$L_{r,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Control Torque $L_r$ [Nm]&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_thrForce">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.plot_thrForce">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_thrForce</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">,</span> <span class="n">numTh</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the Thruster force values.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTh</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numTh</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$thrForce_{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}$&#39;</span>
+                 <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Force requested [N]&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_OnTimeRequest">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.plot_OnTimeRequest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_OnTimeRequest</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSchm</span><span class="p">,</span> <span class="n">numTh</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the thruster on time requests.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTh</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSchm</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numTh</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$OnTimeRequest_{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;OnTimeRequest [sec]&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedback2T_TH.html#scenarioAttitudeFeedback2T_TH.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useDVThrusters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        useDVThrusters (bool): Use 6 DV thrusters instead of the default 8 ACS thrusters.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;dynTask&quot;</span>
+    <span class="n">dynProcessName</span> <span class="o">=</span> <span class="s2">&quot;dynProcess&quot;</span>
+
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">&quot;fswTask&quot;</span>
+    <span class="n">fswProcessName</span> <span class="o">=</span> <span class="s2">&quot;fswProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># set the simulation time variable used later on</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">dynProcessName</span><span class="p">)</span>
+    <span class="n">fswProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">fswProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">simTimeStep</span><span class="p">))</span>
+    <span class="n">fswTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">fswProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">fswTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+    <span class="c1"># define the simulation inertia</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># setup Earth Gravity Body</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># setup extForceTorque module</span>
+    <span class="c1"># the control torque is read in through the messaging system</span>
+    <span class="n">extFTObject</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;externalDisturbance&quot;</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.25</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.25</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">extFTObject</span><span class="p">)</span>
+
+    <span class="c1"># add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+
+    <span class="c1"># create arrays for thrusters&#39; locations and directions</span>
+    <span class="k">if</span> <span class="n">useDVThrusters</span><span class="p">:</span>
+
+        <span class="n">location</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="mf">0.95</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.8227241335952166</span><span class="p">,</span>
+                <span class="mf">0.4750000000000003</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.8227241335952168</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.47499999999999976</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.95</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.8227241335952165</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.4750000000000004</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.822724133595217</span><span class="p">,</span>
+                <span class="mf">0.4749999999999993</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.1</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">direction</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">location</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="mf">3.874945160902288e-2</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">3.874945160902288e-2</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">3.8749451609022656e-2</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">3.8749451609022656e-2</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">3.874945160902288e-2</span><span class="p">,</span>
+                <span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">3.874945160902288e-2</span><span class="p">,</span>
+                <span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">3.8749451609022656e-2</span><span class="p">,</span>
+                <span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="mf">0.85245</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">3.8749451609022656e-2</span><span class="p">,</span>
+                <span class="mf">1.206182747348013</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.85245</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">direction</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mf">0.7071067811865475</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.7071067811865476</span><span class="p">,</span>
+                <span class="mf">0.0</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+
+    <span class="c1"># create the set of thruster in the dynamics task</span>
+    <span class="n">thrusterSet</span> <span class="o">=</span> <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">)</span>
+
+    <span class="c1"># Make a fresh thruster factory instance, this is critical to run multiple times</span>
+    <span class="n">thFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+
+    <span class="c1"># create the thruster devices by specifying the thruster type and its location and direction</span>
+    <span class="k">for</span> <span class="n">pos_B</span><span class="p">,</span> <span class="n">dir_B</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">useDVThrusters</span><span class="p">:</span>
+            <span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;MOOG_Monarc_22_6&#39;</span><span class="p">,</span> <span class="n">pos_B</span><span class="p">,</span> <span class="n">dir_B</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;MOOG_Monarc_1&#39;</span><span class="p">,</span> <span class="n">pos_B</span><span class="p">,</span> <span class="n">dir_B</span><span class="p">)</span>
+
+    <span class="c1"># get number of thruster devices</span>
+    <span class="n">numTh</span> <span class="o">=</span> <span class="n">thFactory</span><span class="o">.</span><span class="n">getNumOfDevices</span><span class="p">()</span>
+
+    <span class="c1"># create thruster object container and tie to spacecraft object</span>
+    <span class="n">thrModelTag</span> <span class="o">=</span> <span class="s2">&quot;ACSThrusterDynamics&quot;</span>
+    <span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">thrModelTag</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the FSW algorithm tasks</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># setup inertial3D guidance module</span>
+    <span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>  <span class="c1"># set the desired inertial orientation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">inertial3DObj</span><span class="p">)</span>
+
+    <span class="c1"># setup the attitude tracking error evaluation module</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="c1"># setup the MRP Feedback control module</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span><span class="o">*</span><span class="mf">10.0</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="mf">0.0002</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span><span class="o">*</span><span class="mf">10.0</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="c1"># setup the thruster force mapping module</span>
+    <span class="n">thrForceMappingObj</span> <span class="o">=</span> <span class="n">thrForceMapping</span><span class="o">.</span><span class="n">thrForceMapping</span><span class="p">()</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;thrForceMapping&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrForceMappingObj</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useDVThrusters</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceSign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceSign</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+
+    <span class="c1"># setup the Schmitt trigger thruster firing logic module</span>
+    <span class="n">thrFiringSchmittObj</span> <span class="o">=</span> <span class="n">thrFiringSchmitt</span><span class="o">.</span><span class="n">thrFiringSchmitt</span><span class="p">()</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;thrFiringSchmitt&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrFiringSchmittObj</span><span class="p">)</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">thrMinFireTime</span> <span class="o">=</span> <span class="mf">0.002</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">level_on</span> <span class="o">=</span> <span class="mf">.75</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">level_off</span> <span class="o">=</span> <span class="mf">.25</span>
+    <span class="k">if</span> <span class="n">useDVThrusters</span><span class="p">:</span>
+        <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">baseThrustState</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">fswTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">mrpTorqueLog</span> <span class="o">=</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">attErrorLog</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">snTransLog</span> <span class="o">=</span> <span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">snAttLog</span> <span class="o">=</span> <span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">thrMapLog</span> <span class="o">=</span> <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceCmdOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">thrTrigLog</span> <span class="o">=</span> <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">onTimeOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">mrpTorqueLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">snTransLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">snAttLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrMapLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">thrTrigLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># create FSW simulation messages</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># create the FSW vehicle configuration message</span>
+
+    <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="c1"># create the FSW Thruster configuration message</span>
+    <span class="k">if</span> <span class="n">useDVThrusters</span><span class="p">:</span>
+        <span class="n">maxThrust</span> <span class="o">=</span> <span class="mi">22</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">maxThrust</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># A `clearSetup()` should be called first to clear out any pre-existing devices from an</span>
+    <span class="c1"># earlier simulation run.  Next, the `maxThrust` value should be specified and used in the macro `create()`,</span>
+    <span class="c1"># together with the locations and directions, and looped through a for cycle to consider all the thrusters.</span>
+    <span class="c1"># The support macro `writeConfigMessage()` creates the required thrusters flight configuration message.</span>
+    <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">pos_B</span><span class="p">,</span> <span class="n">dir_B</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">pos_B</span><span class="p">,</span> <span class="n">dir_B</span><span class="p">,</span> <span class="n">maxThrust</span><span class="p">)</span>
+    <span class="n">fswThrConfigMsg</span> <span class="o">=</span> <span class="n">fswSetupThrusters</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span>
+    <span class="c1"># an alternate method to pull un-modifed SIM Thruster configuration and create the corresponding FSW</span>
+    <span class="c1"># configuration message is:</span>
+    <span class="n">fswThrConfigMsg</span> <span class="o">=</span> <span class="n">thFactory</span><span class="o">.</span><span class="n">getConfigMessage</span><span class="p">()</span>
+
+    <span class="c1">#   set initial Spacecraft States</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">10000000.0</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+    <span class="c1"># connect messages</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswThrConfigMsg</span><span class="p">)</span>
+    <span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">thrConfInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswThrConfigMsg</span><span class="p">)</span>
+    <span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">thrForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrForceMappingObj</span><span class="o">.</span><span class="n">thrForceCmdOutMsg</span><span class="p">)</span>
+    <span class="n">thrusterSet</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrFiringSchmittObj</span><span class="o">.</span><span class="n">onTimeOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span>  <span class="n">scObject</span>
+                                                  <span class="c1"># , saveFile=fileName</span>
+                                                  <span class="p">,</span> <span class="n">thrEffectorList</span><span class="o">=</span><span class="n">thrusterSet</span>
+                                                  <span class="p">,</span> <span class="n">thrColors</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                                                  <span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">setActuatorGuiSetting</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">showThrusterLabels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">dataLr</span> <span class="o">=</span> <span class="n">mrpTorqueLog</span><span class="o">.</span><span class="n">torqueRequestBody</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">sigma_BR</span>
+    <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">omega_BR_B</span>
+    <span class="n">dataMap</span> <span class="o">=</span> <span class="n">thrMapLog</span><span class="o">.</span><span class="n">thrForce</span>
+    <span class="n">dataSchm</span> <span class="o">=</span> <span class="n">thrTrigLog</span><span class="o">.</span><span class="n">OnTimeRequest</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">timeDataFSW</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+
+    <span class="n">plot_requested_torque</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataLr</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useDVThrusters</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useDVThrusters</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useDVThrusters</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">plot_thrForce</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataMap</span><span class="p">,</span> <span class="n">numTh</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;4&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useDVThrusters</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">plot_OnTimeRequest</span><span class="p">(</span><span class="n">timeDataFSW</span><span class="p">,</span> <span class="n">dataSchm</span><span class="p">,</span> <span class="n">numTh</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;5&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useDVThrusters</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="kc">False</span><span class="p">,</span>  <span class="c1"># useDVThrusters</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

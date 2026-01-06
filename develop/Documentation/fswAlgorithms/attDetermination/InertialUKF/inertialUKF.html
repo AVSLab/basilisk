@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: inertialUKF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="InertialUKF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attDetermination</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../CSSEst/index.html">CSSEst</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">InertialUKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../headingSuKF/index.html">headingSuKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../okeefeEKF/index.html">okeefeEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineEKF/index.html">sunlineEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineEphem/index.html">sunlineEphem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineSEKF/index.html">sunlineSEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineSuKF/index.html">sunlineSuKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineUKF/index.html">sunlineUKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attDetermination</a></li>
+          <li class="breadcrumb-item"><a href="index.html">InertialUKF</a></li>
+      <li class="breadcrumb-item active">Module: inertialUKF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-inertialukf">
+<span id="inertialukf"></span><h1>Module: inertialUKF<a class="headerlink" href="#module-inertialukf" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module filters incoming star tracker measurements and reaction wheel data in order to get the best possible inertial attitude estimate. The filter used is an unscented Kalman filter using the Modified Rodrigues Parameters (MRPs) as a non-singular attitude measure.  Measurements can be coming in from several camera heads.</p>
+<p>More information on can be found in the
+<a class="reference download internal" download="" href="../../../../_downloads/3e2ecee0db19a40d6090e80fc8908c40/Basilisk-inertialUKF-20190402.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a></p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>navigation output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>filtDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/InertialFilterMsgPayload.html#inertialfiltermsgpayload"><span class="std std-ref">InertialFilterMsgPayload</span></a></p></td>
+<td><p>name of the output filter data message</p></td>
+</tr>
+<tr class="row-even"><td><p>massPropsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>spacecraft vehicle configuration input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>rwParamsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.html#rwarrayconfigmsgpayload"><span class="std std-ref">RWArrayConfigMsgPayload</span></a></p></td>
+<td><p>reaction wheel parameter input message.  Can be an empty message if no RW are included.</p></td>
+</tr>
+<tr class="row-even"><td><p>rwSpeedsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#rwspeedmsgpayload"><span class="std std-ref">RWSpeedMsgPayload</span></a></p></td>
+<td><p>reaction wheel speed input message.  Can be an empty message if no RW are included.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gyrBuffInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccDataMsgPayload.html#accdatamsgpayload"><span class="std std-ref">AccDataMsgPayload</span></a></p></td>
+<td><p>rate gyro input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420SelfInit_inertialUKFP17InertialUKFConfig7int64_t">
+<span id="_CPPv320SelfInit_inertialUKFP17InertialUKFConfig7int64_t"></span><span id="_CPPv220SelfInit_inertialUKFP17InertialUKFConfig7int64_t"></span><span id="SelfInit_inertialUKF__InertialUKFConfigP.int64_t"></span><span class="target" id="inertial_u_k_f_8h_1aafd22d4af433ea66e0ebbaea2016311f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_inertialUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420SelfInit_inertialUKFP17InertialUKFConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method creates the two moduel output messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS WLS estimator </p></li>
+<li><p><strong>moduleId</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415Read_STMessagesP17InertialUKFConfig">
+<span id="_CPPv315Read_STMessagesP17InertialUKFConfig"></span><span id="_CPPv215Read_STMessagesP17InertialUKFConfig"></span><span id="Read_STMessages__InertialUKFConfigP"></span><span class="target" id="inertial_u_k_f_8h_1a8d7a5389d7a61063ea1375c92a155218"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Read_STMessages</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415Read_STMessagesP17InertialUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads in the messages from all available star trackers and orders them with respect to time of measurement</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418Update_inertialUKFP17InertialUKFConfig8uint64_t7int64_t">
+<span id="_CPPv318Update_inertialUKFP17InertialUKFConfig8uint64_t7int64_t"></span><span id="_CPPv218Update_inertialUKFP17InertialUKFConfig8uint64_t7int64_t"></span><span id="Update_inertialUKF__InertialUKFConfigP.uint64_t.int64_t"></span><span class="target" id="inertial_u_k_f_8h_1aac673f9e06ca4fc2c0b5b43a2be6800c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_inertialUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418Update_inertialUKFP17InertialUKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the parsed CSS sensor data and outputs an estimate of the sun vector in the ADCS body frame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417Reset_inertialUKFP17InertialUKFConfig8uint64_t7int64_t">
+<span id="_CPPv317Reset_inertialUKFP17InertialUKFConfig8uint64_t7int64_t"></span><span id="_CPPv217Reset_inertialUKFP17InertialUKFConfig8uint64_t7int64_t"></span><span id="Reset_inertialUKF__InertialUKFConfigP.uint64_t.int64_t"></span><span class="target" id="inertial_u_k_f_8h_1a662a3db3e00c5eff577a97aea91e8a7a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_inertialUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417Reset_inertialUKFP17InertialUKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the inertial inertial filter to an initial state and initializes the internal estimation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleId</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421inertialUKFAggGyrDataP17InertialUKFConfigddP17AccDataMsgPayload">
+<span id="_CPPv321inertialUKFAggGyrDataP17InertialUKFConfigddP17AccDataMsgPayload"></span><span id="_CPPv221inertialUKFAggGyrDataP17InertialUKFConfigddP17AccDataMsgPayload"></span><span id="inertialUKFAggGyrData__InertialUKFConfigP.double.double.AccDataMsgPayloadP"></span><span class="target" id="inertial_u_k_f_8h_1aebe0f61b4906081c21182e7db3552c6d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialUKFAggGyrData</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">prevTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">propTime</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/AccDataMsgPayload.html#_CPPv417AccDataMsgPayload" title="AccDataMsgPayload"><span class="n"><span class="pre">AccDataMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">gyrData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421inertialUKFAggGyrDataP17InertialUKFConfigddP17AccDataMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>This method aggregates the input gyro data into a combined total quaternion rotation to push the state forward by. This information is stored in the main data structure for use in the propagation routines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>prevTime</strong> – [s] Previous time step </p></li>
+<li><p><strong>propTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+<li><p><strong>gyrData</strong> – The gyro measurements that we are going to accumulate forward into time </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421inertialUKFTimeUpdateP17InertialUKFConfigd">
+<span id="_CPPv321inertialUKFTimeUpdateP17InertialUKFConfigd"></span><span id="_CPPv221inertialUKFTimeUpdateP17InertialUKFConfigd"></span><span id="inertialUKFTimeUpdate__InertialUKFConfigP.double"></span><span class="target" id="inertial_u_k_f_8h_1afd3b76c493d3604ae35155a52caa6cc1"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialUKFTimeUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">updateTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421inertialUKFTimeUpdateP17InertialUKFConfigd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the time update for the inertial kalman filter. It propagates the sigma points forward in time and then gets the current covariance and state estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>updateTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421inertialUKFMeasUpdateP17InertialUKFConfigi">
+<span id="_CPPv321inertialUKFMeasUpdateP17InertialUKFConfigi"></span><span id="_CPPv221inertialUKFMeasUpdateP17InertialUKFConfigi"></span><span id="inertialUKFMeasUpdate__InertialUKFConfigP.i"></span><span class="target" id="inertial_u_k_f_8h_1a0884f2d6624e68174d2ede95ab66b0a4"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialUKFMeasUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentST</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421inertialUKFMeasUpdateP17InertialUKFConfigi" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the measurement update for the inertial kalman filter. It applies the observations in the obs vectors to the current state estimate and updates the state/covariance with that information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>currentST</strong> – Current star tracker state </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422inertialUKFCleanUpdateP17InertialUKFConfig">
+<span id="_CPPv322inertialUKFCleanUpdateP17InertialUKFConfig"></span><span id="_CPPv222inertialUKFCleanUpdateP17InertialUKFConfig"></span><span id="inertialUKFCleanUpdate__InertialUKFConfigP"></span><span class="target" id="inertial_u_k_f_8h_1aa5fd91033bf0897aa0aa98163bbdf5f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialUKFCleanUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422inertialUKFCleanUpdateP17InertialUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method cleans the filter states after a bad upadate on the fly. It removes the potentially corrupted previous estimates and puts the filter back to a working state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417inertialStatePropP17InertialUKFConfigPdd">
+<span id="_CPPv317inertialStatePropP17InertialUKFConfigPdd"></span><span id="_CPPv217inertialStatePropP17InertialUKFConfigPdd"></span><span id="inertialStateProp__InertialUKFConfigP.doubleP.double"></span><span class="target" id="inertial_u_k_f_8h_1a68a475490cd669c915f266b974c8ef8f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialStateProp</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateInOut</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417inertialStatePropP17InertialUKFConfigPdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method propagates a inertial state vector forward in time. Note that the calling parameter is updated in place to save on data copies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>stateInOut</strong> – The state that is propagated </p></li>
+<li><p><strong>dt</strong> – Time step (s) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420inertialUKFMeasModelP17InertialUKFConfigi">
+<span id="_CPPv320inertialUKFMeasModelP17InertialUKFConfigi"></span><span id="_CPPv220inertialUKFMeasModelP17InertialUKFConfigi"></span><span id="inertialUKFMeasModel__InertialUKFConfigP.i"></span><span class="target" id="inertial_u_k_f_8h_1acf66f59d189357f2937fb99b413a949f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialUKFMeasModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417InertialUKFConfig" title="InertialUKFConfig"><span class="n"><span class="pre">InertialUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentST</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420inertialUKFMeasModelP17InertialUKFConfigi" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes what the expected measurement vector is for each CSS that is present on the spacecraft. All data is transacted from the main data structure for the model because there are many variables that would have to be updated otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>currentST</strong> – current star tracker state </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv49STMessage">
+<span id="_CPPv39STMessage"></span><span id="_CPPv29STMessage"></span><span id="STMessage"></span><span class="target" id="struct_s_t_message"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STMessage</span></span></span><a class="headerlink" href="#_CPPv49STMessage" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;inertialUKF.h&gt;</em></div>
+<p>Star Tracker (ST) sensor container structure. Contains the msg input name and Id and sensor noise value. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9STMessage7stInMsgE">
+<span id="_CPPv3N9STMessage7stInMsgE"></span><span id="_CPPv2N9STMessage7stInMsgE"></span><span id="STMessage::stInMsg__STAttMsg_C"></span><span class="target" id="struct_s_t_message_1a39c838b0d87e0401d021670c6e25a107"></span><span class="n"><span class="pre">STAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stInMsg</span></span></span><a class="headerlink" href="#_CPPv4N9STMessage7stInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>star tracker input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N9STMessage5noiseE">
+<span id="_CPPv3N9STMessage5noiseE"></span><span id="_CPPv2N9STMessage5noiseE"></span><span id="STMessage::noise__doubleA"></span><span class="target" id="struct_s_t_message_1a2226e73ca241ab30eb36b1d79b1780bb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noise</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N9STMessage5noiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Per axis noise on the ST </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv413STDataParsing">
+<span id="_CPPv313STDataParsing"></span><span id="_CPPv213STDataParsing"></span><span id="STDataParsing"></span><span class="target" id="struct_s_t_data_parsing"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STDataParsing</span></span></span><a class="headerlink" href="#_CPPv413STDataParsing" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;inertialUKF.h&gt;</em></div>
+<p>Structure to gather the ST messages and content. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13STDataParsing5numSTE">
+<span id="_CPPv3N13STDataParsing5numSTE"></span><span id="_CPPv2N13STDataParsing5numSTE"></span><span id="STDataParsing::numST__i"></span><span class="target" id="struct_s_t_data_parsing_1a9956f94cf93f05a15870ab0246f98f9b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numST</span></span></span><a class="headerlink" href="#_CPPv4N13STDataParsing5numSTE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of Star Trackers. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13STDataParsing10STMessagesE">
+<span id="_CPPv3N13STDataParsing10STMessagesE"></span><span id="_CPPv2N13STDataParsing10STMessagesE"></span><span id="STDataParsing::STMessages__STMessageA"></span><span class="target" id="struct_s_t_data_parsing_1a8544ef2b379901fe6419c30b58535460"></span><a class="reference internal" href="#_CPPv49STMessage" title="STMessage"><span class="n"><span class="pre">STMessage</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STMessages</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N13STDataParsing10STMessagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Decoded MIRU data for both camera heads </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417InertialUKFConfig">
+<span id="_CPPv317InertialUKFConfig"></span><span id="_CPPv217InertialUKFConfig"></span><span id="InertialUKFConfig"></span><span class="target" id="struct_inertial_u_k_f_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InertialUKFConfig</span></span></span><a class="headerlink" href="#_CPPv417InertialUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;inertialUKF.h&gt;</em></div>
+<p>Top level structure for the Inertial unscented kalman filter. Used to estimate the spacecraft’s inertial attitude. Measurements are StarTracker data and gyro data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig14navStateOutMsgE">
+<span id="_CPPv3N17InertialUKFConfig14navStateOutMsgE"></span><span id="_CPPv2N17InertialUKFConfig14navStateOutMsgE"></span><span id="InertialUKFConfig::navStateOutMsg__NavAttMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1a9a76bb9fdfafc5e6eb44cec96f2d9afa"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig14navStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig14filtDataOutMsgE">
+<span id="_CPPv3N17InertialUKFConfig14filtDataOutMsgE"></span><span id="_CPPv2N17InertialUKFConfig14filtDataOutMsgE"></span><span id="InertialUKFConfig::filtDataOutMsg__InertialFilterMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1a93f1eebee7866914c605a3e7ed88b711"></span><span class="n"><span class="pre">InertialFilterMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filtDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig14filtDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output filter data message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig14massPropsInMsgE">
+<span id="_CPPv3N17InertialUKFConfig14massPropsInMsgE"></span><span id="_CPPv2N17InertialUKFConfig14massPropsInMsgE"></span><span id="InertialUKFConfig::massPropsInMsg__VehicleConfigMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1ae5efa0f6ec6f67fc2f0ff7fbafce1de3"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massPropsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig14massPropsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The name of the mass props message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13rwParamsInMsgE">
+<span id="_CPPv3N17InertialUKFConfig13rwParamsInMsgE"></span><span id="_CPPv2N17InertialUKFConfig13rwParamsInMsgE"></span><span id="InertialUKFConfig::rwParamsInMsg__RWArrayConfigMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1ae1c8e907dfd069f2c13c3c9d91e27029"></span><span class="n"><span class="pre">RWArrayConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwParamsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13rwParamsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the RWConfigParams input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13rwSpeedsInMsgE">
+<span id="_CPPv3N17InertialUKFConfig13rwSpeedsInMsgE"></span><span id="_CPPv2N17InertialUKFConfig13rwSpeedsInMsgE"></span><span id="InertialUKFConfig::rwSpeedsInMsg__RWSpeedMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1a3971811eabbe302e65f9574dd70cf59d"></span><span class="n"><span class="pre">RWSpeedMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeedsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13rwSpeedsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The name of the input RW speeds message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig12gyrBuffInMsgE">
+<span id="_CPPv3N17InertialUKFConfig12gyrBuffInMsgE"></span><span id="_CPPv2N17InertialUKFConfig12gyrBuffInMsgE"></span><span id="InertialUKFConfig::gyrBuffInMsg__AccDataMsg_C"></span><span class="target" id="struct_inertial_u_k_f_config_1a82f8926da3619cbb94381ab78265b579"></span><span class="n"><span class="pre">AccDataMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gyrBuffInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig12gyrBuffInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Input message buffer from MIRU </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9numStatesE">
+<span id="_CPPv3N17InertialUKFConfig9numStatesE"></span><span id="_CPPv2N17InertialUKFConfig9numStatesE"></span><span id="InertialUKFConfig::numStates__s"></span><span class="target" id="struct_inertial_u_k_f_config_1a48f7a85913da710eabadd70f7c42110b"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of states for this filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig12countHalfSPsE">
+<span id="_CPPv3N17InertialUKFConfig12countHalfSPsE"></span><span id="_CPPv2N17InertialUKFConfig12countHalfSPsE"></span><span id="InertialUKFConfig::countHalfSPs__s"></span><span class="target" id="struct_inertial_u_k_f_config_1a3eb82663fee3071e96614bfdfc90a7d8"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">countHalfSPs</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig12countHalfSPsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of sigma points over 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig6numObsE">
+<span id="_CPPv3N17InertialUKFConfig6numObsE"></span><span id="_CPPv2N17InertialUKFConfig6numObsE"></span><span id="InertialUKFConfig::numObs__s"></span><span class="target" id="struct_inertial_u_k_f_config_1af81a53036b2e1fad1c3e7a6454876878"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numObs</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig6numObsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of measurements this cycle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig4betaE">
+<span id="_CPPv3N17InertialUKFConfig4betaE"></span><span id="_CPPv2N17InertialUKFConfig4betaE"></span><span id="InertialUKFConfig::beta__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a9c3e83aa68961a4a7877e56b427236d7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig4betaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Beta parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5alphaE">
+<span id="_CPPv3N17InertialUKFConfig5alphaE"></span><span id="_CPPv2N17InertialUKFConfig5alphaE"></span><span id="InertialUKFConfig::alpha__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a3d8f16b7eaa499f7b2473bceaf9edf13"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Alpha parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5kappaE">
+<span id="_CPPv3N17InertialUKFConfig5kappaE"></span><span id="_CPPv2N17InertialUKFConfig5kappaE"></span><span id="InertialUKFConfig::kappa__double"></span><span class="target" id="struct_inertial_u_k_f_config_1ae59100118174ee1b618986d1ed0ca129"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kappa</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5kappaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Kappa parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9lambdaValE">
+<span id="_CPPv3N17InertialUKFConfig9lambdaValE"></span><span id="_CPPv2N17InertialUKFConfig9lambdaValE"></span><span id="InertialUKFConfig::lambdaVal__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a9d03fac236e1f064a0c5dde97dfc9117"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lambdaVal</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9lambdaValE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lambda parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5gammaE">
+<span id="_CPPv3N17InertialUKFConfig5gammaE"></span><span id="_CPPv2N17InertialUKFConfig5gammaE"></span><span id="InertialUKFConfig::gamma__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a31de60f6379d350edac110840817859c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gamma</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5gammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gamma parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9switchMagE">
+<span id="_CPPv3N17InertialUKFConfig9switchMagE"></span><span id="_CPPv2N17InertialUKFConfig9switchMagE"></span><span id="InertialUKFConfig::switchMag__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a23729f0f992039a315e96551eccc0361"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">switchMag</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9switchMagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Threshold for where we switch MRP set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig2dtE">
+<span id="_CPPv3N17InertialUKFConfig2dtE"></span><span id="_CPPv2N17InertialUKFConfig2dtE"></span><span id="InertialUKFConfig::dt__double"></span><span class="target" id="struct_inertial_u_k_f_config_1aa97229f74fe21bb3665b96c416e9a655"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dt</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig2dtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] seconds since last data epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig7timeTagE">
+<span id="_CPPv3N17InertialUKFConfig7timeTagE"></span><span id="_CPPv2N17InertialUKFConfig7timeTagE"></span><span id="InertialUKFConfig::timeTag__double"></span><span class="target" id="struct_inertial_u_k_f_config_1ab7136be9f7441080b241d453a8bb6ebf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTag</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig7timeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time tag for statecovar/etc </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13gyrAggTimeTagE">
+<span id="_CPPv3N17InertialUKFConfig13gyrAggTimeTagE"></span><span id="_CPPv2N17InertialUKFConfig13gyrAggTimeTagE"></span><span id="InertialUKFConfig::gyrAggTimeTag__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a08b5d74c8bd325adeab7b0201f65601b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gyrAggTimeTag</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13gyrAggTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time-tag for aggregated gyro data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13aggSigma_b2b1E">
+<span id="_CPPv3N17InertialUKFConfig13aggSigma_b2b1E"></span><span id="_CPPv2N17InertialUKFConfig13aggSigma_b2b1E"></span><span id="InertialUKFConfig::aggSigma_b2b1__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a5fb80f308c8ed1d66f1d55961ec71474"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aggSigma_b2b1</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13aggSigma_b2b1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Aggregated attitude motion from gyros </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig14dcm_BdyGyrpltfE">
+<span id="_CPPv3N17InertialUKFConfig14dcm_BdyGyrpltfE"></span><span id="_CPPv2N17InertialUKFConfig14dcm_BdyGyrpltfE"></span><span id="InertialUKFConfig::dcm_BdyGyrpltf__doubleAA"></span><span class="target" id="struct_inertial_u_k_f_config_1a26787b700d6b7f3bc41c00c6fc034b54"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BdyGyrpltf</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig14dcm_BdyGyrpltfE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM for converting gyro data to body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig2wME">
+<span id="_CPPv3N17InertialUKFConfig2wME"></span><span id="_CPPv2N17InertialUKFConfig2wME"></span><span id="InertialUKFConfig::wM__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1ae895b80bf62a090b21c6a81902cd923e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wM</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig2wME" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig2wCE">
+<span id="_CPPv3N17InertialUKFConfig2wCE"></span><span id="_CPPv2N17InertialUKFConfig2wCE"></span><span id="InertialUKFConfig::wC__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1aad1404ffc5d7e9177a163501bb45692b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wC</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig2wCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9stateInitE">
+<span id="_CPPv3N17InertialUKFConfig9stateInitE"></span><span id="_CPPv2N17InertialUKFConfig9stateInitE"></span><span id="InertialUKFConfig::stateInit__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a8600966a7e24561acd9a34ed28620256"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9stateInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate to initialize filter to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5stateE">
+<span id="_CPPv3N17InertialUKFConfig5stateE"></span><span id="_CPPv2N17InertialUKFConfig5stateE"></span><span id="InertialUKFConfig::state__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1aae797dfd024ac753cff48079d15f2bb4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9statePrevE">
+<span id="_CPPv3N17InertialUKFConfig9statePrevE"></span><span id="_CPPv2N17InertialUKFConfig9statePrevE"></span><span id="InertialUKFConfig::statePrev__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1ae42ddbe7d1a93ce0555e222230906b60"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">statePrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9statePrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig4sBarE">
+<span id="_CPPv3N17InertialUKFConfig4sBarE"></span><span id="_CPPv2N17InertialUKFConfig4sBarE"></span><span id="InertialUKFConfig::sBar__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a03d23d93521aebd6f137a886bdb24a40"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig4sBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig8sBarPrevE">
+<span id="_CPPv3N17InertialUKFConfig8sBarPrevE"></span><span id="_CPPv2N17InertialUKFConfig8sBarPrevE"></span><span id="InertialUKFConfig::sBarPrev__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a9420efe1d5f9a2bda670d96040faa8dc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig8sBarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5covarE">
+<span id="_CPPv3N17InertialUKFConfig5covarE"></span><span id="_CPPv2N17InertialUKFConfig5covarE"></span><span id="InertialUKFConfig::covar__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a7c72c34dac86cdc6ce73ff7e4b8086c7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5covarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9covarPrevE">
+<span id="_CPPv3N17InertialUKFConfig9covarPrevE"></span><span id="_CPPv2N17InertialUKFConfig9covarPrevE"></span><span id="InertialUKFConfig::covarPrev__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a802ea0a6f398017f0c319f2ed7eb74c8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9covarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9covarInitE">
+<span id="_CPPv3N17InertialUKFConfig9covarInitE"></span><span id="_CPPv2N17InertialUKFConfig9covarInitE"></span><span id="InertialUKFConfig::covarInit__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a43161a6cdb8e5b755388ee37323d452c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9covarInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Covariance to init filter with </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig4xBarE">
+<span id="_CPPv3N17InertialUKFConfig4xBarE"></span><span id="_CPPv2N17InertialUKFConfig4xBarE"></span><span id="InertialUKFConfig::xBar__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1aa2bd275ed7a7b94574ff5e8e9c4aadac"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig4xBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current mean state estimate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig3obsE">
+<span id="_CPPv3N17InertialUKFConfig3obsE"></span><span id="_CPPv2N17InertialUKFConfig3obsE"></span><span id="InertialUKFConfig::obs__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1ac036a9ca4753eade7d1901c2877dcd20"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">obs</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig3obsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Observation vector for frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig5yMeasE">
+<span id="_CPPv3N17InertialUKFConfig5yMeasE"></span><span id="_CPPv2N17InertialUKFConfig5yMeasE"></span><span id="InertialUKFConfig::yMeas__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a0c6e54cb934405ec82992f12cf5a6dbf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yMeas</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig5yMeasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement model data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig2SPE">
+<span id="_CPPv3N17InertialUKFConfig2SPE"></span><span id="_CPPv2N17InertialUKFConfig2SPE"></span><span id="InertialUKFConfig::SP__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1aafa918b51c1d31ae954b7bad13d3b4c4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SP</span></span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig2SPE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sigma point matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig6qNoiseE">
+<span id="_CPPv3N17InertialUKFConfig6qNoiseE"></span><span id="_CPPv2N17InertialUKFConfig6qNoiseE"></span><span id="InertialUKFConfig::qNoise__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1af44579b7f799e24a275dace0dfb2ce7d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig6qNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] process noise matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig7sQnoiseE">
+<span id="_CPPv3N17InertialUKFConfig7sQnoiseE"></span><span id="_CPPv2N17InertialUKFConfig7sQnoiseE"></span><span id="InertialUKFConfig::sQnoise__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1ac6bdafafc9c64c1c23ed0a0549f5ba0b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sQnoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">AKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig7sQnoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] cholesky of Qnoise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig4IInvE">
+<span id="_CPPv3N17InertialUKFConfig4IInvE"></span><span id="_CPPv2N17InertialUKFConfig4IInvE"></span><span id="InertialUKFConfig::IInv__doubleAA"></span><span class="target" id="struct_inertial_u_k_f_config_1a3a0c90fdd8f70a7d5600bfaaaa134cc0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IInv</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig4IInvE" title="Link to this definition"></a><br /></dt>
+<dd><p>[(kg m^2)^-1] inverse of inertia tensor </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig12numUsedGyrosE">
+<span id="_CPPv3N17InertialUKFConfig12numUsedGyrosE"></span><span id="_CPPv2N17InertialUKFConfig12numUsedGyrosE"></span><span id="InertialUKFConfig::numUsedGyros__uint32_t"></span><span class="target" id="struct_inertial_u_k_f_config_1aad9421f938e9b971a154f8019b294714"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numUsedGyros</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig12numUsedGyrosE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Number of currently active CSS sensors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig17firstPassCompleteE">
+<span id="_CPPv3N17InertialUKFConfig17firstPassCompleteE"></span><span id="_CPPv2N17InertialUKFConfig17firstPassCompleteE"></span><span id="InertialUKFConfig::firstPassComplete__uint32_t"></span><span class="target" id="struct_inertial_u_k_f_config_1a6c724eee9a77d271aa86d43c9ae83c1c"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstPassComplete</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig17firstPassCompleteE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig11sigma_BNOutE">
+<span id="_CPPv3N17InertialUKFConfig11sigma_BNOutE"></span><span id="_CPPv2N17InertialUKFConfig11sigma_BNOutE"></span><span id="InertialUKFConfig::sigma_BNOut__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1af0934aab4bf22800773c4243af0c5590"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BNOut</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig11sigma_BNOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Output MRP </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13omega_BN_BOutE">
+<span id="_CPPv3N17InertialUKFConfig13omega_BN_BOutE"></span><span id="_CPPv2N17InertialUKFConfig13omega_BN_BOutE"></span><span id="InertialUKFConfig::omega_BN_BOut__doubleA"></span><span class="target" id="struct_inertial_u_k_f_config_1a324a1e24e8f9c710c4588232114c18e8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_BOut</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13omega_BN_BOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r/s] Body rate output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig10timeTagOutE">
+<span id="_CPPv3N17InertialUKFConfig10timeTagOutE"></span><span id="_CPPv2N17InertialUKFConfig10timeTagOutE"></span><span id="InertialUKFConfig::timeTagOut__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a15ecbaa321de3597484fef890769e563"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTagOut</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig10timeTagOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Output time-tag information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig11maxTimeJumpE">
+<span id="_CPPv3N17InertialUKFConfig11maxTimeJumpE"></span><span id="_CPPv2N17InertialUKFConfig11maxTimeJumpE"></span><span id="InertialUKFConfig::maxTimeJump__double"></span><span class="target" id="struct_inertial_u_k_f_config_1a263eee9d8bc87bacfb43f9981f8fe77c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxTimeJump</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig11maxTimeJumpE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Maximum time jump to allow in propagation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig10stSensorInE">
+<span id="_CPPv3N17InertialUKFConfig10stSensorInE"></span><span id="_CPPv2N17InertialUKFConfig10stSensorInE"></span><span id="InertialUKFConfig::stSensorIn__STAttMsgPayloadA"></span><span class="target" id="struct_inertial_u_k_f_config_1a368c5281e6dcdc233c65331e4794ffe5"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/STAttMsgPayload.html#_CPPv415STAttMsgPayload" title="STAttMsgPayload"><span class="n"><span class="pre">STAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stSensorIn</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig10stSensorInE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ST sensor data read in from message bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13stSensorOrderE">
+<span id="_CPPv3N17InertialUKFConfig13stSensorOrderE"></span><span id="_CPPv2N17InertialUKFConfig13stSensorOrderE"></span><span id="InertialUKFConfig::stSensorOrder__iA"></span><span class="target" id="struct_inertial_u_k_f_config_1ad073cad5f20265705a5e6aca242c80a6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stSensorOrder</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13stSensorOrderE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ST sensor data read in from message bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig11ClockTimeSTE">
+<span id="_CPPv3N17InertialUKFConfig11ClockTimeSTE"></span><span id="_CPPv2N17InertialUKFConfig11ClockTimeSTE"></span><span id="InertialUKFConfig::ClockTimeST__uint64_tA"></span><span class="target" id="struct_inertial_u_k_f_config_1a43f3ae4413cb6c26de1d3bd0d4a715f8"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ClockTimeST</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig11ClockTimeSTE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] All of the ClockTimes for the STs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9isFreshSTE">
+<span id="_CPPv3N17InertialUKFConfig9isFreshSTE"></span><span id="_CPPv2N17InertialUKFConfig9isFreshSTE"></span><span id="InertialUKFConfig::isFreshST__iA"></span><span class="target" id="struct_inertial_u_k_f_config_1ae5ef067995ff2eeb47728203f4d12239"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFreshST</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_ST_VEH_COUNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9isFreshSTE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] isWritten flag for STs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig14rwConfigParamsE">
+<span id="_CPPv3N17InertialUKFConfig14rwConfigParamsE"></span><span id="_CPPv2N17InertialUKFConfig14rwConfigParamsE"></span><span id="InertialUKFConfig::rwConfigParams__RWArrayConfigMsgPayload"></span><span class="target" id="struct_inertial_u_k_f_config_1a12c5577f664d31d656d3865d4c353a65"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.html#_CPPv423RWArrayConfigMsgPayload" title="RWArrayConfigMsgPayload"><span class="n"><span class="pre">RWArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwConfigParams</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig14rwConfigParamsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] struct to store message containing RW config parameters in body B frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig8rwSpeedsE">
+<span id="_CPPv3N17InertialUKFConfig8rwSpeedsE"></span><span id="_CPPv2N17InertialUKFConfig8rwSpeedsE"></span><span id="InertialUKFConfig::rwSpeeds__RWSpeedMsgPayload"></span><span class="target" id="struct_inertial_u_k_f_config_1a6b64e3ea15d2de523055d12010bbee8e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#_CPPv417RWSpeedMsgPayload" title="RWSpeedMsgPayload"><span class="n"><span class="pre">RWSpeedMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeeds</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig8rwSpeedsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Local reaction wheel speeds </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig11rwSpeedPrevE">
+<span id="_CPPv3N17InertialUKFConfig11rwSpeedPrevE"></span><span id="_CPPv2N17InertialUKFConfig11rwSpeedPrevE"></span><span id="InertialUKFConfig::rwSpeedPrev__RWSpeedMsgPayload"></span><span class="target" id="struct_inertial_u_k_f_config_1abf859050eb71713bbbb2f6de758e44a9"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#_CPPv417RWSpeedMsgPayload" title="RWSpeedMsgPayload"><span class="n"><span class="pre">RWSpeedMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeedPrev</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig11rwSpeedPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Local reaction wheel speeds </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig7speedDtE">
+<span id="_CPPv3N17InertialUKFConfig7speedDtE"></span><span id="_CPPv2N17InertialUKFConfig7speedDtE"></span><span id="InertialUKFConfig::speedDt__double"></span><span class="target" id="struct_inertial_u_k_f_config_1af43216985e94e289aba5f27f27657de5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">speedDt</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig7speedDtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] The time difference between speeds </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13timeWheelPrevE">
+<span id="_CPPv3N17InertialUKFConfig13timeWheelPrevE"></span><span id="_CPPv2N17InertialUKFConfig13timeWheelPrevE"></span><span id="InertialUKFConfig::timeWheelPrev__uint64_t"></span><span class="target" id="struct_inertial_u_k_f_config_1aa8c5cece73dacbda03d9dff56268d3cb"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeWheelPrev</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13timeWheelPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Previous wheel time-tag from msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig15localConfigDataE">
+<span id="_CPPv3N17InertialUKFConfig15localConfigDataE"></span><span id="_CPPv2N17InertialUKFConfig15localConfigDataE"></span><span id="InertialUKFConfig::localConfigData__VehicleConfigMsgPayload"></span><span class="target" id="struct_inertial_u_k_f_config_1a82ddf2b96ca50d5e504f61bca39496c4"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localConfigData</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig15localConfigDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Vehicle configuration data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig8gyroFiltE">
+<span id="_CPPv3N17InertialUKFConfig8gyroFiltE"></span><span id="_CPPv2N17InertialUKFConfig8gyroFiltE"></span><span id="InertialUKFConfig::gyroFilt__LowPassFilterDataA"></span><span class="target" id="struct_inertial_u_k_f_config_1ade7393e1081f937bcb02c525cec04c7e"></span><a class="reference internal" href="../../../architecture/utilities/signalCondition.html#_CPPv417LowPassFilterData" title="LowPassFilterData"><span class="n"><span class="pre">LowPassFilterData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gyroFilt</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig8gyroFiltE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Low-pass filters for input gyro data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig13STDatasStructE">
+<span id="_CPPv3N17InertialUKFConfig13STDatasStructE"></span><span id="_CPPv2N17InertialUKFConfig13STDatasStructE"></span><span id="InertialUKFConfig::STDatasStruct__STDataParsing"></span><span class="target" id="struct_inertial_u_k_f_config_1a6fa67ed43353db60b08546c355d94636"></span><a class="reference internal" href="#_CPPv413STDataParsing" title="STDataParsing"><span class="n"><span class="pre">STDataParsing</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STDatasStruct</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig13STDatasStructE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Id of the input message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17InertialUKFConfig9bskLoggerE">
+<span id="_CPPv3N17InertialUKFConfig9bskLoggerE"></span><span id="_CPPv2N17InertialUKFConfig9bskLoggerE"></span><span id="InertialUKFConfig::bskLogger__BSKLoggerP"></span><span class="target" id="struct_inertial_u_k_f_config_1ae2f4f5f70c3232355e5c418f54d6239e"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N17InertialUKFConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="InertialUKF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

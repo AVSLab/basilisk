@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>deprecated &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="fswSetupRW" href="fswSetupRW.html" />
+    <link rel="prev" title="datasheet_RW" href="datasheet_RW.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">deprecated</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.BSKDeprecationWarning"><code class="docutils literal notranslate"><span class="pre">BSKDeprecationWarning</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.BSKUrgentDeprecationWarning"><code class="docutils literal notranslate"><span class="pre">BSKUrgentDeprecationWarning</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.DeprecatedAttribute"><code class="docutils literal notranslate"><span class="pre">DeprecatedAttribute</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.DeprecatedProperty"><code class="docutils literal notranslate"><span class="pre">DeprecatedProperty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.deprecated"><code class="docutils literal notranslate"><span class="pre">deprecated()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.deprecationWarn"><code class="docutils literal notranslate"><span class="pre">deprecationWarn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.filterwarnings"><code class="docutils literal notranslate"><span class="pre">filterwarnings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.formatwarning"><code class="docutils literal notranslate"><span class="pre">formatwarning()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecated.ignore"><code class="docutils literal notranslate"><span class="pre">ignore</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">deprecated</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/deprecated.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deprecated">
+<span id="id1"></span><h1>deprecated<a class="headerlink" href="#deprecated" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py exception" id="module-deprecated">
+<dt class="sig sig-object py" id="deprecated.BSKDeprecationWarning">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">BSKDeprecationWarning</span></span><a class="reference internal" href="../../_modules/deprecated.html#BSKDeprecationWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.BSKDeprecationWarning" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="deprecated.BSKUrgentDeprecationWarning">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">BSKUrgentDeprecationWarning</span></span><a class="reference internal" href="../../_modules/deprecated.html#BSKUrgentDeprecationWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.BSKUrgentDeprecationWarning" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="deprecated.DeprecatedAttribute">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">DeprecatedAttribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">removalDate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#DeprecatedAttribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.DeprecatedAttribute" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Use this descriptor to deprecate class attributes (variables).</p>
+<p>If you want to deprecate <code class="docutils literal notranslate"><span class="pre">myAttribute</span></code> in the following class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myAttribute</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>You can use the following syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PythonTest</span><span class="p">:</span>
+
+    <span class="n">myAttribute</span> <span class="o">=</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">DeprecatedAttribute</span><span class="p">(</span><span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;myAttribute is no longer used in the simulation&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s2">&quot;myAttribute&quot;</span><span class="p">):</span> <span class="c1"># Prevents warnings here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">myAttribute</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The attribute will work as before, but deprecation warnings will be raised
+everytime it’s used (read or set).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="deprecated.DeprecatedProperty">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">DeprecatedProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">removalDate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">property</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#DeprecatedProperty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.DeprecatedProperty" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Use this descriptor to deprecate class properties.</p>
+<p>If you want to deprecate <code class="docutils literal notranslate"><span class="pre">myProperty</span></code> in the following class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="nd">@myProperty</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>You can use the following syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PythonTest</span><span class="p">:</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="nd">@myProperty</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="n">myProperty</span> <span class="o">=</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">DeprecatedProperty</span><span class="p">(</span>
+        <span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myProperty is no longer used in the simulation&quot;</span><span class="p">,</span>
+        <span class="n">myProperty</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The property will work as before, but deprecation warnings will be raised
+everytime it’s used (read or set).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deprecated.deprecated">
+<span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">removalDate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#deprecated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.deprecated" title="Link to this definition"></a></dt>
+<dd><p>A decorator for functions or classes that are deprecated.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2024/05/28&quot;</span><span class="p">,</span> <span class="s2">&quot;Use MyNewClass&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2024/05/28&quot;</span><span class="p">,</span> <span class="s2">&quot;myFun is unsafe now&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">myFun</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ValidClass</span><span class="p">:</span>
+
+    <span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2024/05/28&quot;</span><span class="p">,</span> <span class="s2">&quot;myMethod is slow, use myBetterMethod&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myMethod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>removalDate</strong> (<em>Union</em><em>[</em><em>datetime.date</em><em>, </em><em>str</em><em>]</em>) – The date when we expect to remove this
+deprecated feature, in the format ‘YYYY/MM/DD’ or as a <code class="docutils literal notranslate"><span class="pre">datetime.date</span></code>.
+Think of an amount of time that would let users update their code, and then
+add that duration to today’s date to find a reasonable removal date.</p></li>
+<li><p><strong>msg</strong> (<em>str</em><em>, </em><em>optional</em>) – a text that is directly shown to the users. Here, you may
+explain why the function is deprecated, alternative functions, links to
+documentation or scenarios that show how to translate deprecated code…</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deprecated.deprecationWarn">
+<span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">deprecationWarn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removalDate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#deprecationWarn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.deprecationWarn" title="Link to this definition"></a></dt>
+<dd><p>Utility function to raise deprecation warnings inside a function body.</p>
+<p>This function should rarely be used on its own. For deprecated Python code,
+prefer the <cite>&#64;deprecated</cite> decorator. For deprecated C++ code, use the SWIG
+macros in <cite>swig_deprecated.i</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – An identifier for the deprecated feature (function/variable
+qualified name)</p></li>
+<li><p><strong>removalDate</strong> (<em>Union</em><em>[</em><em>datetime.date</em><em>, </em><em>str</em><em>]</em>) – The date when we expect to remove this
+deprecated feature, in the format ‘YYYY/MM/DD’ or as a <code class="docutils literal notranslate"><span class="pre">datetime.date</span></code>.
+Think of an amount of time that would let users update their code, and then
+add that duration to today’s date to find a reasonable removal date.</p></li>
+<li><p><strong>msg</strong> (<em>str</em><em>, </em><em>optional</em>) – a text that is directly shown to the users. Here, you may
+explain why the function is deprecated, alternative functions, links to
+documentation or scenarios that show how to translate deprecated code…</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deprecated.filterwarnings">
+<span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">filterwarnings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'error'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ignore'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'always'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'default'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'module'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'once'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#filterwarnings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.filterwarnings" title="Link to this definition"></a></dt>
+<dd><p>Use this function to create global deprecation warning filters.</p>
+<p>The most common use of this function is suppressing warnings for deprecated systems
+that you still intend to use. Imagine you want to ignore deprecation warnings
+for the method <cite>myMethod</cite> in class <cite>ValidClass</cite> in module <cite>my_module</cite>. You would add
+the following line to your simulation script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deprecated</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;my_module.ValidClass.myMethod&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that deprecation warnings should not be ignored blindly. Deprecated code WILL
+be removed in future releases, so use warning suppression carefully.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Literal</em><em>[</em><em>&quot;error&quot;</em><em>, </em><em>&quot;ignore&quot;</em><em>, </em><em>&quot;always&quot;</em><em>, </em><em>&quot;default&quot;</em><em>, </em><em>&quot;module&quot;</em><em>, </em><em>&quot;once&quot;</em><em>]</em>) – Controls how the filtered warnings will behave.</p></li>
+<li><p><strong>identifier</strong> (<em>str</em>) – The warning message must contain this string. This can be
+the function or variable identifier (qualified name) in order to hide
+deprecation warnings for specific features.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Any other keyword arguments are passed directly to
+<cite>warnings.filterwarnings</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deprecated.formatwarning">
+<span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">formatwarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__defaultformatwarning=&lt;function</span> <span class="pre">_formatwarning&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#formatwarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.formatwarning" title="Link to this definition"></a></dt>
+<dd><p>Hook to write a warning to a file; replace if you like.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="deprecated.ignore">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deprecated.</span></span><span class="sig-name descname"><span class="pre">ignore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/deprecated.html#ignore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#deprecated.ignore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Use this context manager to ignore warnings in a precise section of code.</p>
+<p>The most common use of this function is suppressing warnings for specific calls.
+Imagine you want to ignore deprecation warnings for the method <cite>myMethod</cite> in
+class <cite>ValidClass</cite> in module <cite>my_module</cite> for a single call to this function.
+You would do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myClass</span> <span class="o">=</span> <span class="n">my_module</span><span class="o">.</span><span class="n">ValidClass</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s2">&quot;my_module.ValidClass.myMethod&quot;</span><span class="p">):</span>
+    <span class="n">myClass</span><span class="o">.</span><span class="n">myMethod</span><span class="p">()</span> <span class="c1"># Does not raise a warning</span>
+
+<span class="n">myClass</span><span class="o">.</span><span class="n">myMethod</span><span class="p">()</span> <span class="c1"># Raises a warning</span>
+</pre></div>
+</div>
+<p>Note that deprecation warnings should not be ignored blindly. Deprecated code WILL
+be removed in future releases, so use warning suppression carefully.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="datasheet_RW.html" class="btn btn-neutral float-left" title="datasheet_RW" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fswSetupRW.html" class="btn btn-neutral float-right" title="fswSetupRW" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

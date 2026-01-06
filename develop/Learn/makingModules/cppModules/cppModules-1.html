@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module Header File &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="C++ Message Object" href="cppModules-2.html" />
+    <link rel="prev" title="Making C++ Modules" href="../cppModules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cModules.html">Making C Modules</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../cppModules.html">Making C++ Modules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Module Header File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cppModules-2.html">C++ Message Object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cppModules-3.html">Module Definition File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cppModules-4.html">Swig Interface File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cppModules-5.html">C++ Module with C-Wrapped Output Message</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+          <li class="breadcrumb-item"><a href="../cppModules.html">Making C++ Modules</a></li>
+      <li class="breadcrumb-item active">Module Header File</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Learn/makingModules/cppModules/cppModules-1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-header-file">
+<span id="cppmodules-1"></span><h1>Module Header File<a class="headerlink" href="#module-header-file" title="Link to this heading"></a></h1>
+<section id="parent-class">
+<h2>Parent Class<a class="headerlink" href="#parent-class" title="Link to this heading"></a></h2>
+<p>Every Basilisk module is a sub-class of <a class="reference internal" href="../../../Documentation/architecture/_GeneralModuleFiles/sys_model.html#sys-model"><span class="std std-ref">sys_model</span></a>.  This parent class provides common modules
+variables such as <code class="docutils literal notranslate"><span class="pre">ModelTag</span></code> and <code class="docutils literal notranslate"><span class="pre">moduleID</span></code>.</p>
+</section>
+<section id="module-class-name">
+<h2>Module Class Name<a class="headerlink" href="#module-class-name" title="Link to this heading"></a></h2>
+<p>The Basilisk module class name should be descriptive and unique.  Its spelling has to be upper camel
+case and thus start with a capital letter.</p>
+</section>
+<section id="sample-code">
+<h2>Sample Code<a class="headerlink" href="#sample-code" title="Link to this heading"></a></h2>
+<p>Let us assume the module is to be called <code class="docutils literal notranslate"><span class="pre">SomeModule</span></code>.  The input and output message type is <code class="docutils literal notranslate"><span class="pre">SomeMsg</span></code>.  A basic C++ module header file would contain for example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#ifndef SOME_MODULE_H</span>
+<span class="linenos"> 2</span><span class="cp">#define SOME_MODULE_H</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;architecture/_GeneralModuleFiles/sys_model.h&quot;</span>
+<span class="linenos"> 5</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;architecture/msgPayloadDefC/SomeMsgPayload.h&quot;</span>
+<span class="linenos"> 6</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;architecture/messaging/messaging.h&quot;</span>
+<span class="linenos"> 7</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;architecture/utilities/bskLogging.h&quot;</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="cm">/*! @brief basic Basilisk C++ module class */</span>
+<span class="linenos">10</span><span class="k">class</span><span class="w"> </span><span class="nc">SomeModule</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">SysModel</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">12</span><span class="w">    </span><span class="n">SomeModule</span><span class="p">();</span>
+<span class="linenos">13</span><span class="w">    </span><span class="o">~</span><span class="n">SomeModule</span><span class="p">();</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">CurrentSimNanos</span><span class="p">);</span>
+<span class="linenos">16</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">CurrentSimNanos</span><span class="p">);</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="w">    </span><span class="n">Message</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dataOutMsg</span><span class="p">;</span><span class="w">     </span><span class="c1">//!&lt; attitude navigation output msg</span>
+<span class="linenos">21</span><span class="w">    </span><span class="n">ReadFunctor</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dataInMsg</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; translation navigation output msg</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="w">    </span><span class="n">BSKLogger</span><span class="w"> </span><span class="n">bskLogger</span><span class="p">;</span><span class="w">                    </span><span class="c1">//!&lt; -- BSK Logging</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="w">    </span><span class="cm">/** setter for `varDouble` property */</span>
+<span class="linenos">26</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setVarDouble</span><span class="p">(</span><span class="kt">double</span><span class="p">);</span>
+<span class="linenos">27</span><span class="w">    </span><span class="cm">/** getter for `varDouble` property */</span>
+<span class="linenos">28</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">getVarDouble</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">varDouble</span><span class="p">;}</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="k">private</span><span class="o">:</span>
+<span class="linenos">31</span><span class="w">    </span><span class="c1">// user configurable variables</span>
+<span class="linenos">32</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">VarDouble</span><span class="p">;</span><span class="w">                       </span><span class="c1">//!&lt; [units] sample module variable declaration</span>
+<span class="linenos">33</span>
+<span class="linenos">34</span><span class="w">    </span><span class="c1">// general private module variables</span>
+<span class="linenos">35</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">internalVariable</span><span class="p">;</span><span class="w">                </span><span class="c1">//!&lt; [units] variable description</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span><span class="p">};</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>Some quick comments about what is included here:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">#ifndef</span></code> statement is used to avoid this header file being imported multiple times during compiling.</p></li>
+<li><p>All <code class="docutils literal notranslate"><span class="pre">include</span></code> statements should be made relative to <code class="docutils literal notranslate"><span class="pre">basilisk/src</span></code></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">sys_model.h</span></code> file must be imported as the BSK modules are a subclass of <a class="reference internal" href="../../../Documentation/architecture/_GeneralModuleFiles/sys_model.html#sys-model"><span class="std std-ref">sys_model</span></a>.</p></li>
+<li><p>All the message payload definition files need to be included.  In the above example there is only one.</p></li>
+<li><p>Include the Basilisk <code class="docutils literal notranslate"><span class="pre">messaging.h</span></code> file to have access to creating message objects</p></li>
+<li><p>Include the <code class="docutils literal notranslate"><span class="pre">bskLogging.h</span></code> file to use the BSK logging functions.</p></li>
+</ul>
+<p>Be sure to add descriptions to both the module and to the class variables used.</p>
+</section>
+<section id="required-module-methods">
+<h2>Required Module Methods<a class="headerlink" href="#required-module-methods" title="Link to this heading"></a></h2>
+<p>Each module should define the <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> method that is called when initializing the BSK simulation,
+and the <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> method which is called every time the task to which the module is added is updated.</p>
+</section>
+<section id="module-variables">
+<h2>Module Variables<a class="headerlink" href="#module-variables" title="Link to this heading"></a></h2>
+<p>The user configurable module variables should be either private or protected variables that are set and retrieved
+through setter and getter methods.  Protected variables make sense if the variable is defined in a parent
+class and the sub-class should have ready access to this variable.
+The setter function should check that the value is
+valid or return an error.  For example, you might want to set a gain variable, or the
+spacecraft area for solar radiation pressure evaluation, and the setter method
+should check that these values are strictly positive.  The benefit of using setter
+and getter methods is that if a variable use is depreciated, then this variable
+can be gracefully depreciated while introducing the new module functionality.
+See <a class="reference internal" href="../../../Support/Developer/deprecatingCode.html#deprecatingcode"><span class="std std-ref">Deprecating code in Basilisk</span></a> for information on how to depreciate code.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Having C++ Basilisk module use setter and getter methods is a recent requirements.
+Older modules mostly have the module variables as public variables which can be
+set directly.  Read the module documentation on how to setup and configure
+a Basilisk module.</p>
+</div>
+<p>The output messages are defined through the <code class="docutils literal notranslate"><span class="pre">Message&lt;&gt;</span></code> template class as shown above.  This
+creates a message object instance which is also able to write to its own message data copy.</p>
+<p>The input message object is defined through the <code class="docutils literal notranslate"><span class="pre">ReadFunctor&lt;&gt;</span></code> template class.</p>
+<p>Finally, the <code class="docutils literal notranslate"><span class="pre">bskLogger</span></code> variable is defined to allow for BSK message logging with variable
+verbosity.  It must be a public module variable.
+See <a class="reference internal" href="../../../examples/scenarioBskLog.html#scenariobsklog"><span class="std std-ref">scenarioBskLog</span></a> for an example of how to set the logging verbosity.</p>
+</section>
+<section id="vector-of-input-messages">
+<h2>Vector of Input Messages<a class="headerlink" href="#vector-of-input-messages" title="Link to this heading"></a></h2>
+<p>To define a vector of input messages, you can define:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ReadFunctor</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">moreInMsgs</span><span class="p">;</span><span class="w">    </span><span class="c1">//!&lt; variable description</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;</span><span class="w"> </span><span class="n">moreInMsgsBuffer</span><span class="p">;</span><span class="w">           </span><span class="c1">//!&lt; variable description</span>
+</pre></div>
+</div>
+<p>Note that the vector of input messages is defined as a public variable.  In contrast, the
+vector of message definition structures (i.e. the message buffer variable) can be defined
+as a private variable as it is only used within the module and not accessed outside.</p>
+</section>
+<section id="vector-of-output-messages">
+<h2>Vector of Output Messages<a class="headerlink" href="#vector-of-output-messages" title="Link to this heading"></a></h2>
+<p>To define a vector of output messages, we define a vector of message pointer using:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Message</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;*&gt;</span><span class="w"> </span><span class="n">moreOutMsgs</span><span class="p">;</span><span class="w">      </span><span class="c1">//!&lt; variable description</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../cppModules.html" class="btn btn-neutral float-left" title="Making C++ Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cppModules-2.html" class="btn btn-neutral float-right" title="C++ Message Object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_gravitySpacecraft &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_gravitySpacecraft</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_gravitySpacecraft</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.pyswice_spk_utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">spkRead</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ephemerisConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">planetEphemeris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail() # need to update how the RW states are defined</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<div class="viewcode-block" id="test_gravityEffectorAllTest">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravitySpacecraft.html#test_gravitySpacecraft.test_gravityEffectorAllTest">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;singleGravityBody&quot;</span><span class="p">,</span> <span class="s2">&quot;multiBodyGravity&quot;</span><span class="p">,</span> <span class="s2">&quot;polyGravityBody&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gravityEffectorAllTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="n">testFunction</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFunction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function &#39;</span><span class="si">{</span><span class="n">function</span><span class="si">}</span><span class="s2">&#39; not found in global scope&quot;</span><span class="p">)</span>
+
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">testFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<div class="viewcode-block" id="singleGravityBody">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravitySpacecraft.html#test_gravitySpacecraft.singleGravityBody">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">singleGravityBody</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">DynUnitTestProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">DynUnitTestProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># setup Gravity Bodies</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravBodies</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createBodies</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="s2">&quot;jupiter barycenter&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ggm03s_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S</span><span class="p">)</span>
+    <span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s_path</span><span class="p">),</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">stringCurrent</span> <span class="o">=</span> <span class="s2">&quot;2016 MAY 1 00:32:30.0&quot;</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">stringCurrent</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># Use the python spice utility to load in spacecraft SPICE ephemeris data</span>
+    <span class="c1"># Note: this following SPICE data only lives in the Python environment, and is</span>
+    <span class="c1">#       separate from the earlier SPICE setup that was loaded to BSK.  This is why</span>
+    <span class="c1">#       all required SPICE libraries must be included when setting up and loading</span>
+    <span class="c1">#       SPICE kernels in Python.</span>
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">de403masses_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+    <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+    <span class="n">hst_edited_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">hst_edited</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403masses_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hst_edited_path</span><span class="p">))</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+    <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span><span class="s2">&quot;HUBBLE SPACE TELESCOPE&quot;</span><span class="p">,</span> <span class="n">stringCurrent</span><span class="p">,</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;EARTH&quot;</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">velStart</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">(</span><span class="n">velStart</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.002</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.003</span><span class="p">]]</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">totalTime</span> <span class="o">=</span> <span class="mf">20000.0</span>
+    <span class="n">currentTime</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">posArray</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">velArray</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">posError</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">currentTime</span> <span class="o">&lt;</span> <span class="n">totalTime</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">currentTime</span> <span class="o">+</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+        <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span>
+            <span class="s2">&quot;HUBBLE SPACE TELESCOPE&quot;</span><span class="p">,</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getCurrentTimeString</span><span class="p">(),</span>
+            <span class="s2">&quot;J2000&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;EARTH&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">posCurr</span> <span class="o">=</span> <span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+        <span class="n">posCurr</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">posCurr</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">posArray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posCurr</span><span class="p">)</span>
+        <span class="n">velCurr</span> <span class="o">=</span> <span class="n">velRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+        <span class="n">velCurr</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">velCurr</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">velArray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">velCurr</span><span class="p">)</span>
+        <span class="n">posDiff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posCurr</span><span class="p">)</span> <span class="o">-</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span>
+        <span class="n">posRow</span> <span class="o">=</span> <span class="p">[</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">*</span> <span class="mf">1.0e-9</span><span class="p">]</span>
+        <span class="n">posRow</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">posDiff</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">posError</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posRow</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posDiff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1000.0</span>
+
+        <span class="n">currentTime</span> <span class="o">+=</span> <span class="n">dt</span>
+
+    <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span>
+        <span class="s2">&quot;HUBBLE SPACE TELESCOPE&quot;</span><span class="p">,</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getCurrentTimeString</span><span class="p">(),</span>
+        <span class="s2">&quot;J2000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;EARTH&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">posArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posArray</span><span class="p">)</span>
+    <span class="n">posError</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posError</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">de403masses_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+    <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+    <span class="n">hst_edited_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">hst_edited</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403masses_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hst_edited_path</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">posError</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])))</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">posError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">posError</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position Difference (m)&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; Single body with spherical harmonics&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">multiBodyGravity</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">DynUnitTestProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">DynUnitTestProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># setup Gravity Bodies</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravBodies</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createBodies</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;mars barycenter&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="s2">&quot;jupiter barycenter&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;sun&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">stringCurrent</span> <span class="o">=</span> <span class="s2">&quot;2008 September 19, 04:00:00.0&quot;</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">stringCurrent</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># Use the python spice utility to load in spacecraft SPICE ephemeris data</span>
+    <span class="c1"># Note: this following SPICE data only lives in the Python environment, and is</span>
+    <span class="c1">#       separate from the earlier SPICE setup that was loaded to BSK.  This is why</span>
+    <span class="c1">#       all required SPICE libraries must be included when setting up and loading</span>
+    <span class="c1">#       SPICE kernels in Python.</span>
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">de403masses_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+    <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+    <span class="n">nh_pred_od077_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">nh_pred_od077</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403masses_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nh_pred_od077_path</span><span class="p">))</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+    <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span><span class="s2">&quot;NEW HORIZONS&quot;</span><span class="p">,</span> <span class="n">stringCurrent</span><span class="p">,</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;SUN&quot;</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">velStart</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">(</span><span class="n">velStart</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.002</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.003</span><span class="p">]]</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">totalTime</span> <span class="o">=</span> <span class="mf">20000.0</span>
+    <span class="n">currentTime</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">posArray</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">velArray</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">posError</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">posInc</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">currentTime</span> <span class="o">&lt;</span> <span class="n">totalTime</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">currentTime</span> <span class="o">+</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+        <span class="n">timeString</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">et2utc_c</span><span class="p">(</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">J2000Current</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">&quot;Yo&quot;</span>
+        <span class="p">)</span>
+        <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span><span class="s2">&quot;NEW HORIZONS&quot;</span><span class="p">,</span> <span class="n">timeString</span><span class="p">,</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;SUN&quot;</span><span class="p">)</span>
+        <span class="n">posCurr</span> <span class="o">=</span> <span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+        <span class="n">posCurr</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">posCurr</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">posArray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posCurr</span><span class="p">)</span>
+        <span class="n">velCurr</span> <span class="o">=</span> <span class="n">velRef</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+        <span class="n">velCurr</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">velCurr</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">velArray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">velCurr</span><span class="p">)</span>
+        <span class="n">posDiff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posCurr</span><span class="p">)</span> <span class="o">-</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span>
+        <span class="n">posRow</span> <span class="o">=</span> <span class="p">[</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">*</span> <span class="mf">1.0e-9</span><span class="p">]</span>
+        <span class="n">posRow</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">posDiff</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">posError</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posRow</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posDiff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1000.0</span>
+        <span class="k">if</span> <span class="n">currentTime</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">posJump</span> <span class="o">=</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posPrevious</span><span class="p">)</span>
+            <span class="n">posInc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posJump</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">posPrevious</span> <span class="o">=</span> <span class="n">stateOut</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span>
+        <span class="n">currentTime</span> <span class="o">+=</span> <span class="n">dt</span>
+
+    <span class="n">stateOut</span> <span class="o">=</span> <span class="n">spkRead</span><span class="p">(</span>
+        <span class="s2">&quot;NEW HORIZONS&quot;</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getCurrentTimeString</span><span class="p">(),</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;SUN&quot;</span>
+    <span class="p">)</span>
+    <span class="n">posArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posArray</span><span class="p">)</span>
+    <span class="n">posError</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posError</span><span class="p">)</span>
+    <span class="n">posInc</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">posInc</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">de403masses_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+    <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+    <span class="n">nh_pred_od077_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">nh_pred_od077</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403masses_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">unload_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nh_pred_od077_path</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">posError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">posError</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position Difference (m)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; multi-point source bodies&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="polyGravityBody">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravitySpacecraft.html#test_gravitySpacecraft.polyGravityBody">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polyGravityBody</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="c1"># Obtain validation data (simulation with tight integration tolerances in MATLAB)</span>
+    <span class="n">valData</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../_UnitTest/polyTestData.csv&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">tVal</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valData</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">posVal</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valData</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">velVal</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valData</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">DynUnitTestProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">intTime</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">DynUnitTestProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">intTime</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># specify orbit of polyhedral body</span>
+    <span class="n">oePolyBody</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">2.3612</span> <span class="o">*</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oePolyBody</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">raPolyBody</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">decPolyBody</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">lst0PolyBody</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rotPeriodPolyBody</span> <span class="o">=</span> <span class="mf">5.27</span> <span class="o">*</span> <span class="mi">3600</span>
+
+    <span class="c1"># setup celestial object ephemeris module</span>
+    <span class="n">polyBodyEphem</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;erosEphemeris&quot;</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span><span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">&quot;eros&quot;</span><span class="p">]))</span>
+
+    <span class="c1"># specify celestial objects orbit</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">planetElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">classicElementVector</span><span class="p">([</span><span class="n">oePolyBody</span><span class="p">])</span>
+
+    <span class="c1"># specify celestial object orientation</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">rightAscension</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">raPolyBody</span><span class="p">])</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">declination</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">decPolyBody</span><span class="p">])</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">lst0</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">lst0PolyBody</span><span class="p">])</span>
+    <span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">rotRate</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">360</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">/</span> <span class="n">rotPeriodPolyBody</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># setup polyhedral gravity body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">4.46275472004</span> <span class="o">*</span> <span class="mf">1e5</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">polyBody</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createCustomGravObject</span><span class="p">(</span><span class="s2">&quot;eros&quot;</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">polyBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">polyBody</span><span class="o">.</span><span class="n">usePolyhedralGravityModel</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../_UnitTest/EROS856Vert1708Fac.txt&quot;</span><span class="p">)</span>
+    <span class="n">polyBody</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># create an ephemeris converter</span>
+    <span class="n">polyBodyEphemConverter</span> <span class="o">=</span> <span class="n">ephemerisConverter</span><span class="o">.</span><span class="n">EphemerisConverter</span><span class="p">()</span>
+    <span class="n">polyBodyEphemConverter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;erosEphemConverter&quot;</span>
+    <span class="n">polyBodyEphemConverter</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">polyBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># create spacecraft and attach polyhedral body</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraft&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="c1"># set initial conditions for spacecraft</span>
+    <span class="n">angvelPolyBody</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">/</span> <span class="n">rotPeriodPolyBody</span><span class="p">])</span>
+    <span class="n">posInit</span> <span class="o">=</span> <span class="n">posVal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">velInit</span> <span class="o">=</span> <span class="n">velVal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">angvelPolyBody</span><span class="p">,</span> <span class="n">posInit</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">posInit</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">velInit</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="c1"># add models to task</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">polyBodyEphem</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">polyBodyEphemConverter</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="n">totalTime</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">scRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+    <span class="n">polyBodyRec</span> <span class="o">=</span> <span class="n">polyBodyEphemConverter</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span>
+        <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scRec</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">polyBodyRec</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTime</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># retrieve logged variables</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">N_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">scRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">r_AN_N</span> <span class="o">=</span> <span class="n">polyBodyRec</span><span class="o">.</span><span class="n">r_BdyZero_N</span>
+    <span class="n">sigma_AN</span> <span class="o">=</span> <span class="n">polyBodyRec</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+    <span class="c1"># obtain position in small body centered fixed frame</span>
+    <span class="n">posArray</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_points</span><span class="p">):</span>
+        <span class="c1"># obtain rotation matrix</span>
+        <span class="n">R_AN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_AN</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># rotate position and velocity</span>
+        <span class="n">posArray</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_AN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">r_BN_N</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">r_AN_N</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+
+    <span class="c1"># compute error in position and assert max error</span>
+    <span class="n">posError</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posArray</span> <span class="o">-</span> <span class="n">posVal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">max</span><span class="p">(</span><span class="n">posError</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">posError</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tVal</span><span class="p">,</span> <span class="n">posArray</span> <span class="o">-</span> <span class="n">posVal</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Position Difference (m)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; Single body with polyhedral shape&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># gravityEffectorAllTest(False)</span>
+    <span class="n">singleGravityBody</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># multiBodyGravity(True)</span>
+    <span class="n">polyGravityBody</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

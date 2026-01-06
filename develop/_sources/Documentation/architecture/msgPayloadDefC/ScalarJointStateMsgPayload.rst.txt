@@ -1,0 +1,8 @@
+.. _ScalarJointStateMsgPayload:
+
+ScalarJointStateMsgPayload
+==================================
+
+.. autodoxygenfile:: ScalarJointStateMsgPayload.h
+   :project: msgPayloadDefC
+

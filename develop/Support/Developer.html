@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer Information &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Coding Guidelines" href="Developer/CodingGuidlines.html" />
+    <link rel="prev" title="Migrating Basilisk Scripts from Version 1.X to 2.X" href="User/migratingToBsk2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Developer Information</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Developer/CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Developer/addSupportData.html">Adding Support Data Files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Support.html">Support</a></li>
+      <li class="breadcrumb-item active">Developer Information</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Support/Developer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="developer-information">
+<h1>Developer Information<a class="headerlink" href="#developer-information" title="Link to this heading"></a></h1>
+<p>The following support files help with writing Basilisk modules.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Developer/CodingGuidlines.html">Coding Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#what-about-non-conforming-code">What about non-conforming code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#naming">Naming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#general-guidelines">General Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#c-c-exceptions">C/C++ Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#python-exceptions">Python Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#running-unit-and-integrated-tests">Running Unit and Integrated Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/CodingGuidlines.html#formatting-code-files-using-pre-commit-and-clang-format">Formatting Code Files using <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">clang-format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/Debugging.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/Debugging.html#basilisk-build-requirements">Basilisk build requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/Debugging.html#how-to-catch-breakpoints-in-a-c-c-module">How to catch breakpoints in a C/C++ module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/deprecatingCode.html">Deprecating code in Basilisk</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/deprecatingCode.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/deprecatingCode.html#deprecating-python-code">Deprecating Python Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/deprecatingCode.html#deprecating-c-code-wrapped-by-swig">Deprecating C++ Code Wrapped by SWIG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSphinxDoc.html#adding-documentation-to-a-basilisk-module">Adding Documentation to a Basilisk Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSphinxDoc.html#adding-documentation-to-a-basilisk-folder">Adding Documentation to a Basilisk Folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSphinxDoc.html#overriding-the-folder-s-auto-generated-index-rst-file">Overriding the Folder’s Auto-Generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> File</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/createHtmlDocumentation.html#documentation-description">Documentation Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/createHtmlDocumentation.html#tool-requirements">Tool Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/createHtmlDocumentation.html#making-the-html-documentation-folder">Making the HTML Documentation Folder</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/bskModuleCheckoutList.html">Basilisk Module Checkout List</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#branch-must-be-up-to-date">Branch Must Be Up to Date</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#building-basilisk-and-testing">Building Basilisk and Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#style-and-formatting">Style and Formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#module-programming">Module Programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#module-documentation">Module Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#module-functionality-testing">Module Functionality Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#module-integrated-test">Module Integrated Test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/bskModuleCheckoutList.html#update-release-notes">Update Release Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html#message-names">Message Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html#creating-new-message-definitions">Creating New Message Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/migratingBskModuleToBsk2.html#step-by-step-guide-to-upgrade-a-basilisk-modules">Step-By-Step Guide to Upgrade a Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/MigratingToPython3.html">Migrating BSK Scripts to Python 3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#dividing-scalars">Dividing Scalars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#returning-lists-instead-of-iterables">Returning Lists Instead of Iterables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#range-map-zip">Range, Map, Zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#print">Print</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#strings">Strings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/MigratingToPython3.html#pyswice-imports">Pyswice Imports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer/addSupportData.html">Adding Support Data Files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#folder-layout">Folder Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#step-1-add-the-file-to-supportdata">Step 1 — Add the File to supportData/</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#step-2-ensure-makeregistry-py-will-include-the-file">Step 2 — Ensure makeRegistry.py will include the file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#step-3-regenerate-the-registrysnippet-py-file">Step 3 — Regenerate the registrySnippet.py file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#step-4-update-datafetcher-py-enums-and-base-paths">Step 4 — Update dataFetcher.py (Enums and Base Paths)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer/addSupportData.html#external-data-sources">External Data Sources</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="User/migratingToBsk2.html" class="btn btn-neutral float-left" title="Migrating Basilisk Scripts from Version 1.X to 2.X" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Developer/CodingGuidlines.html" class="btn btn-neutral float-right" title="Coding Guidelines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_jointMotionCompensator &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_jointMotionCompensator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_jointMotionCompensator</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">jointMotionCompensator</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compensationTorque</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">nonActForce</span><span class="p">,</span> <span class="n">jointTorque</span><span class="p">,</span> <span class="n">maxTorque</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">nonActForce</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">nonActForce</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">jointTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jointTorque</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">maxTorque</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">maxTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">maxTorque</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">nj</span> <span class="o">=</span> <span class="n">jointTorque</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="n">baseTransBias</span> <span class="o">=</span> <span class="n">nonActForce</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">baseRotBias</span>   <span class="o">=</span> <span class="n">nonActForce</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">jointBias</span>     <span class="o">=</span> <span class="n">nonActForce</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">]</span>
+
+    <span class="n">u_H</span> <span class="o">=</span> <span class="n">jointTorque</span>
+
+    <span class="n">Mtt</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">Mrt</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">Mrth</span><span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">]</span>
+    <span class="n">Mtth</span><span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">]</span>
+    <span class="n">Mtht</span><span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">Mthth</span><span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="mi">6</span><span class="o">+</span><span class="n">nj</span><span class="p">]</span>
+
+    <span class="c1"># solve for theta_ddot and r_ddot using block matrix inversion</span>
+    <span class="n">temp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">Mtt</span><span class="p">,</span> <span class="n">baseTransBias</span><span class="p">)</span>
+    <span class="n">temp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">Mtt</span><span class="p">,</span> <span class="n">Mtth</span><span class="p">)</span>
+    <span class="n">temp3</span> <span class="o">=</span> <span class="n">Mthth</span> <span class="o">-</span> <span class="n">Mtht</span> <span class="o">@</span> <span class="n">temp2</span>
+    <span class="n">theta_ddot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">temp3</span><span class="p">,</span> <span class="n">jointBias</span> <span class="o">+</span> <span class="n">u_H</span> <span class="o">-</span> <span class="p">(</span><span class="n">Mtht</span> <span class="o">@</span> <span class="n">temp1</span><span class="p">))</span>
+    <span class="n">r_ddot</span> <span class="o">=</span> <span class="n">temp1</span> <span class="o">-</span> <span class="p">(</span><span class="n">temp2</span> <span class="o">@</span> <span class="n">theta_ddot</span><span class="p">)</span>
+
+    <span class="n">tau_compensation</span> <span class="o">=</span> <span class="o">-</span><span class="n">baseRotBias</span> <span class="o">+</span> <span class="n">Mrt</span> <span class="o">@</span> <span class="n">r_ddot</span> <span class="o">+</span> <span class="n">Mrth</span> <span class="o">@</span> <span class="n">theta_ddot</span>
+
+    <span class="k">if</span> <span class="n">maxTorque</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tau_compensation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">maxTorque</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">tau_compensation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxTorque</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">tau_compensation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">maxTorque</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">tau_compensation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">maxTorque</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">tau_compensation</span>
+
+<div class="viewcode-block" id="test_jointMotionCompensator">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointMotionCompensator/_UnitTest/test_jointMotionCompensator.html#test_jointMotionCompensator.test_jointMotionCompensator">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;nonActForces&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;maxTorque&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;numJoints&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;numSpacecraft&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_jointMotionCompensator</span><span class="p">(</span><span class="n">nonActForces</span><span class="p">,</span> <span class="n">maxTorque</span><span class="p">,</span> <span class="n">numJoints</span><span class="p">,</span> <span class="n">numSpacecraft</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test validates the hub torques found to counteract reaction torques induced by moving joints on spacecraft with attached jointed arms.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    The presence of non actuator based forces, presence of max torque limits, number of joints, and number of spacecraft can be varied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nonActForces (bool): Flag to indicate presence of non-actuator forces</span>
+<span class="sd">        maxTorque (bool): Flag to indicate presence of max torque limits</span>
+<span class="sd">        numJoints (int): Number of joints in the arm</span>
+<span class="sd">        numSpacecraft (int): Number of spacecraft in the simulation</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this test the hub torques output by the module are compared to the expected torques calculated in python.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># setup module to be tested</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">JointMotionCompensator</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;jointMotionCompensatorTag&quot;</span>
+    <span class="k">if</span> <span class="n">maxTorque</span><span class="p">:</span>
+        <span class="n">uMax</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]</span> <span class="o">*</span> <span class="n">numSpacecraft</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">setUMax</span><span class="p">(</span><span class="n">uMax</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numJoints</span><span class="p">):</span>
+            <span class="n">module</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># create mass matrix input message</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">,</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span><span class="p">):</span>
+        <span class="n">startIdx</span> <span class="o">=</span> <span class="n">sc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span>
+        <span class="n">endIdx</span> <span class="o">=</span> <span class="n">startIdx</span> <span class="o">+</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">,</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">))</span>
+        <span class="n">SPD</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span>
+        <span class="n">SPD</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">SPD</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">I</span>
+        <span class="n">M</span><span class="p">[</span><span class="n">startIdx</span><span class="p">:</span><span class="n">endIdx</span><span class="p">,</span> <span class="n">startIdx</span><span class="p">:</span><span class="n">endIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">SPD</span>
+    <span class="n">massMatrixInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MJSysMassMatrixMsgPayload</span><span class="p">()</span>
+    <span class="n">massMatrixInMsgData</span><span class="o">.</span><span class="n">massMatrix</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">flatten</span><span class="p">():</span>
+        <span class="n">massMatrixInMsgData</span><span class="o">.</span><span class="n">massMatrix</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="c1"># create the joint reactions input message</span>
+    <span class="n">JointReactionsInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MJJointReactionsMsgPayload</span><span class="p">()</span>
+    <span class="n">jointTreeIdx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">jointTypes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">jointDOFStart</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">currentDOF</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numJoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">jointTreeIdx</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">numJoints</span>
+        <span class="n">jointTypes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+        <span class="n">jointDOFStart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currentDOF</span><span class="p">)</span>
+        <span class="n">currentDOF</span> <span class="o">+=</span> <span class="mi">6</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numJoints</span><span class="p">):</span>
+            <span class="n">jointDOFStart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currentDOF</span><span class="p">)</span>
+            <span class="n">currentDOF</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">nonActForces</span><span class="p">:</span>
+        <span class="n">biasForces</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">biasForces</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+    <span class="n">passiveForces</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+    <span class="n">constraintForces</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+    <span class="n">appliedForces</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointTreeIdx</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointTypes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointDOFStart</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">biasForces</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">passiveForces</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">constraintForces</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">appliedForces</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">jointTreeIdx</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointTreeIdx</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">jointTypes</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointTypes</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">jointDOFStart</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">jointDOFStart</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">biasForces</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">biasForces</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">passiveForces</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">passiveForces</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">constraintForces</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">constraintForces</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">appliedForces</span><span class="p">:</span>
+        <span class="n">JointReactionsInMsgData</span><span class="o">.</span><span class="n">appliedForces</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="c1"># create the joint torque input messages</span>
+    <span class="k">if</span> <span class="n">numJoints</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">motorTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">numJoints</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">motorTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">motorTorqueInMsgDataList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numJoints</span><span class="p">):</span>
+            <span class="n">jointTorqueInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">()</span>
+            <span class="n">jointTorqueInMsgData</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">motorTorque</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">motorTorqueInMsgDataList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jointTorqueInMsgData</span><span class="p">)</span>
+
+    <span class="c1"># write input messages</span>
+    <span class="n">massMatrixInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MJSysMassMatrixMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">massMatrixInMsgData</span><span class="p">)</span>
+    <span class="n">reactionForcesInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MJJointReactionsMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">JointReactionsInMsgData</span><span class="p">)</span>
+    <span class="n">jointTorqueInMsgList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span> <span class="o">*</span> <span class="n">numJoints</span><span class="p">):</span>
+        <span class="n">jointTorqueInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">motorTorqueInMsgDataList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">jointTorqueInMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jointTorqueInMsg</span><span class="p">)</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">massMatrixInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">massMatrixInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">reactionForcesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">reactionForcesInMsg</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span> <span class="o">*</span> <span class="n">numJoints</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">jointTorqueInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">jointTorqueInMsgList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># setup output message recorder objects</span>
+    <span class="n">hubTorqueRecorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span> <span class="o">*</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="n">rec</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hubTorqueOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">hubTorqueRecorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># pull module data</span>
+    <span class="n">moduleTorques</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">hubTorqueRecorders</span><span class="p">:</span>
+        <span class="n">moduleTorques</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">moduleTorques</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">moduleTorques</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># compute expected results</span>
+    <span class="n">reactionForces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">biasForces</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">expectedTorques</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numSpacecraft</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSpacecraft</span><span class="p">):</span>
+        <span class="n">startIdx</span> <span class="o">=</span> <span class="n">sc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span><span class="p">)</span>
+        <span class="n">endIdx</span> <span class="o">=</span> <span class="n">startIdx</span> <span class="o">+</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">numJoints</span>
+        <span class="n">M_sc</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">startIdx</span><span class="p">:</span><span class="n">endIdx</span><span class="p">,</span> <span class="n">startIdx</span><span class="p">:</span><span class="n">endIdx</span><span class="p">]</span>
+        <span class="n">reactionForces_sc</span> <span class="o">=</span> <span class="o">-</span><span class="n">reactionForces</span><span class="p">[</span><span class="n">startIdx</span><span class="p">:</span><span class="n">endIdx</span><span class="p">]</span>
+        <span class="n">jointTorque_sc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numJoints</span><span class="p">):</span>
+            <span class="n">jointTorque_sc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">motorTorque</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">expectedTorque_sc</span> <span class="o">=</span> <span class="n">compensationTorque</span><span class="p">(</span><span class="n">M_sc</span><span class="p">,</span> <span class="n">reactionForces_sc</span><span class="p">,</span> <span class="n">jointTorque_sc</span><span class="p">,</span>
+                                              <span class="n">maxTorque</span><span class="o">=</span><span class="p">[</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">]</span> <span class="k">if</span> <span class="n">maxTorque</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">expectedTorques</span><span class="p">[</span><span class="n">sc</span><span class="o">*</span><span class="mi">3</span><span class="p">:(</span><span class="n">sc</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">expectedTorque_sc</span>
+
+    <span class="c1"># assert the results are as expected</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">moduleTorques</span><span class="p">,</span> <span class="n">expectedTorques</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hub torques </span><span class="si">{</span><span class="n">moduleTorques</span><span class="si">}</span><span class="s2"> do not match expected </span><span class="si">{</span><span class="n">expectedTorques</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_jointMotionCompensator</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

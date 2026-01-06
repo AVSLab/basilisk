@@ -1,0 +1,236 @@
+div.textblock a, div.textblock a:visited, p a, p a:visited,
+a, a:hover, a:visited,
+a.reference, a.internal, a.current {
+	color: #cfb87c;
+	font-weight: bold;
+}
+
+a.icon-home, a.icon-home:visited {
+	color: #666;
+}
+
+div.wy-menu > p.caption > span.caption-text {
+	color: white;
+	font-weight: bold;
+}
+a.el, a.el:visited {
+	color: #565A5C;
+}
+
+.wy-side-nav-search>div.version {
+	color: #565A5C; # CU dark gray
+}
+
+.wy-nav-content {
+    max-width: none;
+}
+
+code span.pre, code {
+	color: #cb7ccf;
+}
+
+th.head, .wy-nav-top  {
+	color: white;
+	background-color: #565A5C;
+}
+
+th.head p {
+	margin: 0px;
+}
+
+tr td p, th.head p {
+	font-size: small;
+}
+
+img.logo {
+	filter: drop-shadow(0px 0px 8px #fff);
+}
+/* override table no-wrap */
+.wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}
+
+.math {
+    text-align: left;
+}
+.eqno {
+    float: right;
+}
+
+body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+      "Lucida Grande", "Segoe UI" !important;
+}
+
+:root {
+	color-scheme: light dark;
+}
+
+.sidebar {
+	max-width: 500px;
+}
+
+code, .rst-content tt, .rst-content code {
+	color: #E74C3C;
+}
+
+ul.simple li, aside.sidebar ul li {
+	all: revert;
+}
+
+ul.simple li p, aside.sidebar ul li p {
+	all: revert;
+	line-height: 24px;
+	font-size: 16px;
+	margin: 0px;
+}
+
+ul.simple ul li {
+	list-style-type: circle;
+	margin-left: 1.5em;
+}
+
+ul.simple, aside.sidebar ul {
+	all: revert;
+	padding-left: 1.5em;
+}
+
+figure {
+	text-align: center;
+}
+
+.beta-label {
+    background-color: #cfb87c;
+    color: #000;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
+		background-color: black;
+		color:  #ccc;
+	}
+
+	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
+	{
+		background-color: rgb(45, 65, 81);
+	}
+
+	html.writer-html4 .rst-content dl:not(.docutils) .descclassname, html.writer-html4 .rst-content dl:not(.docutils) .descname, html.writer-html4 .rst-content dl:not(.docutils) .sig-name, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descclassname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .sig-name
+	{
+		color: rgb(237, 240, 242);
+	}
+
+	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
+	{
+		background-color: #333;;
+	}
+
+	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
+	{
+		color: rgb(41, 128, 185);
+	}
+
+	.highlight .go {
+		color:  #ccc;
+	}
+
+	img.logo {
+		filter: drop-shadow(0px 0px 8px #000);
+	}
+
+	.rst-content code {
+		background: #0004;
+	}
+	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt, .rst-content .note {
+		background: #2D4151;
+	}
+
+	.rst-content .warning, .rst-content .caution, .rst-content .attention {
+		background: #51402F;
+	}
+
+	.rst-content .important, .rst-content .hint, .rst-content .tip {
+		background: #275145;
+	}
+
+	.rst-content .danger, .rst-content .error {
+		background: #523A37;
+	}
+
+	/* sidebar formatting */
+	.sidebar {
+		border-color: #666;
+	}
+	.rst-content .sidebar {
+		background: #222;
+	}
+	.rst-content .sidebar .sidebar-title {
+		background: #666;
+	}
+
+
+	.btn-neutral, .btn-neutral:hover, .btn:visited {
+		background: #333 !important;
+		color: #ccc !important;
+	}
+
+	.highlight {
+		background: #4448;
+	}
+
+	.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
+		background-color: #222;
+	}
+
+	.rst-content pre.literal-block, .rst-content div[class^='highlight'], .rst-content code, .rst-content table.docutils, .wy-table thead th, .rst-content table.docutils thead th, .rst-content table.field-list thead th, .wy-table-bordered-all td, .rst-content table.docutils td {
+		border-color: gray;
+	}
+
+	img[src$="svg"] {
+		background-color: white;
+		filter: invert(100%) hue-rotate(180deg) saturate(200%);;
+	}
+
+	img[src$="jpg"], img[src$="png"] {
+		border-radius: 5px;
+	}
+
+	.rst-content dl:not(.docutils) dt {
+		background-color: #2D4151;
+	}
+
+	.rst-content dl:not(.docutils) {
+		padding-top: 1em;
+	}
+
+	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
+		color:  #ccc;
+	}
+
+	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list)>dt, .rst-content dl:not(.docutils) dl dt {
+		background-color: black;
+	}
+
+	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
+		color: inherit;
+	}
+
+	span.vm, span.nf, span.nn {
+	    color:#66f !important;
+	}
+
+	span.normal {
+		color: #333 !important;
+	}
+
+	td.linenos pre {
+	    background: #ccc !important;
+	}
+
+	.rst-content .highlighted {
+		background-color: #333;
+	}
+}

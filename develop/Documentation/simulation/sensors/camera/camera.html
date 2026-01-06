@@ -1,0 +1,679 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: camera &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="camera" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">sensors</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">camera</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../coarseSunSensor/index.html">coarseSunSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotorSensor/index.html">hingedRigidBodyMotorSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../imuSensor/index.html">imuSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magnetometer/index.html">magnetometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleMassProps/index.html">simpleMassProps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleVoltEstimator/index.html">simpleVoltEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../starTracker/index.html">starTracker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">sensors</a></li>
+          <li class="breadcrumb-item"><a href="index.html">camera</a></li>
+      <li class="breadcrumb-item active">Module: camera</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/sensors/camera/camera.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-camera">
+<span id="camera"></span><h1>Module: camera<a class="headerlink" href="#module-camera" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The goal of the camera module is to simulate a camera in the Basilisk
+codebase. Although images are provided by the visualization, they are
+renders of the Unity engine and are not necessarily representative of
+a camera. The module reads in an image from a file, or in the
+simulation as a pointer to image data, then corrupts it according to
+input parameters.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The practical limitation of this module is that it decodes and
+re-encodes the images that are corrupted. Outside of this design choice, the limitations are limited to the
+corruption methods used to replicate real camera physics. A Gaussian Dark Current might not always be a good
+model to represent such a phenomenon.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>imageInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#cameraimagemsgpayload"><span class="std std-ref">CameraImageMsgPayload</span></a></p></td>
+<td><p>camera input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>cameraConfigOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#cameraconfigmsgpayload"><span class="std std-ref">CameraConfigMsgPayload</span></a></p></td>
+<td><p>camera parameters output message</p></td>
+</tr>
+<tr class="row-even"><td><p>imageOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#cameraimagemsgpayload"><span class="std std-ref">CameraImageMsgPayload</span></a></p></td>
+<td><p>camera output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="overview-of-corruption-sequence">
+<h3>Overview of Corruption Sequence<a class="headerlink" href="#overview-of-corruption-sequence" title="Link to this heading"></a></h3>
+<p>This modules pulls heavily from the OpenCV library to perform a series of image corruptions. The following methods
+are implemented and executed in the sequence shown:</p>
+<ul class="simple">
+<li><p>Gaussian noise on the image</p></li>
+<li><p>Blurring</p></li>
+<li><p>Dark Current</p></li>
+<li><p>HSV adjustments</p></li>
+<li><p>BGR adjustments</p></li>
+<li><p>Dead and stuck pixels</p></li>
+<li><p>Random Cosmic rays</p></li>
+</ul>
+<p>Doxygen documentation for OpenCV can be found <a class="reference external" href="https://docs.opencv.org/4.5.5/">here</a>.</p>
+</section>
+<section id="overview-of-corruptions">
+<h3>Overview of Corruptions<a class="headerlink" href="#overview-of-corruptions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Gaussian noise is designed to simulate camera sensor noise. This is done by using the addWeighted OpenCV method and
+scaling the noise according to the input parameter. The noise is zero-mean with standard deviation equal to twice the
+gaussian noise parameter. The image is then thresholded at the 6-sigma value of the noise parameter in order to keep
+the background dark.</p></li>
+<li><p>Blurring is implemented using the standard OpenCV blur function with size specified by the blur parameter. This type
+of blur is referred to as a box blur. The only requirement is that the blur parameter be an odd number.</p></li>
+<li><p>Dark current is due to thermal properties of the CCD or CMOS sensor in use: as electrons are created independently of
+incoming light, they are captured in the pixel potential wells and appear to be a signal. Dark current noise is the
+statistical variation of this phenomenon. In Basilisk, dark current noise is added with a Gaussian noise model with
+zero standard deviation and mean of 15 × D, where D is another input to the module.</p></li>
+<li><p>The image color can be changed in the HSV color space.  The hue value is rotated by  a specified amount of radians,
+while the saturation and value component can be adjusted through a positive or negative percentage values.  The
+hue value rotates such that 360 degrees becomes 0 degrees.  The saturation and value components are limited to [0,255].</p></li>
+<li><p>The image color can be changed in the BGR color space.  All color channel changes are specified through
+an integer percentage value that can be either positive or negative.  The resulting integer color value is
+limited to lie within [0,255].</p></li>
+<li><p>Dead and stuck pixels are also implemented as a static perturbation. A dead pixel is a pixel on the sensor that always
+reads black. A stuck pixel is a pixel on the sensor that always reads white. At the initialization of the run, a
+random number generates arbitrary pixel coordinates and either saturates them dark or light.
+The corrupted pixels stay the same throughout the simulation and provide an example of a static artifact.</p></li>
+<li><p>Camera sensor with relatively high energies, they can saturate a line of pixels and corrupt the image. Cosmic rays are
+modeled in Basilisk by randomly choosing a point on the sensor as well as second point within a maximal distance of the
+first one. The abundance of cosmic rays on an image depend on the shutter speed amongst other parameters, and the
+module allows to toggle the frequency and quantity of such events.</p></li>
+</ol>
+<p>To read more about the corruptions and for example pictures see section 5.2 of Dr. Thibaud Teil’s
+<a class="reference external" href="https://hanspeterschaub.info/Papers/grads/ThibaudTeil.pdf">thesis</a>.</p>
+<p>Because each successive filter is applied on top of the previous, the order in which they are applied is very important.
+Currently Basilisk does not support a custom order with out directly modifying the source code. The order is as shown
+in the following table describing the filter and the parameters to control the filter. This order was determined
+in part by trying to match a simulated image to a real image of mars and also based on what makes sense.
+In the following parameters a value of 0 turns this corruption off and is the default value.  Any filter
+that should be supplied must be provided a non-zero filter parameter value.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Order of Corruptions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Corruption</p></th>
+<th class="head"><p>Parameters</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gaussian Noise</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gaussian</span></code></p></td>
+<td><p>[double] Adds noise with a mean of 0 and standard deviation of 2 * scaling parameter</p></td>
+</tr>
+<tr class="row-odd"><td><p>Blur</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blurParam</span></code></p></td>
+<td><p>[double] Determines the size of the box blur. Blur size parameter must be odd</p></td>
+</tr>
+<tr class="row-even"><td><p>Dark Current</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">darkCurrent</span></code></p></td>
+<td><p>[double] Adds noise with mean of 15 * scaling factor and standard deviation of 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>HSV Adjust</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hsv</span></code></p></td>
+<td><p>[3D vector of doubles] First parameter is given in radians and determines the hue shift. Second two parameters are scaling factors for saturation and value</p></td>
+</tr>
+<tr class="row-even"><td><p>BGR Adjust</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bgrPercent</span></code></p></td>
+<td><p>[3D vector of ints] Parameters correspond to scaling factors for blue, green, and red</p></td>
+</tr>
+<tr class="row-odd"><td><p>Salt/Pepper</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">saltPepper</span></code></p></td>
+<td><p>[double] Probability of both stuck and dead pixels is calculated as 0.00002 * scaling parameter</p></td>
+</tr>
+<tr class="row-even"><td><p>Cosmic Rays</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cosmicRays</span></code></p></td>
+<td><p>[double] Adds the specified number of cosmic rays</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The test and these few lines show an example setup for the module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">imageInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inputCamMsg</span><span class="p">)</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="linenos"> 4</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">saveImages</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos"> 5</span><span class="c1"># If images are to be saved, add the directory to which they</span>
+<span class="linenos"> 6</span><span class="n">should</span> <span class="n">be</span> <span class="n">saved</span>
+<span class="linenos"> 7</span><span class="c1">#moduleConfig.saveDir = &#39;/&#39;.join(imagePath.split(&#39;/&#39;)[:-1]) + &#39;/&#39;</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="c1">#Camera config values</span>
+<span class="linenos">10</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">cameraIsOn</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">11</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">sigma_CB</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="c1">#Noise Values</span>
+<span class="linenos">14</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">gaussian</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="linenos">15</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">darkCurrent</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">16</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">saltPepper</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="linenos">17</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">cosmicRays</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">18</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">blurParam</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="linenos">19</span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">hsv</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>These scalar double values are written such that 0 provides no corruption of that
+type and 10 provides very high levels of errors (not bounding though)</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46Camera">
+<span id="_CPPv36Camera"></span><span id="_CPPv26Camera"></span><span id="Camera"></span><span class="target" id="class_camera"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Camera</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv46Camera" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;camera.h&gt;</em></div>
+<p>visual camera class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera6CameraEv">
+<span id="_CPPv3N6Camera6CameraEv"></span><span id="_CPPv2N6Camera6CameraEv"></span><span id="Camera::Camera"></span><span class="target" id="class_camera_1a01f94c3543f56ede7af49dc778f19331"></span><span class="sig-name descname"><span class="n"><span class="pre">Camera</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera6CameraEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor for the <a class="reference internal" href="#class_camera"><span class="std std-ref">Camera</span></a> module. It also sets some default values at its creation. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6CameraD0Ev">
+<span id="_CPPv3N6CameraD0Ev"></span><span id="_CPPv2N6CameraD0Ev"></span><span id="Camera::~Camera"></span><span class="target" id="class_camera_1ad1897942d0ccf91052386388a497349f"></span><span class="sig-name descname"><span class="n"><span class="pre">~Camera</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6CameraD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera11UpdateStateE8uint64_t">
+<span id="_CPPv3N6Camera11UpdateStateE8uint64_t"></span><span id="_CPPv2N6Camera11UpdateStateE8uint64_t"></span><span id="Camera::UpdateState__uint64_t"></span><span class="target" id="class_camera_1ac55e7cdce6e5f2f792f8daa2338556b8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N6Camera11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This module reads an OpNav image and extracts circle information from its content using OpenCV’s HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – The clock time at which the function was called (nanoseconds) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera5ResetE8uint64_t">
+<span id="_CPPv3N6Camera5ResetE8uint64_t"></span><span id="_CPPv2N6Camera5ResetE8uint64_t"></span><span id="Camera::Reset__uint64_t"></span><span class="target" id="class_camera_1a3e8836965b84c96882ddb57f47679d37"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N6Camera5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current time (ns) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera9hsvAdjustERKN2cv3MatERN2cv3MatE">
+<span id="_CPPv3N6Camera9hsvAdjustERKN2cv3MatERN2cv3MatE"></span><span id="_CPPv2N6Camera9hsvAdjustERKN2cv3MatERN2cv3MatE"></span><span id="Camera::hsvAdjust__cv::MatCR.cv::MatR"></span><span class="target" id="class_camera_1aa5d5dcc54bb776741e5480f35e5be4cc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hsvAdjust</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera9hsvAdjustERKN2cv3MatERN2cv3MatE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adjusts the HSV values of each pixel. Can be used to shift the hue, saturation, and brightness of an image. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera16bgrAdjustPercentERKN2cv3MatERN2cv3MatE">
+<span id="_CPPv3N6Camera16bgrAdjustPercentERKN2cv3MatERN2cv3MatE"></span><span id="_CPPv2N6Camera16bgrAdjustPercentERKN2cv3MatERN2cv3MatE"></span><span id="Camera::bgrAdjustPercent__cv::MatCR.cv::MatR"></span><span class="target" id="class_camera_1abde6313b5acffb8ce5a16276b2e6b9d0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bgrAdjustPercent</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera16bgrAdjustPercentERKN2cv3MatERN2cv3MatE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adjusts the BGR values of each pixel by a percent value. Can be used to simulate a sensor with different sensitivities to B, G, and R. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera16addGaussianNoiseERKN2cv3MatERN2cv3MatEdd">
+<span id="_CPPv3N6Camera16addGaussianNoiseERKN2cv3MatERN2cv3MatEdd"></span><span id="_CPPv2N6Camera16addGaussianNoiseERKN2cv3MatERN2cv3MatEdd"></span><span id="Camera::addGaussianNoise__cv::MatCR.cv::MatR.double.double"></span><span class="target" id="class_camera_1a9667b134eb1881f679ac17ba6cb5e94e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addGaussianNoise</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span>, <span class="kt"><span class="pre">double</span></span>, <span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera16addGaussianNoiseERKN2cv3MatERN2cv3MatEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds gaussian noise to an image. Can be used to add color noise and dark current. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+<li><p><strong>Mean</strong> – mean pixel value </p></li>
+<li><p><strong>StdDev</strong> – standard deviation of pixel value </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera13addSaltPepperERKN2cv3MatERN2cv3MatEff">
+<span id="_CPPv3N6Camera13addSaltPepperERKN2cv3MatERN2cv3MatEff"></span><span id="_CPPv2N6Camera13addSaltPepperERKN2cv3MatERN2cv3MatEff"></span><span id="Camera::addSaltPepper__cv::MatCR.cv::MatR.float.float"></span><span class="target" id="class_camera_1a60b66ce3e4d843b168f5e93cd2ca4150"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSaltPepper</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span>, <span class="kt"><span class="pre">float</span></span>, <span class="kt"><span class="pre">float</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera13addSaltPepperERKN2cv3MatERN2cv3MatEff" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds dead and hot pixels to an image. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+<li><p><strong>pa</strong> – probability of dead pixels </p></li>
+<li><p><strong>pb</strong> – probability of hot pixels </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera12addCosmicRayERKN2cv3MatERN2cv3MatEfdi">
+<span id="_CPPv3N6Camera12addCosmicRayERKN2cv3MatERN2cv3MatEfdi"></span><span id="_CPPv2N6Camera12addCosmicRayERKN2cv3MatERN2cv3MatEfdi"></span><span id="Camera::addCosmicRay__cv::MatCR.cv::MatR.float.double.i"></span><span class="target" id="class_camera_1a70cd322ec25797e07029219c31f8fac7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addCosmicRay</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span>, <span class="kt"><span class="pre">float</span></span>, <span class="kt"><span class="pre">double</span></span>, <span class="kt"><span class="pre">int</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera12addCosmicRayERKN2cv3MatERN2cv3MatEfdi" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a cosmic ray to an image. The ray is modelled as a single pixel wide white line. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+<li><p><strong>probThreshhold</strong> – probability of getting a ray each frame </p></li>
+<li><p><strong>randOffset</strong> – if adding multiple rays pass in the number of each to guarantee a random ray </p></li>
+<li><p><strong>maxSize</strong> – max length of cosmic ray </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera17addCosmicRayBurstERKN2cv3MatERN2cv3MatEd">
+<span id="_CPPv3N6Camera17addCosmicRayBurstERKN2cv3MatERN2cv3MatEd"></span><span id="_CPPv2N6Camera17addCosmicRayBurstERKN2cv3MatERN2cv3MatEd"></span><span id="Camera::addCosmicRayBurst__cv::MatCR.cv::MatR.double"></span><span class="target" id="class_camera_1a3b4118374766759de77aa919c8252c3a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addCosmicRayBurst</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="p"><span class="pre">&amp;</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span>, <span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera17addCosmicRayBurstERKN2cv3MatERN2cv3MatEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a user specified number of cosmic rays to an image. Rays are modelled as a single pixel wide white line. The maximum length is hard-coded as 50 pixels. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSrc</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+<li><p><strong>num</strong> – number of cosmic rays to be added </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera12applyFiltersERN2cv3MatERN2cv3MatE">
+<span id="_CPPv3N6Camera12applyFiltersERN2cv3MatERN2cv3MatE"></span><span id="_CPPv2N6Camera12applyFiltersERN2cv3MatERN2cv3MatE"></span><span id="Camera::applyFilters__cv::MatR.cv::MatR"></span><span class="target" id="class_camera_1a505f23042d7362dc9d23edf53a3cdc48"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applyFilters</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mSource</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mDst</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Camera12applyFiltersERN2cv3MatERN2cv3MatE" title="Link to this definition"></a><br /></dt>
+<dd><p>Applies all of the various perturbations to an image with user specified levels. Each parameter is a double scaling actor. A parameter of 0 will result in the respective perturbation not being applied. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mSource</strong> – source image </p></li>
+<li><p><strong>mDst</strong> – destination of modified image </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera8filenameE">
+<span id="_CPPv3N6Camera8filenameE"></span><span id="_CPPv2N6Camera8filenameE"></span><span id="Camera::filename__ss"></span><span class="target" id="class_camera_1ac1203d5a943e34d2dbe4fc3454cf115f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filename</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera8filenameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Filename for module to read an image directly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10imageInMsgE">
+<span id="_CPPv3N6Camera10imageInMsgE"></span><span id="_CPPv2N6Camera10imageInMsgE"></span><span id="Camera::imageInMsg__ReadFunctor:CameraImageMsgPayload:"></span><span class="target" id="class_camera_1a15aa5e59fc1e6916debbad5f18c694e4"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#_CPPv421CameraImageMsgPayload" title="CameraImageMsgPayload"><span class="n"><span class="pre">CameraImageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">imageInMsg</span></span></span><a class="headerlink" href="#_CPPv4N6Camera10imageInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>camera image input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera11imageOutMsgE">
+<span id="_CPPv3N6Camera11imageOutMsgE"></span><span id="_CPPv2N6Camera11imageOutMsgE"></span><span id="Camera::imageOutMsg__Message:CameraImageMsgPayload:"></span><span class="target" id="class_camera_1ac89653fb6abfb9372d1e0a041bca16c6"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#_CPPv421CameraImageMsgPayload" title="CameraImageMsgPayload"><span class="n"><span class="pre">CameraImageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">imageOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N6Camera11imageOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>camera image output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera18cameraConfigOutMsgE">
+<span id="_CPPv3N6Camera18cameraConfigOutMsgE"></span><span id="_CPPv2N6Camera18cameraConfigOutMsgE"></span><span id="Camera::cameraConfigOutMsg__Message:CameraConfigMsgPayload:"></span><span class="target" id="class_camera_1ac1467792c8022371b3c58a63f6d2d872"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#_CPPv422CameraConfigMsgPayload" title="CameraConfigMsgPayload"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfigOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N6Camera18cameraConfigOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the CameraConfigMsg output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera7saveDirE">
+<span id="_CPPv3N6Camera7saveDirE"></span><span id="_CPPv2N6Camera7saveDirE"></span><span id="Camera::saveDir__ss"></span><span class="target" id="class_camera_1a5c4f779091d7dc941e08fd48b36b7f4e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveDir</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera7saveDirE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the directory to save images. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera13sensorTimeTagE">
+<span id="_CPPv3N6Camera13sensorTimeTagE"></span><span id="_CPPv2N6Camera13sensorTimeTagE"></span><span id="Camera::sensorTimeTag__uint64_t"></span><span class="target" id="class_camera_1a06ab4e9ab796dfeb6e48d9196d915a38"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorTimeTag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera13sensorTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Current time tag for sensor out </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10saveImagesE">
+<span id="_CPPv3N6Camera10saveImagesE"></span><span id="_CPPv2N6Camera10saveImagesE"></span><span id="Camera::saveImages__int32_t"></span><span class="target" id="class_camera_1aefb71d0008ca7d243df712c775e88e78"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveImages</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10saveImagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] 1 to save images to file for debugging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10parentNameE">
+<span id="_CPPv3N6Camera10parentNameE"></span><span id="_CPPv2N6Camera10parentNameE"></span><span id="Camera::parentName__cA"></span><span class="target" id="class_camera_1af78c0f05448670fa69732a5daa9a14fb"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentName</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_STRING_LENGTH</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10parentNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the parent body to which the camera should be attached </p>
+<p><a class="reference internal" href="#class_camera"><span class="std std-ref">Camera</span></a> parameters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10cameraIsOnE">
+<span id="_CPPv3N6Camera10cameraIsOnE"></span><span id="_CPPv2N6Camera10cameraIsOnE"></span><span id="Camera::cameraIsOn__i"></span><span class="target" id="class_camera_1a6e555dcd324da77b0e539dbd3a6b2a9f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraIsOn</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10cameraIsOnE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Is the camera currently taking images </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera8cameraIDE">
+<span id="_CPPv3N6Camera8cameraIDE"></span><span id="_CPPv2N6Camera8cameraIDE"></span><span id="Camera::cameraID__i"></span><span class="target" id="class_camera_1ac98a0e4b34543baf7087d8726caab00f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera8cameraIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Is the camera currently taking images </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10resolutionE">
+<span id="_CPPv3N6Camera10resolutionE"></span><span id="_CPPv2N6Camera10resolutionE"></span><span id="Camera::resolution__iA"></span><span class="target" id="class_camera_1af733dc29717b6a857c653faadb2f4207"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resolution</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">512</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">512</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10resolutionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] <a class="reference internal" href="#class_camera"><span class="std std-ref">Camera</span></a> resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10renderRateE">
+<span id="_CPPv3N6Camera10renderRateE"></span><span id="_CPPv2N6Camera10renderRateE"></span><span id="Camera::renderRate__uint64_t"></span><span class="target" id="class_camera_1adc5c8a97b8be7040a0858296327f0536"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">renderRate</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10renderRateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Frame time interval at which to capture images in units of nanosecond </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera11fieldOfViewE">
+<span id="_CPPv3N6Camera11fieldOfViewE"></span><span id="_CPPv2N6Camera11fieldOfViewE"></span><span id="Camera::fieldOfView__double"></span><span class="target" id="class_camera_1a29eda16acfc0ef5450b91c70783f7220"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fieldOfView</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.7</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera11fieldOfViewE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] camera y-axis field of view edge-to-edge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera11cameraPos_BE">
+<span id="_CPPv3N6Camera11cameraPos_BE"></span><span id="_CPPv2N6Camera11cameraPos_BE"></span><span id="Camera::cameraPos_B__doubleA"></span><span class="target" id="class_camera_1a8cb7cc4cbbc1fd1226fa3e3a93768104"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraPos_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera11cameraPos_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] <a class="reference internal" href="#class_camera"><span class="std std-ref">Camera</span></a> position in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera8sigma_CBE">
+<span id="_CPPv3N6Camera8sigma_CBE"></span><span id="_CPPv2N6Camera8sigma_CBE"></span><span id="Camera::sigma_CB__doubleA"></span><span class="target" id="class_camera_1ad203ad6b5dd0deea9b843bd70436e3fa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_CB</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera8sigma_CBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] MRP defining the orientation of the camera frame relative to the body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera6skyBoxE">
+<span id="_CPPv3N6Camera6skyBoxE"></span><span id="_CPPv2N6Camera6skyBoxE"></span><span id="Camera::skyBox__cA"></span><span class="target" id="class_camera_1ab496a20f3915951767580f7a3fcbd441"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">skyBox</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_STRING_LENGTH</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="s"><span class="pre">&quot;black&quot;</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera6skyBoxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] name of skyboz in use </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera16postProcessingOnE">
+<span id="_CPPv3N6Camera16postProcessingOnE"></span><span id="_CPPv2N6Camera16postProcessingOnE"></span><span id="Camera::postProcessingOn__i"></span><span class="target" id="class_camera_1a484685fbadc3869dd91916da34460dac"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postProcessingOn</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera16postProcessingOnE" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default which is off, -1 for false, 1 for true. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera15ppFocusDistanceE">
+<span id="_CPPv3N6Camera15ppFocusDistanceE"></span><span id="_CPPv2N6Camera15ppFocusDistanceE"></span><span id="Camera::ppFocusDistance__double"></span><span class="target" id="class_camera_1a1826a29808086a5db60aeb6c8476af14"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppFocusDistance</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera15ppFocusDistanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10ppApertureE">
+<span id="_CPPv3N6Camera10ppApertureE"></span><span id="_CPPv2N6Camera10ppApertureE"></span><span id="Camera::ppAperture__double"></span><span class="target" id="class_camera_1a63e84890328d06ad4078c3d2a778541e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppAperture</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10ppApertureE" title="Link to this definition"></a><br /></dt>
+<dd><p>Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera13ppFocalLengthE">
+<span id="_CPPv3N6Camera13ppFocalLengthE"></span><span id="_CPPv2N6Camera13ppFocalLengthE"></span><span id="Camera::ppFocalLength__double"></span><span class="target" id="class_camera_1a0fb9601100d8a0880bc03439f2130bcb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppFocalLength</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera13ppFocalLengthE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera13ppMaxBlurSizeE">
+<span id="_CPPv3N6Camera13ppMaxBlurSizeE"></span><span id="_CPPv2N6Camera13ppMaxBlurSizeE"></span><span id="Camera::ppMaxBlurSize__i"></span><span class="target" id="class_camera_1a8ea2703b0444fb445904dd29dd1ad07f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ppMaxBlurSize</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera13ppMaxBlurSizeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera8gaussianE">
+<span id="_CPPv3N6Camera8gaussianE"></span><span id="_CPPv2N6Camera8gaussianE"></span><span id="Camera::gaussian__double"></span><span class="target" id="class_camera_1aa71a5aeac5490f0ff936ae02fc1281ee"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gaussian</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera8gaussianE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gaussian noise level. </p>
+<p>Noise paramters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera11darkCurrentE">
+<span id="_CPPv3N6Camera11darkCurrentE"></span><span id="_CPPv2N6Camera11darkCurrentE"></span><span id="Camera::darkCurrent__double"></span><span class="target" id="class_camera_1a1797f5df303499ca09ed9c793284d672"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">darkCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera11darkCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>Dark current intensity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10saltPepperE">
+<span id="_CPPv3N6Camera10saltPepperE"></span><span id="_CPPv2N6Camera10saltPepperE"></span><span id="Camera::saltPepper__double"></span><span class="target" id="class_camera_1a2f1d2d193581e45fd9c69fd812ff105b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saltPepper</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10saltPepperE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stuck and Dark pixels probability. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10cosmicRaysE">
+<span id="_CPPv3N6Camera10cosmicRaysE"></span><span id="_CPPv2N6Camera10cosmicRaysE"></span><span id="Camera::cosmicRays__double"></span><span class="target" id="class_camera_1a986bf915f97942830f30960dea3e17c0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cosmicRays</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10cosmicRaysE" title="Link to this definition"></a><br /></dt>
+<dd><p>Random cosmic rays (number). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera9blurParamE">
+<span id="_CPPv3N6Camera9blurParamE"></span><span id="_CPPv2N6Camera9blurParamE"></span><span id="Camera::blurParam__double"></span><span class="target" id="class_camera_1a69ae4c8ba7b9c7d1582eac3c5a2b8c3b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">blurParam</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera9blurParamE" title="Link to this definition"></a><br /></dt>
+<dd><p>Blur over image in pixels. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera3hsvE">
+<span id="_CPPv3N6Camera3hsvE"></span><span id="_CPPv2N6Camera3hsvE"></span><span id="Camera::hsv__Eigen::Vector3d"></span><span class="target" id="class_camera_1a47383cc67a38cd6feb07e8286a5ad282"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hsv</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera3hsvE" title="Link to this definition"></a><br /></dt>
+<dd><p>(double) HSV color correction, H (-pi/pi) hue shift, S and V are percent multipliers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera10bgrPercentE">
+<span id="_CPPv3N6Camera10bgrPercentE"></span><span id="_CPPv2N6Camera10bgrPercentE"></span><span id="Camera::bgrPercent__Eigen::Vector3d"></span><span class="target" id="class_camera_1a49c3627dc38f577be2cb7be5a45df90e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bgrPercent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera10bgrPercentE" title="Link to this definition"></a><br /></dt>
+<dd><p>(int) BGR color correction values as percent </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera9bskLoggerE">
+<span id="_CPPv3N6Camera9bskLoggerE"></span><span id="_CPPv2N6Camera9bskLoggerE"></span><span id="Camera::bskLogger__BSKLogger"></span><span class="target" id="class_camera_1a8e3435a274687f1d656ef1eea11c877d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N6Camera9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera20localCurrentSimNanosE">
+<span id="_CPPv3N6Camera20localCurrentSimNanosE"></span><span id="_CPPv2N6Camera20localCurrentSimNanosE"></span><span id="Camera::localCurrentSimNanos__uint64_t"></span><span class="target" id="class_camera_1a1b8839ce3cd4de1d5f55d4bd3e0738e8"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localCurrentSimNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera20localCurrentSimNanosE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Camera13pointImageOutE">
+<span id="_CPPv3N6Camera13pointImageOutE"></span><span id="_CPPv2N6Camera13pointImageOutE"></span><span id="Camera::pointImageOut__voidP"></span><span class="target" id="class_camera_1af531485d822d8a2a583af0772a6d2468"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">pointImageOut</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="k"><span class="pre">nullptr</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N6Camera13pointImageOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>void pointer for image memory passing </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="camera" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

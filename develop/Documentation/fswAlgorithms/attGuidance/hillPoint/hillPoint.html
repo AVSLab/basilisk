@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: hillPoint &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="hillPoint" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../attRefCorrection/index.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../attTrackingError/index.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../celestialTwoBodyPoint/index.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constrainedAttitudeManeuver/index.html">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eulerRotation/index.html">eulerRotation</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3D/index.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3DSpin/index.html">inertial3DSpin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../locationPointing/index.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpRotation/index.html">mrpRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../oneAxisSolarArrayPoint/index.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../opNavPoint/index.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rasterManager/index.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleDeadband/index.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunSafePoint/index.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../velocityPoint/index.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../waypointReference/index.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attGuidance</a></li>
+          <li class="breadcrumb-item"><a href="index.html">hillPoint</a></li>
+      <li class="breadcrumb-item active">Module: hillPoint</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attGuidance/hillPoint/hillPoint.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-hillpoint">
+<span id="hillpoint"></span><h1>Module: hillPoint<a class="headerlink" href="#module-hillpoint" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This attitude guidance module computes the orbital Hill reference frame states.</p>
+<p>The orbit can be any type of Keplerian motion, including circular, elliptical or hyperbolic.
+The module
+<a class="reference download internal" download="" href="../../../../_downloads/87af13293f726db92be69efb4350e9b8/hillPoint.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>attRefOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>attitude reference output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>transNavInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>incoming spacecraft translational state message</p></td>
+</tr>
+<tr class="row-even"><td><p>celBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>(optional) primary celestial body information input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418SelfInit_hillPointP15hillPointConfig7int64_t">
+<span id="_CPPv318SelfInit_hillPointP15hillPointConfig7int64_t"></span><span id="_CPPv218SelfInit_hillPointP15hillPointConfig7int64_t"></span><span id="SelfInit_hillPoint__hillPointConfigP.int64_t"></span><span class="target" id="hill_point_8h_1a402d55f49b17bf1bd2eafa92b7a03b9a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_hillPoint</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415hillPointConfig" title="hillPointConfig"><span class="n"><span class="pre">hillPointConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418SelfInit_hillPointP15hillPointConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>self init method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with RW null space model </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416Update_hillPointP15hillPointConfig8uint64_t7int64_t">
+<span id="_CPPv316Update_hillPointP15hillPointConfig8uint64_t7int64_t"></span><span id="_CPPv216Update_hillPointP15hillPointConfig8uint64_t7int64_t"></span><span id="Update_hillPoint__hillPointConfigP.uint64_t.int64_t"></span><span class="target" id="hill_point_8h_1a5794d3495dfb23c39d276d7a91c73b47"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_hillPoint</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415hillPointConfig" title="hillPointConfig"><span class="n"><span class="pre">hillPointConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416Update_hillPointP15hillPointConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method creates a orbit hill frame reference message. The desired orientation is defined within the module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the null space control </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415Reset_hillPointP15hillPointConfig8uint64_t7int64_t">
+<span id="_CPPv315Reset_hillPointP15hillPointConfig8uint64_t7int64_t"></span><span id="_CPPv215Reset_hillPointP15hillPointConfig8uint64_t7int64_t"></span><span id="Reset_hillPoint__hillPointConfigP.uint64_t.int64_t"></span><span class="target" id="hill_point_8h_1a9a63b43a820af26fbb1e758fef2e327c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_hillPoint</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415hillPointConfig" title="hillPointConfig"><span class="n"><span class="pre">hillPointConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415Reset_hillPointP15hillPointConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the module reset capability. This module has no actions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428computeHillPointingReferenceP15hillPointConfigAL3E_dAL3E_dAL3E_dAL3E_dP16AttRefMsgPayload">
+<span id="_CPPv328computeHillPointingReferenceP15hillPointConfigAL3E_dAL3E_dAL3E_dAL3E_dP16AttRefMsgPayload"></span><span id="_CPPv228computeHillPointingReferenceP15hillPointConfigA3_dA3_dA3_dA3_dP16AttRefMsgPayload"></span><span id="computeHillPointingReference__hillPointConfigP.doubleA.doubleA.doubleA.doubleA.AttRefMsgPayloadP"></span><span class="target" id="hill_point_8h_1a39847b51eb19cf2330cbf792d9201b73"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeHillPointingReference</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415hillPointConfig" title="hillPointConfig"><span class="n"><span class="pre">hillPointConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_BN_N</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v_BN_N</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">celBdyPositonVector</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">celBdyVelocityVector</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#_CPPv416AttRefMsgPayload" title="AttRefMsgPayload"><span class="n"><span class="pre">AttRefMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">attRefOut</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428computeHillPointingReferenceP15hillPointConfigAL3E_dAL3E_dAL3E_dAL3E_dP16AttRefMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415hillPointConfig">
+<span id="_CPPv315hillPointConfig"></span><span id="_CPPv215hillPointConfig"></span><span id="hillPointConfig"></span><span class="target" id="structhill_point_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hillPointConfig</span></span></span><a class="headerlink" href="#_CPPv415hillPointConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;hillPoint.h&gt;</em></div>
+<p>Data structure for module to compute the Hill-frame pointing navigation solution. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15hillPointConfig12attRefOutMsgE">
+<span id="_CPPv3N15hillPointConfig12attRefOutMsgE"></span><span id="_CPPv2N15hillPointConfig12attRefOutMsgE"></span><span id="hillPointConfig::attRefOutMsg__AttRefMsg_C"></span><span class="target" id="structhill_point_config_1a93434b7c0c187c4076b961180eb4ca75"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15hillPointConfig12attRefOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15hillPointConfig13transNavInMsgE">
+<span id="_CPPv3N15hillPointConfig13transNavInMsgE"></span><span id="_CPPv2N15hillPointConfig13transNavInMsgE"></span><span id="hillPointConfig::transNavInMsg__NavTransMsg_C"></span><span class="target" id="structhill_point_config_1a3706dcbdf2d28798136285909cca4891"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transNavInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15hillPointConfig13transNavInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the incoming attitude command. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15hillPointConfig12celBodyInMsgE">
+<span id="_CPPv3N15hillPointConfig12celBodyInMsgE"></span><span id="_CPPv2N15hillPointConfig12celBodyInMsgE"></span><span id="hillPointConfig::celBodyInMsg__EphemerisMsg_C"></span><span class="target" id="structhill_point_config_1a3ae7f76f92bc83793fdc7fee3efaaae4"></span><span class="n"><span class="pre">EphemerisMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">celBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15hillPointConfig12celBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the celestial body message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15hillPointConfig17planetMsgIsLinkedE">
+<span id="_CPPv3N15hillPointConfig17planetMsgIsLinkedE"></span><span id="_CPPv2N15hillPointConfig17planetMsgIsLinkedE"></span><span id="hillPointConfig::planetMsgIsLinked__i"></span><span class="target" id="structhill_point_config_1a4b321e98aea47ade78248ac0106cf6ea"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetMsgIsLinked</span></span></span><a class="headerlink" href="#_CPPv4N15hillPointConfig17planetMsgIsLinkedE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag if the planet message is linked </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15hillPointConfig9bskLoggerE">
+<span id="_CPPv3N15hillPointConfig9bskLoggerE"></span><span id="_CPPv2N15hillPointConfig9bskLoggerE"></span><span id="hillPointConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structhill_point_config_1aacd0cd6d8f16ab416f57460a38b5fbdf"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15hillPointConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="hillPoint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

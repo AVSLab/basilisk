@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioSRPInPanels &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioAsteroidLanding" href="scenarioAsteroidLanding.html" />
+    <link rel="prev" title="scenarioDeployPanels" href="scenarioDeployPanels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioSRPInPanels</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/mujoco/scenarioSRPInPanels.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariosrpinpanels">
+<span id="id1"></span><h1>scenarioSRPInPanels<a class="headerlink" href="#scenariosrpinpanels" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioSRPInPanels">It’s recommended to review the following scenario(s) first (and any
+recommended scenario(s) that they may have):</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/mujoco/scenarioDeployPanels.py</span></code></p></li>
+</ol>
+<p>This scenario showcases how solar-radiation pressure (SRP) can be modeled
+ona spacecraft with deployable panels. This script uses the MuJoCo-based
+<a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicObject.html#dynamicobject"><span class="std std-ref">DynamicObject</span></a> <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+<p>The multi-body system is defined in the XML file <code class="docutils literal notranslate"><span class="pre">sat_w_deployable_panels.xml</span></code>.
+In <code class="docutils literal notranslate"><span class="pre">mujoco/scenarioDeployPanels.py</span></code> we saw how to use a PD controller to compute
+the torque necessary to deploy the panels of this same multi-body system. In
+this script, we opt for constraining the panel joint angles to guarantee a smooth
+deployment.</p>
+<p>The formula for the magnitude of SRP acting on a flat surface can be written as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SRP_force_mag</span> <span class="o">=</span> <span class="n">C_SRP</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">C_SRP</span></code> is a fixed* coefficient and <cite>incidence_angle</cite> is the angle between
+the sunlight vector and the normal vector to the surface. The direction of this
+force is along the normal to the surface, and in the direction of the sunlight (
+imagine the sunrays ‘pushing’ the surface). The point of application is the
+centroid of the surface (akin to regular pressure).</p>
+<p>Modeling this with the tools we have considered in previous scenarios should be
+straightforward! Since the thrust direction and point of application are fixed
+on the body-fixed reference frame, we can use an single (scalar) actuator applied
+on a ‘site’ in the body (recall how thrusters were modeled the same way). To compute
+the <code class="docutils literal notranslate"><span class="pre">incidence_angle</span></code>, we need the direction of sunlight in the inertial frame
+(we assume this is constant during the simulation) and the direction of the normal
+vector to the surface in the inertial frame. Fortunately, all sites (remember, these
+are similar to frames fixed on a body) publish their state, which includes their
+attitude with respect to the inertial frame. If we know the definition of the
+surface normal in the site reference frame (which is constant since both the surface
+normal and site frame are fixed in the same rigid body), then we can easily compute
+the direction of the surface normal in the inertial frame.</p>
+<p>The <a class="reference internal" href="../../Documentation/architecture/_GeneralModuleFiles/sys_model.html#sys-model"><span class="std std-ref">SysModel</span></a> class <code class="docutils literal notranslate"><span class="pre">SRPPanel</span></code> performs this calculation for a single panel.
+This accepts three class attributes: <code class="docutils literal notranslate"><span class="pre">C_SRP</span></code>, the direction of sunlight in the
+inertial frame, and the normal vector in the site-fixed reference frame.
+It also takes an input message, which defines the state of said site frame (i.e.
+it’s attitude, among other information). Finally, it outputs a message with
+the magnitude of the SRP force. This can, in turn, be tied to the control input
+of a (single/scalar) actuator that acts on the same site, and with the <code class="docutils literal notranslate"><span class="pre">gear</span></code>
+attribute that corresponds to the frame-fixed surface normal defined in <code class="docutils literal notranslate"><span class="pre">SRPPanel</span></code>.</p>
+<p>We can create a <code class="docutils literal notranslate"><span class="pre">SRPPanel</span></code> for every single facet for which we want to model
+the SRP force. In this script, we apply it to the sunlit sides of the 6 panels.
+However, we could also apply the same model for the sunlit side of our CubeSat.
+We could even implement a system to detect when a surface is in shadow or sunlit,
+and then apply the <code class="docutils literal notranslate"><span class="pre">SRPPanel</span></code> to every surface of our spacecraft (all sides of
+our CubeSat, both sides of the panels, etc.).</p>
+<p>This script is a good example of how <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>-based simulations are flexible
+and require less modeling effort. The dynamic engine takes care of complicated
+frame transformations, so we can retrieve the state of arbitrary frames defined
+in the multi-body and apply forces/torques in local reference frames.
+It also takes care of computing inter-body forces to meet the defined joint
+types, joint limits, constraints, etc. Because all bodies, sites, joints, and
+actuators are treated equally by the engine, we obtain a very modular architecture
+that reduces development effort.</p>
+<p>Note: * There are many reasons why <code class="docutils literal notranslate"><span class="pre">C_SRP</span></code> may not actually be constant in reality
+(distance from sun, eclipses, material degradation…). This is a simplification!</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioSRPInPanels.SRPPanel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioSRPInPanels.</span></span><span class="sig-name descname"><span class="pre">SRPPanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioSRPInPanels.html#SRPPanel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioSRPInPanels.SRPPanel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SysModel</span></code></p>
+<p>A simple <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> that simulates the Solar Radiation
+Pressure (SRP) force that would act on a flat plate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioSRPInPanels.catchtime">
+<span class="sig-prename descclassname"><span class="pre">scenarioSRPInPanels.</span></span><span class="sig-name descname"><span class="pre">catchtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioSRPInPanels.html#catchtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioSRPInPanels.catchtime" title="Link to this definition"></a></dt>
+<dd><p>Used to measure the time that the context takes to run.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioSRPInPanels.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioSRPInPanels.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialSpin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioSRPInPanels.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioSRPInPanels.run" title="Link to this definition"></a></dt>
+<dd><p>Main function, see scenario description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initialSpin</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the satellite is given an initial
+angular velocity. Defaults to False.</p></li>
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, simulation results are plotted and show.
+Defaults to False.</p></li>
+<li><p><strong>visualize</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> visualization tool is
+run on the simulation results. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioDeployPanels.html" class="btn btn-neutral float-left" title="scenarioDeployPanels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioAsteroidLanding.html" class="btn btn-neutral float-right" title="scenarioAsteroidLanding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

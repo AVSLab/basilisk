@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_MRP_steeringInt &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_MRP_steeringInt</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_MRP_steeringInt</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpSteering</span>  <span class="c1"># import the module that is to be tested</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rateServoFullNonlinear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>  <span class="c1"># general support file with common unit test functions</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail() # need to update how the RW states are defined</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+
+<div class="viewcode-block" id="test_mrp_steering_tracking">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/attControl/mrpSteering/_UnitTest/test_MRP_steeringInt.html#test_MRP_steeringInt.test_mrp_steering_tracking">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;K1&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;K3&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;omegaMax&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_mrp_steering_tracking</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">K1</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="n">omegaMax</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test is an integrated test of this module with :ref:`rateServoFullNonlinear` as well,</span>
+<span class="sd">    comparing the desired torques computed :math:`{\bf L}_r` with truth values computed in the test.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    This test checks a set of gains ``K1``, ``K3`` and ``omegaMax`` on a rigid body with no external</span>
+<span class="sd">    torques, and with a fixed input reference attitude message. The commanded rate solution</span>
+<span class="sd">    is evaluated against python computed values at 0s, 0.5s, 1.0s, 1.5s and 2s to within a</span>
+<span class="sd">    tolerance of :math:`10^{-12}`.</span>
+
+<span class="sd">    :param show_plots: flag indicating if plots should be shown.</span>
+<span class="sd">    :param K1: The control gain :math:`K_1`</span>
+<span class="sd">    :param K3: The control gain :math:`K_3`</span>
+<span class="sd">    :param omegaMax: The control gain :math:`\omega_{\text{max}}`</span>
+<span class="sd">    :return: void</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">mrp_steering_tracking</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">K1</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="n">omegaMax</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mrp_steering_tracking</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span><span class="n">K1</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="n">omegaMax</span><span class="p">):</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Construct algorithm and associated C++ container</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">mrpSteering</span><span class="o">.</span><span class="n">mrpSteering</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpSteering&quot;</span>
+
+    <span class="n">servo</span> <span class="o">=</span> <span class="n">rateServoFullNonlinear</span><span class="o">.</span><span class="n">rateServoFullNonlinear</span><span class="p">()</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rate_servo&quot;</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">servo</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">K1</span> <span class="o">=</span> <span class="n">K1</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">K3</span> <span class="o">=</span> <span class="n">K3</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">omega_max</span> <span class="o">=</span> <span class="n">omegaMax</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">150.0</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">servo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">knownTorquePntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+
+    <span class="c1">#   Create input message and size it because the regular creator of that message</span>
+    <span class="c1">#   is not part of the test.</span>
+    <span class="c1">#   attGuidOut Message:</span>
+    <span class="n">guidCmdData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsgPayload</span><span class="p">()</span>  <span class="c1"># Create a structure for the input message</span>
+    <span class="n">guidCmdData</span><span class="o">.</span><span class="n">sigma_BR</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+    <span class="n">guidCmdData</span><span class="o">.</span><span class="n">omega_BR_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">]</span>
+    <span class="n">guidCmdData</span><span class="o">.</span><span class="n">omega_RN_B</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">]</span>
+    <span class="n">guidCmdData</span><span class="o">.</span><span class="n">domega_RN_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0002</span><span class="p">,</span> <span class="mf">0.0003</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">]</span>
+    <span class="n">guidInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">guidCmdData</span><span class="p">)</span>
+
+    <span class="c1"># vehicleConfigData Message:</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1000.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">]</span>
+    <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="n">I</span>
+    <span class="n">vcInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="c1"># wheelSpeeds Message</span>
+    <span class="n">rwSpeedMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWSpeedMsgPayload</span><span class="p">()</span>
+    <span class="n">Omega</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">]</span>
+    <span class="n">rwSpeedMessage</span><span class="o">.</span><span class="n">wheelSpeeds</span> <span class="o">=</span> <span class="n">Omega</span>
+    <span class="n">rwInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWSpeedMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rwSpeedMessage</span><span class="p">)</span>
+
+    <span class="c1"># wheelConfigData message</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">writeMsgInWheelConfiguration</span><span class="p">():</span>
+        <span class="n">rwConfigParams</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWArrayConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="mf">0.5773502691896258</span><span class="p">,</span> <span class="mf">0.5773502691896258</span><span class="p">,</span> <span class="mf">0.5773502691896258</span>
+        <span class="p">]</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">JsList</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+        <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">numRW</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWArrayConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rwConfigParams</span><span class="p">)</span>
+        <span class="n">jsList</span> <span class="o">=</span> <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">JsList</span>
+        <span class="n">GsMatrix_B</span> <span class="o">=</span> <span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span>
+        <span class="k">return</span> <span class="n">jsList</span><span class="p">,</span> <span class="n">GsMatrix_B</span><span class="p">,</span> <span class="n">msg</span>
+
+    <span class="n">jsList</span><span class="p">,</span> <span class="n">GsMatrix_B</span><span class="p">,</span> <span class="n">rwParamInMsg</span> <span class="o">=</span> <span class="n">writeMsgInWheelConfiguration</span><span class="p">()</span>
+
+    <span class="c1"># wheelAvailability message</span>
+    <span class="n">rwAvailList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rwAvailabilityMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWAvailabilityMsgPayload</span><span class="p">()</span>
+    <span class="n">rwAvail</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AVAILABLE</span><span class="p">]</span>
+    <span class="n">rwAvailabilityMessage</span><span class="o">.</span><span class="n">wheelAvailability</span> <span class="o">=</span> <span class="n">rwAvail</span>
+    <span class="n">rwAvailInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWAvailabilityMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rwAvailabilityMessage</span><span class="p">)</span>
+    <span class="n">rwAvailList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rwAvail</span><span class="p">)</span>
+
+    <span class="c1"># Setup logging on the test module output message so that we get all the writes to it</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">servo</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># connect messages</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">guidInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">guidInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwParamInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwInMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rateSteeringInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">rateCmdOutMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rwAvailInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwAvailInMsg</span><span class="p">)</span>
+
+    <span class="c1"># Need to call the self-init and cross-init methods</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Step the simulation to 3*process rate so 4 total steps including zero</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># seconds to stop simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">servo</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># this module reset function needs a time input (in NanoSeconds)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>  <span class="c1"># seconds to stop simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Compute true values</span>
+    <span class="n">trueVals</span> <span class="o">=</span> <span class="n">findTrueTorques</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">servo</span><span class="p">,</span> <span class="n">guidCmdData</span><span class="p">,</span> <span class="n">rwSpeedMessage</span><span class="p">,</span> <span class="n">vehicleConfigOut</span><span class="p">,</span> <span class="n">rwAvailList</span><span class="p">)</span>
+
+    <span class="c1"># set the filtered output truth states</span>
+    <span class="c1"># compare the module results to the truth values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueVals</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">torqueRequestBody</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueVals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed torqueRequestBody unit test at t=&quot;</span>
+                                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;sec </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+    <span class="c1"># If the argument provided at commandline &quot;--show_plots&quot; evaluates as true,</span>
+    <span class="c1"># plot all figures</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># print out success message if no error were found</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">findTrueValues</span><span class="p">(</span><span class="n">guidCmdData</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+
+    <span class="n">omegaMax</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">omega_max</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guidCmdData</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">)</span>
+    <span class="n">K1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">K1</span><span class="p">)</span>
+    <span class="n">K3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">K3</span><span class="p">)</span>
+    <span class="n">Bmat</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">BmatMRP</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">omegaAst</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#np.asarray([0, 0, 0])</span>
+    <span class="n">omegaAst_P</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)):</span>
+        <span class="n">steerRate</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">omegaMax</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">((</span><span class="n">K1</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K3</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">omegaMax</span><span class="p">))</span>
+        <span class="n">omegaAst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">steerRate</span><span class="p">)</span>
+    <span class="c1">#print omegaAst</span>
+
+
+    <span class="k">if</span> <span class="mi">1</span><span class="p">:</span><span class="c1">#module.ignoreOuterLoopFeedforward: #should be &quot;if not&quot;</span>
+        <span class="n">sigmaP</span> <span class="o">=</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">Bmat</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">omegaAst</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)):</span>
+            <span class="n">omegaAstRate</span> <span class="o">=</span> <span class="p">(</span><span class="n">K1</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">K3</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">((</span><span class="n">K1</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K3</span><span class="o">*</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">omegaMax</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">sigmaP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">omegaAst_P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">omegaAstRate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">omegaAst_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">omegaAst</span><span class="p">,</span> <span class="n">omegaAst_P</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">findTrueTorques</span><span class="p">(</span><span class="n">module</span><span class="p">,</span><span class="n">servo</span><span class="p">,</span> <span class="n">guidCmdData</span><span class="p">,</span><span class="n">rwSpeedMessage</span><span class="p">,</span><span class="n">vehicleConfigOut</span><span class="p">,</span> <span class="n">rwAvailMsg</span><span class="p">):</span>
+    <span class="n">Lr</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1">#Read in variables</span>
+    <span class="n">numRW</span> <span class="o">=</span> <span class="n">servo</span><span class="o">.</span><span class="n">rwConfigParams</span><span class="o">.</span><span class="n">numRW</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">servo</span><span class="o">.</span><span class="n">knownTorquePntB_B</span><span class="p">)</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">]</span>
+    <span class="n">omega_BR_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guidCmdData</span><span class="o">.</span><span class="n">omega_BR_B</span><span class="p">)</span>
+    <span class="n">omega_RN_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guidCmdData</span><span class="o">.</span><span class="n">omega_RN_B</span><span class="p">)</span>
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">omega_BR_B</span> <span class="o">+</span> <span class="n">omega_RN_B</span> <span class="c1">#find body rate</span>
+    <span class="n">domega_RN_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guidCmdData</span><span class="o">.</span><span class="n">domega_RN_B</span><span class="p">)</span>
+
+
+    <span class="n">omega_BastR_B</span><span class="p">,</span> <span class="n">omegap_BastR_B</span> <span class="o">=</span> <span class="n">findTrueValues</span><span class="p">(</span><span class="n">guidCmdData</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="n">omega_BastN_B</span> <span class="o">=</span> <span class="n">omega_BastR_B</span><span class="o">+</span><span class="n">omega_RN_B</span>
+    <span class="n">omega_BBast_B</span> <span class="o">=</span> <span class="n">omega_BN_B</span> <span class="o">-</span> <span class="n">omega_BastN_B</span>
+
+    <span class="n">Isc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span><span class="p">)</span>
+    <span class="n">Isc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Isc</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">Ki</span> <span class="o">=</span> <span class="n">servo</span><span class="o">.</span><span class="n">Ki</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">servo</span><span class="o">.</span><span class="n">P</span>
+    <span class="n">jsVec</span> <span class="o">=</span> <span class="n">servo</span><span class="o">.</span><span class="n">rwConfigParams</span><span class="o">.</span><span class="n">JsList</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">numRW</span><span class="p">]</span>
+    <span class="c1">#GsMatrix_B_array = np.asarray(GsMatrix)</span>
+    <span class="n">GsMatrix</span> <span class="o">=</span> <span class="p">(</span><span class="n">servo</span><span class="o">.</span><span class="n">rwConfigParams</span><span class="o">.</span><span class="n">GsMatrix_B</span><span class="p">)</span>
+    <span class="n">GsMatrix_B_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">GsMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">numRW</span> <span class="o">*</span> <span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="n">numRW</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1">#Compute toruqes</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">steps</span><span class="p">)):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">steps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dt</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">zVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1">#evaluate integral term</span>
+        <span class="k">if</span> <span class="n">Ki</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">servo</span><span class="o">.</span><span class="n">integralLimit</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#if integral feedback is on</span>
+            <span class="n">zVec</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">omega_BBast_B</span> <span class="o">+</span> <span class="n">zVec</span>  <span class="c1"># z = integral(del_omega)</span>
+            <span class="c1"># Make sure each component is less than the integral limit</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">zVec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">servo</span><span class="o">.</span><span class="n">integralLimit</span><span class="p">:</span>
+                        <span class="n">zVec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">zVec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">zVec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">servo</span><span class="o">.</span><span class="n">integralLimit</span>
+
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#integral gain turned off/negative setting</span>
+            <span class="n">zVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1">#compute torque Lr</span>
+        <span class="n">Lr0</span> <span class="o">=</span> <span class="n">Ki</span> <span class="o">*</span> <span class="n">zVec</span>  <span class="c1"># +K*sigmaBR</span>
+        <span class="n">Lr1</span> <span class="o">=</span> <span class="n">Lr0</span> <span class="o">+</span> <span class="n">P</span> <span class="o">*</span> <span class="n">omega_BBast_B</span>  <span class="c1"># +P*deltaOmega</span>
+
+        <span class="n">GsHs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">numRW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">rwAvailMsg</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Make RW availability check</span>
+                    <span class="n">GsHs</span> <span class="o">=</span> <span class="n">GsHs</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">GsMatrix_B_array</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">jsVec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">,</span> <span class="n">GsMatrix_B_array</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span> <span class="o">+</span> <span class="n">rwSpeedMessage</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                    <span class="c1"># J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)</span>
+
+        <span class="n">Lr2</span> <span class="o">=</span> <span class="n">Lr1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_BastN_B</span><span class="p">,</span> <span class="p">(</span><span class="n">Isc</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">)</span><span class="o">+</span><span class="n">GsHs</span><span class="p">))</span>  <span class="c1">#  - omega_BastN x ([I]omega + [Gs]h_s)</span>
+
+        <span class="n">Lr3</span> <span class="o">=</span> <span class="n">Lr2</span> <span class="o">-</span> <span class="n">Isc</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">omegap_BastR_B</span> <span class="o">+</span> <span class="n">domega_RN_B</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">,</span> <span class="n">omega_RN_B</span><span class="p">))</span>
+        <span class="c1"># - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r)</span>
+        <span class="n">Lr4</span> <span class="o">=</span> <span class="n">Lr3</span> <span class="o">+</span> <span class="n">L</span>
+        <span class="n">Lr4</span> <span class="o">=</span> <span class="o">-</span><span class="n">Lr4</span>
+        <span class="n">Lr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">tolist</span><span class="p">(</span><span class="n">Lr4</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">Lr</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_mrp_steering_tracking</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

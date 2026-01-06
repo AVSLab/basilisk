@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_lambertSurfaceRelativeVelocity &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_lambertSurfaceRelativeVelocity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_lambertSurfaceRelativeVelocity</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">lambertSurfaceRelativeVelocity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+
+<span class="c1"># parameters</span>
+<span class="n">relativeVelocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">100.</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.</span><span class="p">,</span> <span class="mf">200.</span><span class="p">]])</span>
+<span class="n">time_maneuver</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.e3</span><span class="p">,</span> <span class="mf">2.e3</span><span class="p">]</span>
+<span class="n">trueAnomalies</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]</span>
+<span class="n">rotAngles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">230.</span><span class="p">]</span>
+<span class="n">angularVelocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]])</span>
+
+<span class="n">paramArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">relativeVelocities</span><span class="p">,</span> <span class="n">time_maneuver</span><span class="p">,</span> <span class="n">trueAnomalies</span><span class="p">,</span> <span class="n">rotAngles</span><span class="p">,</span> <span class="n">angularVelocities</span><span class="p">]</span>
+<span class="c1"># create list with all combinations of parameters</span>
+<span class="n">paramList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">paramArray</span><span class="p">))</span>
+
+<div class="viewcode-block" id="test_lambertSurfaceRelativeVelocity">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/orbitControl/lambertSurfaceRelativeVelocity/_UnitTest/test_lambertSurfaceRelativeVelocity.html#test_lambertSurfaceRelativeVelocity.test_lambertSurfaceRelativeVelocity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;p1_vr, p2_tm, p3_f, p4_rot, p5_omega&quot;</span><span class="p">,</span> <span class="n">paramList</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_lambertSurfaceRelativeVelocity</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_vr</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_f</span><span class="p">,</span> <span class="n">p4_rot</span><span class="p">,</span> <span class="n">p5_omega</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This test checks if the Lambert Surface Relative Velocity module works correctly for different relative velocity</span>
+<span class="sd">    vectors, maneuver times, true anomalies, planet rotation angles, and planet angular velocity vectors.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots: flag if plots should be shown</span>
+<span class="sd">        p1_vr: desired relative velocity</span>
+<span class="sd">        p2_tm: maneuver time</span>
+<span class="sd">        p3_f: true anomaly</span>
+<span class="sd">        p4_rot: rotation angle of planet</span>
+<span class="sd">        p5_omega: angular velocity vector of planet</span>
+<span class="sd">        accuracy: accuracy of the test</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The content of the DesiredVelocityMsg output message (velocity vector and maneuver time) is compared with the true</span>
+<span class="sd">    values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lambertSurfaceRelativeVelocityTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_vr</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_f</span><span class="p">,</span> <span class="n">p4_rot</span><span class="p">,</span> <span class="n">p5_omega</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lambertSurfaceRelativeVelocityTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">p1_vr</span><span class="p">,</span> <span class="n">p2_tm</span><span class="p">,</span> <span class="n">p3_f</span><span class="p">,</span> <span class="n">p4_rot</span><span class="p">,</span> <span class="n">p5_omega</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="n">muBody</span> <span class="o">=</span> <span class="mf">3.986004418e14</span>
+    <span class="n">ecc</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">vRelativeDesired_S</span> <span class="o">=</span> <span class="n">p1_vr</span>
+    <span class="n">tm</span> <span class="o">=</span> <span class="n">p2_tm</span>
+
+    <span class="n">omega_PN_N</span> <span class="o">=</span> <span class="n">p5_omega</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="n">omegaHat_PN_N</span> <span class="o">=</span> <span class="n">omega_PN_N</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">omegaHat_PN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+    <span class="n">prv_PN</span> <span class="o">=</span> <span class="n">p4_rot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="n">omegaHat_PN_N</span>
+    <span class="n">sigma_PN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prv_PN</span><span class="p">)</span>
+    <span class="n">dcm_PN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_PN</span><span class="p">)</span>
+    <span class="n">omega_PN_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_PN</span><span class="p">,</span> <span class="n">omega_PN_N</span><span class="p">)</span>
+
+    <span class="c1"># set up orbit using classical orbit elements</span>
+    <span class="n">oe0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">10000.</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">r</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">ecc</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">10.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">20.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">30.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe0</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">p3_f</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="c1"># spacecraft state at initial time</span>
+    <span class="n">r0_BN_N</span><span class="p">,</span> <span class="n">v0_BN_N</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv_parab</span><span class="p">(</span><span class="n">muBody</span><span class="p">,</span> <span class="n">oe0</span><span class="p">)</span>
+
+    <span class="c1"># setup module to be tested</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">lambertSurfaceRelativeVelocity</span><span class="o">.</span><span class="n">LambertSurfaceRelativeVelocity</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;lambertSurfaceRelativeVelocity&quot;</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setVRelativeDesired_S</span><span class="p">(</span><span class="n">vRelativeDesired_S</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setTime</span><span class="p">(</span><span class="n">tm</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># Configure input messages</span>
+    <span class="n">ephemerisInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsgPayload</span><span class="p">()</span>
+    <span class="n">ephemerisInMsgData</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">sigma_PN</span>
+    <span class="n">ephemerisInMsgData</span><span class="o">.</span><span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">omega_PN_P</span>
+    <span class="n">ephemerisInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ephemerisInMsgData</span><span class="p">)</span>
+
+    <span class="n">lambertProblemInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsgPayload</span><span class="p">()</span>
+    <span class="n">lambertProblemInMsgData</span><span class="o">.</span><span class="n">r2_N</span> <span class="o">=</span> <span class="n">r0_BN_N</span>  <span class="c1"># only info of LambertProblemMsg needed by module</span>
+    <span class="n">lambertProblemInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LambertProblemMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lambertProblemInMsgData</span><span class="p">)</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lambertProblemInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ephemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemerisInMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup output message recorder objects</span>
+    <span class="n">desiredVelocityOutMsgRec</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desiredVelocityOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">desiredVelocityOutMsgRec</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="c1"># pull module data</span>
+    <span class="n">vDesired</span> <span class="o">=</span> <span class="n">desiredVelocityOutMsgRec</span><span class="o">.</span><span class="n">vDesired_N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">desiredVelocityOutMsgRec</span><span class="o">.</span><span class="n">maneuverTime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># true values</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="n">s1Hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">,</span> <span class="n">r0_BN_N</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">,</span> <span class="n">r0_BN_N</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s1Hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">r0_BN_N</span><span class="p">)</span><span class="o">/</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">r0_BN_N</span><span class="p">)))</span>
+    <span class="n">s3Hat</span> <span class="o">=</span> <span class="n">r0_BN_N</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r0_BN_N</span><span class="p">)</span>
+    <span class="n">s2Hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">s3Hat</span><span class="p">,</span> <span class="n">s1Hat</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">s3Hat</span><span class="p">,</span> <span class="n">s1Hat</span><span class="p">))</span>
+    <span class="n">dcm_SN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s1Hat</span><span class="p">,</span> <span class="n">s2Hat</span><span class="p">,</span> <span class="n">s3Hat</span><span class="p">])</span>
+    <span class="n">vDesiredTrue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_PN_N</span><span class="p">,</span> <span class="n">r0_BN_N</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_SN</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vRelativeDesired_S</span><span class="p">)</span>
+    <span class="n">timeTrue</span> <span class="o">=</span> <span class="n">tm</span>
+
+    <span class="c1"># make sure module output data is correct</span>
+    <span class="n">paramsString</span> <span class="o">=</span> <span class="s1">&#39; for desired relative velocity=</span><span class="si">{}</span><span class="s1">, maneuver time=</span><span class="si">{}</span><span class="s1">, true anomaly=</span><span class="si">{}</span><span class="s1">, rotation angle=</span><span class="si">{}</span><span class="s1">, &#39;</span> \
+                   <span class="s1">&#39;angular velocity=</span><span class="si">{}</span><span class="s1">, accuracy=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p1_vr</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p2_tm</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p3_f</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p4_rot</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p5_omega</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">vDesired</span><span class="p">,</span>
+                               <span class="n">vDesiredTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: desired velocity,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">time</span><span class="p">,</span>
+                               <span class="n">timeTrue</span><span class="p">,</span>
+                               <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Variable: maneuver time,&#39;</span> <span class="o">+</span> <span class="n">paramsString</span><span class="p">),</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_lambertSurfaceRelativeVelocity</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">relativeVelocities</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">time_maneuver</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">trueAnomalies</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rotAngles</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                        <span class="n">angularVelocities</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

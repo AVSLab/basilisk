@@ -1,0 +1,563 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: thrusterPlatformReference &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="thrusterPlatformReference" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../jointMotionCompensator/index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgVelocitySteering/index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">thrusterPlatformReference</a></li>
+      <li class="breadcrumb-item active">Module: thrusterPlatformReference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/thrusterPlatformReference/thrusterPlatformReference.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-thrusterplatformreference">
+<span id="thrusterplatformreference"></span><h1>Module: thrusterPlatformReference<a class="headerlink" href="#module-thrusterplatformreference" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes a reference orientation for a dual-gimballed platform connected to the main hub. The platform can only perform a tip-and-tilt type of rotation, and therefore one degree of freedom is blocked. A thruster is mounted on the platform, whose direction is known in platform-frame coordinates. The goal of this module is to compute a reference orientation for the platform which can align the thruster direction with the system’s center of mass, to zero the net torque produced by the thruster on the spacecraft. Alternatively, this module can offset the thrust direction with respect to the center of mass to produce a net torque that dumps the momentum accumulated on the reaction wheels.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vehConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Input vehicle configuration message containing the position of the center of mass of the system.</p></td>
+</tr>
+<tr class="row-odd"><td><p>thrusterConfigFInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRConfigMsgPayload.html#thrconfigmsgpayload"><span class="std std-ref">THRConfigMsgPayload</span></a></p></td>
+<td><p>Input thruster configuration message containing the thrust direction vector and magnitude in <strong>platform frame coordinates</strong>. The entry <code class="docutils literal notranslate"><span class="pre">rThrust_B</span></code> here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (<span class="math notranslate nohighlight">\({}^\mathcal{F}\boldsymbol{r}_{T/F}\)</span>).</p></td>
+</tr>
+<tr class="row-even"><td><p>rwConfigDataInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.html#rwarrayconfigmsgpayload"><span class="std std-ref">RWArrayConfigMsgPayload</span></a></p></td>
+<td><p>Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p>rwSpeedsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#rwspeedmsgpayload"><span class="std std-ref">RWSpeedMsgPayload</span></a></p></td>
+<td><p>Input message containing the relative speeds of the reaction wheels with respect to the hub.</p></td>
+</tr>
+<tr class="row-even"><td><p>hingedRigidBodyRef1OutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a></p></td>
+<td><p>Output message containing the reference angle and angle rate for the tip angle.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hingedRigidBodyRef2OutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a></p></td>
+<td><p>Output message containing the reference angle and angle rate for the tilt angle.</p></td>
+</tr>
+<tr class="row-even"><td><p>bodyHeadingOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/BodyHeadingMsgPayload.html#bodyheadingmsgpayload"><span class="std std-ref">BodyHeadingMsgPayload</span></a></p></td>
+<td><p>Output message containing the unit direction vector of the thruster in body-frame coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p>thrusterTorqueOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>Output message containing the opposite of the net torque produced by the thruster on the system.</p></td>
+</tr>
+<tr class="row-even"><td><p>thrusterConfigBOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRConfigMsgPayload.html#thrconfigmsgpayload"><span class="std std-ref">THRConfigMsgPayload</span></a></p></td>
+<td><p>Output thruster configuration message containing the thrust direction vector and magnitude in <strong>reference body frame coordinates</strong>. The entry <code class="docutils literal notranslate"><span class="pre">rThrust_B</span></code> here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (<span class="math notranslate nohighlight">\({}^\mathcal{B}\boldsymbol{r}_{T/B}\)</span>).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>A detailed mathematical derivation of the equations implemented in this module can be found in <a class="reference external" href="http://hanspeterschaub.info/Papers/Calaon2023a.pdf">R. Calaon, L. Kiner, C. Allard and H. Schaub, “Momentum Management of a Spacecraft equipped with a Dual-Gimballed Electric Thruster”</a>.</p>
+<p>This module computes a direction cosine matrix <span class="math notranslate nohighlight">\([\mathcal{FM}]\)</span> that describes the rotation between the platform frame <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> and the mount frame <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>. To be compliant with the constraint in the motion of the platform, i.e. the dual gimbal, such frame must have a zero in the element (2,1). When such condition is met, the reference angles computed from the D.C.M. allow to align the thruster through the system’s center of mass. The input parameters for this module allow to specify offsets between the origin <span class="math notranslate nohighlight">\(M\)</span> of the hub-fixed mount frame <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> and the origin <span class="math notranslate nohighlight">\(F\)</span> of the platform-fixed frame <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>, the application point of the thruster force in the <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> frame, and the direction, in <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>-frame coordinates, of the thrust vector.</p>
+<p>When the optional input messages <code class="docutils literal notranslate"><span class="pre">rwConfigDataInMsg</span></code> and <code class="docutils literal notranslate"><span class="pre">rwSpeedsInMsg</span></code> the user can specify an input parameter <code class="docutils literal notranslate"><span class="pre">K</span></code>, which is the proportional gain of a control gain that computes an offset with respect to the center of mass: this allows for the thruster to apply a torque on the system that dumps the momentum accumulated on the wheels. Such control law has the expression:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{d} = -\frac{1}{t^2} \boldsymbol{t} \times(\kappa \boldsymbol{h}_w + \kappa_I \boldsymbol{H}_w)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{h}_w\)</span> is the momentum on the wheels and <span class="math notranslate nohighlight">\(\boldsymbol{H}_w\)</span> the integral over time of the momentum:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{H}_w = \int_{t_0}^t \boldsymbol{h}_w \text{d}t.\]</div>
+<p>The inputs <code class="docutils literal notranslate"><span class="pre">theta1Max</span></code> and <code class="docutils literal notranslate"><span class="pre">theta2Max</span></code> are used to set bounds on the output reference angles for the platform. If there are no mechanical bounds, setting these inputs to a negative value bypasses the routine that bounds these angles.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>As pointed out in the paper referenced above, it is not always guaranteed that a direction cosine matrix exists, that can satisfy both the pointing requirement on the thrust direction and the kinematic constraint on the dual-gimballed platform. When a solution does not exist, a minimum problem is solved to compute the closest constraint-incompliant D.C.M. The tip and tilt referemce angles <span class="math notranslate nohighlight">\(\nu_{1R}\)</span> and <span class="math notranslate nohighlight">\(\nu_{2R}\)</span> are extracted from the final D.C.M. according to:</p>
+<div class="math notranslate nohighlight">
+\[\begin{align}
+    \nu_{1R} &amp;= \arctan \left( \frac{f_{23}}{f_{22}} \right) &amp;
+    \nu_{2R} &amp;= \arctan \left( \frac{f_{31}}{f_{11}} \right)
+\end{align}\]</div>
+<p>without checking whether the D.C.M. <span class="math notranslate nohighlight">\([\mathcal{FM}]\)</span> is constraint compliant. As a result, the angles <span class="math notranslate nohighlight">\(\nu_{1R}\)</span> and <span class="math notranslate nohighlight">\(\nu_{2R}\)</span> produce a constraint compliant reference, which however might not align the thruster with the desired point in the hub.</p>
+<p>The module Reset() function zeros the output message to ensure safe management of effector states when the algorithm is disabled.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The required module configuration is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">platformReference</span> <span class="o">=</span> <span class="n">thrusterPlatformReference</span><span class="o">.</span><span class="n">thrusterPlatformReference</span><span class="p">()</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">ModelTag</span>  <span class="o">=</span> <span class="s2">&quot;platformReference&quot;</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">sigma_MB</span>  <span class="o">=</span> <span class="n">sigma_MB</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">r_BM_M</span>    <span class="o">=</span> <span class="n">r_BM_M</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">r_FM_F</span>    <span class="o">=</span> <span class="n">r_FM_F</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">K</span>         <span class="o">=</span> <span class="n">K</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">Ki</span>        <span class="o">=</span> <span class="n">Ki</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">theta1Max</span> <span class="o">=</span> <span class="n">theta1Max</span>
+<span class="n">platformReference</span><span class="o">.</span><span class="n">theta2Max</span> <span class="o">=</span> <span class="n">theta2Max</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTaskAddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">platformReference</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The module is configurable with the following parameters:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_MB</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>relative rotation between body-fixed frames <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{B}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">r_BM_M</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>relative position of point <span class="math notranslate nohighlight">\(B\)</span> with respect to point <span class="math notranslate nohighlight">\(M\)</span>, in <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>-frame coordinates</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r_FM_F</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>relative position of point <span class="math notranslate nohighlight">\(F\)</span> with respect to point <span class="math notranslate nohighlight">\(M\)</span>, in <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>-frame coordinates</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">K</span></code></p></td>
+<td><p>0</p></td>
+<td><p>proportional gain of the momentum dumping control loop</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ki</span></code> (optional)</p></td>
+<td><p>0</p></td>
+<td><p>integral gain of the momentum dumping control loop</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">theta1Max</span></code> (optional)</p></td>
+<td><p>0</p></td>
+<td><p>absolute bound on tip angle</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">theta2Max</span></code> (optional)</p></td>
+<td><p>0</p></td>
+<td><p>absolute bound on tilt angle</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv415momentumDumping">
+<span id="_CPPv315momentumDumping"></span><span id="_CPPv215momentumDumping"></span><span class="target" id="thruster_platform_reference_8h_1ae5f08efe2941c78761aeb4556c395494"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">momentumDumping</span></span></span><a class="headerlink" href="#_CPPv415momentumDumping" title="Link to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15momentumDumping3YesE">
+<span id="_CPPv3N15momentumDumping3YesE"></span><span id="_CPPv2N15momentumDumping3YesE"></span><span class="target" id="thruster_platform_reference_8h_1ae5f08efe2941c78761aeb4556c395494a695ed835e2b72585493b31c1043fdf25"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Yes</span></span></span><a class="headerlink" href="#_CPPv4N15momentumDumping3YesE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15momentumDumping2NoE">
+<span id="_CPPv3N15momentumDumping2NoE"></span><span id="_CPPv2N15momentumDumping2NoE"></span><span class="target" id="thruster_platform_reference_8h_1ae5f08efe2941c78761aeb4556c395494a996e257033c09daf66076efc1ebd3b1c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">No</span></span></span><a class="headerlink" href="#_CPPv4N15momentumDumping2NoE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434SelfInit_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig7int64_t">
+<span id="_CPPv334SelfInit_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig7int64_t"></span><span id="_CPPv234SelfInit_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig7int64_t"></span><span id="SelfInit_thrusterPlatformReference__ThrusterPlatformReferenceConfigP.int64_t"></span><span class="target" id="thruster_platform_reference_8h_1a8244c6e4cb265f6dedffaab9aafad85c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_thrusterPlatformReference</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv431ThrusterPlatformReferenceConfig" title="ThrusterPlatformReferenceConfig"><span class="n"><span class="pre">ThrusterPlatformReferenceConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434SelfInit_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431Reset_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t">
+<span id="_CPPv331Reset_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t"></span><span id="_CPPv231Reset_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t"></span><span id="Reset_thrusterPlatformReference__ThrusterPlatformReferenceConfigP.uint64_t.int64_t"></span><span class="target" id="thruster_platform_reference_8h_1a19bcbe9fa9c177a830ce70f08186ed47"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_thrusterPlatformReference</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv431ThrusterPlatformReferenceConfig" title="ThrusterPlatformReferenceConfig"><span class="n"><span class="pre">ThrusterPlatformReferenceConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431Reset_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432Update_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t">
+<span id="_CPPv332Update_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t"></span><span id="_CPPv232Update_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t"></span><span id="Update_thrusterPlatformReference__ThrusterPlatformReferenceConfigP.uint64_t.int64_t"></span><span class="target" id="thruster_platform_reference_8h_1aeddd426bd47a89d5046d433f3433f646"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_thrusterPlatformReference</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv431ThrusterPlatformReferenceConfig" title="ThrusterPlatformReferenceConfig"><span class="n"><span class="pre">ThrusterPlatformReferenceConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432Update_thrusterPlatformReferenceP31ThrusterPlatformReferenceConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method updates the platformAngles message based on the updated information about the system center of mass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423tprComputeFirstRotationAL3E_dAL3E_dAL3E_AL3E_d">
+<span id="_CPPv323tprComputeFirstRotationAL3E_dAL3E_dAL3E_AL3E_d"></span><span id="_CPPv223tprComputeFirstRotationA3_dA3_dA3_A3_d"></span><span id="tprComputeFirstRotation__doubleA.doubleA.doubleAA"></span><span class="target" id="thruster_platform_reference_8h_1a986b40f1757bcd918a83fecd6615476a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tprComputeFirstRotation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">THat_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rHat_CM_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">F1M</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423tprComputeFirstRotationAL3E_dAL3E_dAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424tprComputeSecondRotationAL3E_dAL3E_dAL3E_dAL3E_dAL3E_AL3E_d">
+<span id="_CPPv324tprComputeSecondRotationAL3E_dAL3E_dAL3E_dAL3E_dAL3E_AL3E_d"></span><span id="_CPPv224tprComputeSecondRotationA3_dA3_dA3_dA3_dA3_A3_d"></span><span id="tprComputeSecondRotation__doubleA.doubleA.doubleA.doubleA.doubleAA"></span><span class="target" id="thruster_platform_reference_8h_1a4dee6a3f8a01b8996db39c5670f764f0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tprComputeSecondRotation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_CM_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_TM_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_CT_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">T_F_hat</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">FF1</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424tprComputeSecondRotationAL3E_dAL3E_dAL3E_dAL3E_dAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423tprComputeThirdRotationAL3E_dAL3E_AL3E_dAL3E_AL3E_d">
+<span id="_CPPv323tprComputeThirdRotationAL3E_dAL3E_AL3E_dAL3E_AL3E_d"></span><span id="_CPPv223tprComputeThirdRotationA3_dA3_A3_dA3_A3_d"></span><span id="tprComputeThirdRotation__doubleA.doubleAA.doubleAA"></span><span class="target" id="thruster_platform_reference_8h_1ab20cf41e7f89d7ba5efcefad3ebc542e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tprComputeThirdRotation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e_theta</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">F2M</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">F3F2</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423tprComputeThirdRotationAL3E_dAL3E_AL3E_dAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423tprComputeFinalRotationAL3E_dAL3E_dAL3E_dAL3E_AL3E_d">
+<span id="_CPPv323tprComputeFinalRotationAL3E_dAL3E_dAL3E_dAL3E_AL3E_d"></span><span id="_CPPv223tprComputeFinalRotationA3_dA3_dA3_dA3_A3_d"></span><span id="tprComputeFinalRotation__doubleA.doubleA.doubleA.doubleAA"></span><span class="target" id="thruster_platform_reference_8h_1a2b1160220ce1285da1434b8841b67cdd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tprComputeFinalRotation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_CM_M</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_TM_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">T_F</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">FM</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423tprComputeFinalRotationAL3E_dAL3E_dAL3E_dAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv431ThrusterPlatformReferenceConfig">
+<span id="_CPPv331ThrusterPlatformReferenceConfig"></span><span id="_CPPv231ThrusterPlatformReferenceConfig"></span><span id="ThrusterPlatformReferenceConfig"></span><span class="target" id="struct_thruster_platform_reference_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ThrusterPlatformReferenceConfig</span></span></span><a class="headerlink" href="#_CPPv431ThrusterPlatformReferenceConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;thrusterPlatformReference.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig8sigma_MBE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig8sigma_MBE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig8sigma_MBE"></span><span id="ThrusterPlatformReferenceConfig::sigma_MB__doubleA"></span><span class="target" id="struct_thruster_platform_reference_config_1a081eca033a3839a2670e8eae2e5b5115"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_MB</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig8sigma_MBE" title="Link to this definition"></a><br /></dt>
+<dd><p>orientation of the M frame w.r.t. the B frame </p>
+<p>declare these user-defined quantities </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig6r_BM_ME">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig6r_BM_ME"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig6r_BM_ME"></span><span id="ThrusterPlatformReferenceConfig::r_BM_M__doubleA"></span><span class="target" id="struct_thruster_platform_reference_config_1a57637d3208e799dd9f4194c900a2f6d8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BM_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig6r_BM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>position of B frame origin w.r.t. M frame origin, in M frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig6r_FM_FE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig6r_FM_FE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig6r_FM_FE"></span><span id="ThrusterPlatformReferenceConfig::r_FM_F__doubleA"></span><span class="target" id="struct_thruster_platform_reference_config_1ab9d730a3537953da4d81b0bf86dacf0e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FM_F</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig6r_FM_FE" title="Link to this definition"></a><br /></dt>
+<dd><p>position of F frame origin w.r.t. M frame origin, in F frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig1KE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig1KE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig1KE"></span><span id="ThrusterPlatformReferenceConfig::K__double"></span><span class="target" id="struct_thruster_platform_reference_config_1a721db37bd6c73db68b095ed6397c5f32"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig1KE" title="Link to this definition"></a><br /></dt>
+<dd><p>momentum dumping proportional gain [1/s] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig2KiE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig2KiE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig2KiE"></span><span id="ThrusterPlatformReferenceConfig::Ki__double"></span><span class="target" id="struct_thruster_platform_reference_config_1ac195f4ff9ebcf9062136ebc67d0af2c7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ki</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig2KiE" title="Link to this definition"></a><br /></dt>
+<dd><p>momentum dumping integral gain [1] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig9theta1MaxE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig9theta1MaxE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig9theta1MaxE"></span><span id="ThrusterPlatformReferenceConfig::theta1Max__double"></span><span class="target" id="struct_thruster_platform_reference_config_1a5508f193b7b6736b08b85f9b6e2486ec"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta1Max</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig9theta1MaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>absolute bound on tip angle [rad] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig9theta2MaxE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig9theta2MaxE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig9theta2MaxE"></span><span id="ThrusterPlatformReferenceConfig::theta2Max__double"></span><span class="target" id="struct_thruster_platform_reference_config_1ac98c45319761423714a1157438e08d40"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta2Max</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig9theta2MaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>absolute bound on tilt angle [rad] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig14rwConfigParamsE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig14rwConfigParamsE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig14rwConfigParamsE"></span><span id="ThrusterPlatformReferenceConfig::rwConfigParams__RWArrayConfigMsgPayload"></span><span class="target" id="struct_thruster_platform_reference_config_1aa9649017daeb81c78212cfc75d96716c"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWArrayConfigMsgPayload.html#_CPPv423RWArrayConfigMsgPayload" title="RWArrayConfigMsgPayload"><span class="n"><span class="pre">RWArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwConfigParams</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig14rwConfigParamsE" title="Link to this definition"></a><br /></dt>
+<dd><p>struct to store message containing RW config parameters in body B frame </p>
+<p>declare variables for internal module calculations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig15momentumDumpingE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig15momentumDumpingE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig15momentumDumpingE"></span><span id="ThrusterPlatformReferenceConfig::momentumDumping__i"></span><span class="target" id="struct_thruster_platform_reference_config_1a13f4cad83b120f2b2688f09177a3805a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">momentumDumping</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig15momentumDumpingE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag that assesses whether RW information is provided to perform momentum dumping </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig7hsInt_ME">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig7hsInt_ME"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig7hsInt_ME"></span><span id="ThrusterPlatformReferenceConfig::hsInt_M__doubleA"></span><span class="target" id="struct_thruster_platform_reference_config_1ac3fdf3d5da6348c27f473dca9aba619c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hsInt_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig7hsInt_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>integral of RW momentum </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig9priorHs_ME">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig9priorHs_ME"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig9priorHs_ME"></span><span id="ThrusterPlatformReferenceConfig::priorHs_M__doubleA"></span><span class="target" id="struct_thruster_platform_reference_config_1a3c614c3ffac7116cce13849f700bb1c6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">priorHs_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig9priorHs_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>prior RW momentum </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig9priorTimeE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig9priorTimeE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig9priorTimeE"></span><span id="ThrusterPlatformReferenceConfig::priorTime__uint64_t"></span><span class="target" id="struct_thruster_platform_reference_config_1a2961a992b749df9d63248499d4cae655"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">priorTime</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig9priorTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>prior call time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig14vehConfigInMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig14vehConfigInMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig14vehConfigInMsgE"></span><span id="ThrusterPlatformReferenceConfig::vehConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1ae5be8785ad14f033bd65765e4cb7631b"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig14vehConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg vehicle configuration msg (needed for CM location) </p>
+<p>declare module IO interfaces </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig20thrusterConfigFInMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig20thrusterConfigFInMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig20thrusterConfigFInMsgE"></span><span id="ThrusterPlatformReferenceConfig::thrusterConfigFInMsg__THRConfigMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a872ddedeb19fe09427a9c138bac1dc6f"></span><span class="n"><span class="pre">THRConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterConfigFInMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig20thrusterConfigFInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input thruster configuration msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig13rwSpeedsInMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig13rwSpeedsInMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig13rwSpeedsInMsgE"></span><span id="ThrusterPlatformReferenceConfig::rwSpeedsInMsg__RWSpeedMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a8474a6ea0dd759932ffb45565f91bf8a"></span><span class="n"><span class="pre">RWSpeedMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeedsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig13rwSpeedsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input reaction wheel speeds message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig17rwConfigDataInMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig17rwConfigDataInMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig17rwConfigDataInMsgE"></span><span id="ThrusterPlatformReferenceConfig::rwConfigDataInMsg__RWArrayConfigMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a85fd73541fec32e859c137522306bce0"></span><span class="n"><span class="pre">RWArrayConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwConfigDataInMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig17rwConfigDataInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input RWA configuration message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef1OutMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef1OutMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef1OutMsgE"></span><span id="ThrusterPlatformReferenceConfig::hingedRigidBodyRef1OutMsg__HingedRigidBodyMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a422b1dea58318409aba1012cefd682ab"></span><span class="n"><span class="pre">HingedRigidBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hingedRigidBodyRef1OutMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef1OutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg containing theta1 reference and thetaDot1 reference </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef2OutMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef2OutMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef2OutMsgE"></span><span id="ThrusterPlatformReferenceConfig::hingedRigidBodyRef2OutMsg__HingedRigidBodyMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1aa8b4980e9dd1fdfbb2fd65c82783dec0"></span><span class="n"><span class="pre">HingedRigidBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hingedRigidBodyRef2OutMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig25hingedRigidBodyRef2OutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg containing theta2 reference and thetaDot2 reference </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig17bodyHeadingOutMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig17bodyHeadingOutMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig17bodyHeadingOutMsgE"></span><span id="ThrusterPlatformReferenceConfig::bodyHeadingOutMsg__BodyHeadingMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a7b81453e5701157636c1efe558cd02b6"></span><span class="n"><span class="pre">BodyHeadingMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bodyHeadingOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig17bodyHeadingOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg containing the thrust heading in body frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig20thrusterTorqueOutMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig20thrusterTorqueOutMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig20thrusterTorqueOutMsgE"></span><span id="ThrusterPlatformReferenceConfig::thrusterTorqueOutMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a84d82a1c521ee0cae4fec82c0f287852"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterTorqueOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig20thrusterTorqueOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg containing the opposite of the thruster torque to be compensated by RW’s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig21thrusterConfigBOutMsgE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig21thrusterConfigBOutMsgE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig21thrusterConfigBOutMsgE"></span><span id="ThrusterPlatformReferenceConfig::thrusterConfigBOutMsg__THRConfigMsg_C"></span><span class="target" id="struct_thruster_platform_reference_config_1a86f3652625fc3c5f2d70270e56962068"></span><span class="n"><span class="pre">THRConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterConfigBOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig21thrusterConfigBOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg containing the thruster configuration infor in B-frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31ThrusterPlatformReferenceConfig9bskLoggerE">
+<span id="_CPPv3N31ThrusterPlatformReferenceConfig9bskLoggerE"></span><span id="_CPPv2N31ThrusterPlatformReferenceConfig9bskLoggerE"></span><span id="ThrusterPlatformReferenceConfig::bskLogger__BSKLoggerP"></span><span class="target" id="struct_thruster_platform_reference_config_1a056303f9ce004076d0058fd4a56f6fc8"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N31ThrusterPlatformReferenceConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="thrusterPlatformReference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

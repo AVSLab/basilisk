@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenario_LimbAttOD &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenario_LimbAttOD</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenario_LimbAttOD</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script is called by OpNavScenarios/OpNavMC/MonteCarlo.py in order to make MC data.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Get current file path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+<span class="c1"># Import utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="c1"># Import master classes: simulation base class and scenario base class</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../..&quot;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_OpNav</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKSim</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_OpNavDynamics</span><span class="o">,</span><span class="w"> </span><span class="nn">BSK_OpNavFsw</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Import plotting file for your scenario</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/../../plottingOpNav&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">OpNav_Plotting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">BSK_plt</span>
+
+
+<span class="c1"># Create your own scenario child class</span>
+<div class="viewcode-block" id="scenario_OpNav">
+<a class="viewcode-back" href="../examples/OpNavScenarios/scenariosOpNav/OpNavMC/scenario_LimbAttOD.html#scenario_LimbAttOD.scenario_OpNav">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">scenario_OpNav</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main Simulation Class&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">scenario_OpNav</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswRate</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynRate</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">(</span><span class="n">BSK_OpNavDynamics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">(</span><span class="n">BSK_OpNavFsw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scenario_opnav&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameSc</span> <span class="o">=</span> <span class="s2">&quot;scMsg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameFilt</span> <span class="o">=</span> <span class="s2">&quot;filtMsg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameOpNav</span> <span class="o">=</span> <span class="s2">&quot;opnavMsg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameLimb</span> <span class="o">=</span> <span class="s2">&quot;limbMsg&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Configure Dynamics initial conditions</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">18000</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.6</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">25.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">190.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># 90 good</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s2">&quot;mars barycenter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">rError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10000.0</span><span class="p">,</span> <span class="mf">10000.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10000</span><span class="p">])</span>
+        <span class="n">vError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+
+        <span class="n">MRP</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">relativeOD</span><span class="o">.</span><span class="n">stateInit</span> <span class="o">=</span> <span class="p">(</span><span class="n">rN</span> <span class="o">+</span> <span class="n">rError</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">vN</span> <span class="o">+</span> <span class="n">vError</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">MRP</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="p">[</span><span class="n">MRP</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+            <span class="p">[</span><span class="n">MRP</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+        <span class="p">]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+        <span class="n">qNoiseIn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="mf">1e-3</span>
+        <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-4</span> <span class="o">*</span> <span class="mf">1e-4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">relativeOD</span><span class="o">.</span><span class="n">qNoise</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">horizonNav</span><span class="o">.</span><span class="n">noiseSF</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Dynamics process outputs: log messages below if desired.</span>
+        <span class="n">FswModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+        <span class="n">DynModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+
+        <span class="c1"># FSW process outputs</span>
+        <span class="n">samplingTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">processTasksTimeStep</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameSc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DynModel</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+            <span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameSc</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameFilt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">FswModel</span><span class="o">.</span><span class="n">relativeOD</span><span class="o">.</span><span class="n">filtDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+            <span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameFilt</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameOpNav</span><span class="p">]</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">opnavMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span>
+            <span class="n">samplingTime</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+            <span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameOpNav</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameLimb</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">FswModel</span><span class="o">.</span><span class="n">limbFinding</span><span class="o">.</span><span class="n">opnavLimbOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+            <span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameLimb</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">):</span>
+        <span class="c1"># Dynamics process outputs: pull log messages below if any</span>
+        <span class="c1">## Spacecraft true states</span>
+        <span class="n">scRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameSc</span><span class="p">]</span>
+        <span class="n">position_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scRec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+        <span class="n">velocity_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scRec</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+
+        <span class="c1">## Attitude</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+
+        <span class="c1">## Image processing</span>
+        <span class="n">limbRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameLimb</span><span class="p">]</span>
+        <span class="n">limb</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">limbRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">limbRec</span><span class="o">.</span><span class="n">limbPoints</span><span class="p">)</span>
+        <span class="n">numLimbPoints</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span>
+            <span class="n">limbRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">limbRec</span><span class="o">.</span><span class="n">numLimbPoints</span>
+        <span class="p">)</span>
+        <span class="n">validLimb</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">limbRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">limbRec</span><span class="o">.</span><span class="n">valid</span><span class="p">)</span>
+
+        <span class="c1">## OpNav Out</span>
+        <span class="n">opNavRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameOpNav</span><span class="p">]</span>
+        <span class="n">measPos</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">opNavRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">opNavRec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+        <span class="n">r_C</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">opNavRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">opNavRec</span><span class="o">.</span><span class="n">r_BN_C</span><span class="p">)</span>
+        <span class="n">measCovar</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">opNavRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">opNavRec</span><span class="o">.</span><span class="n">covar_N</span><span class="p">)</span>
+        <span class="n">covar_C</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">opNavRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">opNavRec</span><span class="o">.</span><span class="n">covar_C</span><span class="p">)</span>
+
+        <span class="n">NUM_STATES</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="c1">## Navigation results</span>
+        <span class="n">filtRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retainedMessageNameFilt</span><span class="p">]</span>
+        <span class="n">navState</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">filtRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">filtRec</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">navCovar</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">filtRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">filtRec</span><span class="o">.</span><span class="n">covar</span><span class="p">)</span>
+        <span class="n">navPostFits</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">filtRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">filtRec</span><span class="o">.</span><span class="n">postFitRes</span><span class="p">)</span>
+
+        <span class="n">sigma_CB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">cameraMRP_CB</span>
+        <span class="n">sizeMM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">cameraSize</span>
+        <span class="n">sizeOfCam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">cameraRez</span>
+        <span class="n">focal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">cameraFocal</span>  <span class="c1"># in m</span>
+
+        <span class="n">pixelSize</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pixelSize</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sizeMM</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">sizeOfCam</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">pixelSize</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sizeMM</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">sizeOfCam</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">dcm_CB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_CB</span><span class="p">)</span>
+        <span class="c1"># Plot results</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+        <span class="n">stateError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">position_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">NUM_STATES</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">navCovarLong</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">position_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">NUM_STATES</span> <span class="o">*</span> <span class="n">NUM_STATES</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="p">)</span>
+        <span class="n">navCovarLong</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">position_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">stateError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">position_N</span><span class="p">)</span>
+        <span class="n">stateError</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">velocity_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>
+        <span class="n">measError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">measPos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">measError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">measPos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">measError_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">measPos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">5</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">measError_C</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">measPos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">trueRhat_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">trueR_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">trueCircles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">trueCircles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">trueRhat_C</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">trueR_C</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">switchIdx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">Rmars</span> <span class="o">=</span> <span class="mf">3396.19</span> <span class="o">*</span> <span class="mf">1e3</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stateError</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">stateError</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">navState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]:</span>
+                <span class="n">stateError</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">-=</span> <span class="n">navState</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">stateError</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]</span> <span class="o">-=</span> <span class="n">navState</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stateError</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">NUM_STATES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">switchIdx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">numLimbPoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">numLimbPoints</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+                <span class="n">measError</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">position_N</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">-</span> <span class="n">measPos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">measError_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                    <span class="n">position_N</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+                <span class="n">trueR_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])),</span>
+                    <span class="n">position_N</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])),</span>
+                    <span class="n">position_N</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span>
+                <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">position_N</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">switchIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+                <span class="n">trueCircles</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">focal</span>
+                    <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">Rmars</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">position_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])))</span>
+                    <span class="o">/</span> <span class="n">pixelSize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">*=</span> <span class="n">focal</span> <span class="o">/</span> <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="n">measError_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">r_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                    <span class="n">r_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">trueCircles</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">pixelSize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">sizeOfCam</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span>
+                <span class="p">)</span>
+                <span class="n">trueCircles</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">trueRhat_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">pixelSize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">sizeOfCam</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">measCovar</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">covar_C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">navCovarLong</span><span class="p">[</span><span class="n">switchIdx</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">navCovar</span><span class="p">)</span>
+
+        <span class="n">timeData</span> <span class="o">=</span> <span class="n">position_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_TwoOrbits</span><span class="p">(</span><span class="n">position_N</span><span class="p">,</span> <span class="n">measPos</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">diff_vectors</span><span class="p">(</span><span class="n">trueR_C</span><span class="p">,</span> <span class="n">r_C</span><span class="p">,</span> <span class="n">validLimb</span><span class="p">,</span> <span class="s2">&quot;Limb&quot;</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_limb</span><span class="p">(</span><span class="n">limb</span><span class="p">,</span> <span class="n">numLimbPoints</span><span class="p">,</span> <span class="n">validLimb</span><span class="p">,</span> <span class="n">sizeOfCam</span><span class="p">)</span>
+        <span class="c1"># BSK_plt.AnimatedScatter(sizeOfCam, circleCenters, circleRadii, validCircle)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plotStateCovarPlot</span><span class="p">(</span><span class="n">stateError</span><span class="p">,</span> <span class="n">navCovarLong</span><span class="p">)</span>
+
+        <span class="c1"># BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plotPostFitResiduals</span><span class="p">(</span><span class="n">navPostFits</span><span class="p">,</span> <span class="n">measCovar</span><span class="p">)</span>
+        <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+            <span class="n">BSK_plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitudeErrorNorm&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rateError&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeed&quot;</span><span class="p">]</span>
+            <span class="n">figureList</span> <span class="o">=</span> <span class="n">BSK_plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">):</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">()</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">imageProcessing</span><span class="o">.</span><span class="n">saveImages</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">vizInterface</span><span class="o">.</span><span class="n">liveStream</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">vizard</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">TheScenario</span><span class="o">.</span><span class="n">vizPath</span><span class="p">,</span> <span class="s2">&quot;--args&quot;</span><span class="p">,</span> <span class="s2">&quot;-directComm&quot;</span><span class="p">,</span> <span class="s2">&quot;tcp://localhost:5556&quot;</span><span class="p">],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vizard spawned with PID = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">vizard</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+
+    <span class="c1"># Configure FSW mode</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;prepOpNav&quot;</span>
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="c1"># Configure run time and execute simulation</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s2">&quot;OpNavAttODLimb&quot;</span>
+    <span class="c1"># TheBSKSim.get_DynModel().SetLocalConfigData(TheBSKSim, 60, True)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">vizard</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">TheScenario</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span>
+    <span class="n">de430_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">)</span>
+    <span class="n">naif0012_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)</span>
+    <span class="n">de403masses_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de_403_masses</span><span class="p">)</span>
+    <span class="n">pck00010_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">)</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de430_path</span><span class="p">))</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">naif0012_path</span><span class="p">))</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">de403masses_path</span><span class="p">))</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pck00010_path</span><span class="p">))</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Instantiate base simulation</span>
+
+    <span class="c1"># Configure a scenario in the base simulation</span>
+    <span class="n">TheScenario</span> <span class="o">=</span> <span class="n">scenario_OpNav</span><span class="p">()</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

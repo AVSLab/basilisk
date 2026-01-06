@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is Basilisk &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Basilisk Process and Task Creation" href="bskPrinciples-1.html" />
+    <link rel="prev" title="Fundamentals of Basilisk Simulations" href="../bskPrinciples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">What is Basilisk</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#from-modules-to-spacecraft">From Modules to Spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-behavior-testing">Module Behavior Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-1.html">Basilisk Process and Task Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2.html">Adding Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2a.html">Execution of Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2b.html">Seeing the Order of Process, Task and Module Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-3.html">Connecting Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-4.html">Recording Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5.html">Creating Stand-Alone Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6.html">Setting and Recording Module Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-7.html">Advanced: Redirecting Module Output to Stand-Alone Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-8.html">Advanced: Enabling and Disabling Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-9.html">Advanced: Using <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-10.html">Advanced: Handling <code class="docutils literal notranslate"><span class="pre">BasiliskException</span></code> in Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-11.html">Advanced: Effector Module Branching</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+      <li class="breadcrumb-item active">What is Basilisk</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/bskPrinciples/bskPrinciples-0.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="what-is-basilisk">
+<span id="bskprinciples-0"></span><h1>What is Basilisk<a class="headerlink" href="#what-is-basilisk" title="Link to this heading"></a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<p>The purpose of the Basilisk astrodynamics simulation framework is to enable sophisticated spacecraft simulations to be rapidly created from a series of pre-built modules.  Consider a deep space mission where the spacecraft must perform a series of science, communication, station keeping and orbit maneuver tasks.  Such operations require not only the spacecraft orbital and attitude dynamics to be modeled, but also sub-components such as reaction wheels, thruster, flexible panels, fuel slosh.  Beyond the mechanical components the spacecraft also contains algorithms that determine the orientation, perform closed loop maneuvers, process sensor data etc.  Depending on the depth of analysis being performed, the battery, data storage or communication devices might have to be modeled.</p>
+<a class="reference internal image-reference" href="../../_images/qs-spacecraft.jpg"><img alt="../../_images/qs-spacecraft.jpg" class="align-center" src="../../_images/qs-spacecraft.jpg" style="width: 400.0px; height: 203.0px;" />
+</a>
+<aside class="sidebar">
+<p class="sidebar-title">Framework</p>
+<p>Why is it a framework?  Basilisk by itself is not a program that that will simulate a spacecraft.  Rather, it provides the building blocks, a software framework, with which spacecraft mission simulations are written.</p>
+</aside>
+<p>The purpose of Basilisk, or BSK for short, is to provide an open-source modular spacecraft simulation environment that allows for a wide range of numerical simulations to be performed.  The atomic spacecraft behaviors and components are encapsulated into modules which have a message passing interface to interface with other components.</p>
+<a class="reference internal image-reference" href="../../_images/qs-bsk-lego.jpg"><img alt="../../_images/qs-bsk-lego.jpg" class="align-center" src="../../_images/qs-bsk-lego.jpg" style="width: 399.5px; height: 199.5px;" />
+</a>
+<p>In essence, think of BSK providing lots of spacecraft lego blocks where the user gets to assemble them into the desired spacecraft behavior.  The benefits of this approach include:</p>
+<ul class="simple">
+<li><p>Reuse of spacecraft simulation code that avoid re-creating common features.</p></li>
+<li><p>Complex components are encapsulated into a self-contained module, allowing the user to only need to know how to use the module, not necessarily all the math contained within the module.</p></li>
+<li><p>Ability to exchange a particular component with another without impacting the rest of the numerical simulation.</p></li>
+<li><p>All BSK modules are already developed, thus the user does not have to auto-generate code and validate a particular simulation implementation.</p></li>
+</ul>
+</section>
+<section id="from-modules-to-spacecraft">
+<h2>From Modules to Spacecraft<a class="headerlink" href="#from-modules-to-spacecraft" title="Link to this heading"></a></h2>
+<p>The BSK modules contain a series of input and output message connections which are they key to assembling components into a functioning spacecraft simulation.  The messages provide a method to control how information is shared across the simulation.  A module may have one or more input message connections. Some input messages are optional and change the behavior of the module if they are connected.  For example, a feedback control module provides a standard control solution if the reaction wheel message is not connected, but will incorporate the reaction wheel data in the control if such a message is connected.</p>
+<img alt="../../_images/qs-bsk-0.svg" class="align-center" src="../../_images/qs-bsk-0.svg" />
+<p>The content of a message is stored in the output message object.  These message objects are typically embedded within a BSK module, but can also be a stand-alone message object.  Connecting output messages to input messages connects various modules to each other, thus creating a complex spacecraft behavior from prototypical components.</p>
+</section>
+<section id="module-behavior-testing">
+<h2>Module Behavior Testing<a class="headerlink" href="#module-behavior-testing" title="Link to this heading"></a></h2>
+<p>How do we know that the BSK modules are doing what they are supposed to?
+In each BSK module folder there is a <code class="docutils literal notranslate"><span class="pre">_UnitTest</span></code> folder which contains python scripts to test the functionality of the given module.  This assures that each module is working as planned.  The <code class="docutils literal notranslate"><span class="pre">src/examples</span></code> folder contains many integrated simulation scripts where the modules are assembled into sample spacecraft simulations.  These scripts are also tested to ensure the integrated simulation is working.  Thus, unit tests ensure a module is working individually, and integrated tests ensure that the module connections and interfaces are working properly.  As a result of this integrated testing, developing and enhancing Basilisk can be done readily while being confident that other code has not been broken.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../bskPrinciples.html" class="btn btn-neutral float-left" title="Fundamentals of Basilisk Simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bskPrinciples-1.html" class="btn btn-neutral float-right" title="Basilisk Process and Task Creation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

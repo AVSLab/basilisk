@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_stateArchitecture &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_stateArchitecture</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_stateArchitecture</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">stateArchitecture</span>
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail() # need to update how the RW states are defined</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+
+<div class="viewcode-block" id="stateData">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_stateArchitecture.html#test_stateArchitecture.stateData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stateData</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">stateUse</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">10.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">]]</span>
+    <span class="n">stateName</span> <span class="o">=</span> <span class="s2">&quot;position&quot;</span>
+    <span class="n">newState</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">StateData</span><span class="p">(</span><span class="n">stateName</span><span class="p">,</span> <span class="n">stateUse</span><span class="p">)</span>
+    <span class="n">newState</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">stateUse</span><span class="p">)</span>
+
+    <span class="n">predictedDerivative</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getRowSize</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stateUse</span><span class="p">)):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State row sized incorrectly&quot;</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getColumnSize</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stateUse</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State column sized incorrectly&quot;</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">!=</span> <span class="n">stateName</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State name incorrect&quot;</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">!=</span> <span class="n">stateUse</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State equality check failure.&quot;</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getStateDeriv</span><span class="p">()</span> <span class="o">!=</span> <span class="n">predictedDerivative</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State derivative zero check failure.&quot;</span><span class="p">)</span>
+
+    <span class="n">derivativeInc</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">]]</span>
+    <span class="n">newState</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">(</span><span class="n">derivativeInc</span><span class="p">)</span>
+    <span class="n">newState</span><span class="o">.</span><span class="n">propagateState</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">predictedDerivativeNum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictedDerivative</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">derivativeInc</span><span class="p">)</span>
+    <span class="n">obsDerivativeNum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getStateDeriv</span><span class="p">())</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">obsDerivativeNum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">predictedDerivativeNum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State derivative update check failure.&quot;</span><span class="p">)</span>
+
+    <span class="n">stateUpdateNum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+    <span class="n">predUpStateNum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stateUse</span><span class="p">)</span> <span class="o">+</span> <span class="n">predictedDerivativeNum</span><span class="o">*</span><span class="mf">0.1</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">stateUpdateNum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">stateUpdateNum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State propagation update check failure.&quot;</span><span class="p">)</span>
+
+    <span class="n">priorState</span> <span class="o">=</span> <span class="n">stateUpdateNum</span>
+    <span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="n">priorState</span> <span class="o">*=</span> <span class="n">scaleFactor</span>
+    <span class="n">newState</span><span class="o">.</span><span class="n">scaleState</span><span class="p">(</span><span class="n">scaleFactor</span><span class="p">)</span>
+    <span class="n">stateUpdateNum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">newState</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">stateUpdateNum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">priorState</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State scaling update check failure.&quot;</span><span class="p">)</span>
+
+    <span class="n">dummyState</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">StateData</span><span class="p">(</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="n">newState</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+
+    <span class="n">dummyState</span><span class="o">.</span><span class="n">addState</span><span class="p">(</span><span class="n">newState</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">dummyState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">!=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">stateUpdateNum</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Plus operator failed on StateData&quot;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; State data&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="stateProperties">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_stateArchitecture.html#test_stateArchitecture.stateProperties">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stateProperties</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">newManager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+
+    <span class="n">gravList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">9.81</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">gravName</span> <span class="o">=</span> <span class="s2">&quot;g_N&quot;</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">gravName</span><span class="p">,</span> <span class="n">gravList</span><span class="p">)</span>
+
+    <span class="n">propRef</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">gravName</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">propRef</span> <span class="o">!=</span> <span class="n">gravList</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Create and property reference matching failed.&quot;</span><span class="p">)</span>
+
+    <span class="n">newGravList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">9.81</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="n">gravName</span><span class="p">,</span> <span class="n">newGravList</span><span class="p">)</span>
+    <span class="n">propRef</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">gravName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">propRef</span> <span class="o">!=</span> <span class="n">newGravList</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Set and property reference matching failed.&quot;</span><span class="p">)</span>
+
+    <span class="n">newGravList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">9.81</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">gravName</span><span class="p">,</span> <span class="n">newGravList</span><span class="p">)</span>
+    <span class="n">propRef</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">gravName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">propRef</span> <span class="o">!=</span> <span class="n">newGravList</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Set and property reference matching failed.&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">wrongGravList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">9.81</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">]]</span>
+        <span class="n">newManager</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="n">gravName</span><span class="o">+</span><span class="s2">&quot;Scott&quot;</span><span class="p">,</span> <span class="n">wrongGravList</span><span class="p">)</span>
+        <span class="n">propRef</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">gravName</span><span class="o">+</span><span class="s2">&quot;Scott&quot;</span><span class="p">)</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Set and property reference matching failed.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">massList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1500.0</span><span class="p">]]</span>
+    <span class="n">massName</span> <span class="o">=</span> <span class="s2">&quot;mass&quot;</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">massName</span><span class="p">,</span> <span class="n">massList</span><span class="p">)</span>
+    <span class="n">massRef</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">massName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">massRef</span> <span class="o">!=</span> <span class="n">massList</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;1x1 Eigen property creation failed.&quot;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; State properties&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="stateArchitectureTest">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_stateArchitecture.html#test_stateArchitecture.stateArchitectureTest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stateArchitectureTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">newManager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+
+    <span class="n">positionName</span> <span class="o">=</span> <span class="s2">&quot;position&quot;</span>
+    <span class="n">stateDim</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">posState</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">stateDim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">positionName</span><span class="p">)</span>
+
+    <span class="n">velocityName</span> <span class="o">=</span> <span class="s2">&quot;velocity&quot;</span>
+    <span class="n">stateDim</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">velState</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">stateDim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">velocityName</span><span class="p">)</span>
+
+    <span class="n">flexName</span> <span class="o">=</span> <span class="s2">&quot;Array1_flex&quot;</span>
+    <span class="n">flexDim</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">flexState</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">flexDim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">flexDim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">flexName</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">posState</span><span class="o">.</span><span class="n">getRowSize</span><span class="p">()</span> <span class="o">!=</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">posState</span><span class="o">.</span><span class="n">getColumnSize</span><span class="p">()</span> <span class="o">!=</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Position state returned improper size&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">velState</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">!=</span> <span class="n">velocityName</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Failed to return proper state name for velocity&quot;</span><span class="p">)</span>
+
+
+    <span class="k">if</span><span class="p">(</span><span class="n">newManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">stateDim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">positionName</span><span class="p">)</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">!=</span> <span class="n">positionName</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Failed to return proper state name in overload of call&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">newManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="n">stateDim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stateDim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">positionName</span><span class="p">)</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">positionStateLookup</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="s2">&quot;Array1_flex&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">positionStateLookup</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">!=</span> <span class="n">flexName</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;State lookup for solar array flex failed&quot;</span><span class="p">)</span>
+
+    <span class="n">vectorFactor</span> <span class="o">=</span> <span class="mf">4.0</span>
+    <span class="n">vecStart</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.5</span><span class="p">]]</span>
+    <span class="n">posState</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vecStart</span><span class="p">)</span>
+    <span class="n">velState</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vecStart</span><span class="p">)</span>
+    <span class="n">vectorComposite</span> <span class="o">=</span> <span class="n">newManager</span><span class="o">.</span><span class="n">getStateVector</span><span class="p">()</span>
+    <span class="n">vectorComposite</span><span class="o">.</span><span class="n">addStates</span><span class="p">(</span><span class="n">vectorComposite</span><span class="p">)</span>
+    <span class="n">vectorComposite</span><span class="o">.</span><span class="n">scaleStates</span><span class="p">(</span><span class="n">vectorFactor</span><span class="p">)</span>
+    <span class="n">numpyOutput</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vecStart</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vecStart</span><span class="p">))</span><span class="o">*</span><span class="n">vectorFactor</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">updateStateVector</span><span class="p">(</span><span class="n">vectorComposite</span><span class="p">)</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">velState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">!=</span> <span class="n">numpyOutput</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Velocity state update via state-manager failed&quot;</span><span class="p">)</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">posState</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">(</span><span class="n">vecStart</span><span class="p">)</span>
+    <span class="n">newManager</span><span class="o">.</span><span class="n">propagateStateVector</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">numpyOutput</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vecStart</span><span class="p">)</span><span class="o">*</span><span class="n">dt</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">posState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">!=</span> <span class="n">numpyOutput</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Position state propagation via state-manager failed&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; State manager&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="EigenConversions">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_stateArchitecture.html#test_stateArchitecture.EigenConversions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">EigenConversions</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">inputArray</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]]</span>
+    <span class="n">outputArray</span> <span class="o">=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">eigenVector3d2CArray</span><span class="p">(</span><span class="n">inputArray</span><span class="p">,</span> <span class="n">outputArray</span><span class="p">)</span>
+
+    <span class="n">flatList</span> <span class="o">=</span>  <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputArray</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flatList</span><span class="p">)):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">flatList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">outputArray</span><span class="p">,</span> <span class="n">i</span><span class="p">)):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;3-vector conversion failed&quot;</span><span class="p">)</span>
+
+    <span class="n">inputArray</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">outputArray</span> <span class="o">=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">eigenMatrix3d2CArray</span><span class="p">(</span><span class="n">inputArray</span><span class="p">,</span> <span class="n">outputArray</span><span class="p">)</span>
+
+    <span class="n">flatList</span> <span class="o">=</span>  <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputArray</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flatList</span><span class="p">)):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">flatList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">outputArray</span><span class="p">,</span> <span class="n">i</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">sim_model</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">outputArray</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;3x3 matrix conversion failed&quot;</span><span class="p">)</span>
+
+    <span class="n">inputArray</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">]]</span>
+    <span class="n">outputArray</span> <span class="o">=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">eigenMatrixXd2CArray</span><span class="p">(</span><span class="n">inputArray</span><span class="p">,</span> <span class="n">outputArray</span><span class="p">)</span>
+
+    <span class="n">flatList</span> <span class="o">=</span>  <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputArray</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flatList</span><span class="p">)):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">flatList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">outputArray</span><span class="p">,</span> <span class="n">i</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">sim_model</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">outputArray</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;3x4 matrix conversion failed&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot; Eigen Conversions&quot;</span><span class="p">)</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+<span class="n">FUNCTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="n">stateData</span><span class="p">,</span> <span class="n">stateArchitectureTest</span><span class="p">,</span> <span class="n">stateProperties</span><span class="p">,</span> <span class="n">EigenConversions</span><span class="p">)</span>
+
+<div class="viewcode-block" id="test_stateArchitectureAllTests">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/stateArchitecture/_UnitTest/test_stateArchitecture.html#test_stateArchitecture.test_stateArchitectureAllTests">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">FUNCTIONS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_stateArchitectureAllTests</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">show_plots</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;--tb=native&quot;</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: thrustCMEstimation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="thrustCMEstimation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">stateEstimation</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">thrustCMEstimation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">stateEstimation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">thrustCMEstimation</a></li>
+      <li class="breadcrumb-item active">Module: thrustCMEstimation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/stateEstimation/thrustCMEstimation/thrustCMEstimation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-thrustcmestimation">
+<span id="thrustcmestimation"></span><h1>Module: thrustCMEstimation<a class="headerlink" href="#module-thrustcmestimation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module estimates the location of the center of mass (CM) of the entire spacecraft system based on a series of torque measurements. The module assumes the ability to measure and provide the control torques delivered to the system at steady state, to ensure equilibrium. Torque measurements are provided sequentially, and measurements updates are performed for each new measurement using a sequential, weighted least-squares (LS) algorithm.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages. The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>thrusterConfigBInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRConfigMsgPayload.html#thrconfigmsgpayload"><span class="std std-ref">THRConfigMsgPayload</span></a></p></td>
+<td><p>Input message the thrust application point with respect to the origin of the <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> frame, thrust unit direction vector, and thrust magnitude, all in <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>-frame components.</p></td>
+</tr>
+<tr class="row-odd"><td><p>intFeedbackTorqueInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>Input message containing the stabilizing integral feedback control torque.</p></td>
+</tr>
+<tr class="row-even"><td><p>attGuidInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#attguidmsgpayload"><span class="std std-ref">AttGuidMsgPayload</span></a></p></td>
+<td><p>Input message containing the attitude and angular rates of the body frame with respect to the guidance reference frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p>vehConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message containing the real location of the CM of the system. It is used to verify the correctness of the estimated solution.</p></td>
+</tr>
+<tr class="row-even"><td><p>vehConfigOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Output message containing the estimated location of the CM of the system.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmEstDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CMEstDataMsgPayload.html#cmestdatamsgpayload"><span class="std std-ref">CMEstDataMsgPayload</span></a></p></td>
+<td><p>Output message containing the estimated state, state errors, state covariance, pre- and post-fit residuals.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>This module assumes the presence of a gimbaled thruster that is periodically actuated in order to change the direction of the thrust vector with respect to the body frame. This is done primarily beacuse one thrust measurement alone is not enough to resolve the three components of the CM location. Moreover, fixing the thrust vector along a certain direction causes momentum to build up on the system if such direction is not aligned with the CM. The relative attitude <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_\mathcal{B/R}\)</span> and relative angular rates <span class="math notranslate nohighlight">\(\boldsymbol{\omega}_\mathcal{B/R}\)</span> of the spacecraft hub with respect to the reference are part of the inputs because measurements are only processed when the attitude and rate errors drop below a certain user-defined threshold:</p>
+<div class="math notranslate nohighlight">
+\[\epsilon = \sqrt{\left| \sigma_\mathcal{B/R} \right|^2 + \left| \omega_\mathcal{B/R} \right|^2}\]</div>
+<p>This is done because the torque measurement should only be processed when the spacecraft hub has converged to the reference within a certain accuracy, which means that the integral feedback torque has converged to the external perturbation. Measurements updates do not happen when <code class="docutils literal notranslate"><span class="pre">attGuidInMsg</span></code> is not written. Whenever the thrust vector is not aligned with the CM, the thruster torque is acting as an external perturbation on the system, which is what is used in this module to infer the location of the CM. During the time when the thruster remains fixed in the body-frame, such disturbance is constant, which aligns with the assumption of a constant unmodeled torque that can be compensated by the integral feedback term in <a class="reference internal" href="../../attControl/mrpFeedback/mrpFeedback.html#mrpfeedback"><span class="std std-ref">Module: mrpFeedback</span></a>. <a class="reference internal" href="../../effectorInterfaces/thrusterPlatformReference/thrusterPlatformReference.html#thrusterplatformreference"><span class="std std-ref">Module: thrusterPlatformReference</span></a> computes the ideal reference angles for a dual-gimbaled thruster platform in order to articulate the thruster in a way that ensures that momentum is constantly dumped and does not cause wheel saturation.</p>
+<p>With <span class="math notranslate nohighlight">\(\boldsymbol{t}\)</span> being the thrust vector and <span class="math notranslate nohighlight">\(\boldsymbol{Z}\)</span> being the negative of the integral feedback term, the following quantities are defined at each step:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\([\boldsymbol{C}_n] = [\boldsymbol{\tilde{t}}]\)</span> : linear model</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{y}_n = \boldsymbol{Z} + [\boldsymbol{\tilde{t}}] \boldsymbol{r}_{T/B}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\([\boldsymbol{K}_n]\)</span> : optimal gain</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{x}_n = \boldsymbol{r}_{C/B}\)</span> : CM location estimate</p></li>
+<li><p><span class="math notranslate nohighlight">\([\boldsymbol{P}_n]\)</span> : covariance of the state estimate.</p></li>
+</ul>
+<p>At each step, the state and covariance estimates are updated according to the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}[\boldsymbol{K}_n] = [\boldsymbol{P}_n] [\boldsymbol{C}_n]^T \left( [\boldsymbol{C}_n] [\boldsymbol{P}_n] [\boldsymbol{C}_n]^T + [\boldsymbol{R}] \right)^{-1} \\
+\boldsymbol{x}_{n+1} = \boldsymbol{x}_n + [\boldsymbol{K}_n] \left( \boldsymbol{y}_n - [\boldsymbol{C}_n] \boldsymbol{x}_n \right) \\
+\left[\boldsymbol{P}_{n+1}\right] = \left( [\boldsymbol{I}] - [\boldsymbol{K}_n] [\boldsymbol{C}_n] \right) [\boldsymbol{P}_n]\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\([\boldsymbol{R}]\)</span> is the measurement noise covariance.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The correct functioning of this module can only be guaranteed as long as multiple, linearly independent torque measurements are being provided. One static measurement is not enough to resolve the CM location.</p>
+<p>When additional external disturbances act on the system, the estimated CM location can be affected. In the presence of a biased, unmodeled external torque such as SRP, the estimated location does not coincide with the CM location, but rather the point through which the thruster produces a torque that cancels the SRP effect. Despite the bias in the measurement, this result is still useful combined with <a class="reference internal" href="../../effectorInterfaces/thrusterPlatformReference/thrusterPlatformReference.html#thrusterplatformreference"><span class="std std-ref">Module: thrusterPlatformReference</span></a> because it guarantees to reach a steady-state equilibrium. See <a class="reference internal" href="../../../../examples/scenarioSepMomentumManagement.html#scenariosepmomentummanagement"><span class="std std-ref">scenarioSepMomentumManagement</span></a> for an integrated example scenario.</p>
+<p>The frequency at which the thruster is articulated needs to be chosen carefully, because holding the thruster fixed for too long can cause reaction wheel saturation, with consequent loss of attitude and inability to estimate the CM location.</p>
+<p>More details can be found in <a class="reference external" href="http://hanspeterschaub.info/Papers/Calaon2023b.pdf">R. Calaon, C. Allard, and H. Schaub, “Continuous Center-Of-Mass Estimation For A Gimbaled Ion-Thruster Equipped Spacecraft”</a>.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The required module configuration is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cmEstimation</span> <span class="o">=</span> <span class="n">thrustCMEstimation</span><span class="o">.</span><span class="n">ThrustCMEstimation</span><span class="p">()</span>
+<span class="n">cmEstimation</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cmEstimator&quot;</span>
+<span class="n">cmEstimation</span><span class="o">.</span><span class="n">attitudeTol</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">cmEstimation</span><span class="o">.</span><span class="n">r_CB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]</span>
+<span class="n">cmEstimation</span><span class="o">.</span><span class="n">P0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0025</span><span class="p">,</span> <span class="mf">0.0025</span><span class="p">,</span> <span class="mf">0.0025</span><span class="p">]</span>
+<span class="n">cmEstimation</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">]</span>
+<span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">cmEstimation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The module is configurable with the following parameters:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">attitudeTol</span></code></p></td>
+<td><p>0</p></td>
+<td><p>convergence error <span class="math notranslate nohighlight">\(\epsilon\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">r_CB_B</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>initial guess on the CM location</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">P0</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>diagonal elements of the initial state covariance</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">R0</span></code></p></td>
+<td><p>[0, 0, 0]</p></td>
+<td><p>diagonal elements of the measurement noise covariance</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418ThrustCMEstimation">
+<span id="_CPPv318ThrustCMEstimation"></span><span id="_CPPv218ThrustCMEstimation"></span><span id="ThrustCMEstimation"></span><span class="target" id="class_thrust_c_m_estimation"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ThrustCMEstimation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv418ThrustCMEstimation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;thrustCMEstimation.h&gt;</em></div>
+<p>Top level structure for the thrust CM estimation kalman filter. Used to estimate the spacecraft’s center of mass position with respect to the B frame. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation18ThrustCMEstimationEv">
+<span id="_CPPv3N18ThrustCMEstimation18ThrustCMEstimationEv"></span><span id="_CPPv2N18ThrustCMEstimation18ThrustCMEstimationEv"></span><span id="ThrustCMEstimation::ThrustCMEstimation"></span><span class="target" id="class_thrust_c_m_estimation_1a4986945bfd374d17b3506fa4456fafb4"></span><span class="sig-name descname"><span class="n"><span class="pre">ThrustCMEstimation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation18ThrustCMEstimationEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimationD0Ev">
+<span id="_CPPv3N18ThrustCMEstimationD0Ev"></span><span id="_CPPv2N18ThrustCMEstimationD0Ev"></span><span id="ThrustCMEstimation::~ThrustCMEstimation"></span><span class="target" id="class_thrust_c_m_estimation_1a563baaca528d09f365672f0f03fb5451"></span><span class="sig-name descname"><span class="n"><span class="pre">~ThrustCMEstimation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation8SelfInitEv">
+<span id="_CPPv3N18ThrustCMEstimation8SelfInitEv"></span><span id="_CPPv2N18ThrustCMEstimation8SelfInitEv"></span><span id="ThrustCMEstimation::SelfInit"></span><span class="target" id="class_thrust_c_m_estimation_1ad47c234fe8a0c7c678d6d399244e27e0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize C-wrapped output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation5ResetE8uint64_t">
+<span id="_CPPv3N18ThrustCMEstimation5ResetE8uint64_t"></span><span id="_CPPv2N18ThrustCMEstimation5ResetE8uint64_t"></span><span id="ThrustCMEstimation::Reset__uint64_t"></span><span class="target" id="class_thrust_c_m_estimation_1a12ca370541a75baf4ca60c511a45e672"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the flyby OD filter to an initial state and initializes the internal estimation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The clock time at which the function was called (nanoseconds) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation11UpdateStateE8uint64_t">
+<span id="_CPPv3N18ThrustCMEstimation11UpdateStateE8uint64_t"></span><span id="_CPPv2N18ThrustCMEstimation11UpdateStateE8uint64_t"></span><span id="ThrustCMEstimation::UpdateState__uint64_t"></span><span class="target" id="class_thrust_c_m_estimation_1af1894107b8582237a507464b7538882c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Take the relative position measurements and outputs an estimate of the spacecraft states in the inertial frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The clock time at which the function was called (nanoseconds) </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation11attitudeTolE">
+<span id="_CPPv3N18ThrustCMEstimation11attitudeTolE"></span><span id="_CPPv2N18ThrustCMEstimation11attitudeTolE"></span><span id="ThrustCMEstimation::attitudeTol__double"></span><span class="target" id="class_thrust_c_m_estimation_1a9502576b524abd2480d188da360b730e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attitudeTol</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation11attitudeTolE" title="Link to this definition"></a><br /></dt>
+<dd><p>declare these user-defined quantities </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation20thrusterConfigBInMsgE">
+<span id="_CPPv3N18ThrustCMEstimation20thrusterConfigBInMsgE"></span><span id="_CPPv2N18ThrustCMEstimation20thrusterConfigBInMsgE"></span><span id="ThrustCMEstimation::thrusterConfigBInMsg__ReadFunctor:THRConfigMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1ad36e3acf05e31bd5e02772c73b774486"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRConfigMsgPayload.html#_CPPv419THRConfigMsgPayload" title="THRConfigMsgPayload"><span class="n"><span class="pre">THRConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrusterConfigBInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation20thrusterConfigBInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>thr config in msg in B-frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation22intFeedbackTorqueInMsgE">
+<span id="_CPPv3N18ThrustCMEstimation22intFeedbackTorqueInMsgE"></span><span id="_CPPv2N18ThrustCMEstimation22intFeedbackTorqueInMsgE"></span><span id="ThrustCMEstimation::intFeedbackTorqueInMsg__ReadFunctor:CmdTorqueBodyMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1acd8bd60152e16d92dfdb8c631dee8d49"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#_CPPv423CmdTorqueBodyMsgPayload" title="CmdTorqueBodyMsgPayload"><span class="n"><span class="pre">CmdTorqueBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">intFeedbackTorqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation22intFeedbackTorqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>integral feedback torque input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation12attGuidInMsgE">
+<span id="_CPPv3N18ThrustCMEstimation12attGuidInMsgE"></span><span id="_CPPv2N18ThrustCMEstimation12attGuidInMsgE"></span><span id="ThrustCMEstimation::attGuidInMsg__ReadFunctor:AttGuidMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1af221ef9e1a8af29f30c1ed30842e5bc7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#_CPPv417AttGuidMsgPayload" title="AttGuidMsgPayload"><span class="n"><span class="pre">AttGuidMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attGuidInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation12attGuidInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude guidance input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation14vehConfigInMsgE">
+<span id="_CPPv3N18ThrustCMEstimation14vehConfigInMsgE"></span><span id="_CPPv2N18ThrustCMEstimation14vehConfigInMsgE"></span><span id="ThrustCMEstimation::vehConfigInMsg__ReadFunctor:VehicleConfigMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1ab52482189f5d7ac269558bafe28463db"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation14vehConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) vehicle configuration input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation15cmEstDataOutMsgE">
+<span id="_CPPv3N18ThrustCMEstimation15cmEstDataOutMsgE"></span><span id="_CPPv2N18ThrustCMEstimation15cmEstDataOutMsgE"></span><span id="ThrustCMEstimation::cmEstDataOutMsg__Message:CMEstDataMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1a5a74292447830e5b854f3f0a65a85581"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CMEstDataMsgPayload.html#_CPPv419CMEstDataMsgPayload" title="CMEstDataMsgPayload"><span class="n"><span class="pre">CMEstDataMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmEstDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation15cmEstDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>estimated CM output msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation15vehConfigOutMsgE">
+<span id="_CPPv3N18ThrustCMEstimation15vehConfigOutMsgE"></span><span id="_CPPv2N18ThrustCMEstimation15vehConfigOutMsgE"></span><span id="ThrustCMEstimation::vehConfigOutMsg__Message:VehicleConfigMsgPayload:"></span><span class="target" id="class_thrust_c_m_estimation_1acd7a7130ecd4affda98a58111848de4f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation15vehConfigOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output C++ vehicle configuration msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation16vehConfigOutMsgCE">
+<span id="_CPPv3N18ThrustCMEstimation16vehConfigOutMsgCE"></span><span id="_CPPv2N18ThrustCMEstimation16vehConfigOutMsgCE"></span><span id="ThrustCMEstimation::vehConfigOutMsgC__VehicleConfigMsg_C"></span><span class="target" id="class_thrust_c_m_estimation_1a4ceced9a6192a8e62827895dd08483d1"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation16vehConfigOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>output C vehicle configuration msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation6r_CB_BE">
+<span id="_CPPv3N18ThrustCMEstimation6r_CB_BE"></span><span id="_CPPv2N18ThrustCMEstimation6r_CB_BE"></span><span id="ThrustCMEstimation::r_CB_B__Eigen::Vector3d"></span><span class="target" id="class_thrust_c_m_estimation_1aff7ee72d46177516dfb7f7969933a9c6"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_CB_B</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation6r_CB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>initial CM estimate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation2P0E">
+<span id="_CPPv3N18ThrustCMEstimation2P0E"></span><span id="_CPPv2N18ThrustCMEstimation2P0E"></span><span id="ThrustCMEstimation::P0__Eigen::Vector3d"></span><span class="target" id="class_thrust_c_m_estimation_1a65a67a472eb0acd59b58f2fe152f1722"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P0</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation2P0E" title="Link to this definition"></a><br /></dt>
+<dd><p>initial CM state covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation2R0E">
+<span id="_CPPv3N18ThrustCMEstimation2R0E"></span><span id="_CPPv2N18ThrustCMEstimation2R0E"></span><span id="ThrustCMEstimation::R0__Eigen::Vector3d"></span><span class="target" id="class_thrust_c_m_estimation_1a3276f9584ecb40ce4382054661404474"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R0</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation2R0E" title="Link to this definition"></a><br /></dt>
+<dd><p>measurement noise covariance </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation1IE">
+<span id="_CPPv3N18ThrustCMEstimation1IE"></span><span id="_CPPv2N18ThrustCMEstimation1IE"></span><span id="ThrustCMEstimation::I__Eigen::Matrix3d"></span><span class="target" id="class_thrust_c_m_estimation_1a6f067f6d2a5e172489e45b6c53669ede"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">I</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation1IE" title="Link to this definition"></a><br /></dt>
+<dd><p>identity matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation1PE">
+<span id="_CPPv3N18ThrustCMEstimation1PE"></span><span id="_CPPv2N18ThrustCMEstimation1PE"></span><span id="ThrustCMEstimation::P__Eigen::Matrix3d"></span><span class="target" id="class_thrust_c_m_estimation_1a5e931e101bb370932d05eb3656d81073"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>state covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation1RE">
+<span id="_CPPv3N18ThrustCMEstimation1RE"></span><span id="_CPPv2N18ThrustCMEstimation1RE"></span><span id="ThrustCMEstimation::R__Eigen::Matrix3d"></span><span class="target" id="class_thrust_c_m_estimation_1aa103a1eda58c90185305c43f2771116c"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation1RE" title="Link to this definition"></a><br /></dt>
+<dd><p>measurement noise covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation8r_CB_estE">
+<span id="_CPPv3N18ThrustCMEstimation8r_CB_estE"></span><span id="_CPPv2N18ThrustCMEstimation8r_CB_estE"></span><span id="ThrustCMEstimation::r_CB_est__Eigen::Vector3d"></span><span class="target" id="class_thrust_c_m_estimation_1a652e0f463ef400c6d14b31c6171a9e47"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_CB_est</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation8r_CB_estE" title="Link to this definition"></a><br /></dt>
+<dd><p>CM location estimate. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation11cmKnowledgeE">
+<span id="_CPPv3N18ThrustCMEstimation11cmKnowledgeE"></span><span id="_CPPv2N18ThrustCMEstimation11cmKnowledgeE"></span><span id="ThrustCMEstimation::cmKnowledge__b"></span><span class="target" id="class_thrust_c_m_estimation_1abb2f4edbbb5abdaf108e659ae26fd24e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmKnowledge</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation11cmKnowledgeE" title="Link to this definition"></a><br /></dt>
+<dd><p>boolean to assess if vehConfigInMsg is connected </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18ThrustCMEstimation9bskLoggerE">
+<span id="_CPPv3N18ThrustCMEstimation9bskLoggerE"></span><span id="_CPPv2N18ThrustCMEstimation9bskLoggerE"></span><span id="ThrustCMEstimation::bskLogger__BSKLogger"></span><span class="target" id="class_thrust_c_m_estimation_1a9508ab105ef91f676d10494cdec676a8"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N18ThrustCMEstimation9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="thrustCMEstimation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

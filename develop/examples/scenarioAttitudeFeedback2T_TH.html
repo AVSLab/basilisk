@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAttitudeFeedback2T_TH &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioMomentumDumping" href="scenarioMomentumDumping.html" />
+    <link rel="prev" title="scenarioAttitudeFeedback2T_stateEffTH" href="scenarioAttitudeFeedback2T_stateEffTH.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-regulation-control">Attitude Regulation Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-guidance">Attitude Guidance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#attitude-control-with-actuators">Attitude Control with Actuators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-steering-control">Attitude Steering Control</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioAttitudeFeedback2T_TH</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioAttitudeFeedback2T_TH.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioattitudefeedback2t-th">
+<span id="id1"></span><h1>scenarioAttitudeFeedback2T_TH<a class="headerlink" href="#scenarioattitudefeedback2t-th" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioAttitudeFeedback2T_TH"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This example script demonstrates how to use thrusters to stabilize the tumble of a spacecraft orbiting the
+Earth, using two separate threads.
+This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
+illustrate how a set of thrusters can be added to the rigid <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> hub, and what
+FSW modules are needed to control these thrusters. The simulation setup is performed with two
+processes, similarly to <a class="reference internal" href="scenarioAttitudeFeedback2T.html#scenarioattitudefeedback2t"><span class="std std-ref">scenarioAttitudeFeedback2T</span></a>,
+in which the dynamics and the FSW algorithms are run at different time steps.  The control setup is the same
+as in <a class="reference internal" href="scenarioAttitudeFeedbackRW.html#scenarioattitudefeedbackrw"><span class="std std-ref">scenarioAttitudeFeedbackRW</span></a>, but here the RW actuation is replaced with
+thruster based control torque solution.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioAttitudeFeedback2T_TH</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The simulation layout is shown in the following illustration. The two processes (SIM and FSW) are simulated
+and run at different time rates. Interface messages are shared across SIM and
+FSW message passing interfaces (MPIs).</p>
+<img alt="../_images/test_scenarioAttitudeFeedback2T_TH.svg" class="align-center" src="../_images/test_scenarioAttitudeFeedback2T_TH.svg" />
+<p>When the simulation completes several plots are shown for the MRP attitude history, the rate
+tracking errors, the requested torque, the requested forces for each thruster and the On-Time commands.</p>
+</section>
+<section id="setup-changes-to-simulate-thrusters-dynamic-effectors">
+<h2>Setup Changes to Simulate Thrusters Dynamic Effectors<a class="headerlink" href="#setup-changes-to-simulate-thrusters-dynamic-effectors" title="Link to this heading"></a></h2>
+<p>At the beginning of the script all the plot functions are declared. Then the fundamental simulation setup is the same
+as the one used in <a class="reference internal" href="scenarioAttitudeFeedback2T.html#scenarioattitudefeedback2t"><span class="std std-ref">scenarioAttitudeFeedback2T</span></a>.
+The dynamics simulation is setup using a <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> module to which an Earth gravity
+effector is attached.  The simple navigation module is still used to output the inertial attitude,
+angular rate, as well as position and velocity messages.</p>
+<p>The Thruster Dynamic Effector is added to the the rigid spacecraft hub, similarly to
+<a class="reference internal" href="scenarioAttitudeFeedbackRW.html#scenarioattitudefeedbackrw"><span class="std std-ref">scenarioAttitudeFeedbackRW</span></a>.  The support macro <code class="docutils literal notranslate"><span class="pre">simIncludeThruster.py</span></code>
+provides several convenient tools to facilitate the setup process.  This script allows the user to
+readily create thrusters from a database of public specifications, customize them if needed, and add
+them to the <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> module.</p>
+<p>The first thing to do is to create the (empty) set of thrusters that will later contain all the devices. Then
+a fresh instance of the thruster factory class <code class="docutils literal notranslate"><span class="pre">thrusterFactory()</span></code> is created.  This factory is able
+to create a list of thruster devices, and return copies that can easily be manipulated and customized if needed.
+The next step in this simulation setup is to use <code class="docutils literal notranslate"><span class="pre">create()</span></code> to include a particular thruster device.
+The <code class="docutils literal notranslate"><span class="pre">thrusterFactory()</span></code> class contains several
+public specifications of thruster devices which can be accessed by specifying their name. In our case we will consider
+<code class="docutils literal notranslate"><span class="pre">MOOG_Monarc_1</span></code> for the ACS Thrusters configuration, and <code class="docutils literal notranslate"><span class="pre">MOOG_Monarc_22_6</span></code> for the DV Thrusters one.
+The  2nd and 3rd required arguments are respectively the location of the
+thruster <span class="math notranslate nohighlight">\(\hat{\mathbf r}\)</span> and the direction of its force <span class="math notranslate nohighlight">\(\hat{\mathbf g}_t\)</span>.  Both
+vectors are expressed in the <span class="math notranslate nohighlight">\(\cal B\)</span>-frame.  The remaining arguments are all optional.
+The thrusters are generated by using the <code class="docutils literal notranslate"><span class="pre">create()</span></code> command inside a ‘for’ loop, which has the
+job of assigning the respective location and direction arguments to each thruster, by cycling through the two
+pre-defined arrays ‘<cite>location</cite>’ and ‘<cite>direction</cite>’.</p>
+<p>The following table provides a comprehensive list of all the optional arguments of the <code class="docutils literal notranslate"><span class="pre">create()</span></code>
+command.  This table list the arguments, default values, as well as expected units.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>useMinPulseTime</p></td>
+<td></td>
+<td><p>Bool</p></td>
+<td><p>flag if the thruster model should
+use a minimum impulse time</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>areaNozzle</p></td>
+<td><p>m^2</p></td>
+<td><p>Float</p></td>
+<td><p>thruster nozzle exhaust cone exit area</p></td>
+<td><p>0.1</p></td>
+</tr>
+<tr class="row-even"><td><p>steadyIsp</p></td>
+<td><p>s</p></td>
+<td><p>Float</p></td>
+<td><p>thruster fuel efficiency in Isp</p></td>
+<td><p>100.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>MaxThrust</p></td>
+<td><p>N</p></td>
+<td><p>Float</p></td>
+<td><p>maximum thruster force</p></td>
+<td><p>0.200</p></td>
+</tr>
+<tr class="row-even"><td><p>thrusterMagDisp</p></td>
+<td><p>%</p></td>
+<td><p>Float</p></td>
+<td><p>thruster dispersion percentage</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>MinOnTime</p></td>
+<td><p>s</p></td>
+<td><p>Float</p></td>
+<td><p>thruster minimum on time</p></td>
+<td><p>0.020</p></td>
+</tr>
+</tbody>
+</table>
+<p>The command <code class="docutils literal notranslate"><span class="pre">addToSpacecraft()</span></code> adds all the created thrusters to the <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> module.  The final step
+is to add the <a class="reference internal" href="../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a> to the list of simulation tasks.</p>
+</section>
+<section id="flight-algorithm-changes-to-control-thrusters">
+<h2>Flight Algorithm Changes to Control Thrusters<a class="headerlink" href="#flight-algorithm-changes-to-control-thrusters" title="Link to this heading"></a></h2>
+<p>The general flight algorithm setup is the same as in the earlier simulation scripts. Here we
+use again the <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/inertial3D/inertial3D.html#inertial3d"><span class="std std-ref">Module: inertial3D</span></a> guidance module, the <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/attTrackingError/attTrackingError.html#atttrackingerror"><span class="std std-ref">Module: attTrackingError</span></a> module to evaluate the
+tracking error states, and the <a class="reference internal" href="../Documentation/fswAlgorithms/attControl/mrpFeedback/mrpFeedback.html#mrpfeedback"><span class="std std-ref">Module: mrpFeedback</span></a> module to provide the desired <span class="math notranslate nohighlight">\({\mathbf L}_r\)</span>
+control torque vector.  In addition, this time, we have to add two more modules: <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.html#thrforcemapping"><span class="std std-ref">Module: thrForceMapping</span></a>
+and <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.html#thrfiringschmitt"><span class="std std-ref">Module: thrFiringSchmitt</span></a>.</p>
+<p>The <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.html#thrforcemapping"><span class="std std-ref">Module: thrForceMapping</span></a> module takes a commanded attitude control torque vector and determines a set of desired
+thruster force values to implement this torque. It is assumed that the nominal thruster configuration is such that
+pure torque solutions are possible. The module supports both on- and off-pulsing solutions, including
+cases where the thruster solutions are saturated due to a large commanded attitude control torque.
+The module set up is done in an analogous way as the previous ones. It can be noted that one of the inputs
+corresponds to the output of the <a class="reference internal" href="../Documentation/fswAlgorithms/attControl/mrpFeedback/mrpFeedback.html#mrpfeedback"><span class="std std-ref">Module: mrpFeedback</span></a>, being the commanded control torque. The other ones are the
+information on the thrusters configuration and spacecraft inertia, whose messages will be created later in the script.
+In addition, the control axes are specified using the full identity matrix for ACS thrusters, and its first
+two rows for the DV ones, since in the latter case we are not able to control one axis (z in our case),
+due to the geometrical configuration. The last value to specify is the <code class="docutils literal notranslate"><span class="pre">thrForceSign</span></code>, which will have the
+value of -1 if off-pulsing DV thrusters are employed, and +1 with the on-pulsing ACS configuration.</p>
+<p>The last needed FSW module is <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.html#thrfiringschmitt"><span class="std std-ref">Module: thrFiringSchmitt</span></a>. A Schmitt trigger logic is implemented to map a desired
+thruster force value into a thruster on command time. The module reads in the attitude control thruster
+force values for both on- and off-pulsing scenarios, and then maps this into a time which specifies how
+long a thruster should be on. Four values are specified: <code class="docutils literal notranslate"><span class="pre">thrMinFireTime</span></code> (minimum thruster on-time in seconds),
+<code class="docutils literal notranslate"><span class="pre">level_on</span></code> (Upper duty cycle percentage threshold relative to t min to turn on thrusters), <code class="docutils literal notranslate"><span class="pre">level_off</span></code>
+(upper duty cycle percentage threshold relative to t min to turn on thrusters), and <code class="docutils literal notranslate"><span class="pre">baseThrustState</span></code> (0 by default
+and set to 1 for DV thrusters). As expected, the thrusters force
+input is directly the output of <code class="docutils literal notranslate"><span class="pre">thrForceMapping</span></code>, and also in this case we will need the thrusters configuration
+message. It can be noted how the output of this module ends up to be the input commands for the
+<a class="reference internal" href="../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>.</p>
+<p>The flight algorithm needs to know how many thruster devices are on the spacecraft and what their
+location and direction are.  This is set through a flight software message that is read
+in by flight algorithm modules that need this info.  To write the required flight thrusters configuration message
+a separate support macros called <code class="docutils literal notranslate"><span class="pre">fswSetupThrusters.py</span></code> is used.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useDVThrusters</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>The first scenario
+has the 8 ACS Thrusters.  By looking at the plots we can see how every axis is controlled, and
+the de-tumbling action is perfectly performed.
+We can also see how the requested force for each thruster (third plot) never reaches the 1 N limit (apart from during
+the initial transitory), which means that they are never saturated.</p>
+<img alt="../_images/scenarioAttitudeFeedback2T_TH10.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH10.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH20.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH20.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH30.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH30.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH40.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH40.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH50.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH50.svg" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">useDVThrusters</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>In this setup we use the 6 DV Thrusters configuration. In this case, given the spacial configuration of the thrusters,
+it is impossible to control the third axis, so the result is a spacecraft attitude in which the x, y axes are
+controlled, but with a tumbling motion in the z axis.  In this setup it can be clearly seen
+how the control action is performed just on the x and y axes, leaving the
+spacecraft tumbling around the z one. Another important remark is that, since the default state of the DV thrusters
+is ‘on’, the requested thruster force is always negative, as it can be seen in the plot.</p>
+<img alt="../_images/scenarioAttitudeFeedback2T_TH11.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH11.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH21.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH21.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH31.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH31.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH41.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH41.svg" />
+<img alt="../_images/scenarioAttitudeFeedback2T_TH51.svg" class="align-center" src="../_images/scenarioAttitudeFeedback2T_TH51.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.plot_OnTimeRequest">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">plot_OnTimeRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataSchm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numTh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#plot_OnTimeRequest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.plot_OnTimeRequest" title="Link to this definition"></a></dt>
+<dd><p>Plot the thruster on time requests.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.plot_attitude_error">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">plot_attitude_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataSigmaBR</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#plot_attitude_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.plot_attitude_error" title="Link to this definition"></a></dt>
+<dd><p>Plot the attitude errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.plot_rate_error">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">plot_rate_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOmegaBR</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#plot_rate_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.plot_rate_error" title="Link to this definition"></a></dt>
+<dd><p>Plot the body angular velocity tracking errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.plot_requested_torque">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">plot_requested_torque</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataLr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#plot_requested_torque"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.plot_requested_torque" title="Link to this definition"></a></dt>
+<dd><p>Plot the commanded attitude control torque.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.plot_thrForce">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">plot_thrForce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numTh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#plot_thrForce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.plot_thrForce" title="Link to this definition"></a></dt>
+<dd><p>Plot the Thruster force values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAttitudeFeedback2T_TH.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioAttitudeFeedback2T_TH.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDVThrusters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAttitudeFeedback2T_TH.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAttitudeFeedback2T_TH.run" title="Link to this definition"></a></dt>
+<dd><p>The scenarios can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p></li>
+<li><p><strong>useDVThrusters</strong> (<em>bool</em>) – Use 6 DV thrusters instead of the default 8 ACS thrusters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioAttitudeFeedback2T_stateEffTH.html" class="btn btn-neutral float-left" title="scenarioAttitudeFeedback2T_stateEffTH" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioMomentumDumping.html" class="btn btn-neutral float-right" title="scenarioMomentumDumping" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>deprecated &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">deprecated</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for deprecated</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">catch_warnings</span> <span class="k">as</span> <span class="n">catch_warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="BSKDeprecationWarning">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.BSKDeprecationWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BSKDeprecationWarning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="n">__color__</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[33;20m&quot;</span>  <span class="c1"># Yellow</span></div>
+
+
+
+<div class="viewcode-block" id="BSKUrgentDeprecationWarning">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.BSKUrgentDeprecationWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BSKUrgentDeprecationWarning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="n">__color__</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[31;1m&quot;</span>  <span class="c1"># Bold red</span></div>
+
+
+
+<div class="viewcode-block" id="filterwarnings">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.filterwarnings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">filterwarnings</span><span class="p">(</span>
+    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;once&quot;</span><span class="p">],</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this function to create global deprecation warning filters.</span>
+
+<span class="sd">    The most common use of this function is suppressing warnings for deprecated systems</span>
+<span class="sd">    that you still intend to use. Imagine you want to ignore deprecation warnings</span>
+<span class="sd">    for the method `myMethod` in class `ValidClass` in module `my_module`. You would add</span>
+<span class="sd">    the following line to your simulation script::</span>
+
+<span class="sd">        deprecated.filterwarnings(&quot;ignore&quot;, &quot;my_module.ValidClass.myMethod&quot;)</span>
+
+<span class="sd">    Note that deprecation warnings should not be ignored blindly. Deprecated code WILL</span>
+<span class="sd">    be removed in future releases, so use warning suppression carefully.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        action (Literal[&quot;error&quot;, &quot;ignore&quot;, &quot;always&quot;, &quot;default&quot;, &quot;module&quot;, &quot;once&quot;]):</span>
+<span class="sd">            Controls how the filtered warnings will behave.</span>
+<span class="sd">        identifier (str): The warning message must contain this string. This can be</span>
+<span class="sd">            the function or variable identifier (qualified name) in order to hide</span>
+<span class="sd">            deprecation warnings for specific features.</span>
+<span class="sd">        **kwargs (Any): Any other keyword arguments are passed directly to</span>
+<span class="sd">            `warnings.filterwarnings`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+        <span class="n">action</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;.*</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">.*&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">BSKDeprecationWarning</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ignore">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.ignore">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ignore</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this context manager to ignore warnings in a precise section of code.</span>
+
+<span class="sd">    The most common use of this function is suppressing warnings for specific calls.</span>
+<span class="sd">    Imagine you want to ignore deprecation warnings for the method `myMethod` in</span>
+<span class="sd">    class `ValidClass` in module `my_module` for a single call to this function.</span>
+<span class="sd">    You would do::</span>
+
+<span class="sd">        myClass = my_module.ValidClass()</span>
+
+<span class="sd">        with deprecated.ignore(&quot;my_module.ValidClass.myMethod&quot;):</span>
+<span class="sd">            myClass.myMethod() # Does not raise a warning</span>
+
+<span class="sd">        myClass.myMethod() # Raises a warning</span>
+
+<span class="sd">    Note that deprecation warnings should not be ignored blindly. Deprecated code WILL</span>
+<span class="sd">    be removed in future releases, so use warning suppression carefully.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catch</span> <span class="o">=</span> <span class="n">catch_warnings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catch</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+        <span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catch</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">exc_info</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deprecationWarn">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.deprecationWarn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deprecationWarn</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">removalDate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility function to raise deprecation warnings inside a function body.</span>
+
+<span class="sd">    This function should rarely be used on its own. For deprecated Python code,</span>
+<span class="sd">    prefer the `@deprecated` decorator. For deprecated C++ code, use the SWIG</span>
+<span class="sd">    macros in `swig_deprecated.i`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (str): An identifier for the deprecated feature (function/variable</span>
+<span class="sd">            qualified name)</span>
+<span class="sd">        removalDate (Union[datetime.date, str]): The date when we expect to remove this</span>
+<span class="sd">            deprecated feature, in the format &#39;YYYY/MM/DD&#39; or as a ``datetime.date``.</span>
+<span class="sd">            Think of an amount of time that would let users update their code, and then</span>
+<span class="sd">            add that duration to today&#39;s date to find a reasonable removal date.</span>
+<span class="sd">        msg (str, optional): a text that is directly shown to the users. Here, you may</span>
+<span class="sd">            explain why the function is deprecated, alternative functions, links to</span>
+<span class="sd">            documentation or scenarios that show how to translate deprecated code...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">removalDate</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">removalDate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">removalDate</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">removalDate</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> will be removed after </span><span class="si">{</span><span class="n">removalDate</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">BSKDeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> will be removed soon: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">BSKUrgentDeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deprecated">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.deprecated">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deprecated</span><span class="p">(</span><span class="n">removalDate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for functions or classes that are deprecated.</span>
+
+<span class="sd">    Usage::</span>
+
+<span class="sd">        @deprecated.deprecated(&quot;2024/05/28&quot;, &quot;Use MyNewClass&quot;)</span>
+<span class="sd">        class MyClass:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    or::</span>
+
+<span class="sd">        @deprecated.deprecated(&quot;2024/05/28&quot;, &quot;myFun is unsafe now&quot;)</span>
+<span class="sd">        def myFun(a, b):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    or::</span>
+
+<span class="sd">        class ValidClass:</span>
+
+<span class="sd">            @deprecated.deprecated(&quot;2024/05/28&quot;, &quot;myMethod is slow, use myBetterMethod&quot;)</span>
+<span class="sd">            def myMethod(self, a, b):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        removalDate (Union[datetime.date, str]): The date when we expect to remove this</span>
+<span class="sd">            deprecated feature, in the format &#39;YYYY/MM/DD&#39; or as a ``datetime.date``.</span>
+<span class="sd">            Think of an amount of time that would let users update their code, and then</span>
+<span class="sd">            add that duration to today&#39;s date to find a reasonable removal date.</span>
+<span class="sd">        msg (str, optional): a text that is directly shown to the users. Here, you may</span>
+<span class="sd">            explain why the function is deprecated, alternative functions, links to</span>
+<span class="sd">            documentation or scenarios that show how to translate deprecated code...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">inner_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">deprecationWarn</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">removalDate</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inner_wrapper</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="DeprecatedAttribute">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.DeprecatedAttribute">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeprecatedAttribute</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this descriptor to deprecate class attributes (variables).</span>
+
+<span class="sd">    If you want to deprecate ``myAttribute`` in the following class::</span>
+
+<span class="sd">        class MyClass:</span>
+
+<span class="sd">            def __init__(self) -&gt; None:</span>
+<span class="sd">                self.myAttribute = 0</span>
+
+<span class="sd">    You can use the following syntax::</span>
+
+<span class="sd">        class PythonTest:</span>
+
+<span class="sd">            myAttribute = deprecated.DeprecatedAttribute(&quot;2099/05/05&quot;, &quot;myAttribute is no longer used in the simulation&quot;)</span>
+
+<span class="sd">            def __init__(self) -&gt; None:</span>
+<span class="sd">                with deprecated.ignore(&quot;myAttribute&quot;): # Prevents warnings here</span>
+<span class="sd">                    self.myAttribute = 0</span>
+
+<span class="sd">    The attribute will work as before, but deprecation warnings will be raised</span>
+<span class="sd">    everytime it&#39;s used (read or set).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">removalDate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span> <span class="o">=</span> <span class="n">removalDate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">owner</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">owner</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">deprecationWarn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">deprecationWarn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DeprecatedProperty</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this descriptor to deprecate class properties.</span>
+
+<span class="sd">    If you want to deprecate ``myProperty`` in the following class::</span>
+
+<span class="sd">        class MyClass:</span>
+
+<span class="sd">            @property</span>
+<span class="sd">            def myProperty(self):</span>
+<span class="sd">                return 0</span>
+
+<span class="sd">            @myProperty.setter</span>
+<span class="sd">            def myProperty(self, value: int):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">    You can use the following syntax::</span>
+
+<span class="sd">        class PythonTest:</span>
+
+<span class="sd">            @property</span>
+<span class="sd">            def myProperty(self):</span>
+<span class="sd">                return 0</span>
+
+<span class="sd">            @myProperty.setter</span>
+<span class="sd">            def myProperty(self, value: int):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">            myProperty = deprecated.DeprecatedProperty(</span>
+<span class="sd">                &quot;2099/05/05&quot;,</span>
+<span class="sd">                &quot;myProperty is no longer used in the simulation&quot;,</span>
+<span class="sd">                myProperty)</span>
+
+<span class="sd">    The property will work as before, but deprecation warnings will be raised</span>
+<span class="sd">    everytime it&#39;s used (read or set).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">removalDate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="nb">property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span> <span class="o">=</span> <span class="n">removalDate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property</span> <span class="o">=</span> <span class="nb">property</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property</span><span class="p">,</span> <span class="s2">&quot;__get__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">property</span><span class="p">,</span> <span class="s2">&quot;__set__&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;DeprecatedProperty must be given an existing property&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">owner</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">owner</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">deprecationWarn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">deprecationWarn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">removalDate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="fm">__set__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="fm">__delete__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># Typing hack so that linters don&#39;t complain about redefining properties</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+
+<div class="viewcode-block" id="DeprecatedProperty">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.DeprecatedProperty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">DeprecatedProperty</span><span class="p">(</span><span class="n">removalDate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="o">...</span></div>
+
+
+
+<span class="c1"># Monkey patching showwarning to modify the behaviour for our warnings</span>
+<div class="viewcode-block" id="formatwarning">
+<a class="viewcode-back" href="../Documentation/utilities/deprecated.html#deprecated.formatwarning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">formatwarning</span><span class="p">(</span>
+    <span class="n">message</span><span class="p">,</span>
+    <span class="n">category</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">,</span>
+    <span class="n">lineno</span><span class="p">,</span>
+    <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">__defaultformatwarning</span><span class="o">=</span><span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hook to write a warning to a file; replace if you like.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="p">(</span><span class="n">BSKDeprecationWarning</span><span class="p">,</span> <span class="n">BSKUrgentDeprecationWarning</span><span class="p">)):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">category</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span><span class="p">)</span>  <span class="c1"># Append the color reset character</span>
+
+        <span class="c1"># Produce a &quot;fake object&quot; with sole attribute __name__ which is the name of</span>
+        <span class="c1"># the actual category prepended by the color character</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span>
+            <span class="vm">__name__</span><span class="o">=</span><span class="n">category</span><span class="o">.</span><span class="n">__color__</span> <span class="o">+</span> <span class="n">category</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">__defaultformatwarning</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span></div>
+
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">formatwarning</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

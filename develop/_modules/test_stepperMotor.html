@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_stepperMotor &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_stepperMotor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_stepperMotor</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">stepperMotor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+
+<div class="viewcode-block" id="test_stepper_motor_nominal">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/stepperMotor/_UnitTest/test_stepperMotor.html#test_stepperMotor.test_stepper_motor_nominal">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;motor_theta_init&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;steps_commanded_1&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;steps_commanded_2&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;step_angle&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;step_time&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_stepper_motor_nominal</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span>
+                               <span class="n">motor_theta_init</span><span class="p">,</span>
+                               <span class="n">steps_commanded_1</span><span class="p">,</span>
+                               <span class="n">steps_commanded_2</span><span class="p">,</span>
+                               <span class="n">step_angle</span><span class="p">,</span>
+                               <span class="n">step_time</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Verification Test Description**</span>
+
+<span class="sd">    This nominal unit test ensures that the stepper motor simulation module correctly actuates the motor from an</span>
+<span class="sd">    initial angle to a final reference angle, given an input integer number of commanded steps. The module outputs</span>
+<span class="sd">    the motor scalar states (angle, angle rate, acceleration), the motor step count, and steps commanded as a function</span>
+<span class="sd">    of time. The motor actuation is profiled using a bang-bang acceleration profile. The motor acceleration is</span>
+<span class="sd">    calculated in the module using the given motor step angle and step time constants. The capability for the motor to</span>
+<span class="sd">    actuate both forwards and backwards is checked by commanding both positive and negative steps to the module.</span>
+<span class="sd">    Zero steps commanded are also included in the test to check that the module correctly updates the motor states for</span>
+<span class="sd">    a zero command message.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        motor_theta_init (float): [rad] Initial stepper motor angle</span>
+<span class="sd">        steps_commanded_1 (int): [steps] Number of steps commanded to the stepper motor (first command)</span>
+<span class="sd">        steps_commanded_2 (int): [steps] Number of steps commanded to the stepper motor (second command)</span>
+<span class="sd">        step_angle (float): [rad] Angle the stepper motor moves through for a single step (constant)</span>
+<span class="sd">        step_time (float): [sec] Time required for a single motor step (constant)</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">     The motor angle, rate, acceleration, and step count are checked to converge to the reference values at the end of</span>
+<span class="sd">     each simulation chunk.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">process_name</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+    <span class="n">test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_time_step_sec</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">test_process_rate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">test_time_step_sec</span><span class="p">)</span>
+    <span class="n">test_process</span> <span class="o">=</span> <span class="n">test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">process_name</span><span class="p">)</span>
+    <span class="n">test_process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">test_process_rate</span><span class="p">))</span>
+
+    <span class="c1"># Create the stepperMotor module</span>
+    <span class="n">stepper_motor</span> <span class="o">=</span> <span class="n">stepperMotor</span><span class="o">.</span><span class="n">StepperMotor</span><span class="p">()</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;StepperMotor&quot;</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">motor_theta_init</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setStepAngle</span><span class="p">(</span><span class="n">step_angle</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setStepTime</span><span class="p">(</span><span class="n">step_time</span><span class="p">)</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">stepper_motor</span><span class="p">)</span>
+
+    <span class="c1"># Create the first stepperMotor input message</span>
+    <span class="n">motor_step_command_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsgPayload</span><span class="p">()</span>
+    <span class="n">motor_step_command_msg_data</span><span class="o">.</span><span class="n">stepsCommanded</span> <span class="o">=</span> <span class="n">steps_commanded_1</span>
+    <span class="n">motor_step_command_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">motor_step_command_msg_data</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">motorStepCommandInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">motor_step_command_msg</span><span class="p">)</span>
+
+    <span class="c1"># Set up data logging</span>
+    <span class="n">stepper_motor_data_log</span> <span class="o">=</span> <span class="n">stepper_motor</span><span class="o">.</span><span class="n">stepperMotorOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">stepper_motor_data_log</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim_time_1</span> <span class="o">=</span> <span class="n">step_time</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">steps_commanded_1</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">sim_time_extra</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [s]</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1</span> <span class="o">+</span> <span class="n">sim_time_extra</span><span class="p">))</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Create the second stepperMotor input message</span>
+    <span class="n">motor_step_command_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsgPayload</span><span class="p">()</span>
+    <span class="n">motor_step_command_msg_data</span><span class="o">.</span><span class="n">stepsCommanded</span> <span class="o">=</span> <span class="n">steps_commanded_2</span>
+    <span class="n">motor_step_command_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">motor_step_command_msg_data</span><span class="p">,</span>
+                                                                   <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1</span> <span class="o">+</span> <span class="n">sim_time_extra</span><span class="p">))</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">motorStepCommandInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">motor_step_command_msg</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation</span>
+    <span class="n">sim_time_2</span> <span class="o">=</span> <span class="n">step_time</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">steps_commanded_2</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1</span>
+                                               <span class="o">+</span> <span class="n">sim_time_extra</span>
+                                               <span class="o">+</span> <span class="n">sim_time_2</span>
+                                               <span class="o">+</span> <span class="n">sim_time_extra</span><span class="p">))</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged data for plotting and data comparison</span>
+    <span class="n">timespan</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>  <span class="c1"># [s]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">theta</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_dot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">thetaDot</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">theta_ddot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">thetaDDot</span>  <span class="c1"># [deg/s^2]</span>
+    <span class="n">motor_step_count</span> <span class="o">=</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">stepCount</span>
+    <span class="n">motor_steps_commanded</span> <span class="o">=</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">stepsCommanded</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plot_results</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span>
+                     <span class="n">theta</span><span class="p">,</span>
+                     <span class="n">theta_dot</span><span class="p">,</span>
+                     <span class="n">theta_ddot</span><span class="p">,</span>
+                     <span class="n">motor_step_count</span><span class="p">,</span>
+                     <span class="n">motor_steps_commanded</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-12</span>
+
+    <span class="c1"># Check the motor states converge to the reference values for the first actuation</span>
+    <span class="n">motor_theta_final_1_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">sim_time_1</span> <span class="o">/</span> <span class="n">test_time_step_sec</span><span class="p">))</span>
+    <span class="n">motor_theta_ref_1_true</span> <span class="o">=</span> <span class="n">motor_theta_init</span> <span class="o">+</span> <span class="p">(</span><span class="n">steps_commanded_1</span> <span class="o">*</span> <span class="n">step_angle</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">motor_theta_ref_1_true</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_dot</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_ddot</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">motor_step_count</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="n">steps_commanded_1</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Check the motor states converge to the reference values for the second actuation</span>
+    <span class="n">motor_theta_final_2_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">sim_time_1</span> <span class="o">+</span> <span class="n">sim_time_extra</span> <span class="o">+</span> <span class="n">sim_time_2</span><span class="p">)</span> <span class="o">/</span> <span class="n">test_time_step_sec</span><span class="p">))</span>
+    <span class="n">motor_theta_ref_2_true</span> <span class="o">=</span> <span class="n">motor_theta_ref_1_true</span> <span class="o">+</span> <span class="p">(</span><span class="n">steps_commanded_2</span> <span class="o">*</span> <span class="n">step_angle</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span><span class="p">],</span>
+                               <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">motor_theta_ref_2_true</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_dot</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_ddot</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">motor_step_count</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="n">steps_commanded_2</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_stepper_motor_interrupt">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/stepperMotor/_UnitTest/test_stepperMotor.html#test_stepperMotor.test_stepper_motor_interrupt">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;steps_commanded_1&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;steps_commanded_2&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;interrupt_fraction&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_stepper_motor_interrupt</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">steps_commanded_1</span><span class="p">,</span> <span class="n">steps_commanded_2</span><span class="p">,</span> <span class="n">interrupt_fraction</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Verification Test Description**</span>
+
+<span class="sd">    The interruption unit test ensures that the module correctly handles reference messages that interrupt an</span>
+<span class="sd">    unfinished motor actuation sequence. The initial motor angle, motor step angle, and step time are not varied in the</span>
+<span class="sd">    interruption test because these parameters were already varied in the nominal test. The interruption test interrupts</span>
+<span class="sd">    the first command sequence after half of the commanded motor steps are completed. The time the second command</span>
+<span class="sd">    message is written is determined using an interruption factor to specify what fraction of the next step is</span>
+<span class="sd">    completed before the second command message is written. Interruption factors of 0 and 1 are also included to</span>
+<span class="sd">    ensure the module correctly resets the motor states when the interruption falls precisely when a step is completed.</span>
+<span class="sd">    A rest period of 5 seconds is added to the end of the simulation for clarity when viewing the generated plots.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        steps_commanded_1 (int): [steps] Number of steps commanded to the stepper motor (First)</span>
+<span class="sd">        steps_commanded_2 (int): [steps] Number of steps commanded to the stepper motor (Second)</span>
+<span class="sd">        interrupt_fraction (float): Specifies what step fraction is completed when the interrupted message is written</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The motor angle, rate, acceleration, and step count are checked to converge to the reference values at the end of</span>
+<span class="sd">    each simulation chunk.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">process_name</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+    <span class="n">test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_time_step_sec</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">test_process_rate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">test_time_step_sec</span><span class="p">)</span>
+    <span class="n">test_process</span> <span class="o">=</span> <span class="n">test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">process_name</span><span class="p">)</span>
+    <span class="n">test_process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">test_process_rate</span><span class="p">))</span>
+
+    <span class="c1"># Create the stepperMotor module</span>
+    <span class="n">step_time</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+    <span class="n">step_angle</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">stepper_motor</span> <span class="o">=</span> <span class="n">stepperMotor</span><span class="o">.</span><span class="n">StepperMotor</span><span class="p">()</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;StepperMotor&quot;</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setStepAngle</span><span class="p">(</span><span class="n">step_angle</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">setStepTime</span><span class="p">(</span><span class="n">step_time</span><span class="p">)</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">stepper_motor</span><span class="p">)</span>
+
+    <span class="c1"># Create the first stepperMotor input message</span>
+    <span class="n">motor_step_command_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsgPayload</span><span class="p">()</span>
+    <span class="n">motor_step_command_msg_data</span><span class="o">.</span><span class="n">stepsCommanded</span> <span class="o">=</span> <span class="n">steps_commanded_1</span>
+    <span class="n">motor_step_command_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">motor_step_command_msg_data</span><span class="p">)</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">motorStepCommandInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">motor_step_command_msg</span><span class="p">)</span>
+
+    <span class="c1"># Set up data logging</span>
+    <span class="n">stepper_motor_data_log</span> <span class="o">=</span> <span class="n">stepper_motor</span><span class="o">.</span><span class="n">stepperMotorOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">stepper_motor_data_log</span><span class="p">)</span>
+
+    <span class="c1"># Determine the simulation time</span>
+    <span class="n">sim_time_1_no_interrupt</span> <span class="o">=</span> <span class="n">step_time</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">steps_commanded_1</span><span class="p">)</span>
+    <span class="n">sim_time_1_interrupt</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sim_time_1_no_interrupt</span> <span class="o">+</span> <span class="n">interrupt_fraction</span> <span class="o">*</span> <span class="n">step_time</span>
+
+    <span class="c1"># Run the first simulation chunk</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1_interrupt</span><span class="p">))</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Create the second stepperMotor input message</span>
+    <span class="n">motor_step_command_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsgPayload</span><span class="p">()</span>
+    <span class="n">motor_step_command_msg_data</span><span class="o">.</span><span class="n">stepsCommanded</span> <span class="o">=</span> <span class="n">steps_commanded_2</span>
+    <span class="n">motor_step_command_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MotorStepCommandMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">motor_step_command_msg_data</span><span class="p">,</span>
+                                                                   <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1_interrupt</span><span class="p">))</span>
+    <span class="n">stepper_motor</span><span class="o">.</span><span class="n">motorStepCommandInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">motor_step_command_msg</span><span class="p">)</span>
+
+    <span class="c1"># Run the second simulation chunk</span>
+    <span class="n">sim_time_2</span> <span class="o">=</span> <span class="n">step_time</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">steps_commanded_2</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">sim_time_extra</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [s]</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sim_time_1_interrupt</span> <span class="o">+</span> <span class="n">sim_time_2</span> <span class="o">+</span> <span class="n">sim_time_extra</span><span class="p">))</span>
+    <span class="n">test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged data for plotting and data comparison</span>
+    <span class="n">timespan</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>  <span class="c1"># [s]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">theta</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_dot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">thetaDot</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">theta_ddot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">thetaDDot</span>  <span class="c1"># [deg/s^2]</span>
+    <span class="n">motor_step_count</span> <span class="o">=</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">stepCount</span>
+    <span class="n">motor_steps_commanded</span> <span class="o">=</span> <span class="n">stepper_motor_data_log</span><span class="o">.</span><span class="n">stepsCommanded</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plot_results</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span>
+                     <span class="n">theta</span><span class="p">,</span>
+                     <span class="n">theta_dot</span><span class="p">,</span>
+                     <span class="n">theta_ddot</span><span class="p">,</span>
+                     <span class="n">motor_step_count</span><span class="p">,</span>
+                     <span class="n">motor_steps_commanded</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Determine the true number of motor steps taken for the first actuation segment</span>
+    <span class="n">steps_taken_1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">sim_time_1_interrupt</span> <span class="o">/</span> <span class="n">step_time</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">steps_commanded_1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">steps_taken_1</span> <span class="o">=</span> <span class="o">-</span> <span class="n">steps_taken_1</span>
+
+    <span class="c1"># Determine the true simulation time for the first actuation segment</span>
+    <span class="n">sim_time_1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_time</span> <span class="o">*</span> <span class="n">steps_taken_1</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="c1"># Check the motor states converge to the correct values for the first actuation</span>
+    <span class="n">motor_theta_final_1_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">sim_time_1</span> <span class="o">/</span> <span class="n">test_time_step_sec</span><span class="p">))</span>
+    <span class="n">motor_theta_ref_1_true</span> <span class="o">=</span> <span class="n">step_angle</span> <span class="o">*</span> <span class="n">steps_taken_1</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">motor_theta_ref_1_true</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_dot</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">motor_step_count</span><span class="p">[</span><span class="n">motor_theta_final_1_index</span><span class="p">],</span>
+                               <span class="n">steps_taken_1</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Check the motor states converge to the reference values for the second actuation</span>
+    <span class="n">motor_theta_final_2_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">sim_time_1</span> <span class="o">+</span> <span class="n">sim_time_2</span><span class="p">)</span> <span class="o">/</span> <span class="n">test_time_step_sec</span><span class="p">))</span>
+    <span class="n">motor_theta_ref_2_true</span> <span class="o">=</span> <span class="n">motor_theta_ref_1_true</span> <span class="o">+</span> <span class="n">step_angle</span> <span class="o">*</span> <span class="n">steps_commanded_2</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span><span class="p">],</span>
+                               <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">motor_theta_ref_2_true</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_dot</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">theta_ddot</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">motor_step_count</span><span class="p">[</span><span class="n">motor_theta_final_2_index</span><span class="p">],</span>
+                               <span class="n">steps_commanded_2</span><span class="p">,</span>
+                               <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_results</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span>
+                 <span class="n">theta</span><span class="p">,</span>
+                 <span class="n">theta_dot</span><span class="p">,</span>
+                 <span class="n">theta_ddot</span><span class="p">,</span>
+                 <span class="n">motor_step_count</span><span class="p">,</span>
+                 <span class="n">motor_steps_commanded</span><span class="p">):</span>
+
+    <span class="c1"># Plot motor angle</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\theta$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Stepper Motor Angle $\theta$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Plot motor theta_dot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_dot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\dot{\theta}$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Stepper Motor Angle Rate $\dot{\theta}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Plot motor theta_ddot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_ddot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\ddot{\theta}$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Stepper Motor Angular Acceleration $\ddot{\theta}$ &#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s$^2$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Plot steps commanded and motor steps taken</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">motor_step_count</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Step Count&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">motor_steps_commanded</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Commanded&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Motor Step History&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Steps&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_stepper_motor_nominal</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad] motor_theta_init</span>
+        <span class="mi">15</span><span class="p">,</span>  <span class="c1"># steps_commanded_1</span>
+        <span class="o">-</span><span class="mi">15</span><span class="p">,</span>  <span class="c1"># steps_commanded_2</span>
+        <span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span>  <span class="c1"># [rad] step_angle</span>
+        <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [s] step_time</span>
+    <span class="p">)</span>
+
+    <span class="n">test_stepper_motor_interrupt</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="mi">10</span><span class="p">,</span>  <span class="c1"># steps_commanded_1</span>
+        <span class="o">-</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># steps_commanded_2</span>
+        <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># interrupt_fraction</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

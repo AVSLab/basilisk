@@ -1,0 +1,722 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: facetSRPDynamicEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="facetSRPDynamicEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">facetSRPDynamicEffector</a></li>
+      <li class="breadcrumb-item active">Module: facetSRPDynamicEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-facetsrpdynamiceffector">
+<span id="facetsrpdynamiceffector"></span><h1>Module: facetSRPDynamicEffector<a class="headerlink" href="#module-facetsrpdynamiceffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This dynamic effector module uses a faceted spacecraft model to calculate the force and torque acting on a spacecraft
+due to solar radiation pressure (SRP). The force and torque are calculated about the spacecraft body frame origin
+point <span class="math notranslate nohighlight">\(B\)</span>. The module can be configured for either a static spacecraft or a spacecraft with any number of
+articulating facets. For example, a spacecraft with two articulating solar arrays can be configured using 4
+articulating facets. The unit test for this module shows how to set up this particular configuration.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sunInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>Input msg for the Sun state information</p></td>
+</tr>
+<tr class="row-odd"><td><p>articulatedFacetDataInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a></p></td>
+<td><p>(Optional) Input msg vector containing the current articulated facet angles</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="mathematical-modeling">
+<h3>Mathematical Modeling<a class="headerlink" href="#mathematical-modeling" title="Link to this heading"></a></h3>
+<p>The spacecraft is represented as a collection of <span class="math notranslate nohighlight">\(N\)</span> total facets with negligible thickness. Each facet is
+characterized by an area <span class="math notranslate nohighlight">\(A\)</span>, an attitude direction cosine matrix (DCM) <span class="math notranslate nohighlight">\([\mathcal{F_0B}]\)</span> relative
+to the spacecraft hub frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, a unit vector normal to its surface
+<span class="math notranslate nohighlight">\(\boldsymbol{\hat{n}}\)</span>, an articulation axis (optional) <span class="math notranslate nohighlight">\(\boldsymbol{\hat{s}}\)</span>, the facet center of pressure (COP)
+location relative to the spacecraft body frame origin point <span class="math notranslate nohighlight">\(B\)</span>, and three optical coefficients representing
+the interaction of impinging photons with the facet surface. The fraction of specularly reflected, diffusely scattered,
+and absorbed photons are represented using the coefficients <span class="math notranslate nohighlight">\(\delta, \rho,\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span>, respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The facet normal vectors and rotation axes are required to be specified in the facet frame <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>.</p></li>
+<li><p>The articulating facets are assumed to rotate with 1 degree-of-freedom (DOF) about the specified articulation axis <span class="math notranslate nohighlight">\(\boldsymbol{\hat{s}}\)</span>.</p></li>
+<li><p>The facet COP vectors are required to be defined in the spacecraft body frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>. This module assumes that each facet COP vector is fixed in the spacecraft body frame for both static and articulating facets. Therefore, it is assumed that the facet COP is the point where the facet normal vector and facet rotation axis intersect.</p></li>
+</ul>
+</div>
+<p>For each articulating facet, the current facet normal vector must be computed in the spacecraft body
+frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>. Using the facet articulation axis <span class="math notranslate nohighlight">\(\boldsymbol{\hat{s}}\)</span> and the current
+facet articulation angle <span class="math notranslate nohighlight">\(\phi\)</span>, the DCM required to rotate from the initial facet attitude to the final
+facet attitude is obtained using the principal rotation vector (PRV) transformation:</p>
+<div class="math notranslate nohighlight">
+\[[\mathcal{F}\mathcal{F}_0] = \text{PRV2C}(\phi, {}^\mathcal{F} \boldsymbol{\hat{s}})\]</div>
+<p>The transformation from the spacecraft body frame to the current facet attitude can next be determined:</p>
+<div class="math notranslate nohighlight">
+\[[\mathcal{F}\mathcal{B}] = [\mathcal{F}\mathcal{F}_0] [\mathcal{F}_0\mathcal{B}]\]</div>
+<p>The facet normal vector can now be transformed to the spacecraft body frame using the <cite>active</cite> transformation:</p>
+<div class="math notranslate nohighlight">
+\[{}^\mathcal{B} \boldsymbol{\hat{n}} = [\mathcal{BF}] {}^{\mathcal{F}} \boldsymbol{\hat{n}}\]</div>
+<p>Next, using the provided facet information and spacecraft Sun-relative position vector
+<span class="math notranslate nohighlight">\(\boldsymbol{r}_{\text{sc} / \odot }\)</span>, the estimated SRP force acting on the spacecraft is calculated
+by summing the SRP force contribution from all <span class="math notranslate nohighlight">\(N\)</span> facets:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{F}_{\text{SRP}} = \sum_{i = 1}^{N} \boldsymbol{F}_{\text{SRP}_i} = -P(|\boldsymbol{r}_{\text{sc} / \odot }|) \sum_{i = 1}^{N} A_i \cos(\theta_i) \left [ (1 - \delta_i) \boldsymbol{\hat{s}} + 2 \left ( \frac{\rho_i}{3} + \delta_i \cos(\theta_i) \right ) \boldsymbol{\hat{n}}_{i}\right ]\]</div>
+<p>Note that all values in the above expression must be specified in the spacecraft body frame. <span class="math notranslate nohighlight">\(\theta\)</span>
+is defined as the incidence angle between each facet normal vector and the Sun-direction vector.
+<span class="math notranslate nohighlight">\(P(|\boldsymbol{r}_{\text{sc}/ \odot\ }|)\)</span> represents the pressure acting on the spacecraft
+scaled by the spacecraft heliocentric distance. <span class="math notranslate nohighlight">\(\boldsymbol{\hat{s}}\)</span> is the unit direction
+vector pointing radially towards the Sun from the spacecraft body frame origin point <span class="math notranslate nohighlight">\(B\)</span>.
+This vector is found by subtracting the current spacecraft inertial position from the Sun position:</p>
+<div class="math notranslate nohighlight">
+\[{}^\mathcal{B} \boldsymbol{\hat{s}} = [\mathcal{BN}] ( {}^\mathcal{N} \boldsymbol{r}_{\odot / N} - {}^\mathcal{N} \boldsymbol{r}_{\text{sc} / N})\]</div>
+<p>The total SRP torque acting on the spacecraft about point <span class="math notranslate nohighlight">\(B\)</span> is calculated by summing the torque
+contributions over all <span class="math notranslate nohighlight">\(N\)</span> facets:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{L}_{\text{SRP},B} = \sum_{i = 1}^{N} \boldsymbol{L}_{{\text{SRP},B}_i} = \sum_{i = 1}^{N} \boldsymbol{r}_{{COP_i}/B} \times \boldsymbol{F}_{\text{SRP}_i}\]</div>
+</section>
+<section id="module-testing">
+<h3>Module Testing<a class="headerlink" href="#module-testing" title="Link to this heading"></a></h3>
+<p>The unit test for this module ensures that the calculated SRP force and torque acting on the spacecraft about the
+body-fixed point B is properly computed for either a static spacecraft or a spacecraft with any number of articulating
+facets. The spacecraft geometry defined in the test consists of a cubic hub and two circular solar arrays.
+Six static square facets represent the cubic hub and four articulated circular facets describe the articulating
+solar arrays. To verify the module functionality, the final SRP force and torque simulation values are checked with the
+true values computed in python.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The following steps are required to set up the <code class="docutils literal notranslate"><span class="pre">facetSRPDynamicEffector</span></code> module in python.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Be sure to include the Sun as a gravitational body in the simulation to use this module.</p>
+</div>
+<ol class="arabic">
+<li><p>First import the <code class="docutils literal notranslate"><span class="pre">facetSRPDynamicEffector</span></code> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">facetSRPDynamicEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Next, create an instantiation of the SRP dynamic effector:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SRPEffector</span> <span class="o">=</span> <span class="n">facetSRPDynamicEffector</span><span class="o">.</span><span class="n">FacetSRPDynamicEffector</span><span class="p">()</span>
+<span class="n">SRPEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SRPEffector&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The user is required to set the total number of spacecraft facets and the number of articulated facets. For example, if the user wants to create a spacecraft with 10 total facets, four of which articulate:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SRPEffector</span><span class="o">.</span><span class="n">setNumFacets</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">SRPEffector</span><span class="o">.</span><span class="n">setNumArticulatedFacets</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>If the spacecraft contains articulated facets, a <code class="docutils literal notranslate"><span class="pre">HingedRigidBodyMsgPayload</span></code> articulation angle message must be configured for each articulated facet. An example using two stand-alone messages is provided below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">facetRotAngle1</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">10.0</span>  <span class="c1"># [rad]</span>
+<span class="n">facetRotAngle2</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="o">-</span><span class="mf">10.0</span>  <span class="c1"># [rad]</span>
+
+<span class="n">facetRotAngle1MessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+<span class="n">facetRotAngle1MessageData</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">facetRotAngle1</span>  <span class="c1"># [rad]</span>
+<span class="n">facetRotAngle1MessageData</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+<span class="n">facetRotAngle1Message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">facetRotAngle1MessageData</span><span class="p">)</span>
+
+<span class="n">facetRotAngle2MessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+<span class="n">facetRotAngle2MessageData</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">facetRotAngle2</span>  <span class="c1"># [rad]</span>
+<span class="n">facetRotAngle2MessageData</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+<span class="n">facetRotAngle2Message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">facetRotAngle2MessageData</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>For articulating facets, the user must configure the module’s optional <code class="docutils literal notranslate"><span class="pre">articulatedFacetDataInMsgs</span></code> input message by calling the <code class="docutils literal notranslate"><span class="pre">addArticulatedFacet()</span></code> method with each facet’s <code class="docutils literal notranslate"><span class="pre">HingedRigidBodyMsgPayload</span></code> articulation angle input message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">srpEffector</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">facetRotAngle1Message</span><span class="p">)</span>
+<span class="n">srpEffector</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">facetRotAngle1Message</span><span class="p">)</span>
+<span class="n">srpEffector</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">facetRotAngle2Message</span><span class="p">)</span>
+<span class="n">srpEffector</span><span class="o">.</span><span class="n">addArticulatedFacet</span><span class="p">(</span><span class="n">facetRotAngle2Message</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Next, define the spacecraft facet geometry information that is contained in the module’s <code class="docutils literal notranslate"><span class="pre">FacetedSRPSpacecraftGeometryData</span></code> structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define facet areas</span>
+<span class="n">area1</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="mf">1.5</span>
+<span class="n">area2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">7.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">7.5</span><span class="p">)</span>
+<span class="n">facetAreaList</span> <span class="o">=</span> <span class="p">[</span><span class="n">area1</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area2</span><span class="p">,</span> <span class="n">area2</span><span class="p">,</span> <span class="n">area2</span><span class="p">,</span> <span class="n">area2</span><span class="p">]</span>
+
+<span class="c1"># Define the initial facet attitudes relative to B frame</span>
+<span class="n">sigma_F01B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">sigma_F02B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">sigma_F03B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">90.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">sigma_F04B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">sigma_F05B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">90.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">sigma_F06B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">sigma_F07B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">sigma_F08B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">sigma_F09B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">sigma_F010B</span> <span class="o">=</span> <span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">facetDcm_F0BList</span> <span class="o">=</span> <span class="p">[</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F01B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F02B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F03B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F04B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F05B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F06B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F07B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F08B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F09B</span><span class="p">),</span>
+                    <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_F010B</span><span class="p">)]</span>
+
+<span class="c1"># Define the facet normal vectors in B frame components</span>
+<span class="n">facetNHat_FList</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])]</span>
+
+<span class="c1"># Define facet articulation axes in B frame components</span>
+<span class="n">facetRotHat_FList</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])]</span>
+
+<span class="c1"># Define facet center of pressure locations relative to point B</span>
+<span class="n">facetR_CopB_BList</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]),</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">])]</span>
+
+<span class="c1"># Define facet optical coefficients</span>
+<span class="n">facetDiffuseCoeffList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="n">facetSpecularCoeffList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>While setting up the <code class="docutils literal notranslate"><span class="pre">FacetedSRPSpacecraftGeometryData</span></code> structure:</p>
+<ul class="simple">
+<li><p>Be sure to configure all data contained in the geometry data structure. For all static facets, the articulation axes may be set to zero.</p></li>
+<li><p>Note that the module requires the articulated facet data to be added at the end of the data vectors.</p></li>
+</ul>
+</div>
+<ol class="arabic">
+<li><p>Next, populate the module’s <code class="docutils literal notranslate"><span class="pre">FacetedSRPSpacecraftGeometryData</span></code> structure with the spacecraft facet information using the <code class="docutils literal notranslate"><span class="pre">addFacet()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numFacets</span><span class="p">):</span>
+    <span class="n">srpEffector</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">facetAreaList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetDcm_F0BList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetNHat_FList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetRotHat_FList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetR_CopB_BList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetDiffuseCoeffList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                         <span class="n">facetSpecularCoeffList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p>Connect the Sun’s ephemeris message to the SRP module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SRPEffector</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the SRP dynamic effector to the spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">SRPEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> documentation on how to set up a spacecraft object.</p>
+</li>
+<li><p>Finally, add the SRP effector module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">SRPEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the example script <a class="reference internal" href="../../../../examples/scenarioSepMomentumManagement.html#scenariosepmomentummanagement"><span class="std std-ref">scenarioSepMomentumManagement</span></a>, which illustrates how to set up a spacecraft with articulated panels for SRP calculation.</p>
+</div>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv432FacetedSRPSpacecraftGeometryData">
+<span id="_CPPv332FacetedSRPSpacecraftGeometryData"></span><span id="_CPPv232FacetedSRPSpacecraftGeometryData"></span><span id="FacetedSRPSpacecraftGeometryData"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FacetedSRPSpacecraftGeometryData</span></span></span><a class="headerlink" href="#_CPPv432FacetedSRPSpacecraftGeometryData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;facetSRPDynamicEffector.h&gt;</em></div>
+<p>Spacecraft Geometry Data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData13facetAreaListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData13facetAreaListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData13facetAreaListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetAreaList__std::vector:double:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1ae4908471bf8c0773f2bdbadf90f1553a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetAreaList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData13facetAreaListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] Vector of facet areas </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData16facetDcm_F0BListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData16facetDcm_F0BListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData16facetDcm_F0BListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetDcm_F0BList__std::vector:Eigen::Matrix3d:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1ac2ba07ea13320c53744403d92566a91a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetDcm_F0BList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData16facetDcm_F0BListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of facet frame F initial attitude DCMs relative to the B frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData15facetNHat_FListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData15facetNHat_FListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData15facetNHat_FListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetNHat_FList__std::vector:Eigen::Vector3d:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1a577e8c0ca7bb8cd9125850d91f0d71b4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetNHat_FList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData15facetNHat_FListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of facet normals expressed in facet F frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData17facetRotHat_FListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData17facetRotHat_FListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData17facetRotHat_FListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetRotHat_FList__std::vector:Eigen::Vector3d:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1a105600d0a394f956e4d02d1844521103"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetRotHat_FList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData17facetRotHat_FListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Vector of facet rotation axes expressed in facet F frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData17facetR_CopB_BListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData17facetR_CopB_BListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData17facetR_CopB_BListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetR_CopB_BList__std::vector:Eigen::Vector3d:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1a357f93dee7ec8ebca08dce4a77834e6a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetR_CopB_BList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData17facetR_CopB_BListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Vector of facet COP locations wrt point B expressed in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData21facetDiffuseCoeffListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData21facetDiffuseCoeffListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData21facetDiffuseCoeffListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetDiffuseCoeffList__std::vector:double:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1aa8d79d149a5bc9f789f421ba624c585a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetDiffuseCoeffList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData21facetDiffuseCoeffListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of facet diffuse reflection optical coefficients. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32FacetedSRPSpacecraftGeometryData22facetSpecularCoeffListE">
+<span id="_CPPv3N32FacetedSRPSpacecraftGeometryData22facetSpecularCoeffListE"></span><span id="_CPPv2N32FacetedSRPSpacecraftGeometryData22facetSpecularCoeffListE"></span><span id="FacetedSRPSpacecraftGeometryData::facetSpecularCoeffList__std::vector:double:"></span><span class="target" id="struct_faceted_s_r_p_spacecraft_geometry_data_1ac6015896f6d3c876276d3cb1f8facd36"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetSpecularCoeffList</span></span></span><a class="headerlink" href="#_CPPv4N32FacetedSRPSpacecraftGeometryData22facetSpecularCoeffListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of facet spectral reflection optical coefficients. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv423FacetSRPDynamicEffector">
+<span id="_CPPv323FacetSRPDynamicEffector"></span><span id="_CPPv223FacetSRPDynamicEffector"></span><span id="FacetSRPDynamicEffector"></span><span class="target" id="class_facet_s_r_p_dynamic_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FacetSRPDynamicEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><a class="headerlink" href="#_CPPv423FacetSRPDynamicEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;facetSRPDynamicEffector.h&gt;</em></div>
+<p>Faceted Solar Radiation Pressure Dynamic Effector. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector23FacetSRPDynamicEffectorEv">
+<span id="_CPPv3N23FacetSRPDynamicEffector23FacetSRPDynamicEffectorEv"></span><span id="_CPPv2N23FacetSRPDynamicEffector23FacetSRPDynamicEffectorEv"></span><span id="FacetSRPDynamicEffector::FacetSRPDynamicEffector"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a115997dcbdec8488c70a3c45acc4a784"></span><span class="sig-name descname"><span class="n"><span class="pre">FacetSRPDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector23FacetSRPDynamicEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffectorD0Ev">
+<span id="_CPPv3N23FacetSRPDynamicEffectorD0Ev"></span><span id="_CPPv2N23FacetSRPDynamicEffectorD0Ev"></span><span id="FacetSRPDynamicEffector::~FacetSRPDynamicEffector"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1ae0da5caf8a7cd12619fe238fcf006624"></span><span class="sig-name descname"><span class="n"><span class="pre">~FacetSRPDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N23FacetSRPDynamicEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N23FacetSRPDynamicEffector12linkInStatesER15DynParamManager"></span><span id="FacetSRPDynamicEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a2d313a48a908072139808a7ea0711905"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for giving the effector access to the hub states. </p>
+<p>This method gives the module access to the hub inertial attitude and position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Dynamic parameter states </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector18computeForceTorqueEdd">
+<span id="_CPPv3N23FacetSRPDynamicEffector18computeForceTorqueEdd"></span><span id="_CPPv2N23FacetSRPDynamicEffector18computeForceTorqueEdd"></span><span id="FacetSRPDynamicEffector::computeForceTorque__double.double"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1af90a4818d119e250010b68767fef98c1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeForceTorque</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector18computeForceTorqueEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the total SRP force and torque about point B. </p>
+<p>This method computes the srp force and torque acting about the hub point B in B frame components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>callTime</strong> – [s] Time the method is called </p></li>
+<li><p><strong>timeStep</strong> – [s] Simulation time step </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector5ResetE8uint64_t">
+<span id="_CPPv3N23FacetSRPDynamicEffector5ResetE8uint64_t"></span><span id="_CPPv2N23FacetSRPDynamicEffector5ResetE8uint64_t"></span><span id="FacetSRPDynamicEffector::Reset__uint64_t"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a3878c181e30f7d894fa41a1fbba1fafe"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset method. </p>
+<p>This method resets required module variables and checks the input messages to ensure they are linked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector12setNumFacetsEK8uint64_t">
+<span id="_CPPv3N23FacetSRPDynamicEffector12setNumFacetsEK8uint64_t"></span><span id="_CPPv2N23FacetSRPDynamicEffector12setNumFacetsEK8uint64_t"></span><span id="FacetSRPDynamicEffector::setNumFacets__uint64_tC"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a2c86ab997864f1bd4be41885f9bd3fa7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNumFacets</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numFacets</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector12setNumFacetsEK8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the total number of spacecraft facets. </p>
+<p>Setter method for the total number of facets used to model the spacecraft structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>numFacets</strong> – Total number of spacecraft facets </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector23setNumArticulatedFacetsEK8uint64_t">
+<span id="_CPPv3N23FacetSRPDynamicEffector23setNumArticulatedFacetsEK8uint64_t"></span><span id="_CPPv2N23FacetSRPDynamicEffector23setNumArticulatedFacetsEK8uint64_t"></span><span id="FacetSRPDynamicEffector::setNumArticulatedFacets__uint64_tC"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a64a617b46182fb61f199f9e0cd8caf05"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNumArticulatedFacets</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numArticulatedFacets</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector23setNumArticulatedFacetsEK8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the number of articulated facets. </p>
+<p>Setter method for the number of articulated facets used to model the spacecraft articulating components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>numArticulatedFacets</strong> – Number of articulated spacecraft facets </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK23FacetSRPDynamicEffector12getNumFacetsEv">
+<span id="_CPPv3NK23FacetSRPDynamicEffector12getNumFacetsEv"></span><span id="_CPPv2NK23FacetSRPDynamicEffector12getNumFacetsEv"></span><span id="FacetSRPDynamicEffector::getNumFacetsC"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a5ea8757bbec2526f268d873813c5bab5"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumFacets</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK23FacetSRPDynamicEffector12getNumFacetsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the total number of spacecraft facets. </p>
+<p>Getter method for the total number of facets used to model the spacecraft structure. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>uint64_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK23FacetSRPDynamicEffector23getNumArticulatedFacetsEv">
+<span id="_CPPv3NK23FacetSRPDynamicEffector23getNumArticulatedFacetsEv"></span><span id="_CPPv2NK23FacetSRPDynamicEffector23getNumArticulatedFacetsEv"></span><span id="FacetSRPDynamicEffector::getNumArticulatedFacetsC"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a580a339f75c2e1cd320530386428d95e"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumArticulatedFacets</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK23FacetSRPDynamicEffector23getNumArticulatedFacetsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the number of articulated facets. </p>
+<p>Getter method for the number of articulated facets used to model the spacecraft articulating components. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>uint64_t </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector8addFacetEdN5Eigen8Matrix3dEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dEdd">
+<span id="_CPPv3N23FacetSRPDynamicEffector8addFacetEdN5Eigen8Matrix3dEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dEdd"></span><span id="_CPPv2N23FacetSRPDynamicEffector8addFacetEdN5Eigen8Matrix3dEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dEdd"></span><span id="FacetSRPDynamicEffector::addFacet__double.Eigen::Matrix3d.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d.double.double"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a806918fe3b2f6da365aa269b08d73b72"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addFacet</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">area</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dcm_F0B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nHat_F</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rotHat_F</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_CopB_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">diffuseCoeff</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">specularCoeff</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector8addFacetEdN5Eigen8Matrix3dEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for adding facets to the spacecraft geometry structure. </p>
+<p>This method populates the spacecraft facet geometry structure with user-input facet information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>area</strong> – [m^2] Facet area </p></li>
+<li><p><strong>dcm_F0B</strong> – Facet frame F initial attitude DCM relative to the B frame </p></li>
+<li><p><strong>nHat_F</strong> – Facet normal expressed in facet F frame components </p></li>
+<li><p><strong>rotHat_F</strong> – Facet articulation axis expressed in facet F frame components </p></li>
+<li><p><strong>r_CopB_B</strong> – [m] Facet location wrt point B expressed in B frame components </p></li>
+<li><p><strong>diffuseCoeff</strong> – Facet diffuse reflection optical coefficient </p></li>
+<li><p><strong>specularCoeff</strong> – Facet spectral reflection optical coefficient </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector19addArticulatedFacetEP7MessageI25HingedRigidBodyMsgPayloadE">
+<span id="_CPPv3N23FacetSRPDynamicEffector19addArticulatedFacetEP7MessageI25HingedRigidBodyMsgPayloadE"></span><span id="_CPPv2N23FacetSRPDynamicEffector19addArticulatedFacetEP7MessageI25HingedRigidBodyMsgPayloadE"></span><span id="FacetSRPDynamicEffector::addArticulatedFacet__Message:HingedRigidBodyMsgPayload:P"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1aa46e29b8cd4564d620412ab82ee3cd7f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addArticulatedFacet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#_CPPv425HingedRigidBodyMsgPayload" title="HingedRigidBodyMsgPayload"><span class="n"><span class="pre">HingedRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector19addArticulatedFacetEP7MessageI25HingedRigidBodyMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for adding articulated facets to the spacecraft geometry structure. </p>
+<p>This method subscribes the articulated facet angle input messages to the module articulatedFacetDataInMsgs input messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpMsg</strong> – hingedRigidBody input message containing facet articulation angle data </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector12ReadMessagesEv">
+<span id="_CPPv3N23FacetSRPDynamicEffector12ReadMessagesEv"></span><span id="_CPPv2N23FacetSRPDynamicEffector12ReadMessagesEv"></span><span id="FacetSRPDynamicEffector::ReadMessages"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1af12702fa395b1d475c3c9d11f9476826"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector12ReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to read input messages. </p>
+<p>This method reads the Sun state input message. If time-varying facet articulations are considered, the articulation angle messages are also read. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector8sunInMsgE">
+<span id="_CPPv3N23FacetSRPDynamicEffector8sunInMsgE"></span><span id="_CPPv2N23FacetSRPDynamicEffector8sunInMsgE"></span><span id="FacetSRPDynamicEffector::sunInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a5335d3d66bf6a466741f831d4e081b8c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsg</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector8sunInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sun spice ephemeris input message. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector26articulatedFacetDataInMsgsE">
+<span id="_CPPv3N23FacetSRPDynamicEffector26articulatedFacetDataInMsgsE"></span><span id="_CPPv2N23FacetSRPDynamicEffector26articulatedFacetDataInMsgsE"></span><span id="FacetSRPDynamicEffector::articulatedFacetDataInMsgs__std::vector:ReadFunctor:HingedRigidBodyMsgPayload::"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a545965d7acd4bc7b2c3198657a7d69c7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#_CPPv425HingedRigidBodyMsgPayload" title="HingedRigidBodyMsgPayload"><span class="n"><span class="pre">HingedRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">articulatedFacetDataInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector26articulatedFacetDataInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Articulated facet angle data input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector26facetArticulationAngleListE">
+<span id="_CPPv3N23FacetSRPDynamicEffector26facetArticulationAngleListE"></span><span id="_CPPv2N23FacetSRPDynamicEffector26facetArticulationAngleListE"></span><span id="FacetSRPDynamicEffector::facetArticulationAngleList__std::vector:double:"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a877ef268e56964cd5e108b384665a1f8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetArticulationAngleList</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector26facetArticulationAngleListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Vector of facet rotation angles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector15facetNHat_BListE">
+<span id="_CPPv3N23FacetSRPDynamicEffector15facetNHat_BListE"></span><span id="_CPPv2N23FacetSRPDynamicEffector15facetNHat_BListE"></span><span id="FacetSRPDynamicEffector::facetNHat_BList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a1529cd9c2807825dcec48bc10bfdee18"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetNHat_BList</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector15facetNHat_BListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of facet normals expressed in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector10scGeometryE">
+<span id="_CPPv3N23FacetSRPDynamicEffector10scGeometryE"></span><span id="_CPPv2N23FacetSRPDynamicEffector10scGeometryE"></span><span id="FacetSRPDynamicEffector::scGeometry__FacetedSRPSpacecraftGeometryData"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a36d41f3127680b76b3247daf6c063596"></span><a class="reference internal" href="#_CPPv432FacetedSRPSpacecraftGeometryData" title="FacetedSRPSpacecraftGeometryData"><span class="n"><span class="pre">FacetedSRPSpacecraftGeometryData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scGeometry</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector10scGeometryE" title="Link to this definition"></a><br /></dt>
+<dd><p>Spacecraft facet data structure. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector6r_SN_NE">
+<span id="_CPPv3N23FacetSRPDynamicEffector6r_SN_NE"></span><span id="_CPPv2N23FacetSRPDynamicEffector6r_SN_NE"></span><span id="FacetSRPDynamicEffector::r_SN_N__Eigen::Vector3d"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a103a6594f16282d463b710bc3e466be1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SN_N</span></span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector6r_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Sun inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector11hubPositionE">
+<span id="_CPPv3N23FacetSRPDynamicEffector11hubPositionE"></span><span id="_CPPv2N23FacetSRPDynamicEffector11hubPositionE"></span><span id="FacetSRPDynamicEffector::hubPosition__StateDataP"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a893cd32452deddc08244ded84d34252b"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubPosition</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector11hubPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Hub inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector8hubSigmaE">
+<span id="_CPPv3N23FacetSRPDynamicEffector8hubSigmaE"></span><span id="_CPPv2N23FacetSRPDynamicEffector8hubSigmaE"></span><span id="FacetSRPDynamicEffector::hubSigma__StateDataP"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a93efc38646a5c679a98a26a28e81187e"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubSigma</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector8hubSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hub MRP inertial attitude. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector17facetAngleMsgReadE">
+<span id="_CPPv3N23FacetSRPDynamicEffector17facetAngleMsgReadE"></span><span id="_CPPv2N23FacetSRPDynamicEffector17facetAngleMsgReadE"></span><span id="FacetSRPDynamicEffector::facetAngleMsgRead__b"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1adb2e74247b9b9e60bf8dbe016a37a862"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">facetAngleMsgRead</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector17facetAngleMsgReadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean variable signaling that the facet articulation messages are read. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector9numFacetsE">
+<span id="_CPPv3N23FacetSRPDynamicEffector9numFacetsE"></span><span id="_CPPv2N23FacetSRPDynamicEffector9numFacetsE"></span><span id="FacetSRPDynamicEffector::numFacets__uint64_t"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1a11b2b4b9c1409b8cfa767bdb244ba770"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numFacets</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector9numFacetsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total number of spacecraft facets. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N23FacetSRPDynamicEffector20numArticulatedFacetsE">
+<span id="_CPPv3N23FacetSRPDynamicEffector20numArticulatedFacetsE"></span><span id="_CPPv2N23FacetSRPDynamicEffector20numArticulatedFacetsE"></span><span id="FacetSRPDynamicEffector::numArticulatedFacets__uint64_t"></span><span class="target" id="class_facet_s_r_p_dynamic_effector_1aace00e004f322433682f622b23c72661"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numArticulatedFacets</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N23FacetSRPDynamicEffector20numArticulatedFacetsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of articulated facets. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="facetSRPDynamicEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

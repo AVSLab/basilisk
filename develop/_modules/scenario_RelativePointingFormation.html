@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenario_RelativePointingFormation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenario_RelativePointingFormation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenario_RelativePointingFormation</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script sets up a deputy that points to a chief spacecraft. The goal of the scenario is to</span>
+
+<span class="sd">#. How to make sure that a deputy spacecraft is able to read data from a chief spacecraft.</span>
+<span class="sd">#. How to implement a module that combines data from two spacecraft into a scenario.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::</span>
+
+<span class="sd">      python3 scenario_RelativePointingFormation.py</span>
+
+<span class="sd">The simulation mimics the basic simulation in the earlier tutorial in</span>
+<span class="sd">:ref:`scenario_BasicOrbitFormation`.</span>
+
+<span class="sd">The flight software mode is set to spacecraftPointing. The goal of this mode is to align a vector given in the</span>
+<span class="sd">deputy&#39;s body-frame with a vector that points from the deputy to the chief spacecraft.</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenario_RelativePointingFormation.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">In the simulation flow diagram it can be observed that the deputy spacecraft reads the data from the chief spacecraft&#39;s</span>
+<span class="sd">``simpleNavObject``. This data is consequently used to calculate the attitude of the reference frame with respect to</span>
+<span class="sd">the inertial reference frame. Together with the attitude of the body frame of the deputy spacecraft, this data is fed</span>
+<span class="sd">into the attitudeError module. In this module, the attitude error is calculated and fed into the MRP feedback and</span>
+<span class="sd">torque module to make sure that the deputy&#39;s attitude will match with the attitude of the reference frame.</span>
+
+
+<span class="sd">Configuring the scenario file</span>
+<span class="sd">-----------------------------</span>
+<span class="sd">The simulation layout is almost the same as the one used for the :ref:`scenario_BasicOrbitFormation` file.</span>
+<span class="sd">Two simulation processes are created: one which contains dynamics modules, and one that contains</span>
+<span class="sd">the Flight Software (FSW) modules. First of all, it can be observed that the Dynamics- and FSW files used are</span>
+<span class="sd">the :ref:`BSK_FormationDynamics` and :ref:`BSK_FormationFSW` files.</span>
+<span class="sd">These two files have been created for this specific formation flying implementation into Basilisk.</span>
+
+<span class="sd">After initializing the interfaces and making sure that the :ref:`scenario_BasicOrbitFormation`</span>
+<span class="sd">class inherits from the BSKSim class,</span>
+<span class="sd">it is time to configure the initial conditions using the ``configure_initial_conditions`` method.</span>
+<span class="sd">It can be observed that two sets of</span>
+<span class="sd">orbital elements are created. Each set corresponding to one spacecraft. From the true anomaly of both spacecraft,</span>
+<span class="sd">it can be deduced that this scenario makes use of a leader-follower formation. However,</span>
+<span class="sd">the orbital elements can be changed to</span>
+<span class="sd">whatever the user prefers. After the orbital elements are initialized the initial</span>
+<span class="sd">conditions are set for each spacecraft.</span>
+
+<span class="sd">After that the function that logs the outputs can be observed. Again this looks very similar to the log_outputs function</span>
+<span class="sd">in the :ref:`scenario_BasicOrbit` file, however one discrepancy can be noticed. Looking</span>
+<span class="sd">at the code below it can be observed that</span>
+<span class="sd">two instances of the simpleNavObject are logged (``simpleNavObject`` and ``simpleNavObject2``</span>
+<span class="sd">respectively). Each object corresponds</span>
+<span class="sd">two one of the spacecraft. The output of the new module is also logged, as can be seen in the</span>
+<span class="sd">before last logging statement below.</span>
+
+<span class="sd">BSK_FormationDynamics file description</span>
+<span class="sd">--------------------------------------</span>
+<span class="sd">Looking at the :ref:`BSK_FormationDynamics` file, it can be observed that the dynamics process consists of two tasks named ``DynamicsTask``</span>
+<span class="sd">and ``DynamicsTask2`` respectively. These tasks are added to the dynamics process and to each task, an instance of a specific object</span>
+<span class="sd">is added.</span>
+
+<span class="sd">The gravity body (Earth in this case) is created using the ``gravBodyFactory`` and is attached as a</span>
+<span class="sd">separate object to each spacecraft as can be seen below.</span>
+
+<span class="sd">After that each object is added to the corresponding task. Something that is very important is the message names.</span>
+<span class="sd">In case multiple spacecraft are implemented in Basilisk it is necessary to manually connect an output message of</span>
+<span class="sd">one module to the input of a different module. This can be seen in the module-initialization methods</span>
+<span class="sd">in the :ref:`BSK_FormationDynamics.py &lt;BSK_FormationDynamics&gt;` file.</span>
+
+<span class="sd">BSK_FormationFsw file description</span>
+<span class="sd">---------------------------------</span>
+
+<span class="sd">The setup of the FSW file (:ref:`BSK_FormationFSW`) in case of formation flying is</span>
+<span class="sd">very similar to the setup of the dynamics file.</span>
+<span class="sd">Also in this case, an instance of each task is initialized that corresponds to one</span>
+<span class="sd">of the two spacecraft. Furthermore, it is</span>
+<span class="sd">necessary to manually set the input- and output message names for the FSW modules.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">If this simulation is run for 200 minutes the following plots should be shown.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    showPlots = True</span>
+
+<span class="sd">This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through</span>
+<span class="sd">the Earth&#39;s shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_RelativePointingFormation_attitude_error.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_RelativePointingFormation_relative_orbit.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_RelativePointingFormation_sigma_BN_deputy.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_RelativePointingFormation_sigma_BR_deputy.svg</span>
+<span class="sd">   :align: center</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<span class="c1"># Import utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">vizSupport</span>
+
+<span class="c1"># Get current file path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="c1"># Import master classes: simulation base class and scenario base class</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/..&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_masters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_FormationDynamics</span><span class="o">,</span><span class="w"> </span><span class="nn">BSK_FormationFsw</span>
+
+<span class="c1"># Import plotting files for your scenario</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../plotting&#39;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Plotting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">BSK_plt</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../../scenarios&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create your own scenario child class</span>
+<div class="viewcode-block" id="scenario_RelativePointingFormation">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_RelativePointingFormation.html#scenario_RelativePointingFormation.scenario_RelativePointingFormation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">scenario_RelativePointingFormation</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">scenario_RelativePointingFormation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;scenario_RelativePointingFormation&#39;</span>
+
+        <span class="c1"># declare empty class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavTrans2Rec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErr2Rec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scStateRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scState2Rec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTor2Msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRef2Msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavAttRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavAtt2Rec</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">(</span><span class="n">BSK_FormationDynamics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">(</span><span class="n">BSK_FormationFsw</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">()</span>
+
+        <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following line</span>
+        <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+            <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span>
+                                                      <span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject2</span><span class="p">]</span>
+                                                      <span class="p">,</span> <span class="n">rwEffectorList</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector2</span><span class="p">]</span>
+                                                      <span class="p">,</span> <span class="n">saveFile</span><span class="o">=</span><span class="vm">__file__</span>
+                                                      <span class="p">)</span>
+
+<div class="viewcode-block" id="scenario_RelativePointingFormation.configure_initial_conditions">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_RelativePointingFormation.html#scenario_RelativePointingFormation.scenario_RelativePointingFormation.configure_initial_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+
+        <span class="c1"># Configure Dynamics initial conditions</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">8000000.0</span>  <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span> <span class="c1"># sigma_BN_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+        <span class="c1"># Configure Dynamics initial conditions</span>
+        <span class="n">oe2</span> <span class="o">=</span> <span class="n">oe</span>
+        <span class="n">oe2</span><span class="o">.</span><span class="n">f</span> <span class="o">-=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">rN2</span><span class="p">,</span> <span class="n">vN2</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe2</span><span class="p">)</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN2</span><span class="p">,</span> <span class="n">vN2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN2</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN2</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.003</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span></div>
+
+
+<div class="viewcode-block" id="scenario_RelativePointingFormation.log_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_RelativePointingFormation.html#scenario_RelativePointingFormation.scenario_RelativePointingFormation.log_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">samplingTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">processTasksTimeStep</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">FswModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavTrans2Rec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject2</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavAttRec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sNavAtt2Rec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject2</span><span class="o">.</span><span class="n">attOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErr2Rec</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">attGuid2Msg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scStateRec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scState2Rec</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRef2Msg</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">spacecraftPointing</span><span class="o">.</span><span class="n">attReferenceOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTor2Msg</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTrans2Rec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavAttRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavAtt2Rec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErr2Rec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scStateRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scState2Rec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRef2Msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModels</span><span class="o">.</span><span class="n">taskName2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdTor2Msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="scenario_RelativePointingFormation.pull_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_RelativePointingFormation.html#scenario_RelativePointingFormation.scenario_RelativePointingFormation.pull_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">):</span>
+        <span class="c1"># Dynamics process outputs</span>
+        <span class="n">r_BN_N_chief</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="n">r_BN_N_deputy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTrans2Rec</span><span class="o">.</span><span class="n">r_BN_N</span>
+
+        <span class="n">v_BN_N_chief</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span><span class="o">.</span><span class="n">v_BN_N</span>
+        <span class="n">v_BN_N_deputy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTrans2Rec</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+        <span class="n">sigma_BN_chief</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavAttRec</span><span class="o">.</span><span class="n">sigma_BN</span>
+        <span class="n">sigma_BN_deputy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavAtt2Rec</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+        <span class="c1"># FSW process outputs</span>
+        <span class="n">omega_BR_B_chief</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span><span class="o">.</span><span class="n">omega_BR_B</span>
+        <span class="n">omega_BR_B_deputy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErr2Rec</span><span class="o">.</span><span class="n">omega_BR_B</span>
+
+        <span class="n">sigma_BR_deputy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErr2Rec</span><span class="o">.</span><span class="n">sigma_BR</span>
+
+        <span class="n">sigma_RN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRef2Msg</span><span class="o">.</span><span class="n">sigma_RN</span>
+        <span class="n">omega_RN_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRef2Msg</span><span class="o">.</span><span class="n">omega_RN_N</span>
+
+        <span class="c1"># Plot results</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+        <span class="n">timeData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sNavTransRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_BR_deputy</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rel_orbit</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">r_BN_N_chief</span><span class="p">,</span> <span class="n">r_BN_N_deputy</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_sigma</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_RN</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_sigma</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_BN_deputy</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_sigma</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_BR_deputy</span><span class="p">)</span>
+
+        <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+            <span class="n">BSK_plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitude_error&quot;</span><span class="p">,</span> <span class="s2">&quot;relative_orbit&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_RN&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;sigma_BN_deputy&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_BR_deputy&quot;</span><span class="p">]</span>
+            <span class="n">figureList</span> <span class="o">=</span> <span class="n">BSK_plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figureList</span></div>
+</div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">):</span>
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure FSW mode</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s1">&#39;spacecraftPointing&#39;</span>
+
+    <span class="c1"># Configure run time and execute simulation</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">):</span>
+
+    <span class="n">TheScenario</span> <span class="o">=</span> <span class="n">scenario_RelativePointingFormation</span><span class="p">()</span>
+    <span class="n">runScenario</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">TheScenario</span><span class="o">.</span><span class="n">pull_outputs</span><span class="p">(</span><span class="n">showPlots</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

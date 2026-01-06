@@ -1,0 +1,546 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: MJBody &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: MJEquality" href="MJEquality.html" />
+    <link rel="prev" title="Module: MJActuator" href="MJActuator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: MJBody</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJBody.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mjbody">
+<span id="mjbody"></span><h1>Module: MJBody<a class="headerlink" href="#module-mjbody" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46MJBody">
+<span id="_CPPv36MJBody"></span><span id="_CPPv26MJBody"></span><span id="MJBody"></span><span class="target" id="class_m_j_body"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJBody</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="MJObject.html#_CPPv4I0E8MJObject" title="MJObject"><span class="n"><span class="pre">MJObject</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjsBody</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv46MJBody" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJBody.h&gt;</em></div>
+<p>Represents a MuJoCo body object. </p>
+<p>The <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_body"><span class="std std-ref"><span class="pre">MJBody</span></span></a></code> class manages a body in the MuJoCo simulation, including its joints, sites, and inertial properties. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody6MJBodyEP7mjsBodyR6MJSpec">
+<span id="_CPPv3N6MJBody6MJBodyEP7mjsBodyR6MJSpec"></span><span id="_CPPv2N6MJBody6MJBodyEP7mjsBodyR6MJSpec"></span><span id="MJBody::MJBody__mjsBodyP.MJSpecR"></span><span class="target" id="class_m_j_body_1ad28d0c91be25fa277d8ada6ef9d51c9c"></span><span class="sig-name descname"><span class="n"><span class="pre">MJBody</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6MJBody6MJBodyEP7mjsBodyR6MJSpec" title="MJBody::MJBody::mjsBody"><span class="n"><span class="pre">mjsBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">mjsBody</span></span>, <a class="reference internal" href="MJSpec.html#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody6MJBodyEP7mjsBodyR6MJSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_body"><span class="std std-ref"><span class="pre">MJBody</span></span></a></code> with a given MuJoCo body object and the spec where it’s created. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mjsBody</strong> – Pointer to the MuJoCo body. </p></li>
+<li><p><strong>spec</strong> – Reference to the <a class="reference internal" href="MJSpec.html#class_m_j_spec"><span class="std std-ref">MJSpec</span></a> associated with the body. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody6MJBodyERK6MJBody">
+<span id="_CPPv3N6MJBody6MJBodyERK6MJBody"></span><span id="_CPPv2N6MJBody6MJBodyERK6MJBody"></span><span id="MJBody::MJBody__MJBodyCR"></span><span class="target" id="class_m_j_body_1a795e4260aba32d6b77d541c35c642101"></span><span class="sig-name descname"><span class="n"><span class="pre">MJBody</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N6MJBody6MJBodyERK6MJBody" title="MJBody::MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJBody6MJBodyERK6MJBody" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody6MJBodyERR6MJBody">
+<span id="_CPPv3N6MJBody6MJBodyERR6MJBody"></span><span id="_CPPv2N6MJBody6MJBodyERR6MJBody"></span><span id="MJBody::MJBody__MJBodyRR"></span><span class="target" id="class_m_j_body_1a2d2e93ab0c237e1d71f208f4c998d5d4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJBody</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6MJBody6MJBodyERR6MJBody" title="MJBody::MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJBody6MJBodyERR6MJBody" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBodyaSERK6MJBody">
+<span id="_CPPv3N6MJBodyaSERK6MJBody"></span><span id="_CPPv2N6MJBodyaSERK6MJBody"></span><span id="MJBody::assign-operator__MJBodyCR"></span><span class="target" id="class_m_j_body_1a201ebefec7b020ce6d2881030c0733c4"></span><a class="reference internal" href="#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJBodyaSERK6MJBody" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBodyaSERR6MJBody">
+<span id="_CPPv3N6MJBodyaSERR6MJBody"></span><span id="_CPPv2N6MJBodyaSERR6MJBody"></span><span id="MJBody::assign-operator__MJBodyRR"></span><span class="target" id="class_m_j_body_1a48e8bd8be75e9bb4941c04484abb6473"></span><a class="reference internal" href="#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N6MJBodyaSERR6MJBody" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody9configureEPK7mjModel">
+<span id="_CPPv3N6MJBody9configureEPK7mjModel"></span><span id="_CPPv2N6MJBody9configureEPK7mjModel"></span><span id="MJBody::configure__mjModelCP"></span><span class="target" id="class_m_j_body_1a03a394f23aa1cd37e52716ca3f6753ba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">configure</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">model</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody9configureEPK7mjModel" title="Link to this definition"></a><br /></dt>
+<dd><p>Configures the body within a given MuJoCo model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – Pointer to the MuJoCo model used for configuration. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody7addSiteENSt6stringERKN5Eigen8Vector3dERKN5Eigen4MRPdE">
+<span id="_CPPv3N6MJBody7addSiteENSt6stringERKN5Eigen8Vector3dERKN5Eigen4MRPdE"></span><span id="_CPPv2N6MJBody7addSiteENSt6stringERKN5Eigen8Vector3dERKN5Eigen4MRPdE"></span><span id="MJBody::addSite__ss.Eigen::Vector3dCR.Eigen::MRPdCR"></span><span class="target" id="class_m_j_body_1ae2d3016128083fda4dee7753a932ea01"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSite</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">position</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">attitude</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody7addSiteENSt6stringERKN5Eigen8Vector3dERKN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a site to the body with a specified name, position, and attitude. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the site. </p></li>
+<li><p><strong>position</strong> – The position of the site relative to the body. </p></li>
+<li><p><strong>attitude</strong> – The orientation of the site as Modified Rodrigues Parameters (MRP). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK6MJBody7hasSiteERKNSt6stringE">
+<span id="_CPPv3NK6MJBody7hasSiteERKNSt6stringE"></span><span id="_CPPv2NK6MJBody7hasSiteERKNSt6stringE"></span><span id="MJBody::hasSite__ssCRC"></span><span class="target" id="class_m_j_body_1a5020ca0096d69c05b9a61f54d5a883d4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hasSite</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK6MJBody7hasSiteERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks if the body has a site with a given name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the site to search for. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the site exists, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody7getSiteERKNSt6stringE">
+<span id="_CPPv3N6MJBody7getSiteERKNSt6stringE"></span><span id="_CPPv2N6MJBody7getSiteERKNSt6stringE"></span><span id="MJBody::getSite__ssCR"></span><span class="target" id="class_m_j_body_1a5322a62c7273cbc0cbfa7ba760b2a25f"></span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getSite</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody7getSiteERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a site by name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the site to retrieve. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if the site does not exist. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJSite.html#class_m_j_site"><span class="std std-ref"><span class="pre">MJSite</span></span></a></code> with the specified name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody15getCenterOfMassEv">
+<span id="_CPPv3N6MJBody15getCenterOfMassEv"></span><span id="_CPPv2N6MJBody15getCenterOfMassEv"></span><span id="MJBody::getCenterOfMass"></span><span class="target" id="class_m_j_body_1a1da232872f853ea89e57ef4599f0a535"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getCenterOfMass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody15getCenterOfMassEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the center of mass site of the object. </p>
+<p>This site is located at the center of mass of the body (ignoring any child bodies). The frame orientation is the same as the origin site frame orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the center of mass site. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody9getOriginEv">
+<span id="_CPPv3N6MJBody9getOriginEv"></span><span id="_CPPv2N6MJBody9getOriginEv"></span><span id="MJBody::getOrigin"></span><span class="target" id="class_m_j_body_1a77bd4a5c01bc0605279ae36df9165f56"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getOrigin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody9getOriginEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the origin site. </p>
+<p>This site corresponds to the origin (main, base) reference frame of the body. All other sites’ positions, as well as the center of mass, are given with respect to this reference frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the origin site. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody7getSpecEv">
+<span id="_CPPv3N6MJBody7getSpecEv"></span><span id="_CPPv2N6MJBody7getSpecEv"></span><span id="MJBody::getSpec"></span><span class="target" id="class_m_j_body_1a0e7d3aeaa66b55eeee8a01984a57e8f7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getSpec</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody7getSpecEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the associated <a class="reference internal" href="MJSpec.html#class_m_j_spec"><span class="std std-ref">MJSpec</span></a> object. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJSpec.html#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> associated with this body. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody14getScalarJointERKNSt6stringE">
+<span id="_CPPv3N6MJBody14getScalarJointERKNSt6stringE"></span><span id="_CPPv2N6MJBody14getScalarJointERKNSt6stringE"></span><span id="MJBody::getScalarJoint__ssCR"></span><span class="target" id="class_m_j_body_1a0cdff7e97f6c46abd02ca70e472d6c6f"></span><a class="reference internal" href="MJJoint.html#_CPPv413MJScalarJoint" title="MJScalarJoint"><span class="n"><span class="pre">MJScalarJoint</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getScalarJoint</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody14getScalarJointERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a scalar joint by name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the scalar joint. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if the joint does not exist. </p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if the joint with that name is not a scalar joint. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJJoint.html#class_m_j_scalar_joint"><span class="std std-ref"><span class="pre">MJScalarJoint</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody12hasBallJointEv">
+<span id="_CPPv3N6MJBody12hasBallJointEv"></span><span id="_CPPv2N6MJBody12hasBallJointEv"></span><span id="MJBody::hasBallJoint"></span><span class="target" id="class_m_j_body_1a40e3ea801a54ef023e4037b42f9a3c9b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hasBallJoint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody12hasBallJointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks whether the body has a ball joint. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the body has a ball joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody12getBallJointEv">
+<span id="_CPPv3N6MJBody12getBallJointEv"></span><span id="_CPPv2N6MJBody12getBallJointEv"></span><span id="MJBody::getBallJoint"></span><span class="target" id="class_m_j_body_1a3fe9cd39e5107c359beb9933d9e945bc"></span><a class="reference internal" href="MJJoint.html#_CPPv411MJBallJoint" title="MJBallJoint"><span class="n"><span class="pre">MJBallJoint</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getBallJoint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody12getBallJointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the ball joint of this body, if it exists. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if the joint does not have a ball joint. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJJoint.html#class_m_j_ball_joint"><span class="std std-ref"><span class="pre">MJBallJoint</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody6isFreeEv">
+<span id="_CPPv3N6MJBody6isFreeEv"></span><span id="_CPPv2N6MJBody6isFreeEv"></span><span id="MJBody::isFree"></span><span class="target" id="class_m_j_body_1ac0425fd411cd9a16b0ed5ed1e66e7fa8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFree</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody6isFreeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks whether this is a free body. </p>
+<p>‘Free’ bodies are those that have a ‘free’ joint, and thus they can move freely in the environment. For these bodies, we can set the position, velocity, attitude, and angular rate. Usually, ‘free’ bodies are those without parent bodies in the simulation (‘top-level’ bodies).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the body has a free joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody12getFreeJointEv">
+<span id="_CPPv3N6MJBody12getFreeJointEv"></span><span id="_CPPv2N6MJBody12getFreeJointEv"></span><span id="MJBody::getFreeJoint"></span><span class="target" id="class_m_j_body_1a8ae5f2d8b87f09ebcb8951ea0b0145c4"></span><a class="reference internal" href="MJJoint.html#_CPPv411MJFreeJoint" title="MJFreeJoint"><span class="n"><span class="pre">MJFreeJoint</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getFreeJoint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody12getFreeJointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the free joint of this body, if it exists. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if the joint does not have a free joint. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJJoint.html#class_m_j_ball_joint"><span class="std std-ref"><span class="pre">MJBallJoint</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody11setPositionERKN5Eigen8Vector3dE">
+<span id="_CPPv3N6MJBody11setPositionERKN5Eigen8Vector3dE"></span><span id="_CPPv2N6MJBody11setPositionERKN5Eigen8Vector3dE"></span><span id="MJBody::setPosition__Eigen::Vector3dCR"></span><span class="target" id="class_m_j_body_1a30e9191b6fce139cde7625cbb321452a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPosition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">position</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody11setPositionERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the position of the body. </p>
+<p>This method may only be called for ‘free’ bodies. Free bodies are those that have a ‘free’ joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>position</strong> – The desired 3D position vector. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if this body is not free (has no ‘free’ joint). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody11setVelocityERKN5Eigen8Vector3dE">
+<span id="_CPPv3N6MJBody11setVelocityERKN5Eigen8Vector3dE"></span><span id="_CPPv2N6MJBody11setVelocityERKN5Eigen8Vector3dE"></span><span id="MJBody::setVelocity__Eigen::Vector3dCR"></span><span class="target" id="class_m_j_body_1acc8feb5a79a335598d752264f15e846f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setVelocity</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">velocity</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody11setVelocityERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the translational velocity of the body. </p>
+<p>This method may only be called for ‘free’ bodies. Free bodies are those that have a ‘free’ joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>velocity</strong> – The desired 3D velocity vector. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if this body is not free (has no ‘free’ joint). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody11setAttitudeERKN5Eigen4MRPdE">
+<span id="_CPPv3N6MJBody11setAttitudeERKN5Eigen4MRPdE"></span><span id="_CPPv2N6MJBody11setAttitudeERKN5Eigen4MRPdE"></span><span id="MJBody::setAttitude__Eigen::MRPdCR"></span><span class="target" id="class_m_j_body_1abdcd395d9971582549bfdcc3043e418e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAttitude</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">attitude</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody11setAttitudeERKN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the orientation (attitude) of the body. </p>
+<p>This method may only be called for ‘free’ bodies. Free bodies are those that have a ‘free’ joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attitude</strong> – The orientation represented as Modified Rodrigues Parameters (MRP). </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if this body is not free (has no ‘free’ joint). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody15setAttitudeRateERKN5Eigen8Vector3dE">
+<span id="_CPPv3N6MJBody15setAttitudeRateERKN5Eigen8Vector3dE"></span><span id="_CPPv2N6MJBody15setAttitudeRateERKN5Eigen8Vector3dE"></span><span id="MJBody::setAttitudeRate__Eigen::Vector3dCR"></span><span class="target" id="class_m_j_body_1abf2039ceb1b45bc5d106ab90c9a14836"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAttitudeRate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">attitudeRate</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody15setAttitudeRateERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the attitude rate (angular velocity) of the body. </p>
+<p>This method may only be called for ‘free’ bodies. Free bodies are those that have a ‘free’ joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attitudeRate</strong> – The desired 3D attitude rate vector. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if this body is not free (has no ‘free’ joint). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody26writeFwdKinematicsMessagesEP7mjModelP6mjData8uint64_t">
+<span id="_CPPv3N6MJBody26writeFwdKinematicsMessagesEP7mjModelP6mjData8uint64_t"></span><span id="_CPPv2N6MJBody26writeFwdKinematicsMessagesEP7mjModelP6mjData8uint64_t"></span><span id="MJBody::writeFwdKinematicsMessages__mjModelP.mjDataP.uint64_t"></span><span class="target" id="class_m_j_body_1ae8b297c4b03d92a0653f3a1f7fa23fbe"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeFwdKinematicsMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">m</span></span>, <span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">d</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody26writeFwdKinematicsMessagesEP7mjModelP6mjData8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes forward kinematics messages based on the current state. </p>
+<p>Writes the state (position, attitude, etc.) out messages for all sites in this body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – Pointer to the MuJoCo model. </p></li>
+<li><p><strong>d</strong> – Pointer to the MuJoCo data. </p></li>
+<li><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody33writeStateDependentOutputMessagesE8uint64_t">
+<span id="_CPPv3N6MJBody33writeStateDependentOutputMessagesE8uint64_t"></span><span id="_CPPv2N6MJBody33writeStateDependentOutputMessagesE8uint64_t"></span><span id="MJBody::writeStateDependentOutputMessages__uint64_t"></span><span class="target" id="class_m_j_body_1aa2086b68a55e5586ccd3419bed414e21"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeStateDependentOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody33writeStateDependentOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes body-mass-properties and joint-state messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody14registerStatesE18DynParamRegisterer">
+<span id="_CPPv3N6MJBody14registerStatesE18DynParamRegisterer"></span><span id="_CPPv2N6MJBody14registerStatesE18DynParamRegisterer"></span><span id="MJBody::registerStates__DynParamRegisterer"></span><span class="target" id="class_m_j_body_1a050c08d4a640059b826bcaedd76e3b83"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="StatefulSysModel.html#_CPPv418DynParamRegisterer" title="DynParamRegisterer"><span class="n"><span class="pre">DynParamRegisterer</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">paramManager</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody14registerStatesE18DynParamRegisterer" title="Link to this definition"></a><br /></dt>
+<dd><p>Registers the body’s states with a dynamic parameter registerer. </p>
+<p>Currently, only the mass of the body is considered a parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paramManager</strong> – The dynamic parameter registerer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody30updateMujocoModelFromMassPropsEv">
+<span id="_CPPv3N6MJBody30updateMujocoModelFromMassPropsEv"></span><span id="_CPPv2N6MJBody30updateMujocoModelFromMassPropsEv"></span><span id="MJBody::updateMujocoModelFromMassProps"></span><span class="target" id="class_m_j_body_1a906261675ddcd07363665fcff752e7cd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateMujocoModelFromMassProps</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody30updateMujocoModelFromMassPropsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the MuJoCo model from the mass properties of the body. </p>
+<p>The mass of the body is a state, which may change in time (for example, when a thruster burns fuel). This change in mass must be relayed back to MuJoCo. Calling this method will update the <code class="docutils literal notranslate"><span class="pre">mjModel</span></code> with the mass value stored in the mass state of this body.</p>
+<p>Note that the inertia is also updated (scaled by the change in mass). The center of mass remains constant.</p>
+<p>This method will also mark the kinematics and mujoco model ‘const’ as stale. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody25updateMassPropsDerivativeEv">
+<span id="_CPPv3N6MJBody25updateMassPropsDerivativeEv"></span><span id="_CPPv2N6MJBody25updateMassPropsDerivativeEv"></span><span id="MJBody::updateMassPropsDerivative"></span><span class="target" id="class_m_j_body_1a1e138fc81a2d2ae0ab3fcf21c3b8b9b1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateMassPropsDerivative</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody25updateMassPropsDerivativeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the derivative of the mass state with the information from the connected <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_body_1a4ae8fca2d3e9b0022dabb7c0dc51a0de"><span class="std std-ref"><span class="pre">derivativeMassPropertiesInMsg</span></span></a></code>. </p>
+<p>If no such message is connected, then the derivative is assumed to be zero. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody31updateConstrainedEqualityJointsEv">
+<span id="_CPPv3N6MJBody31updateConstrainedEqualityJointsEv"></span><span id="_CPPv2N6MJBody31updateConstrainedEqualityJointsEv"></span><span id="MJBody::updateConstrainedEqualityJoints"></span><span class="target" id="class_m_j_body_1ad3bbb485b8cc4e4f5140cac28a00d76a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateConstrainedEqualityJoints</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MJBody31updateConstrainedEqualityJointsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates all constrained equality joints associated with the body. </p>
+<p>Calls <code class="docutils literal notranslate"><a class="reference internal" href="MJJoint.html#class_m_j_scalar_joint_1a3b1cc5d9214b87cefcc558f3278863ee"><span class="std std-ref"><span class="pre">MJScalarJoint::updateConstrainedEquality</span></span></a></code> for all scalar joints in this body. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody20massPropertiesOutMsgE">
+<span id="_CPPv3N6MJBody20massPropertiesOutMsgE"></span><span id="_CPPv2N6MJBody20massPropertiesOutMsgE"></span><span id="MJBody::massPropertiesOutMsg__Message:SCMassPropsMsgPayload:"></span><span class="target" id="class_m_j_body_1a2ccfe87aa958dc7fa05bf459a7d494fc"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCMassPropsMsgPayload.html#_CPPv421SCMassPropsMsgPayload" title="SCMassPropsMsgPayload"><span class="n"><span class="pre">SCMassPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massPropertiesOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody20massPropertiesOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message to output body mass properties. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody29derivativeMassPropertiesInMsgE">
+<span id="_CPPv3N6MJBody29derivativeMassPropertiesInMsgE"></span><span id="_CPPv2N6MJBody29derivativeMassPropertiesInMsgE"></span><span id="MJBody::derivativeMassPropertiesInMsg__ReadFunctor:SCMassPropsMsgPayload:"></span><span class="target" id="class_m_j_body_1a4ae8fca2d3e9b0022dabb7c0dc51a0de"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCMassPropsMsgPayload.html#_CPPv421SCMassPropsMsgPayload" title="SCMassPropsMsgPayload"><span class="n"><span class="pre">SCMassPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivativeMassPropertiesInMsg</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody29derivativeMassPropertiesInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read mass properties derivatives. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody4specE">
+<span id="_CPPv3N6MJBody4specE"></span><span id="_CPPv2N6MJBody4specE"></span><span id="MJBody::spec__MJSpecR"></span><span class="target" id="class_m_j_body_1a95703e15b87776d69daa9c37002d1ddd"></span><a class="reference internal" href="MJSpec.html#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">spec</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody4specE" title="Link to this definition"></a><br /></dt>
+<dd><p>Reference to the spec where this body is defined. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody5sitesE">
+<span id="_CPPv3N6MJBody5sitesE"></span><span id="_CPPv2N6MJBody5sitesE"></span><span id="MJBody::sites__std::list:MJSite:"></span><span class="target" id="class_m_j_body_1ab0476cf0129ee4977f5fe5679bd0b937"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sites</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody5sitesE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of sites associated with the body. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody9freeJointE">
+<span id="_CPPv3N6MJBody9freeJointE"></span><span id="_CPPv2N6MJBody9freeJointE"></span><span id="MJBody::freeJoint__std::optional:MJFreeJoint:"></span><span class="target" id="class_m_j_body_1acba2fe49cbb1bdda6ffbff628d3b215f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJJoint.html#_CPPv411MJFreeJoint" title="MJFreeJoint"><span class="n"><span class="pre">MJFreeJoint</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">freeJoint</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody9freeJointE" title="Link to this definition"></a><br /></dt>
+<dd><p>Optional free joint associated with the body. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody9ballJointE">
+<span id="_CPPv3N6MJBody9ballJointE"></span><span id="_CPPv2N6MJBody9ballJointE"></span><span id="MJBody::ballJoint__std::optional:MJBallJoint:"></span><span class="target" id="class_m_j_body_1a1d8f31f61eadf624d980a5c342e97152"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJJoint.html#_CPPv411MJBallJoint" title="MJBallJoint"><span class="n"><span class="pre">MJBallJoint</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ballJoint</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody9ballJointE" title="Link to this definition"></a><br /></dt>
+<dd><p>Optional ball joint associated with the body. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody12scalarJointsE">
+<span id="_CPPv3N6MJBody12scalarJointsE"></span><span id="_CPPv2N6MJBody12scalarJointsE"></span><span id="MJBody::scalarJoints__std::list:MJScalarJoint:"></span><span class="target" id="class_m_j_body_1ad1474351c9c20649aad7ae0b777e1e07"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="MJJoint.html#_CPPv413MJScalarJoint" title="MJScalarJoint"><span class="n"><span class="pre">MJScalarJoint</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarJoints</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody12scalarJointsE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of scalar joints associated with the body. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6MJBody9massStateE">
+<span id="_CPPv3N6MJBody9massStateE"></span><span id="_CPPv2N6MJBody9massStateE"></span><span id="MJBody::massState__StateDataP"></span><span class="target" id="class_m_j_body_1a2c25df792ba1a3bb032f859785190337"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">massState</span></span></span><a class="headerlink" href="#_CPPv4N6MJBody9massStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data representing the mass of the body. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJActuator.html" class="btn btn-neutral float-left" title="Module: MJActuator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MJEquality.html" class="btn btn-neutral float-right" title="Module: MJEquality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

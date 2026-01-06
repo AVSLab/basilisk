@@ -1,0 +1,1056 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: constraintDynamicEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="constraintEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">constraintEffector</a></li>
+      <li class="breadcrumb-item active">Module: constraintDynamicEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-constraintdynamiceffector">
+<span id="constraintdynamiceffector"></span><h1>Module: constraintDynamicEffector<a class="headerlink" href="#module-constraintdynamiceffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The constraint effector class is used to define a physical connection between two separate
+spacecraft. This class takes in the connection location on each spacecraft in their respective
+body frames as well as a relative vector between these two connection points. It also takes in
+two gain tuning parameters to tailor the stiffness and damping of the connection between the
+two spacecraft.</p>
+<p>The constraint effector class is an instantiation of the dynamic effector abstract class. The
+included test is validating the interaction between two spacecraft rigid body hubs that are
+attached through a constraint effector. In this case, two identical spacecraft are connected
+by a 0.1 meter long arm which is enforced with high stiffness and damping to be virtually rigid.</p>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>A constraint effector is a combination of two separate 3-degree-of-freedom holonomic constraints: a
+direction constraint which enforces the position of the connection point on each spacecraft
+relative to the other, and an attitude constraint which enforces the attitude of each spacecraft
+relative to the other. The constraint effector works by correcting violations of these constraints
+as well as their derivatives.</p>
+<section id="mathematical-modeling">
+<h3>Mathematical Modeling<a class="headerlink" href="#mathematical-modeling" title="Link to this heading"></a></h3>
+<p>See the following conference paper for a detailed description of the mathematical model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>J. Vaz Carneiro, A. Morell and H. Schaub, <a class="reference external" href="https://hanspeterschaub.info/Papers/VazCarneiro2023b.pdf">“Post-Docking Complex
+Spacecraft Dynamics Using Baumgarte Stabilization”</a>,
+AAS/AIAA Astrodynamics Specialist Conference, Big Sky, Montana, Aug. 13-17, 2023</p>
+</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section outlines the steps needed to setup a Constraint Dynamic Effector in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the constraintDynamicEffector class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">constraintDynamicEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of a holonomic constraint:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all physical parameters for the constraint:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P1B1_B1</span><span class="p">(</span><span class="n">r_P1B1_B1</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2B2_B2</span><span class="p">(</span><span class="n">r_P2B2_B2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2P1_B1Init</span><span class="p">(</span><span class="n">r_P2P1_B1Init</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define the stiffness and damping of the connection. See the recommended starting gains here:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">1E2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">1e3</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define exact gains for the direction and attitude constraints separately. These are internally set based on alpha and beta during reset, but can be overridden in this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">setK_d</span><span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setC_d</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setK_a</span><span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">setC_a</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the effector to both spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject1</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+<span class="n">scObject2</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> documentation on how to set up a spacecraft object.</p>
+</li>
+<li><p>Add the spacecraft and module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject1</span><span class="p">)</span>
+<span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject2</span><span class="p">)</span>
+<span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">constraintEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The order in which the spacecraft are solved in the task <strong>MUST</strong> compute
+spacecraft 1 first and spacecraft 2 second. Regardless of what your spacecraft objects are
+named, the spacecraft considered “1” and “2” are dictated when setting <code class="docutils literal notranslate"><span class="pre">R_P1B1_B1</span></code>, <code class="docutils literal notranslate"><span class="pre">R_P2B2_B2</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">R_P2P1_B1Init</span></code> where spacecraft 1 hosts connection point P1 and parent frame B1, and
+spacecraft 2 hosts connection point P2 and parent frame B2.</p>
+<p>When using the <a class="reference internal" href="../../../utilities/SimulationBaseClass.html#simulationbaseclass"><span class="std std-ref">SimulationBaseClass</span></a> <code class="docutils literal notranslate"><span class="pre">AddModelToTask()</span></code> model priority to set the order of execution, ensure that spacecraft 1 is
+set to be solved before spacecraft 2. Note that model priority execution is from highest
+value to lowest value, with the default being -1 when unspecified. When using the model
+priority, the setup could look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject2</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># spacecraft 2 solved second</span>
+<span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject1</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># spacecraft 1 solved first</span>
+</pre></div>
+</div>
+<p>When not setting any model priority, and therefore letting all models default to a -1
+model priority, models of the same priority are computed in the order that they are added.
+So if not setting a model priority, the setup MUST look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject1</span><span class="p">)</span> <span class="c1"># spacecraft 1 solved first</span>
+<span class="n">Sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">TaskName</span><span class="p">,</span> <span class="n">scObject2</span><span class="p">)</span> <span class="c1"># spacecraft 2 solved second</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p>Ensure that the dynamics integration is synced between the connected spacecraft. For best results use a variable timestep integrator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">integratorObject1</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scObject1</span><span class="p">)</span>
+<span class="n">scObject1</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject1</span><span class="p">)</span>
+<span class="n">scObject1</span><span class="o">.</span><span class="n">syncDynamicsIntegration</span><span class="p">(</span><span class="n">scObject2</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Retrieve the constraint effector’s physical parameters, gain tuning parameters, or exact gains for the direction and attitude constraints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">getR_P1B1_B1</span><span class="p">(</span><span class="n">r_P1B1_B1</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getR_P2B2_B2</span><span class="p">(</span><span class="n">r_P2B2_B2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getR_P2P1_B1Init</span><span class="p">(</span><span class="n">r_P2P1_B1Init</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getAlpha</span><span class="p">(</span><span class="mf">1E2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getBeta</span><span class="p">(</span><span class="mf">1e3</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">beta</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define a input device status message.(1 means constraintEffector is connected.0 means constraintEffector is disconnected). If not set, it defaults to being connected:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">effectorStatusMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="p">()</span>
+<span class="n">effectorStatusMsgPayload</span><span class="o">.</span><span class="n">deviceStatus</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">effectorStatusMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">effectorStatusMsgPayload</span><span class="p">)</span>
+<span class="n">constraintEffector</span><span class="o">.</span><span class="n">effectorStatusInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">effectorStatusMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Setup Low Pass Filtering for the Constraint Forces and Torques acting on the two satellites. Define a positive cut-off frequency wc for the low-pass filter. If not set, defaults to 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">setFilterData</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable <code class="docutils literal notranslate"><span class="pre">constraintElements</span></code>.</p></li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv48parentID">
+<span id="_CPPv38parentID"></span><span id="_CPPv28parentID"></span><span id="parentID"></span><span class="target" id="structparent_i_d"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentID</span></span></span><a class="headerlink" href="#_CPPv48parentID" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constraintDynamicEffector.h&gt;</em></div>
+<p>Struct containing parent classification variables. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8parentID3idxE">
+<span id="_CPPv3N8parentID3idxE"></span><span id="_CPPv2N8parentID3idxE"></span><span id="parentID::idx__i"></span><span class="target" id="structparent_i_d_1a069299670e04f847e2ef12dfe604f9fa"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">idx</span></span></span><a class="headerlink" href="#_CPPv4N8parentID3idxE" title="Link to this definition"></a><br /></dt>
+<dd><p>index of effector’s parent within parent type (ex. hub #1 or state eff #2) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8parentID10parentTypeE">
+<span id="_CPPv3N8parentID10parentTypeE"></span><span id="_CPPv2N8parentID10parentTypeE"></span><span id="parentID::parentType__ss"></span><span class="target" id="structparent_i_d_1aa6296835cf6f9eecb3c160f6a35c75bd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentType</span></span></span><a class="headerlink" href="#_CPPv4N8parentID10parentTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>type of parent attached to (hub or state effector) </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv425ConstraintDynamicEffector">
+<span id="_CPPv325ConstraintDynamicEffector"></span><span id="_CPPv225ConstraintDynamicEffector"></span><span id="ConstraintDynamicEffector"></span><span class="target" id="class_constraint_dynamic_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConstraintDynamicEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><a class="headerlink" href="#_CPPv425ConstraintDynamicEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;constraintDynamicEffector.h&gt;</em></div>
+<p>constraint dynamic effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector25ConstraintDynamicEffectorEv">
+<span id="_CPPv3N25ConstraintDynamicEffector25ConstraintDynamicEffectorEv"></span><span id="_CPPv2N25ConstraintDynamicEffector25ConstraintDynamicEffectorEv"></span><span id="ConstraintDynamicEffector::ConstraintDynamicEffector"></span><span class="target" id="class_constraint_dynamic_effector_1ad00d1f494195d14f3eb0d9cc56991e1a"></span><span class="sig-name descname"><span class="n"><span class="pre">ConstraintDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector25ConstraintDynamicEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffectorD0Ev">
+<span id="_CPPv3N25ConstraintDynamicEffectorD0Ev"></span><span id="_CPPv2N25ConstraintDynamicEffectorD0Ev"></span><span id="ConstraintDynamicEffector::~ConstraintDynamicEffector"></span><span class="target" id="class_constraint_dynamic_effector_1af1999431a7cf7b1f32256a9e57ab5d0b"></span><span class="sig-name descname"><span class="n"><span class="pre">~ConstraintDynamicEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor, nothing to report here </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector5ResetE8uint64_t">
+<span id="_CPPv3N25ConstraintDynamicEffector5ResetE8uint64_t"></span><span id="_CPPv2N25ConstraintDynamicEffector5ResetE8uint64_t"></span><span id="ConstraintDynamicEffector::Reset__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1aba5204888b07607eb6a9a498bccab2d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N25ConstraintDynamicEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N25ConstraintDynamicEffector12linkInStatesER15DynParamManager"></span><span id="ConstraintDynamicEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_constraint_dynamic_effector_1a65ee1a7778dc9869a02cca2b42564164"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the constraint effector to have access to the parent states </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – The states to link </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16linkInPropertiesER15DynParamManager">
+<span id="_CPPv3N25ConstraintDynamicEffector16linkInPropertiesER15DynParamManager"></span><span id="_CPPv2N25ConstraintDynamicEffector16linkInPropertiesER15DynParamManager"></span><span id="ConstraintDynamicEffector::linkInProperties__DynParamManagerR"></span><span class="target" id="class_constraint_dynamic_effector_1a4fd834a863beae9b4d87a82f236a48a3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">properties</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16linkInPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to link properties to the constraint effector. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>properties</strong> – The parameter manager to collect from </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector18computeForceTorqueEdd">
+<span id="_CPPv3N25ConstraintDynamicEffector18computeForceTorqueEdd"></span><span id="_CPPv2N25ConstraintDynamicEffector18computeForceTorqueEdd"></span><span id="ConstraintDynamicEffector::computeForceTorque__double.double"></span><span class="target" id="class_constraint_dynamic_effector_1af2214d3ce2d5ca3b9fd6681dad92c9e7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeForceTorque</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector18computeForceTorqueEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the forces on torques on each spacecraft body. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – Integration time </p></li>
+<li><p><strong>timeStep</strong> – Current integration time step used </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N25ConstraintDynamicEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N25ConstraintDynamicEffector11UpdateStateE8uint64_t"></span><span id="ConstraintDynamicEffector::UpdateState__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1a0d667995cb25b102c700c6fa8e7b34fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update state method </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector23writeOutputStateMessageE8uint64_t">
+<span id="_CPPv3N25ConstraintDynamicEffector23writeOutputStateMessageE8uint64_t"></span><span id="_CPPv2N25ConstraintDynamicEffector23writeOutputStateMessageE8uint64_t"></span><span id="ConstraintDynamicEffector::writeOutputStateMessage__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1ac1ec367d5197bf006478b865b2567ee9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector23writeOutputStateMessageE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the computed constraint force and torque states and outputs them to the messaging system. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector20computeFilteredForceE8uint64_t">
+<span id="_CPPv3N25ConstraintDynamicEffector20computeFilteredForceE8uint64_t"></span><span id="_CPPv2N25ConstraintDynamicEffector20computeFilteredForceE8uint64_t"></span><span id="ConstraintDynamicEffector::computeFilteredForce__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1ae11e728e7bd616ac0d66f005d5cfe716"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeFilteredForce</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector20computeFilteredForceE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Filtering method to calculate filtered Constraint Force </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector21computeFilteredTorqueE8uint64_t">
+<span id="_CPPv3N25ConstraintDynamicEffector21computeFilteredTorqueE8uint64_t"></span><span id="_CPPv2N25ConstraintDynamicEffector21computeFilteredTorqueE8uint64_t"></span><span id="ConstraintDynamicEffector::computeFilteredTorque__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1a1657aad52d5b044fa21eaffd41ad9cc3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeFilteredTorque</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector21computeFilteredTorqueE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Filtering method to calculate filtered Constraint Torque </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16readInputMessageEv">
+<span id="_CPPv3N25ConstraintDynamicEffector16readInputMessageEv"></span><span id="_CPPv2N25ConstraintDynamicEffector16readInputMessageEv"></span><span id="ConstraintDynamicEffector::readInputMessage"></span><span class="target" id="class_constraint_dynamic_effector_1ae327e3c280395d7e6f494c9f8fb667ac"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessage</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16readInputMessageEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the user to set the status of the constraint dynamic effector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16setR_P2P1_B1InitEN5Eigen8Vector3dE">
+<span id="_CPPv3N25ConstraintDynamicEffector16setR_P2P1_B1InitEN5Eigen8Vector3dE"></span><span id="_CPPv2N25ConstraintDynamicEffector16setR_P2P1_B1InitEN5Eigen8Vector3dE"></span><span id="ConstraintDynamicEffector::setR_P2P1_B1Init__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a0c9923b6d462423d482ace712fafcd75"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_P2P1_B1Init</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_P2P1_B1Init</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16setR_P2P1_B1InitEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_P2P1_B1Init</span></code> initial spacecraft separation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector12setR_P1B1_B1EN5Eigen8Vector3dE">
+<span id="_CPPv3N25ConstraintDynamicEffector12setR_P1B1_B1EN5Eigen8Vector3dE"></span><span id="_CPPv2N25ConstraintDynamicEffector12setR_P1B1_B1EN5Eigen8Vector3dE"></span><span id="ConstraintDynamicEffector::setR_P1B1_B1__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a48684b1c718196b6b68b3af99c19b2f0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_P1B1_B1</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_P1B1_B1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector12setR_P1B1_B1EN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_P1B1_B1</span></code> connection point position on spacecraft 1 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector12setR_P2B2_B2EN5Eigen8Vector3dE">
+<span id="_CPPv3N25ConstraintDynamicEffector12setR_P2B2_B2EN5Eigen8Vector3dE"></span><span id="_CPPv2N25ConstraintDynamicEffector12setR_P2B2_B2EN5Eigen8Vector3dE"></span><span id="ConstraintDynamicEffector::setR_P2B2_B2__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1ad9473783323193be85519c641935f071"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_P2B2_B2</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_P2B2_B2</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector12setR_P2B2_B2EN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_P2B2_B2</span></code> connection point position on spacecraft 2 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector17setSigma_B2B1InitEN5Eigen4MRPdE">
+<span id="_CPPv3N25ConstraintDynamicEffector17setSigma_B2B1InitEN5Eigen4MRPdE"></span><span id="_CPPv2N25ConstraintDynamicEffector17setSigma_B2B1InitEN5Eigen4MRPdE"></span><span id="ConstraintDynamicEffector::setSigma_B2B1Init__Eigen::MRPd"></span><span class="target" id="class_constraint_dynamic_effector_1a03a9887e57272291d1551191ab3c493f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSigma_B2B1Init</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_B2B1Init</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector17setSigma_B2B1InitEN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">sigma_B2B1_Init</span></code> initial spacecraft relative attitude </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector8setAlphaEd">
+<span id="_CPPv3N25ConstraintDynamicEffector8setAlphaEd"></span><span id="_CPPv2N25ConstraintDynamicEffector8setAlphaEd"></span><span id="ConstraintDynamicEffector::setAlpha__double"></span><span class="target" id="class_constraint_dynamic_effector_1acc9f202dda0bbb82d72a8836cdb7c93b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAlpha</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alpha</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector8setAlphaEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">alpha</span></code> gain tuning parameter </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector7setBetaEd">
+<span id="_CPPv3N25ConstraintDynamicEffector7setBetaEd"></span><span id="_CPPv2N25ConstraintDynamicEffector7setBetaEd"></span><span id="ConstraintDynamicEffector::setBeta__double"></span><span class="target" id="class_constraint_dynamic_effector_1aa1cfcabe663539308102ddf64c613fe1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBeta</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">beta</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector7setBetaEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">beta</span></code> gain tuning parameter </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector6setK_dEd">
+<span id="_CPPv3N25ConstraintDynamicEffector6setK_dEd"></span><span id="_CPPv2N25ConstraintDynamicEffector6setK_dEd"></span><span id="ConstraintDynamicEffector::setK_d__double"></span><span class="target" id="class_constraint_dynamic_effector_1afde985f8ba84a05ff2c0c4910f9b20e5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK_d</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k_d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector6setK_dEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">k_d</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector6setC_dEd">
+<span id="_CPPv3N25ConstraintDynamicEffector6setC_dEd"></span><span id="_CPPv2N25ConstraintDynamicEffector6setC_dEd"></span><span id="ConstraintDynamicEffector::setC_d__double"></span><span class="target" id="class_constraint_dynamic_effector_1a289387022c2e8a8556e84765785589ee"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setC_d</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c_d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector6setC_dEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">c_d</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector6setK_aEd">
+<span id="_CPPv3N25ConstraintDynamicEffector6setK_aEd"></span><span id="_CPPv2N25ConstraintDynamicEffector6setK_aEd"></span><span id="ConstraintDynamicEffector::setK_a__double"></span><span class="target" id="class_constraint_dynamic_effector_1ab68bc386693ede7898a25186f61585cd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK_a</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k_a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector6setK_aEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">k_a</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector6setC_aEd">
+<span id="_CPPv3N25ConstraintDynamicEffector6setC_aEd"></span><span id="_CPPv2N25ConstraintDynamicEffector6setC_aEd"></span><span id="ConstraintDynamicEffector::setC_a__double"></span><span class="target" id="class_constraint_dynamic_effector_1ae2fcaa67ae1017ec62cf424658a0fcfc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setC_a</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c_a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector6setC_aEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">c_a</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14setFilter_DataEddd">
+<span id="_CPPv3N25ConstraintDynamicEffector14setFilter_DataEddd"></span><span id="_CPPv2N25ConstraintDynamicEffector14setFilter_DataEddd"></span><span id="ConstraintDynamicEffector::setFilter_Data__double.double.double"></span><span class="target" id="class_constraint_dynamic_effector_1a0f01ff7514f1356fae0821d9e9fd530d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFilter_Data</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wc</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">h</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14setFilter_DataEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">a,b,s,c,d,e</span></code> coefficients of low pass filter</p>
+<p>This method allows the user to set the cut-off frequency of the low pass filter which is then used to calculate the coefficients for numerical low pass filtering based on a second-order low pass filter design. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wc</strong> – The cut-off frequency of the low pass filter. </p></li>
+<li><p><strong>h</strong> – The constant digital time step. </p></li>
+<li><p><strong>k</strong> – The damping coefficient </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector22setStateNameOfPositionENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector22setStateNameOfPositionENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector22setStateNameOfPositionENSt6stringE"></span><span id="ConstraintDynamicEffector::setStateNameOfPosition__ss"></span><span class="target" id="class_constraint_dynamic_effector_1af28756952864abe814f9bc9ebfb7768c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector22setStateNameOfPositionENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">stateNameOfPosition</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector22setStateNameOfVelocityENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector22setStateNameOfVelocityENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector22setStateNameOfVelocityENSt6stringE"></span><span id="ConstraintDynamicEffector::setStateNameOfVelocity__ss"></span><span class="target" id="class_constraint_dynamic_effector_1a6add7bd0d3196bcd0a1e6101ffd88b47"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector22setStateNameOfVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">stateNameOfVelocity</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector19setStateNameOfSigmaENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector19setStateNameOfSigmaENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector19setStateNameOfSigmaENSt6stringE"></span><span id="ConstraintDynamicEffector::setStateNameOfSigma__ss"></span><span class="target" id="class_constraint_dynamic_effector_1ac2355a2a29bb4d60ef051bb8f6896e89"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfSigma</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector19setStateNameOfSigmaENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">stateNameOfSigma</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector19setStateNameOfOmegaENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector19setStateNameOfOmegaENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector19setStateNameOfOmegaENSt6stringE"></span><span id="ConstraintDynamicEffector::setStateNameOfOmega__ss"></span><span class="target" id="class_constraint_dynamic_effector_1a5f59f6479efe8bb10a4e3fcf5963640d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateNameOfOmega</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector19setStateNameOfOmegaENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">stateNameOfOmega</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector28setPropName_inertialPositionENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector28setPropName_inertialPositionENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector28setPropName_inertialPositionENSt6stringE"></span><span id="ConstraintDynamicEffector::setPropName_inertialPosition__ss"></span><span class="target" id="class_constraint_dynamic_effector_1a6c093689c0f8a78d6cb707db31fbc373"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector28setPropName_inertialPositionENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">propName_inertialPosition</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialPositionEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector28getPropName_inertialPositionEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector28getPropName_inertialPositionEv"></span><span id="ConstraintDynamicEffector::getPropName_inertialPositionC"></span><span class="target" id="class_constraint_dynamic_effector_1a6a2908ea243e767693f0e212ef584ddf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialPosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialPositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">propName_inertialPosition</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector28setPropName_inertialVelocityENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector28setPropName_inertialVelocityENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector28setPropName_inertialVelocityENSt6stringE"></span><span id="ConstraintDynamicEffector::setPropName_inertialVelocity__ss"></span><span class="target" id="class_constraint_dynamic_effector_1ac603a694206769abaa968bb7eec544bf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector28setPropName_inertialVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">propName_inertialVelocity</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialVelocityEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector28getPropName_inertialVelocityEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector28getPropName_inertialVelocityEv"></span><span id="ConstraintDynamicEffector::getPropName_inertialVelocityC"></span><span class="target" id="class_constraint_dynamic_effector_1abb1878a24a519de8b546f9de319d197c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">propName_inertialVelocity</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector28setPropName_inertialAttitudeENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector28setPropName_inertialAttitudeENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector28setPropName_inertialAttitudeENSt6stringE"></span><span id="ConstraintDynamicEffector::setPropName_inertialAttitude__ss"></span><span class="target" id="class_constraint_dynamic_effector_1ada11a9ffa287148e661d52bd8c3c9f1e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialAttitude</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector28setPropName_inertialAttitudeENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">propName_inertialAttitude</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialAttitudeEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector28getPropName_inertialAttitudeEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector28getPropName_inertialAttitudeEv"></span><span id="ConstraintDynamicEffector::getPropName_inertialAttitudeC"></span><span class="target" id="class_constraint_dynamic_effector_1af81850203beb84553c63b400b5385752"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialAttitude</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector28getPropName_inertialAttitudeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">propName_inertialAttitude</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector31setPropName_inertialAngVelocityENSt6stringE">
+<span id="_CPPv3N25ConstraintDynamicEffector31setPropName_inertialAngVelocityENSt6stringE"></span><span id="_CPPv2N25ConstraintDynamicEffector31setPropName_inertialAngVelocityENSt6stringE"></span><span id="ConstraintDynamicEffector::setPropName_inertialAngVelocity__ss"></span><span class="target" id="class_constraint_dynamic_effector_1a5ff2eb9d61a2af405ae7b056725b4ebe"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPropName_inertialAngVelocity</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector31setPropName_inertialAngVelocityENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">propName_inertialAngVelocity</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector31getPropName_inertialAngVelocityEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector31getPropName_inertialAngVelocityEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector31getPropName_inertialAngVelocityEv"></span><span id="ConstraintDynamicEffector::getPropName_inertialAngVelocityC"></span><span class="target" id="class_constraint_dynamic_effector_1a128bfbfc77bf587f554538a73d70144e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPropName_inertialAngVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector31getPropName_inertialAngVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">propName_inertialAngVelocity</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector16getR_P2P1_B1InitEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector16getR_P2P1_B1InitEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector16getR_P2P1_B1InitEv"></span><span id="ConstraintDynamicEffector::getR_P2P1_B1InitC"></span><span class="target" id="class_constraint_dynamic_effector_1ab6b0babadab6df536ba4389c0523cbac"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_P2P1_B1Init</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector16getR_P2P1_B1InitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_P2P1_B1Init</span></code> initial spacecraft separation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector12getR_P1B1_B1Ev">
+<span id="_CPPv3NK25ConstraintDynamicEffector12getR_P1B1_B1Ev"></span><span id="_CPPv2NK25ConstraintDynamicEffector12getR_P1B1_B1Ev"></span><span id="ConstraintDynamicEffector::getR_P1B1_B1C"></span><span class="target" id="class_constraint_dynamic_effector_1a576180e9aac0f02920caaf1c63fc49ce"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_P1B1_B1</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector12getR_P1B1_B1Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_P1B1_B1</span></code> connection point position on spacecraft 1 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector12getR_P2B2_B2Ev">
+<span id="_CPPv3NK25ConstraintDynamicEffector12getR_P2B2_B2Ev"></span><span id="_CPPv2NK25ConstraintDynamicEffector12getR_P2B2_B2Ev"></span><span id="ConstraintDynamicEffector::getR_P2B2_B2C"></span><span class="target" id="class_constraint_dynamic_effector_1a92d6a457020b88cbcc3366271906703d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_P2B2_B2</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector12getR_P2B2_B2Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_P2B2_B2</span></code> connection point position on spacecraft 2 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector8getAlphaEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector8getAlphaEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector8getAlphaEv"></span><span id="ConstraintDynamicEffector::getAlphaC"></span><span class="target" id="class_constraint_dynamic_effector_1a562d58a91c0f8790f62f79c09bce8c83"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAlpha</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector8getAlphaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">alpha</span></code> gain tuning parameter </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector7getBetaEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector7getBetaEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector7getBetaEv"></span><span id="ConstraintDynamicEffector::getBetaC"></span><span class="target" id="class_constraint_dynamic_effector_1a3fce8f849d3bd171b3c35f39e1e94bc4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getBeta</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector7getBetaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">beta</span></code> gain tuning parameter </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector6getK_dEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector6getK_dEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector6getK_dEv"></span><span id="ConstraintDynamicEffector::getK_dC"></span><span class="target" id="class_constraint_dynamic_effector_1a1df1a106cc93d4495da1f5e485fd24a7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK_d</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector6getK_dEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">k_d</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector6getC_dEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector6getC_dEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector6getC_dEv"></span><span id="ConstraintDynamicEffector::getC_dC"></span><span class="target" id="class_constraint_dynamic_effector_1a996c9e90e19c662cb98e0e2d8b1ed9ad"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getC_d</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector6getC_dEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">c_d</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector6getK_aEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector6getK_aEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector6getK_aEv"></span><span id="ConstraintDynamicEffector::getK_aC"></span><span class="target" id="class_constraint_dynamic_effector_1ab07aae81fa4f52491e8055148fa93bef"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK_a</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector6getK_aEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">k_a</span></code> gain </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK25ConstraintDynamicEffector6getC_aEv">
+<span id="_CPPv3NK25ConstraintDynamicEffector6getC_aEv"></span><span id="_CPPv2NK25ConstraintDynamicEffector6getC_aEv"></span><span id="ConstraintDynamicEffector::getC_aC"></span><span class="target" id="class_constraint_dynamic_effector_1a27086e0b66edd309fa74c111b19342b7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getC_a</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK25ConstraintDynamicEffector6getC_aEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">c_a</span></code> gain </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector18constraintElementsE">
+<span id="_CPPv3N25ConstraintDynamicEffector18constraintElementsE"></span><span id="_CPPv2N25ConstraintDynamicEffector18constraintElementsE"></span><span id="ConstraintDynamicEffector::constraintElements__Message:ConstDynEffectorMsgPayload:"></span><span class="target" id="class_constraint_dynamic_effector_1a2e05d783d0eadd29e0f3d6c410eff6ea"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ConstDynEffectorMsgPayload.html#_CPPv426ConstDynEffectorMsgPayload" title="ConstDynEffectorMsgPayload"><span class="n"><span class="pre">ConstDynEffectorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">constraintElements</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector18constraintElementsE" title="Link to this definition"></a><br /></dt>
+<dd><p>output message with constraint force and torque on connected s/c </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector19effectorStatusInMsgE">
+<span id="_CPPv3N25ConstraintDynamicEffector19effectorStatusInMsgE"></span><span id="_CPPv2N25ConstraintDynamicEffector19effectorStatusInMsgE"></span><span id="ConstraintDynamicEffector::effectorStatusInMsg__ReadFunctor:DeviceStatusMsgPayload:"></span><span class="target" id="class_constraint_dynamic_effector_1a5fd468b54a7a4fd951101c23e7b0bece"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DeviceStatusMsgPayload.html#_CPPv422DeviceStatusMsgPayload" title="DeviceStatusMsgPayload"><span class="n"><span class="pre">DeviceStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorStatusInMsg</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector19effectorStatusInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message to record device status </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14effectorStatusE">
+<span id="_CPPv3N25ConstraintDynamicEffector14effectorStatusE"></span><span id="_CPPv2N25ConstraintDynamicEffector14effectorStatusE"></span><span id="ConstraintDynamicEffector::effectorStatus__uint64_t"></span><span class="target" id="class_constraint_dynamic_effector_1aaaac380106ee56a5c5420c9d16b17743"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorStatus</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14effectorStatusE" title="Link to this definition"></a><br /></dt>
+<dd><p>internal variable to toggle effector status </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector13scInitCounterE">
+<span id="_CPPv3N25ConstraintDynamicEffector13scInitCounterE"></span><span id="_CPPv2N25ConstraintDynamicEffector13scInitCounterE"></span><span id="ConstraintDynamicEffector::scInitCounter__i"></span><span class="target" id="class_constraint_dynamic_effector_1a6b8f1bbae78e0a9499176df87319eaf3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scInitCounter</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector13scInitCounterE" title="Link to this definition"></a><br /></dt>
+<dd><p>counter to kill simulation if more than two spacecraft initialized </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector4scIDE">
+<span id="_CPPv3N25ConstraintDynamicEffector4scIDE"></span><span id="_CPPv2N25ConstraintDynamicEffector4scIDE"></span><span id="ConstraintDynamicEffector::scID__i"></span><span class="target" id="class_constraint_dynamic_effector_1a0fccf38b5001f276930399c38b328333"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector4scIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>0,1 alternating spacecraft toggle to output appropriate force/torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector7parent1E">
+<span id="_CPPv3N25ConstraintDynamicEffector7parent1E"></span><span id="_CPPv2N25ConstraintDynamicEffector7parent1E"></span><span id="ConstraintDynamicEffector::parent1__parentID"></span><span class="target" id="class_constraint_dynamic_effector_1a0375323f3d534893791c31416cc11a1d"></span><a class="reference internal" href="#_CPPv48parentID" title="parentID"><span class="n"><span class="pre">parentID</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parent1</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector7parent1E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector7parent2E">
+<span id="_CPPv3N25ConstraintDynamicEffector7parent2E"></span><span id="_CPPv2N25ConstraintDynamicEffector7parent2E"></span><span id="ConstraintDynamicEffector::parent2__parentID"></span><span class="target" id="class_constraint_dynamic_effector_1a9ceeec1931ebfe78429b1603805b0111"></span><a class="reference internal" href="#_CPPv48parentID" title="parentID"><span class="n"><span class="pre">parentID</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parent2</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector7parent2E" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector10hubCounterE">
+<span id="_CPPv3N25ConstraintDynamicEffector10hubCounterE"></span><span id="_CPPv2N25ConstraintDynamicEffector10hubCounterE"></span><span id="ConstraintDynamicEffector::hubCounter__i"></span><span class="target" id="class_constraint_dynamic_effector_1af519aa447e87aa0c7bc4903a146140e8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubCounter</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector10hubCounterE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector15effectorCounterE">
+<span id="_CPPv3N25ConstraintDynamicEffector15effectorCounterE"></span><span id="_CPPv2N25ConstraintDynamicEffector15effectorCounterE"></span><span id="ConstraintDynamicEffector::effectorCounter__i"></span><span class="target" id="class_constraint_dynamic_effector_1af5821215ba659560ed74495002fe01b8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorCounter</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector15effectorCounterE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector9r_P1B1_B1E">
+<span id="_CPPv3N25ConstraintDynamicEffector9r_P1B1_B1E"></span><span id="_CPPv2N25ConstraintDynamicEffector9r_P1B1_B1E"></span><span id="ConstraintDynamicEffector::r_P1B1_B1__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1aa286ea889c3de9e742625768c48c5328"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_P1B1_B1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector9r_P1B1_B1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from spacecraft 1 hub to its connection point P1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector9r_P2B2_B2E">
+<span id="_CPPv3N25ConstraintDynamicEffector9r_P2B2_B2E"></span><span id="_CPPv2N25ConstraintDynamicEffector9r_P2B2_B2E"></span><span id="ConstraintDynamicEffector::r_P2B2_B2__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a4d6ba86716f582db626cf9e316dd9261"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_P2B2_B2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector9r_P2B2_B2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from spacecraft 2 hub to its connection point P2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector13r_P2P1_B1InitE">
+<span id="_CPPv3N25ConstraintDynamicEffector13r_P2P1_B1InitE"></span><span id="_CPPv2N25ConstraintDynamicEffector13r_P2P1_B1InitE"></span><span id="ConstraintDynamicEffector::r_P2P1_B1Init__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a1d20ae61b338b690d917547df554dd96"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_P2P1_B1Init</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector13r_P2P1_B1InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] prescribed position vector from spacecraft 1 connection point to spacecraft 2 connection point </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector12dcm_B2B1InitE">
+<span id="_CPPv3N25ConstraintDynamicEffector12dcm_B2B1InitE"></span><span id="_CPPv2N25ConstraintDynamicEffector12dcm_B2B1InitE"></span><span id="ConstraintDynamicEffector::dcm_B2B1Init__Eigen::Matrix3d"></span><span class="target" id="class_constraint_dynamic_effector_1abb1eac3b95ae79c4ff3beec55b9322ec"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_B2B1Init</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector12dcm_B2B1InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude constraint violation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector5alphaE">
+<span id="_CPPv3N25ConstraintDynamicEffector5alphaE"></span><span id="_CPPv2N25ConstraintDynamicEffector5alphaE"></span><span id="ConstraintDynamicEffector::alpha__double"></span><span class="target" id="class_constraint_dynamic_effector_1a8d158af6c08019abb1fb9dea98757a5a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Baumgarte stabilization gain tuning variable. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector4betaE">
+<span id="_CPPv3N25ConstraintDynamicEffector4betaE"></span><span id="_CPPv2N25ConstraintDynamicEffector4betaE"></span><span id="ConstraintDynamicEffector::beta__double"></span><span class="target" id="class_constraint_dynamic_effector_1ab406f098c0633dcc5bf93d5253461fad"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector4betaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Baumgarte stabilization gain tuning variable. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector3k_dE">
+<span id="_CPPv3N25ConstraintDynamicEffector3k_dE"></span><span id="_CPPv2N25ConstraintDynamicEffector3k_dE"></span><span id="ConstraintDynamicEffector::k_d__double"></span><span class="target" id="class_constraint_dynamic_effector_1a30ce60f2fc9f972427bae30c71adcfab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k_d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector3k_dE" title="Link to this definition"></a><br /></dt>
+<dd><p>direction constraint proportional gain </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector3c_dE">
+<span id="_CPPv3N25ConstraintDynamicEffector3c_dE"></span><span id="_CPPv2N25ConstraintDynamicEffector3c_dE"></span><span id="ConstraintDynamicEffector::c_d__double"></span><span class="target" id="class_constraint_dynamic_effector_1a9ef1a5d9f4dc04bffd64b93374442378"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c_d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector3c_dE" title="Link to this definition"></a><br /></dt>
+<dd><p>direction constraint derivative gain </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector3k_aE">
+<span id="_CPPv3N25ConstraintDynamicEffector3k_aE"></span><span id="_CPPv2N25ConstraintDynamicEffector3k_aE"></span><span id="ConstraintDynamicEffector::k_a__double"></span><span class="target" id="class_constraint_dynamic_effector_1a2a2cdaf3f8015682c92c905a06262387"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k_a</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector3k_aE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude constraint proportional gain </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector3c_aE">
+<span id="_CPPv3N25ConstraintDynamicEffector3c_aE"></span><span id="_CPPv2N25ConstraintDynamicEffector3c_aE"></span><span id="ConstraintDynamicEffector::c_a__double"></span><span class="target" id="class_constraint_dynamic_effector_1a9df55fc9ab402477441123c6f426b061"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c_a</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector3c_aE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude constraint derivative gain </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector1aE">
+<span id="_CPPv3N25ConstraintDynamicEffector1aE"></span><span id="_CPPv2N25ConstraintDynamicEffector1aE"></span><span id="ConstraintDynamicEffector::a__double"></span><span class="target" id="class_constraint_dynamic_effector_1a3c7ad9e5b46bdd1b52eef8aa550f1976"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>coefficient in numerical low pass filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector1bE">
+<span id="_CPPv3N25ConstraintDynamicEffector1bE"></span><span id="_CPPv2N25ConstraintDynamicEffector1bE"></span><span id="ConstraintDynamicEffector::b__double"></span><span class="target" id="class_constraint_dynamic_effector_1a45690f1f39981b78fb86acb4afc33c94"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">b</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector1bE" title="Link to this definition"></a><br /></dt>
+<dd><p>coefficient in numerical low pass filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector1cE">
+<span id="_CPPv3N25ConstraintDynamicEffector1cE"></span><span id="_CPPv2N25ConstraintDynamicEffector1cE"></span><span id="ConstraintDynamicEffector::c__double"></span><span class="target" id="class_constraint_dynamic_effector_1a71e8114135cd501161ad37e00328de9b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector1cE" title="Link to this definition"></a><br /></dt>
+<dd><p>coefficient in numerical low pass filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector1dE">
+<span id="_CPPv3N25ConstraintDynamicEffector1dE"></span><span id="_CPPv2N25ConstraintDynamicEffector1dE"></span><span id="ConstraintDynamicEffector::d__double"></span><span class="target" id="class_constraint_dynamic_effector_1aecf938daeb9421d118af38f0b28bedea"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector1dE" title="Link to this definition"></a><br /></dt>
+<dd><p>coefficient in numerical low pass filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector1eE">
+<span id="_CPPv3N25ConstraintDynamicEffector1eE"></span><span id="_CPPv2N25ConstraintDynamicEffector1eE"></span><span id="ConstraintDynamicEffector::e__double"></span><span class="target" id="class_constraint_dynamic_effector_1a8f540362a53715af8f72b4dee9c33a1c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">e</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector1eE" title="Link to this definition"></a><br /></dt>
+<dd><p>coefficient in numerical low pass filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector13F_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector13F_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector13F_mag_tminus2E"></span><span id="ConstraintDynamicEffector::F_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1af17c8a597cd0e6bc342fee80bb1cefa1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector13F_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint force at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector13F_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector13F_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector13F_mag_tminus1E"></span><span id="ConstraintDynamicEffector::F_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1aad81f84330088ee28697b2bb6fb45dce"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector13F_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint force at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector7F_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector7F_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector7F_mag_tE"></span><span id="ConstraintDynamicEffector::F_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1a2357b2fc8301bdeb47430ecc13f10808"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector7F_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint force at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16F_filtered_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector16F_filtered_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector16F_filtered_mag_tE"></span><span id="ConstraintDynamicEffector::F_filtered_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1aa9b809b1ed9374c7befb5b13c5be0d04"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_filtered_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16F_filtered_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint force at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector22F_filtered_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector22F_filtered_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector22F_filtered_mag_tminus1E"></span><span id="ConstraintDynamicEffector::F_filtered_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1a5df6b84f5f056a8433a88911fb9b0f26"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_filtered_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector22F_filtered_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint force at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector22F_filtered_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector22F_filtered_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector22F_filtered_mag_tminus2E"></span><span id="ConstraintDynamicEffector::F_filtered_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1aed525fd35770699ec68ed516727a6129"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F_filtered_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector22F_filtered_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint force at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14T1_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector14T1_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector14T1_mag_tminus2E"></span><span id="ConstraintDynamicEffector::T1_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1ad4aad1f1e16cfdf7c7d054e13f660ecb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14T1_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 1 at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14T1_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector14T1_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector14T1_mag_tminus1E"></span><span id="ConstraintDynamicEffector::T1_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1ac37f2237f67e8540c29feb58d5d35548"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14T1_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 1 at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector8T1_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector8T1_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector8T1_mag_tE"></span><span id="ConstraintDynamicEffector::T1_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1a795fdd85c735d2c266728c0225988aeb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector8T1_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 1 at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector17T1_filtered_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector17T1_filtered_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector17T1_filtered_mag_tE"></span><span id="ConstraintDynamicEffector::T1_filtered_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1a2adc068296a9a1da5cd7aee7cb46bdd0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_filtered_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector17T1_filtered_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 1 at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector23T1_filtered_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector23T1_filtered_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector23T1_filtered_mag_tminus1E"></span><span id="ConstraintDynamicEffector::T1_filtered_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1abb8f9d52e5a4f04ee8f558ccdf2178ee"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_filtered_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector23T1_filtered_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 1 at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector23T1_filtered_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector23T1_filtered_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector23T1_filtered_mag_tminus2E"></span><span id="ConstraintDynamicEffector::T1_filtered_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1ab3244c05e4f360ec1469f688526275b4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T1_filtered_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector23T1_filtered_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 1 at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14T2_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector14T2_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector14T2_mag_tminus2E"></span><span id="ConstraintDynamicEffector::T2_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1a750db1d7272395dc511371482d2cf8f1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14T2_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 2 at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector14T2_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector14T2_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector14T2_mag_tminus1E"></span><span id="ConstraintDynamicEffector::T2_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1a29687619299e57287056e9b63525553a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector14T2_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 2at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector8T2_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector8T2_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector8T2_mag_tE"></span><span id="ConstraintDynamicEffector::T2_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1a9139eb457d5d5b14b1d5dd9239e22845"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector8T2_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of unfiltered constraint torque on s/c 2 at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector17T2_filtered_mag_tE">
+<span id="_CPPv3N25ConstraintDynamicEffector17T2_filtered_mag_tE"></span><span id="_CPPv2N25ConstraintDynamicEffector17T2_filtered_mag_tE"></span><span id="ConstraintDynamicEffector::T2_filtered_mag_t__double"></span><span class="target" id="class_constraint_dynamic_effector_1aadf804850f6bd59ed12072d40afa7580"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_filtered_mag_t</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector17T2_filtered_mag_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 2 at t time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector23T2_filtered_mag_tminus1E">
+<span id="_CPPv3N25ConstraintDynamicEffector23T2_filtered_mag_tminus1E"></span><span id="_CPPv2N25ConstraintDynamicEffector23T2_filtered_mag_tminus1E"></span><span id="ConstraintDynamicEffector::T2_filtered_mag_tminus1__double"></span><span class="target" id="class_constraint_dynamic_effector_1a0cb8c6039b9373bfebacab6d6f37d1c2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_filtered_mag_tminus1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector23T2_filtered_mag_tminus1E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 2 at t-1 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector23T2_filtered_mag_tminus2E">
+<span id="_CPPv3N25ConstraintDynamicEffector23T2_filtered_mag_tminus2E"></span><span id="_CPPv2N25ConstraintDynamicEffector23T2_filtered_mag_tminus2E"></span><span id="ConstraintDynamicEffector::T2_filtered_mag_tminus2__double"></span><span class="target" id="class_constraint_dynamic_effector_1a062a1dac616653ba551154de03a4f21a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T2_filtered_mag_tminus2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector23T2_filtered_mag_tminus2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of filtered constraint torque on s/c 2 at t-2 time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector19stateNameOfPositionE">
+<span id="_CPPv3N25ConstraintDynamicEffector19stateNameOfPositionE"></span><span id="_CPPv2N25ConstraintDynamicEffector19stateNameOfPositionE"></span><span id="ConstraintDynamicEffector::stateNameOfPosition__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1ac036ae8bbfad0bc50ca5b7c70f1a809f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfPosition</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector19stateNameOfPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector19stateNameOfVelocityE">
+<span id="_CPPv3N25ConstraintDynamicEffector19stateNameOfVelocityE"></span><span id="_CPPv2N25ConstraintDynamicEffector19stateNameOfVelocityE"></span><span id="ConstraintDynamicEffector::stateNameOfVelocity__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1abe995a3287aa835dda4e0b42e0148113"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfVelocity</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector19stateNameOfVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16stateNameOfSigmaE">
+<span id="_CPPv3N25ConstraintDynamicEffector16stateNameOfSigmaE"></span><span id="_CPPv2N25ConstraintDynamicEffector16stateNameOfSigmaE"></span><span id="ConstraintDynamicEffector::stateNameOfSigma__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1a97b04a8a87e88a13fb5f4eaddfbe20de"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfSigma</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16stateNameOfSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial attitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector16stateNameOfOmegaE">
+<span id="_CPPv3N25ConstraintDynamicEffector16stateNameOfOmegaE"></span><span id="_CPPv2N25ConstraintDynamicEffector16stateNameOfOmegaE"></span><span id="ConstraintDynamicEffector::stateNameOfOmega__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1a5dc82145884bd17f17078d4848fb00a4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNameOfOmega</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector16stateNameOfOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>state engine name of the parent rigid body inertial angular velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector11hubPositionE">
+<span id="_CPPv3N25ConstraintDynamicEffector11hubPositionE"></span><span id="_CPPv2N25ConstraintDynamicEffector11hubPositionE"></span><span id="ConstraintDynamicEffector::hubPosition__std::vector:StateDataP:"></span><span class="target" id="class_constraint_dynamic_effector_1adbe962847f6a99c9ddfd988cafb14b48"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubPosition</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector11hubPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] parent inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector11hubVelocityE">
+<span id="_CPPv3N25ConstraintDynamicEffector11hubVelocityE"></span><span id="_CPPv2N25ConstraintDynamicEffector11hubVelocityE"></span><span id="ConstraintDynamicEffector::hubVelocity__std::vector:StateDataP:"></span><span class="target" id="class_constraint_dynamic_effector_1a84d317337d29a40b44009b12edcc89ac"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubVelocity</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector11hubVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] parent inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector8hubSigmaE">
+<span id="_CPPv3N25ConstraintDynamicEffector8hubSigmaE"></span><span id="_CPPv2N25ConstraintDynamicEffector8hubSigmaE"></span><span id="ConstraintDynamicEffector::hubSigma__std::vector:StateDataP:"></span><span class="target" id="class_constraint_dynamic_effector_1acd5b63ed8208d504e80ba94780ca5574"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubSigma</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector8hubSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>parent attitude Modified Rodrigues Parameters (MRPs) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector8hubOmegaE">
+<span id="_CPPv3N25ConstraintDynamicEffector8hubOmegaE"></span><span id="_CPPv2N25ConstraintDynamicEffector8hubOmegaE"></span><span id="ConstraintDynamicEffector::hubOmega__std::vector:StateDataP:"></span><span class="target" id="class_constraint_dynamic_effector_1aa582e458a30635f23df69ec2234ccec3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubOmega</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector8hubOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] parent inertial angular velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector25propName_inertialPositionE">
+<span id="_CPPv3N25ConstraintDynamicEffector25propName_inertialPositionE"></span><span id="_CPPv2N25ConstraintDynamicEffector25propName_inertialPositionE"></span><span id="ConstraintDynamicEffector::propName_inertialPosition__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1ae081715aae376aba921b94cfbb53d9b1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialPosition</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector25propName_inertialPositionE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialPosition </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector25propName_inertialVelocityE">
+<span id="_CPPv3N25ConstraintDynamicEffector25propName_inertialVelocityE"></span><span id="_CPPv2N25ConstraintDynamicEffector25propName_inertialVelocityE"></span><span id="ConstraintDynamicEffector::propName_inertialVelocity__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1a952b583891af3df67f80e05a886a7b99"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialVelocity</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector25propName_inertialVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialVelocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector25propName_inertialAttitudeE">
+<span id="_CPPv3N25ConstraintDynamicEffector25propName_inertialAttitudeE"></span><span id="_CPPv2N25ConstraintDynamicEffector25propName_inertialAttitudeE"></span><span id="ConstraintDynamicEffector::propName_inertialAttitude__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1afb292807465a829ec5e573a2b16d4b60"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialAttitude</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector25propName_inertialAttitudeE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialAttitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector28propName_inertialAngVelocityE">
+<span id="_CPPv3N25ConstraintDynamicEffector28propName_inertialAngVelocityE"></span><span id="_CPPv2N25ConstraintDynamicEffector28propName_inertialAngVelocityE"></span><span id="ConstraintDynamicEffector::propName_inertialAngVelocity__std::vector:ss:"></span><span class="target" id="class_constraint_dynamic_effector_1a6025e508ce362036c361ee389f1907f6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertialAngVelocity</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector28propName_inertialAngVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertialAngVelocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector24inertialPositionPropertyE">
+<span id="_CPPv3N25ConstraintDynamicEffector24inertialPositionPropertyE"></span><span id="_CPPv2N25ConstraintDynamicEffector24inertialPositionPropertyE"></span><span id="ConstraintDynamicEffector::inertialPositionProperty__std::vector:Eigen::MatrixXdP:"></span><span class="target" id="class_constraint_dynamic_effector_1ac8eeda2752445750ecea1fae6f276c4f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N25ConstraintDynamicEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N25ConstraintDynamicEffector24inertialVelocityPropertyE"></span><span id="ConstraintDynamicEffector::inertialVelocityProperty__std::vector:Eigen::MatrixXdP:"></span><span class="target" id="class_constraint_dynamic_effector_1a0bb3795f3245600ada36454186113f92"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] velocity relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector24inertialAttitudePropertyE">
+<span id="_CPPv3N25ConstraintDynamicEffector24inertialAttitudePropertyE"></span><span id="_CPPv2N25ConstraintDynamicEffector24inertialAttitudePropertyE"></span><span id="ConstraintDynamicEffector::inertialAttitudeProperty__std::vector:Eigen::MatrixXdP:"></span><span class="target" id="class_constraint_dynamic_effector_1a297771beae42af77a27cd65ba6853b99"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialAttitudeProperty</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector24inertialAttitudePropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector27inertialAngVelocityPropertyE">
+<span id="_CPPv3N25ConstraintDynamicEffector27inertialAngVelocityPropertyE"></span><span id="_CPPv2N25ConstraintDynamicEffector27inertialAngVelocityPropertyE"></span><span id="ConstraintDynamicEffector::inertialAngVelocityProperty__std::vector:Eigen::MatrixXdP:"></span><span class="target" id="class_constraint_dynamic_effector_1a246752dcac73b04f331d62f923ab1dd9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialAngVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector27inertialAngVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] inertial angular velocity relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector5psi_NE">
+<span id="_CPPv3N25ConstraintDynamicEffector5psi_NE"></span><span id="_CPPv2N25ConstraintDynamicEffector5psi_NE"></span><span id="ConstraintDynamicEffector::psi_N__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a3c75bd7b8edb9b5ae0458dfb38e5341b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">psi_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector5psi_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] direction constraint violation in inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector10psiPrime_NE">
+<span id="_CPPv3N25ConstraintDynamicEffector10psiPrime_NE"></span><span id="_CPPv2N25ConstraintDynamicEffector10psiPrime_NE"></span><span id="ConstraintDynamicEffector::psiPrime_N__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a9f1e6e73ea5f825895ad5dfb511e985b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">psiPrime_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector10psiPrime_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] direction rate constraint violation in inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector3phiE">
+<span id="_CPPv3N25ConstraintDynamicEffector3phiE"></span><span id="_CPPv2N25ConstraintDynamicEffector3phiE"></span><span id="ConstraintDynamicEffector::phi__Eigen::MRPd"></span><span class="target" id="class_constraint_dynamic_effector_1a0d329f70ad9a4e009b4fe3bef6841886"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phi</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector3phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude constraint violation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector13omega_B2B1_B2E">
+<span id="_CPPv3N25ConstraintDynamicEffector13omega_B2B1_B2E"></span><span id="_CPPv2N25ConstraintDynamicEffector13omega_B2B1_B2E"></span><span id="ConstraintDynamicEffector::omega_B2B1_B2__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1aa9f3a815d776dfa84d3bfc9cc9229ee5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_B2B1_B2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector13omega_B2B1_B2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity constraint violation in spacecraft 2 body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector4Fc_NE">
+<span id="_CPPv3N25ConstraintDynamicEffector4Fc_NE"></span><span id="_CPPv2N25ConstraintDynamicEffector4Fc_NE"></span><span id="ConstraintDynamicEffector::Fc_N__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1abe9d9feb03e7c03484aa1aa376547c69"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Fc_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector4Fc_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] force applied on each spacecraft COM in the inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector4T_B2E">
+<span id="_CPPv3N25ConstraintDynamicEffector4T_B2E"></span><span id="_CPPv2N25ConstraintDynamicEffector4T_B2E"></span><span id="ConstraintDynamicEffector::T_B2__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1acfbcc19d2479c5d56fc190bac8d8944e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_B2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector4T_B2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] torque applied on spacecraft 2 in its body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N25ConstraintDynamicEffector4T_B1E">
+<span id="_CPPv3N25ConstraintDynamicEffector4T_B1E"></span><span id="_CPPv2N25ConstraintDynamicEffector4T_B1E"></span><span id="ConstraintDynamicEffector::T_B1__Eigen::Vector3d"></span><span class="target" id="class_constraint_dynamic_effector_1a9cd055549c75bb3073d73d68d9c05ba6"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_B1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N25ConstraintDynamicEffector4T_B1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] torque applied on spacecraft 1 in its body frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="constraintEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

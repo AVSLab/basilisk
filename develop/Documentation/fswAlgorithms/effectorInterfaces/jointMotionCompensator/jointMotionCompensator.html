@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: jointMotionCompensator &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="jointMotionCompensator" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgVelocitySteering/index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">jointMotionCompensator</a></li>
+      <li class="breadcrumb-item active">Module: jointMotionCompensator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-jointmotioncompensator">
+<span id="jointmotioncompensator"></span><h1>Module: jointMotionCompensator<a class="headerlink" href="#module-jointmotioncompensator" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">jointMotionCompensator</span></code> module determines the hub torques required to negate the effect of hinged joint motor torques on the spacecraft hub motion.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is designed to work for systems with multiple spacecraft, however, each spacecraft must be comprised of six degree-of-freedom rigid hub with attached hinged joints only.</p>
+</div>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>massMatrixInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.html#mjsysmassmatrixmsgpayload"><span class="std std-ref">MJSysMassMatrixMsgPayload</span></a></p></td>
+<td><p>system mass matrix input msg</p></td>
+</tr>
+<tr class="row-odd"><td><p>reactionForcesInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/MJJointReactionsMsgPayload.html#mjjointreactionsmsgpayload"><span class="std std-ref">MJJointReactionsMsgPayload</span></a></p></td>
+<td><p>joint reaction forces and torques input msg</p></td>
+</tr>
+<tr class="row-even"><td><p>jointTorqueInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#singleactuatormsgpayload"><span class="std std-ref">SingleActuatorMsgPayload</span></a></p></td>
+<td><p>vector of joint motor torque input msgs</p></td>
+</tr>
+<tr class="row-odd"><td><p>hubTorqueOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#singleactuatormsgpayload"><span class="std std-ref">SingleActuatorMsgPayload</span></a></p></td>
+<td><p>vector of hub torque output msgs</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup the <code class="docutils literal notranslate"><span class="pre">jointMotionCompensator</span></code> module in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the jointMotionCompensator class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">jointMotionCompensator</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instance of jointMotionCompensator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">JointMotionCompensator</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Set the maximum hub torque values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uMax</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">numSpacecraft</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setUMax</span><span class="p">(</span><span class="n">uMax</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>For each spacecraft in the system, add a spacecraft to the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>For each hinged joint in the system, add a hinged joint to the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv422JointMotionCompensator">
+<span id="_CPPv322JointMotionCompensator"></span><span id="_CPPv222JointMotionCompensator"></span><span id="JointMotionCompensator"></span><span class="target" id="class_joint_motion_compensator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">JointMotionCompensator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv422JointMotionCompensator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;jointMotionCompensator.h&gt;</em></div>
+<p>This module determines the hub torques required to negate the reaction torques induced by moving joints on a spacecraft. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator22JointMotionCompensatorEv">
+<span id="_CPPv3N22JointMotionCompensator22JointMotionCompensatorEv"></span><span id="_CPPv2N22JointMotionCompensator22JointMotionCompensatorEv"></span><span id="JointMotionCompensator::JointMotionCompensator"></span><span class="target" id="class_joint_motion_compensator_1a7cf308c0eea77a12983737924fa876e3"></span><span class="sig-name descname"><span class="n"><span class="pre">JointMotionCompensator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator22JointMotionCompensatorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensatorD0Ev">
+<span id="_CPPv3N22JointMotionCompensatorD0Ev"></span><span id="_CPPv2N22JointMotionCompensatorD0Ev"></span><span id="JointMotionCompensator::~JointMotionCompensator"></span><span class="target" id="class_joint_motion_compensator_1aa621b2f969f9572ae790a09de8525a30"></span><span class="sig-name descname"><span class="n"><span class="pre">~JointMotionCompensator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensatorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator5ResetE8uint64_t">
+<span id="_CPPv3N22JointMotionCompensator5ResetE8uint64_t"></span><span id="_CPPv2N22JointMotionCompensator5ResetE8uint64_t"></span><span id="JointMotionCompensator::Reset__uint64_t"></span><span class="target" id="class_joint_motion_compensator_1ae0d7a7413d7e219a476b5ecd52852c8e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator11UpdateStateE8uint64_t">
+<span id="_CPPv3N22JointMotionCompensator11UpdateStateE8uint64_t"></span><span id="_CPPv2N22JointMotionCompensator11UpdateStateE8uint64_t"></span><span id="JointMotionCompensator::UpdateState__uint64_t"></span><span class="target" id="class_joint_motion_compensator_1a175c77387c1bc2f79e6739234c3248a7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. It computes the hub torques needed to negate the reaction torques induced by moving joints. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator7setUMaxENSt6vectorIdEE">
+<span id="_CPPv3N22JointMotionCompensator7setUMaxENSt6vectorIdEE"></span><span id="_CPPv2N22JointMotionCompensator7setUMaxENSt6vectorIdEE"></span><span id="JointMotionCompensator::setUMax__std::vector:double:"></span><span class="target" id="class_joint_motion_compensator_1a596f37f8c9797aad1d23ef4ee5bf0d92"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setUMax</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator7setUMaxENSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">uMax</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22JointMotionCompensator7getUMaxEv">
+<span id="_CPPv3NK22JointMotionCompensator7getUMaxEv"></span><span id="_CPPv2NK22JointMotionCompensator7getUMaxEv"></span><span id="JointMotionCompensator::getUMaxC"></span><span class="target" id="class_joint_motion_compensator_1a292d9afcf9020cdf3a9d9818ffbf064c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getUMax</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22JointMotionCompensator7getUMaxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">uMax</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator13addSpacecraftEv">
+<span id="_CPPv3N22JointMotionCompensator13addSpacecraftEv"></span><span id="_CPPv2N22JointMotionCompensator13addSpacecraftEv"></span><span id="JointMotionCompensator::addSpacecraft"></span><span class="target" id="class_joint_motion_compensator_1ae99f8f4924aa4f103ca5f419379c453d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraft</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator13addSpacecraftEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method for adding a new spacecraft to the system </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator14addHingedJointEv">
+<span id="_CPPv3N22JointMotionCompensator14addHingedJointEv"></span><span id="_CPPv2N22JointMotionCompensator14addHingedJointEv"></span><span id="JointMotionCompensator::addHingedJoint"></span><span class="target" id="class_joint_motion_compensator_1a7408bb6a5cc9d160a7cabf9296ffe872"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addHingedJoint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator14addHingedJointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method for adding a new hinged joint to the system </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator15massMatrixInMsgE">
+<span id="_CPPv3N22JointMotionCompensator15massMatrixInMsgE"></span><span id="_CPPv2N22JointMotionCompensator15massMatrixInMsgE"></span><span id="JointMotionCompensator::massMatrixInMsg__ReadFunctor:MJSysMassMatrixMsgPayload:"></span><span class="target" id="class_joint_motion_compensator_1a96b610da05dfc848ad601f1d76613078"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.html#_CPPv425MJSysMassMatrixMsgPayload" title="MJSysMassMatrixMsgPayload"><span class="n"><span class="pre">MJSysMassMatrixMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">massMatrixInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator15massMatrixInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>system mass matrix input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator19reactionForcesInMsgE">
+<span id="_CPPv3N22JointMotionCompensator19reactionForcesInMsgE"></span><span id="_CPPv2N22JointMotionCompensator19reactionForcesInMsgE"></span><span id="JointMotionCompensator::reactionForcesInMsg__ReadFunctor:MJJointReactionsMsgPayload:"></span><span class="target" id="class_joint_motion_compensator_1a412735b11a72600b0f19b386bf4851c5"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/MJJointReactionsMsgPayload.html#_CPPv426MJJointReactionsMsgPayload" title="MJJointReactionsMsgPayload"><span class="n"><span class="pre">MJJointReactionsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reactionForcesInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator19reactionForcesInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>joint reaction forces and torques input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator17jointTorqueInMsgsE">
+<span id="_CPPv3N22JointMotionCompensator17jointTorqueInMsgsE"></span><span id="_CPPv2N22JointMotionCompensator17jointTorqueInMsgsE"></span><span id="JointMotionCompensator::jointTorqueInMsgs__std::vector:ReadFunctor:SingleActuatorMsgPayload::"></span><span class="target" id="class_joint_motion_compensator_1aff44cd08a1bebf2011b8b2e28016cdf9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#_CPPv424SingleActuatorMsgPayload" title="SingleActuatorMsgPayload"><span class="n"><span class="pre">SingleActuatorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">jointTorqueInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator17jointTorqueInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of joint motor torque input msgs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator16hubTorqueOutMsgsE">
+<span id="_CPPv3N22JointMotionCompensator16hubTorqueOutMsgsE"></span><span id="_CPPv2N22JointMotionCompensator16hubTorqueOutMsgsE"></span><span id="JointMotionCompensator::hubTorqueOutMsgs__std::vector:Message:SingleActuatorMsgPayload:P:"></span><span class="target" id="class_joint_motion_compensator_1ac6007a1f986cdf1a88fef530f00f2de5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#_CPPv424SingleActuatorMsgPayload" title="SingleActuatorMsgPayload"><span class="n"><span class="pre">SingleActuatorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hubTorqueOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator16hubTorqueOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of hub torque output msgs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator9bskLoggerE">
+<span id="_CPPv3N22JointMotionCompensator9bskLoggerE"></span><span id="_CPPv2N22JointMotionCompensator9bskLoggerE"></span><span id="JointMotionCompensator::bskLogger__BSKLogger"></span><span class="target" id="class_joint_motion_compensator_1a974c25258a6e3985a2b66c2c17361e9f"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator4uMaxE">
+<span id="_CPPv3N22JointMotionCompensator4uMaxE"></span><span id="_CPPv2N22JointMotionCompensator4uMaxE"></span><span id="JointMotionCompensator::uMax__std::vector:double:"></span><span class="target" id="class_joint_motion_compensator_1acd15f0e85df2987aca2e574dfcbc9bcf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uMax</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator4uMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Nm] (optional) maximum hub motor torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator13numSpacecraftE">
+<span id="_CPPv3N22JointMotionCompensator13numSpacecraftE"></span><span id="_CPPv2N22JointMotionCompensator13numSpacecraftE"></span><span id="JointMotionCompensator::numSpacecraft__i"></span><span class="target" id="class_joint_motion_compensator_1ab2a4cbd8d1eb7a8c5aba9e8dd170b710"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numSpacecraft</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator13numSpacecraftE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of spacecraft in the system </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator15numHingedJointsE">
+<span id="_CPPv3N22JointMotionCompensator15numHingedJointsE"></span><span id="_CPPv2N22JointMotionCompensator15numHingedJointsE"></span><span id="JointMotionCompensator::numHingedJoints__i"></span><span class="target" id="class_joint_motion_compensator_1a5bce53975bb231afa2a763a4db649a28"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numHingedJoints</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator15numHingedJointsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of hinged joints in the system </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator19treeInfoInitializedE">
+<span id="_CPPv3N22JointMotionCompensator19treeInfoInitializedE"></span><span id="_CPPv2N22JointMotionCompensator19treeInfoInitializedE"></span><span id="JointMotionCompensator::treeInfoInitialized__b"></span><span class="target" id="class_joint_motion_compensator_1afd8f451f0e7c1954ce10f156ec7e02c3"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">treeInfoInitialized</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator19treeInfoInitializedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] flag indicating if the treeInfo struct has been initialized </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator7treeMapE">
+<span id="_CPPv3N22JointMotionCompensator7treeMapE"></span><span id="_CPPv2N22JointMotionCompensator7treeMapE"></span><span id="JointMotionCompensator::treeMap__std::unordered_map:i.TreeInfo:"></span><span class="target" id="class_joint_motion_compensator_1ab3bfabf17bb7ceef58fed1937326756f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N22JointMotionCompensator8TreeInfoE" title="JointMotionCompensator::TreeInfo"><span class="n"><span class="pre">TreeInfo</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">treeMap</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator7treeMapE" title="Link to this definition"></a><br /></dt>
+<dd><p>map holding tree info for each kinematic tree </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator8TreeInfoE">
+<span id="_CPPv3N22JointMotionCompensator8TreeInfoE"></span><span id="_CPPv2N22JointMotionCompensator8TreeInfoE"></span><span id="JointMotionCompensator::TreeInfo"></span><span class="target" id="struct_joint_motion_compensator_1_1_tree_info"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TreeInfo</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator8TreeInfoE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator8TreeInfo12freeJointIdxE">
+<span id="_CPPv3N22JointMotionCompensator8TreeInfo12freeJointIdxE"></span><span id="_CPPv2N22JointMotionCompensator8TreeInfo12freeJointIdxE"></span><span id="JointMotionCompensator::TreeInfo::freeJointIdx__i"></span><span class="target" id="struct_joint_motion_compensator_1_1_tree_info_1af72cf435ce86be0d5629b1d69916a104"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">freeJointIdx</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator8TreeInfo12freeJointIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] free joint index </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator8TreeInfo14hingeJointIdxsE">
+<span id="_CPPv3N22JointMotionCompensator8TreeInfo14hingeJointIdxsE"></span><span id="_CPPv2N22JointMotionCompensator8TreeInfo14hingeJointIdxsE"></span><span id="JointMotionCompensator::TreeInfo::hingeJointIdxs__std::vector:i:"></span><span class="target" id="struct_joint_motion_compensator_1_1_tree_info_1a74f6bcb278ca45bbd736ae870919cb37"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hingeJointIdxs</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator8TreeInfo14hingeJointIdxsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] per-tree hinged joint indices </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22JointMotionCompensator8TreeInfo15hingeGlobalIdxsE">
+<span id="_CPPv3N22JointMotionCompensator8TreeInfo15hingeGlobalIdxsE"></span><span id="_CPPv2N22JointMotionCompensator8TreeInfo15hingeGlobalIdxsE"></span><span id="JointMotionCompensator::TreeInfo::hingeGlobalIdxs__std::vector:i:"></span><span class="target" id="struct_joint_motion_compensator_1_1_tree_info_1a6d234e55661888b52528ee63c9331edd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hingeGlobalIdxs</span></span></span><a class="headerlink" href="#_CPPv4N22JointMotionCompensator8TreeInfo15hingeGlobalIdxsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] global indices of hinged joints </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="jointMotionCompensator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

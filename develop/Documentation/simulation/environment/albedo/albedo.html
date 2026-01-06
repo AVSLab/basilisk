@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: albedo &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="albedo" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">albedo</a></li>
+      <li class="breadcrumb-item active">Module: albedo</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/albedo/albedo.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-albedo">
+<span id="albedo"></span><h1>Module: albedo<a class="headerlink" href="#module-albedo" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document describes how albedo is modeled in the Basilisk software. The purpose of this module is to calculate
+albedo value at the given instrument locations.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable names are set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>spacecraftStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>input message with thruster commands</p></td>
+</tr>
+<tr class="row-odd"><td><p>sunPositionInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>Sun input message</p></td>
+</tr>
+<tr class="row-even"><td><p>planetInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>vector of planet input messages are set by using either the <code class="docutils literal notranslate"><span class="pre">addPlanetandAlbedoAverageModel()</span></code> method and
+<code class="docutils literal notranslate"><span class="pre">addPlanetandAlbedoDataModel()</span></code> method</p></td>
+</tr>
+<tr class="row-odd"><td><p>albOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AlbedoMsgPayload.html#albedomsgpayload"><span class="std std-ref">AlbedoMsgPayload</span></a></p></td>
+<td><p>vector of albedo output message names.  The order matches the order with which instruments are added.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The albedo module is responsible for determining whether or not an incremental area on a planet is sunlit and within
+the field of view of an instrument and if so, what is the albedo value at the instrument’s location.
+The module uses the configuration of the instruments, and states of the sun, spacecraft and planets. It calculates
+the albedo value at the instrument locations as ratio [-] and albedo flux <span class="math notranslate nohighlight">\([W/m^2]\)</span>. Albedo ratio of <span class="math notranslate nohighlight">\(0.0\)</span> represents
+no albedo, and <span class="math notranslate nohighlight">\(1.0\)</span> represents an equal flux with solar flux at the location.</p>
+<p>To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian
+vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are
+read in. If given multiple instruments, the code iterates through the sensor list and creates an array consisting of
+albedo values for each instrument. If given multiple planets, the code iterates through the planet list but sum all
+the values at the end and creates only one value for each instrument.</p>
+<section id="determining-states">
+<h3>Determining States<a class="headerlink" href="#determining-states" title="Link to this heading"></a></h3>
+<p>The initial step in the module is to obtain the albedo model, then compute the albedo. In computing albedo,
+the celestial body state data are obtained and transformed into usable terms.
+The relationships shown below remove the dependency on relating position to the inertial frame <span class="math notranslate nohighlight">\(N\)</span> and instead
+utilize the spacecraft body <span class="math notranslate nohighlight">\(B\)</span>, instrument body <span class="math notranslate nohighlight">\(I\)</span>, sun <span class="math notranslate nohighlight">\(S\)</span>, planet <span class="math notranslate nohighlight">\(P\)</span>, and
+incremental area <span class="math notranslate nohighlight">\(dA\)</span> on the planet.</p>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-albedo-1" title="Link to this equation"></a></span>\[\mathbf{r}_{BP} = \mathbf{r}_{BN} - \mathbf{r}_{PN}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-albedo-2" title="Link to this equation"></a></span>\[\mathbf{r}_{IB} = \mathbf{r}_{IN} - \mathbf{r}_{BN}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-3">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-albedo-3" title="Link to this equation"></a></span>\[\mathbf{r}_{IP} = \mathbf{r}_{IB} + \mathbf{r}_{BP}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-4">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-albedo-4" title="Link to this equation"></a></span>\[\mathbf{r}_{SP} = \mathbf{r}_{SN} - \mathbf{r}_{PN}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-5">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-albedo-5" title="Link to this equation"></a></span>\[\mathbf{r}_{IdA} = \mathbf{r}_{IP} - \mathbf{r}_{dAP}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-6">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-albedo-6" title="Link to this equation"></a></span>\[\mathbf{r}_{SdA} = \mathbf{r}_{SP} - \mathbf{r}_{dAP}\]</div>
+<p>The previous two equations provide the sun’s and instrument’s position with respect to the incremental area using
+Eq. <a class="reference internal" href="#equation-eq-albedo-1">(1)</a> - <a class="reference internal" href="#equation-eq-albedo-4">(4)</a> and <span class="math notranslate nohighlight">\(\mathbf{r}_{dAP}\)</span>, which is transformed from latitude and longitude of the
+grid points.</p>
+</section>
+<section id="sunlit-field-of-view-area">
+<h3>Sunlit Field of View Area<a class="headerlink" href="#sunlit-field-of-view-area" title="Link to this heading"></a></h3>
+<p>In determining the illuminated area within the instrument’s fov, <span class="math notranslate nohighlight">\(f_1\)</span>, <span class="math notranslate nohighlight">\(f_2\)</span> and <span class="math notranslate nohighlight">\(f_3\)</span>
+are computed as shown below,</p>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-7">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-albedo-7" title="Link to this equation"></a></span>\[f_1 = \frac{\mathbf{r}_{dAP}}{| \mathbf{r}_{dAP}|} \cdot \frac{\mathbf{r}_{SdA}}{| \mathbf{r}_{SdA}|}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-8">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-albedo-8" title="Link to this equation"></a></span>\[f_2 = \frac{\mathbf{r}_{dAP}}{| \mathbf{r}_{dAP}|} \cdot \frac{\mathbf{r}_{IdA}}{| \mathbf{r}_{IdA}|}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-9">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-albedo-9" title="Link to this equation"></a></span>\[f_3 = \hat{n}_N \cdot \frac{-\mathbf{r}_{IdA}}{| \mathbf{r}_{IdA}|}\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\hat{n}_N\)</span> indicates the unit normal vector of the instrument in inertial frame. <span class="math notranslate nohighlight">\(f_1 &gt; 0\)</span> presents
+the sunlit <span class="math notranslate nohighlight">\(f_2 &gt; 0\)</span> presents the instrument’s maximum fov, <span class="math notranslate nohighlight">\(f_3 &gt; \cos(fov)\)</span> presents the instrument’s
+specified fov.</p>
+<p>Albedo module needs three variables related to instrument’s configuration which are instrument’s misalignment vector
+with respect to spacecraft’s body frame (<span class="math notranslate nohighlight">\(r_{{IB}_B}\)</span>), unit normal vector of the instrument in spacecraft body
+frame (<span class="math notranslate nohighlight">\(\hat{n}_B\)</span>), and instrument’s field of view half angle in radian (<span class="math notranslate nohighlight">\(fov\)</span>). These variables can be
+added to the module using <code class="docutils literal notranslate"><span class="pre">addInstrumentConfig()</span></code> method. First term for the method is the instrument name. The
+rest of the terms can be set using the <code class="docutils literal notranslate"><span class="pre">instConfig_t</span></code> class or variable by variable respectively as: <span class="math notranslate nohighlight">\(fov\)</span>,
+<span class="math notranslate nohighlight">\(\hat{n}_B\)</span>, and <span class="math notranslate nohighlight">\(r_{{IB}_B}\)</span>.</p>
+<p>In the module, for planets that have polar radius, <span class="math notranslate nohighlight">\(RP_{planet}\)</span> and equatorial radius, <span class="math notranslate nohighlight">\(REQ_{planet}\)</span> defined,
+authalic radius is calculated. By doing this, the sphere is having the same surface area with the reference ellipsoid.
+If the polar radius is not defined, module uses the equatorial radius.</p>
+</section>
+<section id="albedo-value">
+<h3>Albedo Value<a class="headerlink" href="#albedo-value" title="Link to this heading"></a></h3>
+<p>Albedo flux ratio can be calculated as,</p>
+<div class="math notranslate nohighlight" id="equation-eq-albedo-10">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-albedo-10" title="Link to this equation"></a></span>\[\text{albedoAtInstrument} = ALB \frac{f_1 \cdot f_2 \cdot f_3 \cdot d_{Area}}{\pi \cdot |\mathbf{r}_{IdA}|^2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(d_{Area}\)</span> is the area of the incremental area, <span class="math notranslate nohighlight">\(ALB\)</span> is the albedo coefficient. There are albedo models
+based on an average albedo value and albedo data. The existing data files are placed under
+<code class="docutils literal notranslate"><span class="pre">Basilisk/supportData/AlbedoData</span></code> as <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file format consisting <span class="math notranslate nohighlight">\(ALB\)</span> matrix. The number of rows represent the
+<span class="math notranslate nohighlight">\(numLat\)</span>, number of latitude (between -90 to 90 deg) and columns represent the <span class="math notranslate nohighlight">\(numLon\)</span>, number of longitude
+(between -180 to 180 deg).</p>
+<p>The Earth’s albedo data is obtained from <a class="reference external" href="https://ceres.larc.nasa.gov/data/">CERES instrument</a> as .nd format and
+converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions under clear-sky and all-sky
+conditions.</p>
+<p>The Mars’ albedo data is obtained from <a class="reference external" href="http://www.mars.asu.edu/data/tes_albedo/">TES instrument</a> as VICAR format
+and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">shadowFactorAtdA</span></code> is optional to be calculated with eclipseCase being True or can be assigned
+directly by the user with eclipseCase False. It is used as a multiplication term in Eq. <a class="reference internal" href="#equation-eq-albedo-10">(10)</a>, if defined.
+Therefore, when using albedo output on an instrument, it should be used after the shadow factor multiplication of the
+instrument, if exists.</p>
+<p>A limit can be set in order not to compute the albedo for planets too far by <span class="math notranslate nohighlight">\(altitudeRateLimit\)</span> which is the
+limit for the rate of the instrument’s altitude to the planet’s radius.</p>
+</section>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Albedo Model:</strong> The albedo models based on average value or specified data can be used.</p></li>
+<li><p><strong>Planet Shape:</strong> The module uses approximated authalic sphere which has the same surface area with the reference ellipsoid.</p></li>
+<li><p><strong>Planet Radius:</strong> The module have a list of planets with specified radius.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section outlines the steps needed to add Albedo module to a sim. First, the albedo module should be imported:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">albedo</span>
+<span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+<span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Albedo_module&quot;</span>
+</pre></div>
+</div>
+<p>The instruments’ configuration must be added by using,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">instConfig</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">()</span>
+<span class="n">instConfig</span><span class="o">.</span><span class="n">fov</span>
+<span class="n">instConfig</span><span class="o">.</span><span class="n">nHat_B</span>
+<span class="n">instConfig</span><span class="o">.</span><span class="n">r_IB_B</span>
+<span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">instConfig</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or by using,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">fov</span><span class="p">,</span> <span class="n">nHat_B</span><span class="p">,</span> <span class="n">r_IB_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the first case, if the variables are not defined for some reason and they are empty; then, default values are going
+to be used as <span class="math notranslate nohighlight">\(fov = 90.\)</span> deg, <span class="math notranslate nohighlight">\(\hat{n}_B = [ 1.0, 0.0, 0.0 ]\)</span>, <span class="math notranslate nohighlight">\(r_{{IB}_B} = [ 0.0, 0.0, 0.0 ]\)</span>.
+The default values can be defined by the user as well. Both functions for the instrument configuration has the ability
+to do a sanity check for <span class="math notranslate nohighlight">\(fov\)</span> being positive and <span class="math notranslate nohighlight">\(\hat{n}_B\)</span> not having all zero elements.
+Also, <span class="math notranslate nohighlight">\(\hat{n}_B\)</span> is always normalized. Then, the planet and albedo model function must be added.</p>
+<p>There are three options based on the albedo model to be used.  In all cases the planet input message is
+provided as an argument and the method makes the albedo modue subscribe to this message.
+For <code class="docutils literal notranslate"><span class="pre">ALBEDO_AVG</span></code> case,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where albedo average value is calculated automatically based on the given planet, and</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">,</span> <span class="n">ALB_avg</span><span class="p">,</span> <span class="n">numLat</span><span class="p">,</span> <span class="n">numLon</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the user can set the albedo average value. Number of latitude/longitude can also be specified or set to a negative
+value to let default values being used instead (<code class="docutils literal notranslate"><span class="pre">defaultNumLat</span> <span class="pre">=</span> <span class="pre">180</span></code> and <code class="docutils literal notranslate"><span class="pre">defaultNumLon</span> <span class="pre">=</span> <span class="pre">360</span></code>). The default values can
+be changed by the user as well.
+For <code class="docutils literal notranslate"><span class="pre">ALBEDO_DATA</span></code> case,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoDataModel</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">,</span> <span class="n">dataPath</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the user can define the data path and file name for the albedo data to be used.
+The model can  be added to a task like other simModels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv412instConfig_t">
+<span id="_CPPv312instConfig_t"></span><span id="_CPPv212instConfig_t"></span><span id="instConfig_t"></span><span class="target" id="albedo_8h_1a83ab5d0018b98a8ecee1bb9bde3933ea"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46Config" title="Config"><span class="n"><span class="pre">Config</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">instConfig_t</span></span></span><a class="headerlink" href="#_CPPv412instConfig_t" title="Link to this definition"></a><br /></dt>
+<dd><p>albedo instrument configuration class </p>
+</dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46Config">
+<span id="_CPPv36Config"></span><span id="_CPPv26Config"></span><span id="Config"></span><span class="target" id="class_config"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Config</span></span></span><a class="headerlink" href="#_CPPv46Config" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;albedo.h&gt;</em></div>
+<p>albedo instrument configuration class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Config6ConfigEv">
+<span id="_CPPv3N6Config6ConfigEv"></span><span id="_CPPv2N6Config6ConfigEv"></span><span id="Config::Config"></span><span class="target" id="class_config_1abd0c571c116924871e30444b192b792a"></span><span class="sig-name descname"><span class="n"><span class="pre">Config</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Config6ConfigEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6ConfigD0Ev">
+<span id="_CPPv3N6ConfigD0Ev"></span><span id="_CPPv2N6ConfigD0Ev"></span><span id="Config::~Config"></span><span class="target" id="class_config_1a543dce59b66475c5108088ee4ce1cdfc"></span><span class="sig-name descname"><span class="n"><span class="pre">~Config</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6ConfigD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Config3fovE">
+<span id="_CPPv3N6Config3fovE"></span><span id="_CPPv2N6Config3fovE"></span><span id="Config::fov__double"></span><span class="target" id="class_config_1ae2c65457312b8c6ebad9b7c5bf0996b1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fov</span></span></span><a class="headerlink" href="#_CPPv4N6Config3fovE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] instrument’s field of view half angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Config6nHat_BE">
+<span id="_CPPv3N6Config6nHat_BE"></span><span id="_CPPv2N6Config6nHat_BE"></span><span id="Config::nHat_B__Eigen::Vector3d"></span><span class="target" id="class_config_1a060c18d1c5381cc055116238b82216ed"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_B</span></span></span><a class="headerlink" href="#_CPPv4N6Config6nHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit normal of the instrument (spacecraft body) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Config6r_IB_BE">
+<span id="_CPPv3N6Config6r_IB_BE"></span><span id="_CPPv2N6Config6r_IB_BE"></span><span id="Config::r_IB_B__Eigen::Vector3d"></span><span class="target" id="class_config_1ad0a6a8920251fd8f6287148779e09d15"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_IB_B</span></span></span><a class="headerlink" href="#_CPPv4N6Config6r_IB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] instrument’s misalignment wrt spacecraft’s body frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv46Albedo">
+<span id="_CPPv36Albedo"></span><span id="_CPPv26Albedo"></span><span id="Albedo"></span><span class="target" id="class_albedo"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Albedo</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv46Albedo" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;albedo.h&gt;</em></div>
+<p>albedo class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6AlbedoEv">
+<span id="_CPPv3N6Albedo6AlbedoEv"></span><span id="_CPPv2N6Albedo6AlbedoEv"></span><span id="Albedo::Albedo"></span><span class="target" id="class_albedo_1a2f054f6a7ae6097f4c462a1ae942666d"></span><span class="sig-name descname"><span class="n"><span class="pre">Albedo</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo6AlbedoEv" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_albedo"><span class="std std-ref">Albedo</span></a> module constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6AlbedoD0Ev">
+<span id="_CPPv3N6AlbedoD0Ev"></span><span id="_CPPv2N6AlbedoD0Ev"></span><span id="Albedo::~Albedo"></span><span class="target" id="class_albedo_1a528820507d5df5b966010057bf2aea6d"></span><span class="sig-name descname"><span class="n"><span class="pre">~Albedo</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6AlbedoD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_albedo"><span class="std std-ref">Albedo</span></a> module destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo11UpdateStateE8uint64_t">
+<span id="_CPPv3N6Albedo11UpdateStateE8uint64_t"></span><span id="_CPPv2N6Albedo11UpdateStateE8uint64_t"></span><span id="Albedo::UpdateState__uint64_t"></span><span class="target" id="class_albedo_1ab5f85fc47f541b48f22c7a4fd5c35633"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>updates the state </p>
+<p>Read Messages, calculate albedo then write it out </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo5ResetE8uint64_t">
+<span id="_CPPv3N6Albedo5ResetE8uint64_t"></span><span id="_CPPv2N6Albedo5ResetE8uint64_t"></span><span id="Albedo::Reset__uint64_t"></span><span class="target" id="class_albedo_1a708c146efb9a01fb07ddf0b0a2e07efb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>resets the module </p>
+<p>This method resets the module </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo19addInstrumentConfigE12instConfig_t">
+<span id="_CPPv3N6Albedo19addInstrumentConfigE12instConfig_t"></span><span id="_CPPv2N6Albedo19addInstrumentConfigE12instConfig_t"></span><span id="Albedo::addInstrumentConfig__instConfig_t"></span><span class="target" id="class_albedo_1a7549512fcc7f06927a4be51e4415c0fa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addInstrumentConfig</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv412instConfig_t" title="instConfig_t"><span class="n"><span class="pre">instConfig_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">configMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo19addInstrumentConfigE12instConfig_t" title="Link to this definition"></a><br /></dt>
+<dd><p>adds instrument configuration (overloaded function) </p>
+<p>Adds the instrument configuration and automatically creates an output message name (overloaded function) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo19addInstrumentConfigEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N6Albedo19addInstrumentConfigEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N6Albedo19addInstrumentConfigEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Albedo::addInstrumentConfig__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_albedo_1a92d6723370115b4dcb8ec367da9f1965"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addInstrumentConfig</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fov</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nHat_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_IB_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo19addInstrumentConfigEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>adds instrument configuration (overloaded function) </p>
+<p>Adds the instrument configuration and automatically creates an output message name (overloaded function) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadE">
+<span id="_CPPv3N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="_CPPv2N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="Albedo::addPlanetandAlbedoAverageModel__Message:SpicePlanetStateMsgPayload:P"></span><span class="target" id="class_albedo_1aa4c469aa3263ddd40be382a0ebce10d0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetandAlbedoAverageModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds planet msg and albedo average model name (overloaded function). </p>
+<p>This method subscribes to the planet msg and sets the albedo average model (overloaded function) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadEdii">
+<span id="_CPPv3N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadEdii"></span><span id="_CPPv2N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadEdii"></span><span id="Albedo::addPlanetandAlbedoAverageModel__Message:SpicePlanetStateMsgPayload:P.double.i.i"></span><span class="target" id="class_albedo_1a7591f9a2133963f1dde1ec3fce858058"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetandAlbedoAverageModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ALB_avg</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numLat</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numLon</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo30addPlanetandAlbedoAverageModelEP7MessageI26SpicePlanetStateMsgPayloadEdii" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds planet name and albedo average model name (overloaded function). </p>
+<p>This method subscribes to the planet msg and sets the albedo average model (overloaded function) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo27addPlanetandAlbedoDataModelEP7MessageI26SpicePlanetStateMsgPayloadENSt6stringENSt6stringE">
+<span id="_CPPv3N6Albedo27addPlanetandAlbedoDataModelEP7MessageI26SpicePlanetStateMsgPayloadENSt6stringENSt6stringE"></span><span id="_CPPv2N6Albedo27addPlanetandAlbedoDataModelEP7MessageI26SpicePlanetStateMsgPayloadENSt6stringENSt6stringE"></span><span id="Albedo::addPlanetandAlbedoDataModel__Message:SpicePlanetStateMsgPayload:P.ss.ss"></span><span class="target" id="class_albedo_1ab8b9ab99a2252af1ee82a1b4edb3a0f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetandAlbedoDataModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dataPath</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fileName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo27addPlanetandAlbedoDataModelEP7MessageI26SpicePlanetStateMsgPayloadENSt6stringENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds planet name and albedo data model. </p>
+<p>This method subscribes to the planet msg and sets the albedo data model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo16getAlbedoAverageENSt6stringE">
+<span id="_CPPv3N6Albedo16getAlbedoAverageENSt6stringE"></span><span id="_CPPv2N6Albedo16getAlbedoAverageENSt6stringE"></span><span id="Albedo::getAlbedoAverage__ss"></span><span class="target" id="class_albedo_1ac7117eb91b5554b06937930b9ed2f572"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAlbedoAverage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetSpiceName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo16getAlbedoAverageENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>gets the average albedo value of the specified planet </p>
+<p>This method gets the average albedo value of the planet </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo10albOutMsgsE">
+<span id="_CPPv3N6Albedo10albOutMsgsE"></span><span id="_CPPv2N6Albedo10albOutMsgsE"></span><span id="Albedo::albOutMsgs__std::vector:Message:AlbedoMsgPayload:P:"></span><span class="target" id="class_albedo_1a8e3233da0fb9b43d8730a365fa1006ac"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AlbedoMsgPayload.html#_CPPv416AlbedoMsgPayload" title="AlbedoMsgPayload"><span class="n"><span class="pre">AlbedoMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo10albOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of output messages for albedo data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo16sunPositionInMsgE">
+<span id="_CPPv3N6Albedo16sunPositionInMsgE"></span><span id="_CPPv2N6Albedo16sunPositionInMsgE"></span><span id="Albedo::sunPositionInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_albedo_1a6d56e7e49179d450b778dd7fb7585512"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunPositionInMsg</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo16sunPositionInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message name for sun data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo20spacecraftStateInMsgE">
+<span id="_CPPv3N6Albedo20spacecraftStateInMsgE"></span><span id="_CPPv2N6Albedo20spacecraftStateInMsgE"></span><span id="Albedo::spacecraftStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_albedo_1a3bebe65b37ba5e9965a106f407652a7f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo20spacecraftStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message name for spacecraft data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo12planetInMsgsE">
+<span id="_CPPv3N6Albedo12planetInMsgsE"></span><span id="_CPPv2N6Albedo12planetInMsgsE"></span><span id="Albedo::planetInMsgs__std::vector:ReadFunctor:SpicePlanetStateMsgPayload::"></span><span class="target" id="class_albedo_1a2f2b2e9533e8c0017f076ac3a0e35d0b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo12planetInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of planet data input data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo9bskLoggerE">
+<span id="_CPPv3N6Albedo9bskLoggerE"></span><span id="_CPPv2N6Albedo9bskLoggerE"></span><span id="Albedo::bskLogger__BSKLogger"></span><span class="target" id="class_albedo_1a4af0fca78fd859acaa58f66704ed4c0f"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo13defaultNumLatE">
+<span id="_CPPv3N6Albedo13defaultNumLatE"></span><span id="_CPPv2N6Albedo13defaultNumLatE"></span><span id="Albedo::defaultNumLat__i"></span><span class="target" id="class_albedo_1a4b4b26626a2dff713e0d9433d79b4750"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">defaultNumLat</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo13defaultNumLatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] default number of latitude grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo13defaultNumLonE">
+<span id="_CPPv3N6Albedo13defaultNumLonE"></span><span id="_CPPv2N6Albedo13defaultNumLonE"></span><span id="Albedo::defaultNumLon__i"></span><span class="target" id="class_albedo_1a2f4be16c91477defd6b2169ae08213f0"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">defaultNumLon</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo13defaultNumLonE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] default number of longitude grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo14nHat_B_defaultE">
+<span id="_CPPv3N6Albedo14nHat_B_defaultE"></span><span id="_CPPv2N6Albedo14nHat_B_defaultE"></span><span id="Albedo::nHat_B_default__Eigen::Vector3d"></span><span class="target" id="class_albedo_1a5beff6566937157f991940ae4cebd35c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_B_default</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo14nHat_B_defaultE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] default value for unit normal of the instrument (spacecraft body) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo11fov_defaultE">
+<span id="_CPPv3N6Albedo11fov_defaultE"></span><span id="_CPPv2N6Albedo11fov_defaultE"></span><span id="Albedo::fov_default__double"></span><span class="target" id="class_albedo_1a095b29020feff3cf573c026d34afe483"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fov_default</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo11fov_defaultE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] default value for instrument’s field of view half angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo11eclipseCaseE">
+<span id="_CPPv3N6Albedo11eclipseCaseE"></span><span id="_CPPv2N6Albedo11eclipseCaseE"></span><span id="Albedo::eclipseCase__b"></span><span class="target" id="class_albedo_1a76c79dbbac60620d3d657f0020139f54"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseCase</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo11eclipseCaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>consider eclipse at dA, if true </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo16shadowFactorAtdAE">
+<span id="_CPPv3N6Albedo16shadowFactorAtdAE"></span><span id="_CPPv2N6Albedo16shadowFactorAtdAE"></span><span id="Albedo::shadowFactorAtdA__double"></span><span class="target" id="class_albedo_1a267a6dbab1697fdba531ae63f5883a09"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shadowFactorAtdA</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo16shadowFactorAtdAE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] shadow factor at incremental area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo17altitudeRateLimitE">
+<span id="_CPPv3N6Albedo17altitudeRateLimitE"></span><span id="_CPPv2N6Albedo17altitudeRateLimitE"></span><span id="Albedo::altitudeRateLimit__double"></span><span class="target" id="class_albedo_1a726d96056905eba81732e6de5f5984b5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">altitudeRateLimit</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo17altitudeRateLimitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] rate limit of the instrument’s altitude to the planet’s radius for albedo calculations </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo12readMessagesEv">
+<span id="_CPPv3N6Albedo12readMessagesEv"></span><span id="_CPPv2N6Albedo12readMessagesEv"></span><span id="Albedo::readMessages"></span><span class="target" id="class_albedo_1af7c1c5ee05ea0bf60ebece67161b6eb9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>reads the inpt messages </p>
+<p>This method reads the messages and saves the values to member attributes </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo13writeMessagesE8uint64_t">
+<span id="_CPPv3N6Albedo13writeMessagesE8uint64_t"></span><span id="_CPPv2N6Albedo13writeMessagesE8uint64_t"></span><span id="Albedo::writeMessages__uint64_t"></span><span class="target" id="class_albedo_1af5d7d7095e19b2e2120738e1086081a6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>writes the outpus messages </p>
+<p>This method writes the output albedo messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo15getPlanetRadiusENSt6stringE">
+<span id="_CPPv3N6Albedo15getPlanetRadiusENSt6stringE"></span><span id="_CPPv2N6Albedo15getPlanetRadiusENSt6stringE"></span><span id="Albedo::getPlanetRadius__ss"></span><span class="target" id="class_albedo_1a596382092c81b77976527ce67e491f67"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPlanetRadius</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetSpiceName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo15getPlanetRadiusENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>gets the planet’s radius </p>
+<p>Planet’s equatorial radii and polar radii (if exists) in meters </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo19evaluateAlbedoModelEi">
+<span id="_CPPv3N6Albedo19evaluateAlbedoModelEi"></span><span id="_CPPv2N6Albedo19evaluateAlbedoModelEi"></span><span id="Albedo::evaluateAlbedoModel__i"></span><span class="target" id="class_albedo_1ab0dfd8609d9d1a67d04383fd926ab05c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateAlbedoModel</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo19evaluateAlbedoModelEi" title="Link to this definition"></a><br /></dt>
+<dd><p>evaluates the ALB model </p>
+<p>This method evaluates the albedo model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo13computeAlbedoEii26SpicePlanetStateMsgPayloadbA_d">
+<span id="_CPPv3N6Albedo13computeAlbedoEii26SpicePlanetStateMsgPayloadbA_d"></span><span id="_CPPv2N6Albedo13computeAlbedoEii26SpicePlanetStateMsgPayloadbA_d"></span><span id="Albedo::computeAlbedo__i.i.SpicePlanetStateMsgPayload.b.doubleA"></span><span class="target" id="class_albedo_1a834dc3b10f5dd03945de14b1ae6d4f78"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAlbedo</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">idx</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">instIdx</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">planetMsg</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">AlbArray</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">outData</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo13computeAlbedoEii26SpicePlanetStateMsgPayloadbA_d" title="Link to this definition"></a><br /></dt>
+<dd><p>computes the albedo at instrument’s location </p>
+<p>This method calculates the albedo at instrument </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Albedo::computeEclipseAtdA__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_albedo_1aac3d83df6a82ba6584e7b27db9f11634"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEclipseAtdA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Rplanet</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_dAP_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_SP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>computes the shadow factor at dA </p>
+<p>This method computes eclipse at the incremental area if eclipseCase is defined true </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo9dataPathsE">
+<span id="_CPPv3N6Albedo9dataPathsE"></span><span id="_CPPv2N6Albedo9dataPathsE"></span><span id="Albedo::dataPaths__std::vector:ss:"></span><span class="target" id="class_albedo_1a1a9d1cd04b489e399c7f05027fcb3669"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataPaths</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo9dataPathsE" title="Link to this definition"></a><br /></dt>
+<dd><p>string with the path to the ALB coefficient folder </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo9fileNamesE">
+<span id="_CPPv3N6Albedo9fileNamesE"></span><span id="_CPPv2N6Albedo9fileNamesE"></span><span id="Albedo::fileNames__std::vector:ss:"></span><span class="target" id="class_albedo_1a300312df75ce3ae91f1122cf03a19eb2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fileNames</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo9fileNamesE" title="Link to this definition"></a><br /></dt>
+<dd><p>file names containing the ALB coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo10modelNamesE">
+<span id="_CPPv3N6Albedo10modelNamesE"></span><span id="_CPPv2N6Albedo10modelNamesE"></span><span id="Albedo::modelNames__std::vector:ss:"></span><span class="target" id="class_albedo_1a69c245198f39117412db719f778cbc5f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">modelNames</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo10modelNamesE" title="Link to this definition"></a><br /></dt>
+<dd><p>albedo model names </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo8ALB_avgsE">
+<span id="_CPPv3N6Albedo8ALB_avgsE"></span><span id="_CPPv2N6Albedo8ALB_avgsE"></span><span id="Albedo::ALB_avgs__std::vector:double:"></span><span class="target" id="class_albedo_1ab3c813696f5c45851d09d64fc224905f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ALB_avgs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo8ALB_avgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] albedo average value vector for each planet defined </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo11REQ_planetsE">
+<span id="_CPPv3N6Albedo11REQ_planetsE"></span><span id="_CPPv2N6Albedo11REQ_planetsE"></span><span id="Albedo::REQ_planets__std::vector:double:"></span><span class="target" id="class_albedo_1a3f8c8f827a458d67b0308721f6b967e9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REQ_planets</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo11REQ_planetsE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo10RP_planetsE">
+<span id="_CPPv3N6Albedo10RP_planetsE"></span><span id="_CPPv2N6Albedo10RP_planetsE"></span><span id="Albedo::RP_planets__std::vector:double:"></span><span class="target" id="class_albedo_1ae129f958497aca2cd2ef914637448f10"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RP_planets</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo10RP_planetsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] equatorial and polar radius of the planets </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6albLonE">
+<span id="_CPPv3N6Albedo6albLonE"></span><span id="_CPPv2N6Albedo6albLonE"></span><span id="Albedo::albLon__Eigen::MatrixXd"></span><span class="target" id="class_albedo_1ad77372e6c3754229c178b8167698f331"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albLon</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6albLonE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6albLatE">
+<span id="_CPPv3N6Albedo6albLatE"></span><span id="_CPPv2N6Albedo6albLatE"></span><span id="Albedo::albLat__Eigen::MatrixXd"></span><span class="target" id="class_albedo_1a65f1e575c028d237d276e9e7fdbe8d30"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albLat</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6albLatE" title="Link to this definition"></a><br /></dt>
+<dd><p>sunlit area seen by the instroment fov </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo5scLonE">
+<span id="_CPPv3N6Albedo5scLonE"></span><span id="_CPPv2N6Albedo5scLonE"></span><span id="Albedo::scLon__double"></span><span class="target" id="class_albedo_1a2ae5eb33811bd39d6a943b53e634fb73"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scLon</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo5scLonE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo5scLatE">
+<span id="_CPPv3N6Albedo5scLatE"></span><span id="_CPPv2N6Albedo5scLatE"></span><span id="Albedo::scLat__double"></span><span class="target" id="class_albedo_1a4002d9eb169661b06a0d17e2be2c7e63"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scLat</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo5scLatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[deg, deg] spaceccraft footprint </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7numLatsE">
+<span id="_CPPv3N6Albedo7numLatsE"></span><span id="_CPPv2N6Albedo7numLatsE"></span><span id="Albedo::numLats__std::vector:i:"></span><span class="target" id="class_albedo_1ad78074f1c18b149537d384d390996e7e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numLats</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7numLatsE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7numLonsE">
+<span id="_CPPv3N6Albedo7numLonsE"></span><span id="_CPPv2N6Albedo7numLonsE"></span><span id="Albedo::numLons__std::vector:i:"></span><span class="target" id="class_albedo_1a430c525bfce30cd43acdee6f8e3ea11c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numLons</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7numLonsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of latitude and longitude number </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo18albedoAtInstrumentE">
+<span id="_CPPv3N6Albedo18albedoAtInstrumentE"></span><span id="_CPPv2N6Albedo18albedoAtInstrumentE"></span><span id="Albedo::albedoAtInstrument__double"></span><span class="target" id="class_albedo_1a13fc543a11db1fc6457736a94e8e04fd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoAtInstrument</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo18albedoAtInstrumentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] total albedo at instrument location </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo21albedoAtInstrumentMaxE">
+<span id="_CPPv3N6Albedo21albedoAtInstrumentMaxE"></span><span id="_CPPv2N6Albedo21albedoAtInstrumentMaxE"></span><span id="Albedo::albedoAtInstrumentMax__double"></span><span class="target" id="class_albedo_1a2b41537f84ba854526958d02c006f6c4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoAtInstrumentMax</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo21albedoAtInstrumentMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] max total albedo at instrument location </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo17SfluxAtInstrumentE">
+<span id="_CPPv3N6Albedo17SfluxAtInstrumentE"></span><span id="_CPPv2N6Albedo17SfluxAtInstrumentE"></span><span id="Albedo::SfluxAtInstrument__double"></span><span class="target" id="class_albedo_1aeb9b9846448d25d133c70b3ed4996e41"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SfluxAtInstrument</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo17SfluxAtInstrumentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m2] solar flux at instrument’s position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo20AfluxAtInstrumentMaxE">
+<span id="_CPPv3N6Albedo20AfluxAtInstrumentMaxE"></span><span id="_CPPv2N6Albedo20AfluxAtInstrumentMaxE"></span><span id="Albedo::AfluxAtInstrumentMax__double"></span><span class="target" id="class_albedo_1a6b031d3aec7ec41aea5ffc21673821f8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AfluxAtInstrumentMax</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo20AfluxAtInstrumentMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m2] max albedo flux at instrument’s position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo17AfluxAtInstrumentE">
+<span id="_CPPv3N6Albedo17AfluxAtInstrumentE"></span><span id="_CPPv2N6Albedo17AfluxAtInstrumentE"></span><span id="Albedo::AfluxAtInstrument__double"></span><span class="target" id="class_albedo_1aa742ede4e27cd17d259b020cba9c9e6d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AfluxAtInstrument</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo17AfluxAtInstrumentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m2] albedo flux at instrument’s position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7r_IB_BsE">
+<span id="_CPPv3N6Albedo7r_IB_BsE"></span><span id="_CPPv2N6Albedo7r_IB_BsE"></span><span id="Albedo::r_IB_Bs__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_albedo_1a03f46be340a222e2ca344bd6c587b31f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_IB_Bs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7r_IB_BsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] instrument’s misalignment vector wrt spacecraft’s body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7nHat_BsE">
+<span id="_CPPv3N6Albedo7nHat_BsE"></span><span id="_CPPv2N6Albedo7nHat_BsE"></span><span id="Albedo::nHat_Bs__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_albedo_1aeb0dbbaad52d736391e4c1a6217100d3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_Bs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7nHat_BsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit normal vector of the instrument (spacecraft body) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo4fovsE">
+<span id="_CPPv3N6Albedo4fovsE"></span><span id="_CPPv2N6Albedo4fovsE"></span><span id="Albedo::fovs__std::vector:double:"></span><span class="target" id="class_albedo_1ade315f0d4ecc739627e4fa6ffbba5a5e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fovs</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo4fovsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] vector containing instrument’s field of view half angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo10albOutDataE">
+<span id="_CPPv3N6Albedo10albOutDataE"></span><span id="_CPPv2N6Albedo10albOutDataE"></span><span id="Albedo::albOutData__std::vector:Eigen::Vector4d:"></span><span class="target" id="class_albedo_1a0acd351d0016a0de292a501d950099fe"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector4d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albOutData</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo10albOutDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>the vector that keeps the albedo output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo5gdlatE">
+<span id="_CPPv3N6Albedo5gdlatE"></span><span id="_CPPv2N6Albedo5gdlatE"></span><span id="Albedo::gdlat__std::map:i.std::vector:double::"></span><span class="target" id="class_albedo_1a6a42609cadd3a6d5a5d2eb53f07c631f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gdlat</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo5gdlatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] geodetic latitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo5gdlonE">
+<span id="_CPPv3N6Albedo5gdlonE"></span><span id="_CPPv2N6Albedo5gdlonE"></span><span id="Albedo::gdlon__std::map:i.std::vector:double::"></span><span class="target" id="class_albedo_1a4a4277c26c57742da544f2dfb7eda754"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gdlon</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo5gdlonE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] geodetic longitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7latDiffE">
+<span id="_CPPv3N6Albedo7latDiffE"></span><span id="_CPPv2N6Albedo7latDiffE"></span><span id="Albedo::latDiff__std::map:i.double:"></span><span class="target" id="class_albedo_1ad709b60596aa63c8785373bf98ca6489"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">latDiff</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7latDiffE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] latitude difference between grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo7lonDiffE">
+<span id="_CPPv3N6Albedo7lonDiffE"></span><span id="_CPPv2N6Albedo7lonDiffE"></span><span id="Albedo::lonDiff__std::map:i.double:"></span><span class="target" id="class_albedo_1acbf178c856900a6231d4b375ff979646"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lonDiff</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo7lonDiffE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] longitude difference between grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo3ALBE">
+<span id="_CPPv3N6Albedo3ALBE"></span><span id="_CPPv2N6Albedo3ALBE"></span><span id="Albedo::ALB__std::map:i.std::vector:std::vector:double:::"></span><span class="target" id="class_albedo_1a167ec44a956c27f37de490606c71bbe8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ALB</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo3ALBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ALB coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo8readFileE">
+<span id="_CPPv3N6Albedo8readFileE"></span><span id="_CPPv2N6Albedo8readFileE"></span><span id="Albedo::readFile__b"></span><span class="target" id="class_albedo_1a5d9ece4c1bfe21226ba3aad61f9360de"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readFile</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo8readFileE" title="Link to this definition"></a><br /></dt>
+<dd><p>defines if there is a need for reading an albedo model file or not </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo8albArrayE">
+<span id="_CPPv3N6Albedo8albArrayE"></span><span id="_CPPv2N6Albedo8albArrayE"></span><span id="Albedo::albArray__std::vector:b:"></span><span class="target" id="class_albedo_1a43e070f74534acbbefcf6b22770f0423"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albArray</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo8albArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>defines if the albedo data is formatted as array or not </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6r_PN_NE">
+<span id="_CPPv3N6Albedo6r_PN_NE"></span><span id="_CPPv2N6Albedo6r_PN_NE"></span><span id="Albedo::r_PN_N__Eigen::Vector3d"></span><span class="target" id="class_albedo_1a8307d4f70a835279b11a4f4b2b617098"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] planet position (inertial) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6r_SN_NE">
+<span id="_CPPv3N6Albedo6r_SN_NE"></span><span id="_CPPv2N6Albedo6r_SN_NE"></span><span id="Albedo::r_SN_N__Eigen::Vector3d"></span><span class="target" id="class_albedo_1af23a77b2219b28861235716ddac1c855"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SN_N</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6r_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sun position (inertial) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo8sigma_BNE">
+<span id="_CPPv3N6Albedo8sigma_BNE"></span><span id="_CPPv2N6Albedo8sigma_BNE"></span><span id="Albedo::sigma_BN__Eigen::MRPd"></span><span class="target" id="class_albedo_1ad1cbe4d37a21f22df58e28c9b77b2ff0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo8sigma_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current spaceraft MRPs (inertial) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6r_BN_NE">
+<span id="_CPPv3N6Albedo6r_BN_NE"></span><span id="_CPPv2N6Albedo6r_BN_NE"></span><span id="Albedo::r_BN_N__Eigen::Vector3d"></span><span class="target" id="class_albedo_1aeefbd32e8066a04535662c08ab58a192"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6r_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] s/c position (inertial) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo6nHat_NE">
+<span id="_CPPv3N6Albedo6nHat_NE"></span><span id="_CPPv2N6Albedo6nHat_NE"></span><span id="Albedo::nHat_N__Eigen::Vector3d"></span><span class="target" id="class_albedo_1ab17872902ebcf096e109f5a294e67e44"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_N</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo6nHat_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Unit normal vector of the instrument (inertial) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo9rHat_PI_NE">
+<span id="_CPPv3N6Albedo9rHat_PI_NE"></span><span id="_CPPv2N6Albedo9rHat_PI_NE"></span><span id="Albedo::rHat_PI_N__Eigen::Vector3d"></span><span class="target" id="class_albedo_1ab5d2f4260388596964b131c5ed62ad97"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rHat_PI_N</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo9rHat_PI_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] direction vector from instrument to planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo13planetMsgDataE">
+<span id="_CPPv3N6Albedo13planetMsgDataE"></span><span id="_CPPv2N6Albedo13planetMsgDataE"></span><span id="Albedo::planetMsgData__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_albedo_1a837306f0b290e05e4ecfa8a0c15e2767"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetMsgData</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo13planetMsgDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of incoming planet message states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo10sunMsgDataE">
+<span id="_CPPv3N6Albedo10sunMsgDataE"></span><span id="_CPPv2N6Albedo10sunMsgDataE"></span><span id="Albedo::sunMsgData__SpicePlanetStateMsgPayload"></span><span class="target" id="class_albedo_1aeb4ac56c8e6216410e6cc99f041326b0"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunMsgData</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo10sunMsgDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>sun message data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo15scStatesMsgDataE">
+<span id="_CPPv3N6Albedo15scStatesMsgDataE"></span><span id="_CPPv2N6Albedo15scStatesMsgDataE"></span><span id="Albedo::scStatesMsgData__SCStatesMsgPayload"></span><span class="target" id="class_albedo_1ad193c73d34dd2499d498cc5c66d2673f"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStatesMsgData</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo15scStatesMsgDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft message data </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="albedo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

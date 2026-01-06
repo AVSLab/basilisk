@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vizSupport &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="MonteCarlo" href="MonteCarlo/index.html" />
+    <link rel="prev" title="unitTestSupport" href="unitTestSupport.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vizSupport</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.addLocation"><code class="docutils literal notranslate"><span class="pre">addLocation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.addQuadMap"><code class="docutils literal notranslate"><span class="pre">addQuadMap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.assert_option"><code class="docutils literal notranslate"><span class="pre">assert_option()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.assert_trinary"><code class="docutils literal notranslate"><span class="pre">assert_trinary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.changeLocation"><code class="docutils literal notranslate"><span class="pre">changeLocation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createCameraConfigMsg"><code class="docutils literal notranslate"><span class="pre">createCameraConfigMsg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createConeInOut"><code class="docutils literal notranslate"><span class="pre">createConeInOut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createCustomModel"><code class="docutils literal notranslate"><span class="pre">createCustomModel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createPointLine"><code class="docutils literal notranslate"><span class="pre">createPointLine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createStandardCamera"><code class="docutils literal notranslate"><span class="pre">createStandardCamera()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createTargetLine"><code class="docutils literal notranslate"><span class="pre">createTargetLine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.enableUnityVisualization"><code class="docutils literal notranslate"><span class="pre">enableUnityVisualization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.fixedframe2lla"><code class="docutils literal notranslate"><span class="pre">fixedframe2lla()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.lla2fixedframe"><code class="docutils literal notranslate"><span class="pre">lla2fixedframe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setActuatorGuiSetting"><code class="docutils literal notranslate"><span class="pre">setActuatorGuiSetting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setInstrumentGuiSetting"><code class="docutils literal notranslate"><span class="pre">setInstrumentGuiSetting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setSprite"><code class="docutils literal notranslate"><span class="pre">setSprite()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">vizSupport</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/vizSupport.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vizsupport">
+<span id="id1"></span><h1>vizSupport<a class="headerlink" href="#vizsupport" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-vizSupport">
+<dt class="sig sig-object py" id="vizSupport.addLocation">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">addLocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stationName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBodyName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_GP_P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lla_GP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gHat_P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldOfView</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markerScale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isHidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#addLocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.addLocation" title="Link to this definition"></a></dt>
+<dd><p>This method creates a Location instance on a parent body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stationName</strong> (<em>str</em>) – Location text label</p></li>
+<li><p><strong>parentBodyName</strong> (<em>str</em>) – Name of the parent body P (spacecraft or planet) on which the location G is positioned.</p></li>
+<li><p><strong>r_GP_P</strong> (<em>3-element double-list</em>) – Position of G relative to parent body frame P.
+Required, if lla_GP not provided</p></li>
+<li><p><strong>lla_GP</strong> (<em>3-element double-list</em>) – Position of G relative to parent body in lat/lon/alt coordinates.
+Required, if r_GP_P not provided</p></li>
+<li><p><strong>gHat_P</strong> (<em>3-element double-list</em>) – Location normal relative to parent body frame.</p></li>
+<li><p><strong>fieldOfView</strong> (<em>double</em>) – [rad] FOV angle measured edge-to-edge.</p></li>
+<li><p><strong>color</strong> (<em>int-list</em>) – Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>range</strong> (<em>double</em>) – [m] Range of the ground Location.</p></li>
+<li><p><strong>markerScale</strong> (<em>double</em>) – Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.</p></li>
+<li><p><strong>isHidden</strong> (<em>bool</em>) – True to hide Location, false to show (vizDefault)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – string to display on location label, if empty, then stationName is used. Send “NOLABEL” to delete label</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.addQuadMap">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">addQuadMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBodyName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isHidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#addQuadMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.addQuadMap" title="Link to this definition"></a></dt>
+<dd><p>This method creates a QuadMap element for displaying shaded regions in Vizard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ID</strong> (<em>int</em>) – The reference ID of the QuadMap instance. Once instantiated, can be used to change the QuadMap settings.</p></li>
+<li><p><strong>parentBodyName</strong> (<em>str</em>) – Name of the parent body to draw the QuadMap in reference to.</p></li>
+<li><p><strong>vertices</strong> (<em>single</em><em> or </em><em>double-list</em>) – Specifies the internal mesh coordinates of the QuadMap, in body-fixed frame.</p></li>
+<li><p><strong>color</strong> (<em>int list</em>) – Color of the QuadMap.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>isHidden</strong> (<em>bool</em>) – Flag if the QuadMap should be hidden (1) or shown (-1).
+Optional. Default: 0 - if not provided, then the Vizard default settings are used.</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – Label to display in the center of QuadMap region.
+Optional. Send “NOLABEL” to delete label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.assert_option">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">assert_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#assert_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.assert_option" title="Link to this definition"></a></dt>
+<dd><p>Check if the value is in [low, high] inclusive.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.assert_trinary">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">assert_trinary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#assert_trinary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.assert_trinary" title="Link to this definition"></a></dt>
+<dd><p>Check if the value is in [-1, 0, 1] and map False to -1 or 0 depending on default.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.changeLocation">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">changeLocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stationName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBodyName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_GP_P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lla_GP</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gHat_P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldOfView</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markerScale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isHidden</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#changeLocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.changeLocation" title="Link to this definition"></a></dt>
+<dd><p>This method changes the information of a Location instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stationName</strong> (<em>str</em>) – Location text label
+Required</p></li>
+<li><p><strong>parentBodyName</strong> (<em>str</em>) – Name of the parent body P (spacecraft or planet) on which the location G is positioned.</p></li>
+<li><p><strong>r_GP_P</strong> (<em>3-element double-list</em>) – Position of G relative to parent body frame P.
+Required, if lla_GP not provided</p></li>
+<li><p><strong>lla_GP</strong> (<em>3-element double-list</em>) – Position of G relative to parent body in lat/lon/alt coordinates.
+Required, if r_GP_P not provided</p></li>
+<li><p><strong>gHat_P</strong> (<em>3-element double-list</em>) – Location normal relative to parent body frame.</p></li>
+<li><p><strong>fieldOfView</strong> (<em>double</em>) – [rad] FOV angle measured edge-to-edge.</p></li>
+<li><p><strong>color</strong> (<em>int-list</em>) – Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>range</strong> (<em>double</em>) – [m] Range of the ground Location.</p></li>
+<li><p><strong>markerScale</strong> (<em>double</em>) – Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.</p></li>
+<li><p><strong>isHidden</strong> (<em>bool</em>) – True to hide Location, false to show (vizDefault)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – string to display on location label, if empty, then stationName is used. Send “NOLABEL” to delete label</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createCameraConfigMsg">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createCameraConfigMsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cameraID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldOfView</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cameraPos_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_CB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyBox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postProcessingOn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppFocusDistance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppAperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppFocalLength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppMaxBlurSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateCameraParameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depthMapClippingPlanes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showHUDElementsInImage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createCameraConfigMsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createCameraConfigMsg" title="Link to this definition"></a></dt>
+<dd><p>This method configures camera settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>camera instance</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cameraID</strong> (<em>int</em>) – ID of the camera that took the snapshot.</p></li>
+<li><p><strong>parentName</strong> (<em>str</em>) – Name of the parent body to which the camera should be attached
+Optional, default is <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+<li><p><strong>fieldOfView</strong> (<em>double</em>) – [rad] Camera FOV, edge-to-edge along camera y-axis.</p></li>
+<li><p><strong>resolution</strong> (<em>2-element int-list</em>) – Camera resolution, width/height in pixels.</p></li>
+<li><p><strong>renderRate</strong> (<em>int</em>) – [ns] Frame time interval at which to capture images.</p></li>
+<li><p><strong>cameraPos_B</strong> (<em>3-element double-list</em>) – [m] Camera position in body frame.</p></li>
+<li><p><strong>sigma_CB</strong> (<em>3-element double-list</em>) – MRP defining the orientation of the camera frame relative to the body frame.</p></li>
+<li><p><strong>skyBox</strong> (<em>str</em>) – String containing the star field preference.</p></li>
+<li><p><strong>postProcessingOn</strong> (<em>int</em>) – Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default which is off, -1 for false, 1 for true.</p></li>
+<li><p><strong>ppFocusDistance</strong> (<em>double</em>) – Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely.</p></li>
+<li><p><strong>ppAperature</strong> (<em>double</em>) – Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely.</p></li>
+<li><p><strong>ppFocalLength</strong> (<em>double</em>) – Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.</p></li>
+<li><p><strong>ppMaxBlurSize</strong> (<em>int</em>) – Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.</p></li>
+<li><p><strong>updateCameraParameters</strong> (<em>int</em>) – If true, commands camera to update Instrument Camera to current message’s parameters.</p></li>
+<li><p><strong>renderMode</strong> (<em>int</em>) – Value of 0 to render visual image (default), value of 1 to render depth buffer to image.</p></li>
+<li><p><strong>depthMapClippingPlanes</strong> (<em>2-element double-list</em>) – [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.</p></li>
+<li><p><strong>showHUDElementsInImage</strong> (<em>int</em>) – Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createConeInOut">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createConeInOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toBodyName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coneColor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isKeepIn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalVector_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incidenceAngle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coneHeight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromBodyName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coneName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createConeInOut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createConeInOut" title="Link to this definition"></a></dt>
+<dd><p>This method creates a <code class="docutils literal notranslate"><span class="pre">KeepOutInCone</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fromBodyName</strong> (<em>str</em>) – Name of body to attach cone onto.
+Optional, default selects <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+<li><p><strong>toBodyName</strong> (<em>str</em>) – Detect changes if this body has impingement on cone.</p></li>
+<li><p><strong>coneColor</strong> (<em>int list</em>) – Color of the KeepOutInCone.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>isKeepIn</strong> (<em>bool</em>) – True -&gt; keep-in cone created, False -&gt; keep-out cone created</p></li>
+<li><p><strong>position_B</strong> (<em>3-element double-list</em>) – [m] Cone start relative to from-body coordinate frame.
+Optional, default [0.0, 0.0, 0.0]</p></li>
+<li><p><strong>normalVector_B</strong> (<em>3-element double-list</em>) – Cone normal direction vector</p></li>
+<li><p><strong>incidenceAngle</strong> (<em>double</em>) – [rad] Cone incidence angle</p></li>
+<li><p><strong>coneHeight</strong> (<em>double</em>) – [m] Sets height of visible cone (aesthetic only, does not impact function)</p></li>
+<li><p><strong>coneName</strong> (<em>str</em>) – Cone name, if unspecified, viz will autogenerate name</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createCustomModel">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createCustomModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simBodiesToModify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customTexturePath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalMapPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createCustomModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createCustomModel" title="Link to this definition"></a></dt>
+<dd><p>This method creates a CustomModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelPath</strong> (<em>str</em>) – Path to model obj -OR- <code class="docutils literal notranslate"><span class="pre">CUBE</span></code>, <code class="docutils literal notranslate"><span class="pre">CYLINDER</span></code>, or <code class="docutils literal notranslate"><span class="pre">SPHERE</span></code> to use a primitive shape</p></li>
+<li><p><strong>simBodiesToModify</strong> (<em>list</em>) – Which bodies in scene to replace with this model, use <code class="docutils literal notranslate"><span class="pre">ALL_SPACECRAFT</span></code> to apply custom model to all spacecraft in simulation
+Optional, default modifies <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+<li><p><strong>offset</strong> (<em>3-element double-list</em>) – [m] Offset to use to draw the model
+Optional, default is [0.0, 0.0, 0.0]</p></li>
+<li><p><strong>rotation</strong> (<em>3-element double-list</em>) – [rad] 3-2-1 Euler angles to rotate CAD about z, y, x axes
+Optional, default is [0.0, 0.0, 0.0]</p></li>
+<li><p><strong>scale</strong> (<em>3-element double-list</em>) – Desired model scaling factor along the body x, y, z, axes in spacecraft CS
+Optional, default is [1.0, 1.0, 1.0]</p></li>
+<li><p><strong>customTexturePath</strong> (<em>str</em>) – Path to texture to apply to model (note that a custom model’s .mtl will be automatically imported with its textures during custom model import)
+Optional</p></li>
+<li><p><strong>normalMapPath</strong> (<em>str</em>) – Path to the normal map for the customTexture</p></li>
+<li><p><strong>shader</strong> (<em>int</em>) – Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader</p></li>
+<li><p><strong>color</strong> (<em>int list</em>) – Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createPointLine">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createPointLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toBodyName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineColor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromBodyName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createPointLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createPointLine" title="Link to this definition"></a></dt>
+<dd><p>This method creates a PointLine between two bodies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>toBodyName</strong> (<em>str</em>) – Body which the PointLine points to.</p></li>
+<li><p><strong>lineColor</strong> (<em>int list</em>) – Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>fromBodyName</strong> (<em>str</em>) – Body from which PointLine originates.
+Optional, default selects <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createStandardCamera">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createStandardCamera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacecraftName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showHUDElementsInImage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setView</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldOfView</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bodyTarget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointingVector_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displayName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createStandardCamera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createStandardCamera" title="Link to this definition"></a></dt>
+<dd><p>This method creates a Standard Camera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>camera instance</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spacecraftName</strong> (<em>str</em>) – Name of spacecraft to attach camera onto.
+Optional, default selects <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+<li><p><strong>setMode</strong> (<em>int</em>) – 0 -&gt; body targeting, 1 -&gt; pointing vector (default).</p></li>
+<li><p><strong>showHUDElementsInImage</strong> (<em>int</em>) – Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true</p></li>
+<li><p><strong>setView</strong> (<em>int</em>) – 0 -&gt; nadir (default), 1 -&gt; orbit normal, 2 -&gt; along track. This is a setting for body targeting mode.</p></li>
+<li><p><strong>fieldOfView</strong> (<em>double</em>) – [rad] FOV angle measured edge-to-edge, -1 to use viz default.</p></li>
+<li><p><strong>bodyTarget</strong> (<em>str</em>) – Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.</p></li>
+<li><p><strong>pointingVector_B</strong> (<em>3-element double-list</em>) – Camera pointing vector in the spacecraft body frame.
+Optional, default [1.0, 0.0, 0.0]</p></li>
+<li><p><strong>position_B</strong> (<em>3-element double-list</em>) – If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside the spacecraft along the pointing vector direction.
+Optional, default [0.0, 0.0, 0.0]</p></li>
+<li><p><strong>displayName</strong> (<em>str</em>) – Name of the standard camera panel.
+Optional</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.createTargetLine">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createTargetLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toBodyName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineColor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromBodyName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createTargetLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createTargetLine" title="Link to this definition"></a></dt>
+<dd><p>This method creates a TargetLine between two bodies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>toBodyName</strong> (<em>str</em>) – Body which the PointLine points to.</p></li>
+<li><p><strong>lineColor</strong> (<em>int list</em>) – Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.</p></li>
+<li><p><strong>fromBodyName</strong> (<em>str</em>) – Body from which PointLine originates.
+Optional, default selects <code class="docutils literal notranslate"><span class="pre">firstSpacecraftName</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.enableUnityVisualization">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">enableUnityVisualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scSim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simTaskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveFile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rwEffectorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thrEffectorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thrColors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cssList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genericSensorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoidList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lightList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genericStorageList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transceiverList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spriteList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelDictionaryKeyList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logoTextureList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oscOrbitColorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueOrbitColorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groundTrackColorList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msmInfoList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueOrbitColorInMsgList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groundTrackBodyNameList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">liveStream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broadcastStream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noDisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#enableUnityVisualization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.enableUnityVisualization" title="Link to this definition"></a></dt>
+<dd><p>This method creates an instance of the vizInterface() modules and sets up associated Vizard
+configuration setting messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scSim</strong> – variable with the simulationBaseClass copy</p></li>
+<li><p><strong>simTaskName</strong> – task to which to add the vizInterface module</p></li>
+<li><p><strong>scList</strong> – <a class="reference internal" href="../simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> objects.  Can be a single object or list of objects</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>saveFile</strong> (<em>str</em>) – can be a single python file name, or a full path + file name. In both cases a local results are stored
+in a local sub-folder called <code class="docutils literal notranslate"><span class="pre">_VizFiles</span></code>.
+If a data file name is provided directly (i.e. it ends with <code class="docutils literal notranslate"><span class="pre">.bin</span></code>), then the
+associated file path and name are used explicitly.
+Default: empty string resulting in the data not being saved to a file</p></li>
+<li><p><strong>rwEffectorList</strong> (single or list of <code class="docutils literal notranslate"><span class="pre">ReactionWheelStateEffector</span></code>) – The list must have the same length <code class="docutils literal notranslate"><span class="pre">scList</span></code>.  Each entry is the <a class="reference internal" href="../simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">Module: reactionWheelStateEffector</span></a> instance
+for the spacecraft, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the spacecraft has no RW devices.</p></li>
+<li><p><strong>thrEffectorList</strong> (single or double-list of <a class="reference internal" href="../simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>) – The list must have the same length <code class="docutils literal notranslate"><span class="pre">scList</span></code>.  Each entry is a list of <a class="reference internal" href="../simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">Module: reactionWheelStateEffector</span></a>
+instances
+for the spacecraft denoting a thruster cluster, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the spacecraft has no thruster devices.</p></li>
+<li><p><strong>thrColors</strong> (<em>single</em><em> or </em><em>vector</em><em> of </em><em>int</em><em>(</em><em>4</em><em>)</em>) – array of RGBA color values for each thruster set.  The list must have the same length as <code class="docutils literal notranslate"><span class="pre">scList</span></code>.
+Each list entry is a list of RGBA array values for each cluster set.</p></li>
+<li><p><strong>cssList</strong> – list of lists of <a class="reference internal" href="../simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">Module: coarseSunSensor</span></a> objects.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>genericSensorList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">GenericSensor</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>ellipsoidList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>lightList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">Light</span></code> structures.   The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>genericStorageList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">GenericStorage</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>transceiverList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">Transceiver</span></code> objects.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>spriteList</strong> – list of sprite information for each spacecraft.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>modelDictionaryKeyList</strong> – list of the spacecraft model dictionary.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>logoTextureList</strong> – list of the spacecraft logo texture file paths.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>oscOrbitColorList</strong> – list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255) or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if default values should be used.  The array must be of the length of the spacecraft list</p></li>
+<li><p><strong>trueOrbitColorList</strong> – list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255) or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if default values should be used.  The array must be of the length of the spacecraft list</p></li>
+<li><p><strong>trueOrbitColorInMsgList</strong> – list of color messages to read and provide the true orbit color at each time step.  This overwrites
+the values set with trueOrbitColorList.</p></li>
+<li><p><strong>groundTrackColorList</strong> – list of spacecraft ground track colors.  Can be 4 RGBA integer value (0-255) or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if default values should be used.  The array must be of the length of the spacecraft list</p></li>
+<li><p><strong>groundTrackBodyNameList</strong> – list of celestial bodies relative to which to draw ground track on.
+If None the ground track will default to spacecraft’s dominant grav body</p></li>
+<li><p><strong>msmInfoList</strong> – list of MSM configuration messages</p></li>
+<li><p><strong>liveStream</strong> (<em>bool</em>) – flag if live data streaming to Vizard should be used</p></li>
+<li><p><strong>broadcastStream</strong> (<em>bool</em>) – flag if messages should be broadcast for listener Vizards to pick up.</p></li>
+<li><p><strong>noDisplay</strong> (<em>bool</em>) – flag if Vizard should run performance opNav (no Vizard display)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>copy of the vizInterface instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.fixedframe2lla">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">fixedframe2lla</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_GP_P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radEquator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radRatio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#fixedframe2lla"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.fixedframe2lla" title="Link to this definition"></a></dt>
+<dd><p>This method receives a cartesian point above a reference ellipsoid with
+equatorial radius and flattening ratio, then converts to lat/lon/alt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r_GP_P</strong> – [m] position vector of the location G relative to the parent body</p></li>
+<li><p><strong>radEquator</strong> – [m] equatorial radius of the parent body</p></li>
+<li><p><strong>radRatio</strong> – ratio of polar radius to equatorial radius</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[rad,rad,m] lla_GP, position vector of the location G relative to parent body frame P in lat/lon/alt</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>3-element list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.lla2fixedframe">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">lla2fixedframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lla_GP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radEquator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radRatio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#lla2fixedframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.lla2fixedframe" title="Link to this definition"></a></dt>
+<dd><p>This method receives a latitude/longitude/altitude point above a reference
+ellipsoid with equatorial radius and flattening ratio, then converts to
+body-fixed frame coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lla_GP</strong> – [rad,rad,m] position vector of the location G relative to the parent body
+in lat/lon/alt components</p></li>
+<li><p><strong>radEquator</strong> – [m] equatorial radius of the parent body</p></li>
+<li><p><strong>radRatio</strong> – ratio of polar radius to equatorial radius</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[m] r_GP_P, position vector of the location G relative to parent body frame P in P frame components</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>3-element list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setActuatorGuiSetting">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setActuatorGuiSetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacecraftName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewThrusterPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewThrusterHUD</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewRWPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewRWHUD</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showThrusterLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showRWLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setActuatorGuiSetting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setActuatorGuiSetting" title="Link to this definition"></a></dt>
+<dd><p>This method sets the actuator GUI properties for a particular spacecraft.  If no <code class="docutils literal notranslate"><span class="pre">spacecraftName</span></code> is
+provided, then the name of the first spacecraft in the simulation is assumed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spacecraftName</strong> (<em>str</em>) – The name of the spacecraft for which the actuator GUI options are set.
+Default: If not provided, then the name of the first spacecraft in the simulation is used.</p></li>
+<li><p><strong>viewThrusterPanel</strong> (<em>bool</em>) – flag if the GUI panel should be shown illustrating the thruster states
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewRWPanel</strong> (<em>bool</em>) – flag if the GUI panel should be shown illustrating the reaction wheel states
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewThrusterHUD</strong> (<em>bool</em>) – flag if the HUD visualization of the thruster states should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewRWHUD</strong> (<em>bool</em>) – flag if the HUD visualization of the reaction wheel states should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showThrusterLabels</strong> (<em>bool</em>) – flag if the thruster labels should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showRWLabels</strong> (<em>bool</em>) – flag if the reaction wheel labels should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setInstrumentGuiSetting">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setInstrumentGuiSetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacecraftName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewCSSPanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewCSSCoverage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewCSSBoresight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showCSSLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showGenericSensorLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showTransceiverLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showTransceiverFrustum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showTransceiverFrustrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showGenericStoragePanel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showMultiShapeLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setInstrumentGuiSetting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setInstrumentGuiSetting" title="Link to this definition"></a></dt>
+<dd><p>This method sets the instrument GUI properties for a particular spacecraft.  If no <code class="docutils literal notranslate"><span class="pre">spacecraftName</span></code> is
+provided, then the name of the first spacecraft in the simulation is assumed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>viz</strong> – copy of the vizInterface module</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spacecraftName</strong> (<em>str</em>) – The name of the spacecraft for which the actuator GUI options are set.
+Default: 0 - If not provided, then the name of the first spacecraft in the simulation is used.</p></li>
+<li><p><strong>viewCSSPanel</strong> (<em>int</em>) – flag if the GUI panel should be shown (1) or hidden (-1) illustrating the CSS states
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewCSSCoverage</strong> (<em>int</em>) – flag if the HUD spherical coverage of the CSS states should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewCSSBoresight</strong> (<em>int</em>) – flag if the HUD boresight axes of the CSS states should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showCSSLabels</strong> (<em>int</em>) – flag if the CSS labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showGenericSensorLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showTransceiverLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showTransceiverFrustum</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showGenericStoragePanel</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showMultiShapeLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setSprite">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setSprite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setSprite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setSprite" title="Link to this definition"></a></dt>
+<dd><p>Helper function to set the sprite shape and optional sprite color.
+:param shape: Sprite shape, must be either “CIRCLE”, “SQUARE”, “TRIANGLE”, “STAR”, or “bskSat”
+:param kwargs: RGBA color, can be either color name string or a 4D list of [0,255] values
+:return: string of the protobuffer sprite setting</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="unitTestSupport.html" class="btn btn-neutral float-left" title="unitTestSupport" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MonteCarlo/index.html" class="btn btn-neutral float-right" title="MonteCarlo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
