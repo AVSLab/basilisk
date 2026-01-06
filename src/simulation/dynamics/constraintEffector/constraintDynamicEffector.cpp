@@ -219,7 +219,7 @@ void ConstraintDynamicEffector::readInputMessage(){
         statusMsg = this->effectorStatusInMsg();
         this->effectorStatus = statusMsg.deviceStatus;
     }
-    else{
+    else{ // default to active if no message is linked
         this->effectorStatus = 1;
     }
 }
@@ -300,7 +300,8 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
  */
 void ConstraintDynamicEffector::computeForceTorque(double integTime, double timeStep)
 {
-    if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
+    // only proceed once both spacecraft are added (scInitCounter) and effector is active (effectorStatus)
+    if (this->scInitCounter == 2 && this->effectorStatus == 1) {
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
             Eigen::Vector3d r_B1N_N;
@@ -391,6 +392,10 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
         }
         this->scID = (1 + pow(-1,this->scID))/2; // toggle spacecraft to be assigned forces and torques
     }
+    else {
+        this->forceExternal_N = Eigen::Vector3d::Zero();
+        this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
+    }
 }
 
 /*! This method takes the computed constraint force and torque states and outputs them to the
@@ -399,16 +404,23 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
  */
 void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 {
-    ConstDynEffectorMsgPayload outputForces;
-    outputForces = this->constraintElements.zeroMsgPayload;
-    eigenVector3d2CArray(this->forceExternal_N,outputForces.Fc_N);
-    eigenVector3d2CArray(this->T_B1,outputForces.L1_B1);
-    eigenVector3d2CArray(this->T_B2,outputForces.L2_B2);
-    eigenVector3d2CArray(this->psi_N,outputForces.psi_N);
-    outputForces.Fc_mag_filtered = this->F_filtered_mag_t;
-    outputForces.L1_mag_filtered = this->T1_filtered_mag_t;
-    outputForces.L2_mag_filtered = this->T2_filtered_mag_t;
-    this->constraintElements.write(&outputForces,this->moduleID,CurrentClock);
+    if (this->constraintElements.isLinked()) {
+        ConstDynEffectorMsgPayload outputForces;
+        outputForces = this->constraintElements.zeroMsgPayload;
+
+        // Log the instantaneous force and torque values
+        eigenVector3d2CArray(this->forceExternal_N, outputForces.Fc_N);
+        eigenVector3d2CArray(this->T_B1, outputForces.L1_B1);
+        eigenVector3d2CArray(this->T_B2, outputForces.L2_B2);
+        eigenVector3d2CArray(this->psi_N, outputForces.psi_N);
+
+        // Log the filtered force and torque magnitudes
+        outputForces.Fc_mag_filtered = this->F_filtered_mag_t;
+        outputForces.L1_mag_filtered = this->T1_filtered_mag_t;
+        outputForces.L2_mag_filtered = this->T2_filtered_mag_t;
+
+        this->constraintElements.write(&outputForces, this->moduleID, CurrentClock);
+    }
 }
 
 /*! Update state method
@@ -417,11 +429,9 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessage();
-    if(this->effectorStatus){
-        this->computeFilteredForce(CurrentSimNanos);
-        this->computeFilteredTorque(CurrentSimNanos);
-        this->writeOutputStateMessage(CurrentSimNanos);
-    }
+    this->computeFilteredForce(CurrentSimNanos);
+    this->computeFilteredTorque(CurrentSimNanos);
+    this->writeOutputStateMessage(CurrentSimNanos);
 }
 
 /*! Filtering method to calculate filtered Constraint Force
