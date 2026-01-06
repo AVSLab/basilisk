@@ -26,6 +26,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Updated merge workflow to deploy develop branch documentation to https://avslab.github.io/basilisk/develop and master
+  branch documentation to https://avslab.github.io/basilisk.
 - Migrated supportData handling to a Pooch-based fetch system.
   .. warning::
 
