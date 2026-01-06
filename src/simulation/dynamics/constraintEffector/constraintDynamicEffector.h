@@ -121,8 +121,8 @@ public:
     double getC_a() const {return this->c_a;};
 
     Message<ConstDynEffectorMsgPayload> constraintElements; //!< output message with constraint force and torque on connected s/c
-    ReadFunctor<DeviceStatusMsgPayload> effectorStatusInMsg; //!< input message to record device status
-    uint64_t effectorStatus=1; //!< internal variable to toggle effector status
+    ReadFunctor<DeviceStatusMsgPayload> effectorStatusInMsg; //!< input message to toggle effector on/off
+    uint64_t effectorStatus=1; //!< effector toggle on/off (1-active, 0-inactive)
 
 private:
 
