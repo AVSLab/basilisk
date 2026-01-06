@@ -492,13 +492,6 @@ def getStateEffInertialPropName(segment, stateEff, propType):
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
-    elif segment == 4:
-        try:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
-            scObject.dynManager.getPropertyReference(propName)
-        except BasiliskError:
-            return "notHandedCorrectly"
-        return propName
 
 def getModernStateEffInertialPropName(scObject, segment, stateEff, propType):
     try:
