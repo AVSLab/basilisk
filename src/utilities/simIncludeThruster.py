@@ -473,6 +473,27 @@ class thrusterFactory(object):
 
         return
 
+    #
+    #    NanoAvionics EPSS C2:
+    #
+    #    Information Source:
+    #    https://satcatalog.s3.amazonaws.com/components/901/SatCatalog_-_NanoAvionics_-_EPSS_C2_-_Datasheet.pdf
+    #    https://www.youtube.com/watch?v=_YOA2swigBw
+    #
+    #    This is a NanoAvionics EPSS C2 monopropellant thruster
+    #
+    def EPSS_C2(self, TH):
+        # maximum thrust BOL [N]
+        TH.MaxThrust = 1.0
+        # minimum thruster on time [s]
+        TH.MinOnTime = 0.010    # Guesstimate based on similar thrusters & estimate based on minimum impulse
+        # Isp value [s]
+        TH.steadyIsp = 230.0    # Figure 5 of datasheet
+        # nozzle area [m^2]
+        TH.areaNozzle = 6.0e-7  # [m^2] Guesstimate
+
+        return
+
     def Blank_Thruster(self, TH):
         # this method doesn't set any thruster properties.  Rather, it is assumed that all thruster
         # properties are defined explicitly in the create function, or external to the create function
