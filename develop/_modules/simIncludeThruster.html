@@ -581,6 +581,27 @@
 
         <span class="k">return</span>
 
+    <span class="c1">#</span>
+    <span class="c1">#    NanoAvionics EPSS C2:</span>
+    <span class="c1">#</span>
+    <span class="c1">#    Information Source:</span>
+    <span class="c1">#    https://satcatalog.s3.amazonaws.com/components/901/SatCatalog_-_NanoAvionics_-_EPSS_C2_-_Datasheet.pdf</span>
+    <span class="c1">#    https://www.youtube.com/watch?v=_YOA2swigBw</span>
+    <span class="c1">#</span>
+    <span class="c1">#    This is a NanoAvionics EPSS C2 monopropellant thruster</span>
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">EPSS_C2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TH</span><span class="p">):</span>
+        <span class="c1"># maximum thrust BOL [N]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c1"># minimum thruster on time [s]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">MinOnTime</span> <span class="o">=</span> <span class="mf">0.010</span>    <span class="c1"># Guesstimate based on similar thrusters &amp; estimate based on minimum impulse</span>
+        <span class="c1"># Isp value [s]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="mf">230.0</span>    <span class="c1"># Figure 5 of datasheet</span>
+        <span class="c1"># nozzle area [m^2]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">areaNozzle</span> <span class="o">=</span> <span class="mf">6.0e-7</span>  <span class="c1"># [m^2] Guesstimate</span>
+
+        <span class="k">return</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">Blank_Thruster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TH</span><span class="p">):</span>
         <span class="c1"># this method doesn&#39;t set any thruster properties.  Rather, it is assumed that all thruster</span>
         <span class="c1"># properties are defined explicitly in the create function, or external to the create function</span>
