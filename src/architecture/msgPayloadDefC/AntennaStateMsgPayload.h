@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Department of Engineering Cybernetics, NTNU, Norway
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,18 +17,14 @@
 
  */
 
+#ifndef antennaStateMsg_H
+#define antennaStateMsg_H
 
-#ifndef BASILISK_GROUNDPOSITIONSIMMSG_H
-#define BASILISK_GROUNDPOSITIONSIMMSG_H
+#include <stdint.h>
 
-
-/*! @brief Message that defines the inertial location of a groundLocation at the current time.
+/*! @brief Antenna state output message definition
  */
 typedef struct {
-    double r_LN_N[3];    //!< Position vector of the location w.r.t. the inertial origin in the inertial frame
-    double r_LP_N[3];    //!< Position vector of the location with respect to the planet center in the inertial frame
-    double rHat_LP_N[3]; //!< [-] Surface normal vector from the target location in inertial coordinates
-}GroundStateMsgPayload;
-
-
-#endif //BASILISK_GROUNDPOSITIONSIMMSG_H
+    uint32_t antennaState;   //!< [-] antenna state: 0: OFF, 1: Rx, 2: Tx, 3: RxTx
+}AntennaStateMsgPayload;
+#endif /* antennaStateMsg_H */

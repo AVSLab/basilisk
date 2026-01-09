@@ -622,6 +622,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/thermal" THERMAL_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/communication" COMMUNICATION_TARGETS)
 
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
@@ -648,6 +649,7 @@ generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulatio
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${THERMAL_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${COMMUNICATION_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 # FSW ALGORITHMS
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)

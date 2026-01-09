@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Department of Engineering Cybernetics, NTNU, Norway
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,20 +15,24 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- */
+*/
 
+// AntennaDefinitions.h (new file in same directory)
+#ifndef ANTENNA_DEFINITIONS_H
+#define ANTENNA_DEFINITIONS_H
 
-#ifndef BASILISK_GROUNDPOSITIONSIMMSG_H
-#define BASILISK_GROUNDPOSITIONSIMMSG_H
-
-
-/*! @brief Message that defines the inertial location of a groundLocation at the current time.
- */
-typedef struct {
-    double r_LN_N[3];    //!< Position vector of the location w.r.t. the inertial origin in the inertial frame
-    double r_LP_N[3];    //!< Position vector of the location with respect to the planet center in the inertial frame
-    double rHat_LP_N[3]; //!< [-] Surface normal vector from the target location in inertial coordinates
-}GroundStateMsgPayload;
-
-
-#endif //BASILISK_GROUNDPOSITIONSIMMSG_H
+namespace AntennaTypes {
+    enum EnvironmentType {
+        ENVIRONMENT_SPACE    = 0,
+        ENVIRONMENT_EARTH    = 1,
+        _ENVIRONMENT_UNKNOWN = -1
+    };
+    enum AntennaStateEnum {
+        ANTENNA_OFF            = 0,
+        ANTENNA_RX             = 1,
+        ANTENNA_TX             = 2,
+        ANTENNA_RXTX           = 3,
+        _ANTENNA_STATE_UNKNOWN = -1
+    };
+} // namespace AntennaTypes
+#endif /* ANTENNA_DEFINITIONS_H */
