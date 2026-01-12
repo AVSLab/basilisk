@@ -26,8 +26,10 @@ import filecmp
 
 
 ROOT = Path(__file__).resolve().parents[3]
-make_script = ROOT.joinpath("src", "utilities", "supportData", "makeRegistry.py")
-registry_path = ROOT.joinpath("src", "utilities", "supportData", "registrySnippet.py")
+make_script = ROOT.joinpath("src", "utilities", "supportDataTools", "makeRegistry.py")
+registry_path = ROOT.joinpath(
+    "src", "utilities", "supportDataTools", "registrySnippet.py"
+)
 
 
 def main():
@@ -51,7 +53,7 @@ def main():
     if not filecmp.cmp(tmp_path, registry_path, shallow=False):
         print("❌ supportData/ changed, but registrySnippet.py is outdated.")
         print(
-            "   Run: python src/utilities/supportData/makeRegistry.py > src/utilities/supportData/registrySnippet.py"
+            "   Run: python src/utilities/supportDataTools/makeRegistry.py > src/utilities/supportDataTools/registrySnippet.py"
         )
         return 1
 
