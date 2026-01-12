@@ -19,7 +19,7 @@
 # Eclipse Condition Unit Test
 #
 # Purpose:  Test the proper function of the Eclipse environment module.
-#           This is done by comparing computed expected shadow factors in
+#           This is done by comparing computed expected illumination factors in
 #           particular eclipse conditions to what is simulated
 # Author:   Patrick Kenneally
 # Creation Date:  May. 31, 2017
@@ -29,6 +29,7 @@ import os
 import numpy as np
 
 import pytest
+import datetime
 from Basilisk import __path__
 from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraft
@@ -39,6 +40,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
+from Basilisk.architecture.messaging import EclipseMsgPayload
 
 bskPath = __path__[0]
 
@@ -54,7 +56,7 @@ def test_unitEclipse(show_plots, eclipseCondition, planet):
 **Test Description and Success Criteria**
 
 The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \
-expected output. It validates the computation of a shadow factor for total eclipse, partial eclipse,annular eclipse, \
+expected output. It validates the computation of a illumination factor for total eclipse, partial eclipse,annular eclipse, \
 and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then \
 repeated for all three.
 
@@ -72,9 +74,9 @@ annular case where Cartesian vectors are, instead, the initial inputs. Since the
 step process, the velocity is not necessarily needed as an input, so only a position vector is provided \
 for these cases.
 
-The shadow factor obtained through the module is compared to the expected result, which is either trivial or \
-calculated, depending on the eclipse type. Full eclipse and no eclipse shadow factors are compared without the \
-need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse shadow \
+The illumination factor obtained through the module is compared to the expected result, which is either trivial or \
+calculated, depending on the eclipse type. Full eclipse and no eclipse illumination factors are compared without the \
+need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse illumination \
 factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using \
 MATLAB and Spice data.
 
@@ -89,9 +91,9 @@ MATLAB and Spice data.
 
 **Description of Variables Being Tested**
 
-In each test scenario the shadow eclipse variable
+In each test scenario the illumination eclipse variable
 
-    ``shadowFactor``
+    ``illuminationFactor``
 
 is pulled from the log data and compared to expected truth values.
 
@@ -105,19 +107,19 @@ def test_unitEclipseCustom(show_plots):
 **Test Description and Success Criteria**
 
 The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \
-expected output. It validates the computation of a shadow factor for total eclipse using a custom gravity body.
+expected output. It validates the computation of a illumination factor for total eclipse using a custom gravity body.
 
 This unit test sets up a custom gravity body, the asteroid Bennu, using the planetEphemeris module (i.e. Spice \
 is not used for this test.) An empty spice planet message is created for the sun. The spacecraft is set 500 m \
 on the side of the asteroid opposite of the sun.
 
-The shadow factor obtained through the module is compared to the expected result, which is trivial to compute.
+The illumination factor obtained through the module is compared to the expected result, which is trivial to compute.
 
 **Description of Variables Being Tested**
 
-In this test scenario the shadow eclipse variable
+In this test scenario the illumination eclipse variable
 
-    ``shadowFactor``
+    ``illuminationFactor``
 
 is pulled from the log data and compared to the expected truth value.
 
@@ -249,55 +251,55 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     # Execute the simulation for one time step
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    eclipseData_0 = dataLog.shadowFactor
+    eclipseData_0 = dataLog.illuminationFactor
     # Obtain body position vectors to check with MATLAB
 
     errTol = 1E-12
     if planet == "earth":
         if eclipseCondition == "partial":
-            truthShadowFactor = 0.62310760206735027
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 0.62310760206735027
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth partial eclipse condition")
+                testMessages.append("Illumination Factor failed for Earth partial eclipse condition")
 
         elif eclipseCondition == "full":
-            truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 0.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth full eclipse condition")
+                testMessages.append("Illumination Factor failed for Earth full eclipse condition")
 
         elif eclipseCondition == "none":
-            truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 1.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth none eclipse condition")
+                testMessages.append("Illumination Factor failed for Earth none eclipse condition")
         elif eclipseCondition == "annular":
-            truthShadowFactor = 1.497253388113018e-04
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 1.497253388113018e-04
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth annular eclipse condition")
+                testMessages.append("Illumination Factor failed for Earth annular eclipse condition")
 
     elif planet == "mars":
         if eclipseCondition == "partial":
-            truthShadowFactor = 0.18745025055615416
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 0.18745025055615416
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars partial eclipse condition")
+                testMessages.append("Illumination Factor failed for Mars partial eclipse condition")
         elif eclipseCondition == "full":
-            truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 0.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars full eclipse condition")
+                testMessages.append("Illumination Factor failed for Mars full eclipse condition")
         elif eclipseCondition == "none":
-            truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 1.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars none eclipse condition")
+                testMessages.append("Illumination Factor failed for Mars none eclipse condition")
         elif eclipseCondition == "annular":
-            truthShadowFactor = 4.245137380531894e-05
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            truthilluminationFactor = 4.245137380531894e-05
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars annular eclipse condition")
+                testMessages.append("Illumination Factor failed for Mars annular eclipse condition")
 
     if testFailCount == 0:
         print("PASSED: " + planet + "-" + eclipseCondition)
@@ -386,14 +388,14 @@ def unitEclipseCustom(show_plots):
     # Execute the simulation for one time step
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    eclipseData_0 = dataLog.shadowFactor
+    eclipseData_0 = dataLog.illuminationFactor
     # Obtain body position vectors to check with MATLAB
 
     errTol = 1E-12
-    truthShadowFactor = 0.0
-    if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+    truthilluminationFactor = 0.0
+    if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
         testFailCount += 1
-        testMessages.append("Shadow Factor failed for custom full eclipse condition")
+        testMessages.append("Illumination Factor failed for custom full eclipse condition")
 
     if testFailCount == 0:
         print("PASSED: custom-full")
@@ -406,6 +408,44 @@ def unitEclipseCustom(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+def test_shadow_vs_illumination_alias_and_deprecation_behavior():
+    """
+    Check aliasing and deprecation behavior for EclipseMsgPayload.
+
+    If this test starts failing with a BSKUrgentDeprecationWarning (or the
+    deprecation utility starts treating ``shadowFactor`` as an error), that is
+    a signal that we have passed the deprecation deadline and should:
+
+    * remove support for ``EclipseMsgPayload.shadowFactor``, and
+    * remove this test (or update it to only check ``illuminationFactor``).
+    """
+    p = EclipseMsgPayload()
+
+    # 1. Test Forward Direction (New -> Old)
+    # Setting the new variable should update the old one silently (or logically).
+    p.illuminationFactor = 0.8
+    assert p.illuminationFactor == pytest.approx(0.8)
+
+    # Reading the OLD variable (shadowFactor) triggers the warning.
+    # We must catch it so it doesn't fail the "no warnings allowed" check.
+    with pytest.warns(Warning, match=".*illuminationFactor.*"):
+        val = p.shadowFactor
+    assert val == pytest.approx(0.8)
+
+    cutoff = datetime.date(2026, 12, 31)
+    today = datetime.date.today()
+
+    if today <= cutoff:
+        # 2. Test Backward Direction (Old -> New)
+        # Setting the deprecated name should emit a warning.
+        with pytest.warns(Warning, match=r".*illuminationFactor.*"):
+            p.shadowFactor = 0.5
+
+        # Verify it updated the new variable
+        assert p.illuminationFactor == pytest.approx(0.5)
+
+
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")
     unitEclipseCustom(False)
+    test_shadow_vs_illumination_alias_and_deprecation_behavior()

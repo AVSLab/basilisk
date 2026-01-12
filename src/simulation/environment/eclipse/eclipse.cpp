@@ -74,7 +74,7 @@ void Eclipse::readInputMessages()
     }
 }
 
-/*! This method takes the computed shadow factors and outputs them to the
+/*! This method takes the computed illumination factors and outputs them to the
  messaging system.
  @param CurrentClock The current simulation time (used for time stamping)
 
@@ -83,7 +83,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
     for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
         EclipseMsgPayload tmpEclipseMsg = {};
-        tmpEclipseMsg.shadowFactor = this->eclipseShadowFactors.at(c);
+        tmpEclipseMsg.illuminationFactor = this->eclipseIlluminationFactors.at(c);
         this->eclipseOutMsgs.at(c)->write(&tmpEclipseMsg, this->moduleID, CurrentClock);
     }
 }
@@ -112,13 +112,13 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
 
 
-    // Index to assign the shadowFactor for each body position (S/C)
+    // Index to assign the illuminationFactor for each body position (S/C)
     // being tracked
     int scIdx = 0;
 
     for(scIt = this->scStateBuffer.begin(); scIt != this->scStateBuffer.end(); scIt++)
     {
-        double tmpShadowFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
+        double tmpIlluminationFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
         double eclipsePlanetDistance = 0.0;
         int64_t eclipsePlanetKey = -1;
         r_BN_N = cArray2EigenVector3d(scIt->r_BN_N);
@@ -170,15 +170,15 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 
             if (fabs(l) < fabs(l_2)) {
                 if (c_2 < 0) { // total eclipse
-                    tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+                    tmpIlluminationFactor = this->computePercentIllumination(planetRadius, r_HB_N, s_BP_N);
                 } else { //c_2 > 0 // annular
-                    tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+                    tmpIlluminationFactor = this->computePercentIllumination(planetRadius, r_HB_N, s_BP_N);
                 }
             } else if (fabs(l) < fabs(l_1)) { // partial
-                tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+                tmpIlluminationFactor = this->computePercentIllumination(planetRadius, r_HB_N, s_BP_N);
             }
         }
-        this->eclipseShadowFactors.at(scIdx) = tmpShadowFactor;
+        this->eclipseIlluminationFactors.at(scIdx) = tmpIlluminationFactor;
         scIdx++;
     }
     this->writeOutputMessages(CurrentSimNanos);
@@ -188,12 +188,12 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
  @param planetRadius
  @param r_HB_N
  @param s_BP_N
- @return double fractionShadow The eclipse shadow fraction.
+ @return double fractionIllumination The eclipse illumination fraction.
  */
-double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
+double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
 {
     double area = 0.0;
-    double shadowFraction = 1.0; // Initialise to value for no eclipse
+    double illuminationFraction = 1.0; // Initialise to value for no eclipse
     double normR_HB_N = r_HB_N.norm();
     double normS_BP_N = s_BP_N.norm();
     double a = safeAsin(REQ_SUN*1000/normR_HB_N); // apparent radius of sun
@@ -204,19 +204,19 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     // In particular (c < a + b) must check last to avoid testing
     // with implausible a, b and c values
     if (c < b - a) { // total eclipse, implying a < b
-        shadowFraction = 0.0;
+        illuminationFraction = 0.0;
     } else if (c < a - b) { // partial maximum eclipse, implying a > b
         double areaSun = M_PI*a*a;
         double areaBody = M_PI*b*b;
         area = areaSun - areaBody;
-        shadowFraction = 1 - area/(M_PI*a*a);
+        illuminationFraction = 1 - area/(M_PI*a*a);
     } else if (c < a + b) { // partial eclipse
         double x = (c*c + a*a - b*b)/(2*c);
         double y = sqrt(a*a - x*x);
         area = a*a*safeAcos(x/a) + b*b*safeAcos((c-x)/b) - c*y;
-        shadowFraction = 1 - area/(M_PI*a*a);
+        illuminationFraction = 1 - area/(M_PI*a*a);
     }
-    return shadowFraction;
+    return illuminationFraction;
 }
 
 /*!
@@ -240,7 +240,7 @@ void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 
     // Now that we know the number of output messages we can size and zero
     // the eclipse data vector
-    this->eclipseShadowFactors.resize(this->eclipseOutMsgs.size());
+    this->eclipseIlluminationFactors.resize(this->eclipseOutMsgs.size());
 
 }
 

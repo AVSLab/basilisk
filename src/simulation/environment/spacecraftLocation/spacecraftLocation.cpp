@@ -36,7 +36,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
     this->theta_solar = -1.0;
-    this->min_shadow_factor = -1.0;
+    this->min_illumination_factor = -1.0;
+    this->min_shadow_factor = -2.0;      // Initialize to -2 (different from min_illumination_factor to detect if user sets it
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -89,6 +90,12 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
         if (this->aHat_B.norm() < 0.001) {
             bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set aHat_B if you specify theta_solar");
         }
+    }
+
+    if (this->min_shadow_factor != -2.0) {
+        // User set the old variable, so it is mapped to new one and a warning is printed to the user
+        this->min_illumination_factor = this->min_shadow_factor;
+        bskLogger.bskLog(BSK_WARNING, "spacecraftLocation: min_shadow_factor is deprecated and will be removed by 12/31/2026. Please use min_illumination_factor.");
     }
 }
 
@@ -283,8 +290,8 @@ SpacecraftLocation::computeAccess()
             }
 
             // Check if eclipse is valid
-            if (this->eclipseInMsg.isLinked() && this->min_shadow_factor > 0.0) {
-                if (eclipseInMsgData.shadowFactor < this->min_shadow_factor) {
+            if (this->eclipseInMsg.isLinked() && this->min_illumination_factor > 0.0) {
+                if (eclipseInMsgData.illuminationFactor < this->min_illumination_factor) {
                     this->accessMsgBuffer.at(c).hasAccess = 0;
                     this->accessMsgBuffer.at(c).hasIllumination = 0;
                 }

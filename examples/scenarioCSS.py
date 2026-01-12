@@ -246,7 +246,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     sunPositionMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsgData)
 
     if useEclipse:
-        eclipseMsgData = messaging.EclipseMsgPayload(shadowFactor=0.5)
+        eclipseMsgData = messaging.EclipseMsgPayload(illuminationFactor=0.5)
         eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
 
     def setupCSS(CSS):
@@ -418,6 +418,6 @@ if __name__ == "__main__":
          True,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform
-         False,       # useEclipse
+         True,       # useEclipse
          False        # useKelly
        )

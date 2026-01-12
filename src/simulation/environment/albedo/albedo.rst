@@ -126,9 +126,9 @@ conditions.
 The Mars' albedo data is obtained from `TES instrument <http://www.mars.asu.edu/data/tes_albedo/>`__ as VICAR format
 and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.
 
-``shadowFactorAtdA`` is optional to be calculated with eclipseCase being True or can be assigned
+``illuminationFactorAtdA`` is optional to be calculated with eclipseCase being True or can be assigned
 directly by the user with eclipseCase False. It is used as a multiplication term in Eq. :eq:`eq:albedo:10`, if defined.
-Therefore, when using albedo output on an instrument, it should be used after the shadow factor multiplication of the
+Therefore, when using albedo output on an instrument, it should be used after the illumination factor multiplication of the
 instrument, if exists.
 
 A limit can be set in order not to compute the albedo for planets too far by :math:`altitudeRateLimit` which is the
@@ -202,3 +202,8 @@ The model can  be added to a task like other simModels.
 .. code-block:: python
 
       unitTestSim.AddModelToTask(simTaskName, albModule)
+
+.. warning::
+   ``shadowFactor`` is **deprecated** in favor of ``illuminationFactor``.
+   In C/C++ both names work until **Dec 31, 2026**. After that date, code must
+   use ``illuminationFactor`` exclusively.

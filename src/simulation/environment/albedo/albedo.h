@@ -76,7 +76,7 @@ private:
     void getPlanetRadius(std::string planetSpiceName);        //!< gets the planet's radius
     void evaluateAlbedoModel(int idx);                        //!< evaluates the ALB model
     void computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload planetMsg, bool AlbArray, double outData[]); //!< computes the albedo at instrument's location
-    double computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N); //!< computes the shadow factor at dA
+    double computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N); //!< computes the illumination factor at dA
 
 public:
     std::vector<Message<AlbedoMsgPayload>*> albOutMsgs;         //!< vector of output messages for albedo data
@@ -84,13 +84,13 @@ public:
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs; //!< vector of planet data input data
 
-    BSKLogger bskLogger;                        //!< BSK Logging    
+    BSKLogger bskLogger;                        //!< BSK Logging
     int defaultNumLat;                                 //!< [-] default number of latitude grid points
     int defaultNumLon;                                 //!< [-] default number of longitude grid points
     Eigen::Vector3d nHat_B_default;             //!< [-] default value for unit normal of the instrument (spacecraft body)
     double fov_default;                         //!< [rad] default value for instrument's field of view half angle
     bool eclipseCase;                           //!< consider eclipse at dA, if true
-    double shadowFactorAtdA;                    //!< [-] shadow factor at incremental area
+    double illuminationFactorAtdA;                    //!< [-] illumination factor at incremental area
     double altitudeRateLimit;                   //!< [-] rate limit of the instrument's altitude to the planet's radius for albedo calculations
 
 private:

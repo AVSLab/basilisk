@@ -74,7 +74,7 @@ private:
     double projectedArea;                       //!< [m^2] Area of the sensor projected along the sun vector.
     SpicePlanetStateMsgPayload sunData;         //!< [-] sun message input buffer
     SCStatesMsgPayload stateCurrent;            //!< [-] Current spacecraft state
-    double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
+    double illuminationFactor;                        //!< [-] solar eclipse illumination factor from 0 (fully obscured) to 1 (fully visible)
     double sensorTemp;                          //!< [C] Current temperature
     double Q_in;                                //!< [W] Current power in
     double Q_out;                               //!< [W] Current power out

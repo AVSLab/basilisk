@@ -16,7 +16,7 @@ SimpleSolarPanel::SimpleSolarPanel(){
     this->panelEfficiency = -1;
     this->nHat_B.setZero();
 
-    this->shadowFactor = 1;
+    this->illuminationFactor = 1;
 
     return;
 
@@ -32,7 +32,7 @@ SimpleSolarPanel::~SimpleSolarPanel(){
  */
 void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
 
-    this->shadowFactor = 1.0;
+    this->illuminationFactor = 1.0;
 
     if (this->panelArea < 0.0) {
         bskLogger.bskLog(BSK_ERROR, "The panelArea must be a positive value");
@@ -76,7 +76,7 @@ bool SimpleSolarPanel::customReadMessages()
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
         sunVisibilityFactor = this->sunEclipseInMsg();
-        this->shadowFactor = sunVisibilityFactor.shadowFactor;
+        this->illuminationFactor = sunVisibilityFactor.illuminationFactor;
     }
     return(true);
 }
@@ -143,7 +143,7 @@ void SimpleSolarPanel::computeSunData()
 void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageSimMsg) {
 
     this->computeSunData();
-    double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->shadowFactor;
+    double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->illuminationFactor;
     powerUsageSimMsg->netPower = sunPowerFactor * this->projectedArea * this->panelEfficiency;
 
     return;
