@@ -56,10 +56,10 @@ radiative surface area, and :math:`T` is the current temperature of the sensor.
 The radiative thermal absorption, which comes only from the sun in this module, is given by:
 
 .. math::
-    \dot{Q}_{\text{absorb}} = shadowFactor \cdot \alpha \cdot S \cdot A_{\text{proj}}
+    \dot{Q}_{\text{absorb}} = illuminationFactor \cdot \alpha \cdot S \cdot A_{\text{proj}}
 
-The :math:`shadowFactor` is an indication of whether or not the sensor is in eclipse. A shadowFactor of 0 indicates the sensor
-is in eclipse. Likewise, a shadowFactor of 1 indicates the sensor is not in eclipse. The :math:`\alpha` parameter
+The :math:`illuminationFactor` is an indication of whether or not the sensor is in eclipse. An illuminationFactor of 0 indicates the sensor
+is in eclipse. Likewise, an illuminationFactor of 1 indicates the sensor is not in eclipse. The :math:`\alpha` parameter
 is the absorptivity constant of the sensor. :math:`S` is the solar constant, and :math:`A_{\text{proj}}` is the projected
 area of the sensor with respect to incoming solar flux.
 
@@ -166,6 +166,13 @@ The relevant messages are then connected to the module:
     sensorThermalModel.stateInMsg.subscribeTo(scStateMsg)
     sensorThermalModel.sensorStatusInMsg.subscribeTo(sensorStatusMsg)
     unitTestSim.AddModelToTask(unitTaskName, sensorThermalModel)
+
+.. warning::
+
+   ``shadowFactor`` is **deprecated** in favor of ``illuminationFactor``.
+   In C/C++ both names work until **Dec 31, 2026**. After that date, code must
+   use ``illuminationFactor`` exclusively.
+
 
 ----
 

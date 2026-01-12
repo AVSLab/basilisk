@@ -140,19 +140,19 @@
 </div>
 <dl class="py function" id="module-test_solarFlux">
 <dt class="sig sig-object py" id="test_solarFlux.test_solarFlux">
-<span class="sig-prename descclassname"><span class="pre">test_solarFlux.</span></span><span class="sig-name descname"><span class="pre">test_solarFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positionFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shadowFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseMsgName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relTol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_solarFlux.html#test_solarFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_solarFlux.test_solarFlux" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">test_solarFlux.</span></span><span class="sig-name descname"><span class="pre">test_solarFlux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positionFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">illuminationFactor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseMsgName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relTol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_solarFlux.html#test_solarFlux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_solarFlux.test_solarFlux" title="Link to this definition"></a></dt>
 <dd><p><strong>Test Description</strong></p>
 <p>Test that solar flux is appropriately modified depending on spacecraft distance from the sun.
 To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write
 the flux at <code class="docutils literal notranslate"><span class="pre">positionFactor*AU</span></code> and the flux is checked to be <code class="docutils literal notranslate"><span class="pre">positionFactor**2</span></code> of that at 1 AU to within
 a relative tolerance of relTol.
-The application of the shadowFactor is also checked as a multiple of the un-shadowed flux.</p>
+The application of the illuminationFactor is also checked as a multiple of the un-shadowed flux.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>positionFactor</strong> (<em>float</em>) – positive,
 a factor by which to multiply the original s/c position to check flux at a new position</p></li>
-<li><p><strong>shadowFactor</strong> (<em>float</em>) – between 0 and 1,
+<li><p><strong>illuminationFactor</strong> (<em>float</em>) – between 0 and 1,
 the eclipse factor by which to multiple the solar flux at a position</p></li>
 <li><p><strong>relTol</strong> (<em>float</em>) – positive, the relative tolerance to which the result is checked.</p></li>
 </ul>

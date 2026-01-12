@@ -372,7 +372,7 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7Eclipse19writeOutputMessagesE8uint64_t">
 <span id="_CPPv3N7Eclipse19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N7Eclipse19writeOutputMessagesE8uint64_t"></span><span id="Eclipse::writeOutputMessages__uint64_t"></span><span class="target" id="class_eclipse_1a8f3dfc3408704b88c75527a68c7812b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
-<dd><p>This method takes the computed shadow factors and outputs them to the messaging system. </p>
+<dd><p>This method takes the computed illumination factors and outputs them to the messaging system. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
@@ -451,8 +451,8 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 </dd></dl>
 
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
-<span id="_CPPv3N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Eclipse::computePercentShadow__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_eclipse_1a1148d555d37f2b6cecd0461732cbb7f2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePercentShadow</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetRadius</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_HB_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s_BP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse26computePercentIlluminationEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N7Eclipse26computePercentIlluminationEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N7Eclipse26computePercentIlluminationEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Eclipse::computePercentIllumination__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_eclipse_1a7b2be06d350e257c324f9ed578b959aa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePercentIllumination</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetRadius</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_HB_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s_BP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7Eclipse26computePercentIlluminationEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
 <dd><p>This method computes the fraction of sunlight given an eclipse. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -463,7 +463,7 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>double fractionShadow The eclipse shadow fraction. </p>
+<dd class="field-even"><p>double fractionIllumination The eclipse illumination fraction. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,9 +510,9 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 </dd></dl>
 
 <dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse20eclipseShadowFactorsE">
-<span id="_CPPv3N7Eclipse20eclipseShadowFactorsE"></span><span id="_CPPv2N7Eclipse20eclipseShadowFactorsE"></span><span id="Eclipse::eclipseShadowFactors__std::vector:double:"></span><span class="target" id="class_eclipse_1a64de16c3fc3f2d76a8e9087c05157e2d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseShadowFactors</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse20eclipseShadowFactorsE" title="Link to this definition"></a><br /></dt>
-<dd><p>vector of shadow factor output values </p>
+<dt class="sig sig-object cpp" id="_CPPv4N7Eclipse26eclipseIlluminationFactorsE">
+<span id="_CPPv3N7Eclipse26eclipseIlluminationFactorsE"></span><span id="_CPPv2N7Eclipse26eclipseIlluminationFactorsE"></span><span id="Eclipse::eclipseIlluminationFactors__std::vector:double:"></span><span class="target" id="class_eclipse_1ac6c395f0bcd5081d84eaa8858b3c7da1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseIlluminationFactors</span></span></span><a class="headerlink" href="#_CPPv4N7Eclipse26eclipseIlluminationFactorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of illumination factor output values </p>
 </dd></dl>
 
 </div>

@@ -53,13 +53,13 @@ Overall, this module was created because many other modules need this informatio
 
 Equations
 ^^^^^^^^^
-The flux is calculated by scaling the flux at 1 AU and applying the :ref:`EclipseMsgPayload` ``shadowFactor``:
+The flux is calculated by scaling the flux at 1 AU and applying the :ref:`EclipseMsgPayload` ``illuminationFactor``:
 
 .. math::
 
     F_{\mathrm{out}} = F_{\mathrm{Earth}} * \frac{\mathrm{AU}^2}{r_{\mathrm{Sun}}^2} * f_s
 
-where :math:`r_{\mathrm{Sun}}` is the distance between the spacecraft and the sun and :math:`f_s` is the shadow factor.
+where :math:`r_{\mathrm{Sun}}` is the distance between the spacecraft and the sun and :math:`f_s` is the illumination factor.
 
 
 User Guide
@@ -85,6 +85,11 @@ The names below are only special in that they are useful defaults and are actual
 
     dataLog = sf.solarFluxOutMsg.recorder()
 
+.. warning::
+
+   ``shadowFactor`` is **deprecated** in favor of ``illuminationFactor``.
+   In C/C++ both names work until **Dec 31, 2026**. After that date, code must
+   use ``illuminationFactor`` exclusively.
 
 
 ----

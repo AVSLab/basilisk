@@ -217,12 +217,29 @@
     <span class="k">return</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">plot_shadow_fraction</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">shadow_factor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_illumination_fraction">
+<a class="viewcode-back" href="../examples/BskSim/plotting/BSK_Plotting.html#BSK_Plotting.plot_illumination_fraction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_illumination_fraction</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">illumination_factor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Preferred plot for eclipse illumination fraction.&quot;&quot;&quot;</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">shadow_factor</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">illumination_factor</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time min&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Shadow Fraction&#39;</span><span class="p">)</span>
-    <span class="k">return</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Illumination Fraction&#39;</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="plot_shadow_fraction">
+<a class="viewcode-back" href="../examples/BskSim/plotting/BSK_Plotting.html#BSK_Plotting.plot_shadow_fraction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_shadow_fraction</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">shadow_factor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Backwards-compatible alias for plot_illumination_fraction.</span>
+
+<span class="sd">    Kept for older scenarios that still call plot_shadow_fraction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Treat shadow_factor the same way as illumination_factor for plotting.</span>
+    <span class="k">return</span> <span class="n">plot_illumination_fraction</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">shadow_factor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_sun_point</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">sunPoint</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

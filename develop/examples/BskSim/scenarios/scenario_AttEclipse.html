@@ -158,7 +158,7 @@ changing the <code class="docutils literal notranslate"><span class="pre">fswRat
 <p>The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
 The user is cautioned when setting a changing the standard time step
 as too large a time step can lead to propagated inaccuracy.</p>
-<p>When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
+<p>When the simulation completes several plots are shown for the eclipse illumination factor, the sun direction vector,
 attitude error, RW motor torque, and RW speed.</p>
 </section>
 <section id="custom-dynamics-configurations-instructions">
@@ -194,9 +194,9 @@ coarse sun sensors. The algorithm requires a minimum of three CSS to operate cor
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">showPlots</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+<p>This plot illustrates the illumination fraction calculated by the CSS as the spacecraft orbits Earth and passes through
 the Earth’s shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.</p>
-<img alt="../../../_images/scenario_AttEclipse_shadowFraction.svg" class="align-center" src="../../../_images/scenario_AttEclipse_shadowFraction.svg" />
+<img alt="../../../_images/scenario_AttEclipse_illuminationFraction.svg" class="align-center" src="../../../_images/scenario_AttEclipse_illuminationFraction.svg" />
 <p>The <a class="reference internal" href="../../../Documentation/fswAlgorithms/attDetermination/CSSEst/cssWlsEst.html#csswlsest"><span class="std std-ref">Module: cssWlsEst</span></a> module calculates the position of the sun based on input from the CSS.
 The corresponding vector’s three
 components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to

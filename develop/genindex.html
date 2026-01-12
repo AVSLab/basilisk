@@ -360,6 +360,8 @@
 </li>
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo15getPlanetRadiusENSt6stringE">Albedo::getPlanetRadius (C++ function)</a>
 </li>
+      <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo22illuminationFactorAtdAE">Albedo::illuminationFactorAtdA (C++ member)</a>
+</li>
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo7latDiffE">Albedo::latDiff (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo7lonDiffE">Albedo::lonDiff (C++ member)</a>
@@ -407,8 +409,6 @@
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo15scStatesMsgDataE">Albedo::scStatesMsgData (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo17SfluxAtInstrumentE">Albedo::SfluxAtInstrument (C++ member)</a>
-</li>
-      <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo16shadowFactorAtdAE">Albedo::shadowFactorAtdA (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/albedo/albedo.html#_CPPv4N6Albedo8sigma_BNE">Albedo::sigma_BN (C++ member)</a>
 </li>
@@ -3516,13 +3516,13 @@
 </li>
       <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse9bskLoggerE">Eclipse::bskLogger (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse20computePercentShadowEdN5Eigen8Vector3dEN5Eigen8Vector3dE">Eclipse::computePercentShadow (C++ function)</a>
+      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse26computePercentIlluminationEdN5Eigen8Vector3dEN5Eigen8Vector3dE">Eclipse::computePercentIllumination (C++ function)</a>
 </li>
       <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse7EclipseEv">Eclipse::Eclipse (C++ function)</a>
 </li>
-      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse14eclipseOutMsgsE">Eclipse::eclipseOutMsgs (C++ member)</a>
+      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse26eclipseIlluminationFactorsE">Eclipse::eclipseIlluminationFactors (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse20eclipseShadowFactorsE">Eclipse::eclipseShadowFactors (C++ member)</a>
+      <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse14eclipseOutMsgsE">Eclipse::eclipseOutMsgs (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/eclipse/eclipse.html#_CPPv4N7Eclipse25getPlanetEquatorialRadiusENSt6stringE">Eclipse::getPlanetEquatorialRadius (C++ function)</a>
 </li>
@@ -6033,6 +6033,8 @@
 </li>
       <li><a href="Documentation/simulation/environment/magneticFieldWMM/GeomagnetismHeader.html#c.IGRF_ERROR_MULTIPLIER">IGRF_ERROR_MULTIPLIER (C macro)</a>
 </li>
+      <li><a href="Documentation/architecture/msgPayloadDefC/EclipseMsgPayload.html#c.illuminationFactor">illuminationFactor (C macro)</a>
+</li>
       <li><a href="Documentation/fswAlgorithms/sensorInterfaces/IMUSensorData/imuComm.html#_CPPv413IMUConfigData">IMUConfigData (C++ struct)</a>
 </li>
       <li><a href="Documentation/fswAlgorithms/sensorInterfaces/IMUSensorData/imuComm.html#_CPPv4N13IMUConfigData9bskLoggerE">IMUConfigData::bskLogger (C++ member)</a>
@@ -6267,10 +6269,10 @@
 </li>
       <li><a href="Documentation/architecture/msgPayloadDefC/InertialFilterMsgPayload.html#_CPPv4N24InertialFilterMsgPayload5stateE">InertialFilterMsgPayload::state (C++ member)</a>
 </li>
-      <li><a href="Documentation/architecture/msgPayloadDefC/InertialFilterMsgPayload.html#_CPPv4N24InertialFilterMsgPayload7timeTagE">InertialFilterMsgPayload::timeTag (C++ member)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="Documentation/architecture/msgPayloadDefC/InertialFilterMsgPayload.html#_CPPv4N24InertialFilterMsgPayload7timeTagE">InertialFilterMsgPayload::timeTag (C++ member)</a>
+</li>
       <li><a href="Documentation/architecture/msgPayloadDefC/InertialHeadingMsgPayload.html#_CPPv425InertialHeadingMsgPayload">InertialHeadingMsgPayload (C++ struct)</a>
 </li>
       <li><a href="Documentation/architecture/msgPayloadDefC/InertialHeadingMsgPayload.html#_CPPv4N25InertialHeadingMsgPayload9rHat_XN_NE">InertialHeadingMsgPayload::rHat_XN_N (C++ member)</a>
@@ -12158,6 +12160,8 @@
 </li>
       <li><a href="Documentation/simulation/environment/groundLocation/_UnitTest/test_unitGroundLocation.html#test_unitGroundLocation.plot_geometry">plot_geometry() (in module test_unitGroundLocation)</a>
 </li>
+      <li><a href="examples/BskSim/plotting/BSK_Plotting.html#BSK_Plotting.plot_illumination_fraction">plot_illumination_fraction() (in module BSK_Plotting)</a>
+</li>
       <li><a href="examples/scenarioMtbMomentumManagement.html#scenarioMtbMomentumManagement.plot_magnetic_field">plot_magnetic_field() (in module scenarioMtbMomentumManagement)</a>
 
       <ul>
@@ -12360,6 +12364,8 @@
         <li><a href="examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rw_voltages">(in module scenarioAttitudeFeedbackRW)</a>
 </li>
       </ul></li>
+      <li><a href="examples/BskSim/plotting/BSK_Plotting.html#BSK_Plotting.plot_shadow_fraction">plot_shadow_fraction() (in module BSK_Plotting)</a>
+</li>
       <li><a href="examples/scenarioSepMomentumManagement.html#scenarioSepMomentumManagement.plot_solar_array_angle">plot_solar_array_angle() (in module scenarioSepMomentumManagement)</a>
 </li>
       <li><a href="examples/scenarioSepMomentumManagement.html#scenarioSepMomentumManagement.plot_solar_array_pointing_error">plot_solar_array_pointing_error() (in module scenarioSepMomentumManagement)</a>
@@ -12514,10 +12520,10 @@
 </li>
       <li><a href="Documentation/simulation/power/_GeneralModuleFiles/powerNodeBase.html#_CPPv4N13PowerNodeBase15nodePowerOutMsgE">PowerNodeBase::nodePowerOutMsg (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/power/_GeneralModuleFiles/powerNodeBase.html#_CPPv4N13PowerNodeBase15nodeStatusInMsgE">PowerNodeBase::nodeStatusInMsg (C++ member)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="Documentation/simulation/power/_GeneralModuleFiles/powerNodeBase.html#_CPPv4N13PowerNodeBase15nodeStatusInMsgE">PowerNodeBase::nodeStatusInMsg (C++ member)</a>
+</li>
       <li><a href="Documentation/simulation/power/_GeneralModuleFiles/powerNodeBase.html#_CPPv4N13PowerNodeBase13nodeStatusMsgE">PowerNodeBase::nodeStatusMsg (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/power/_GeneralModuleFiles/powerNodeBase.html#_CPPv4N13PowerNodeBase13PowerNodeBaseEv">PowerNodeBase::PowerNodeBase (C++ function)</a>
@@ -16067,6 +16073,8 @@
 </li>
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal20evaluateThermalModelE8uint64_t">SensorThermal::evaluateThermalModel (C++ function)</a>
 </li>
+      <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal18illuminationFactorE">SensorThermal::illuminationFactor (C++ member)</a>
+</li>
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal6nHat_BE">SensorThermal::nHat_B (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal13projectedAreaE">SensorThermal::projectedArea (C++ member)</a>
@@ -16100,8 +16108,6 @@
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal10sensorTempE">SensorThermal::sensorTemp (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal13SensorThermalEv">SensorThermal::SensorThermal (C++ function)</a>
-</li>
-      <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal12shadowFactorE">SensorThermal::shadowFactor (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/thermal/sensorThermal/sensorThermal.html#_CPPv4N13SensorThermal12stateCurrentE">SensorThermal::stateCurrent (C++ member)</a>
 </li>
@@ -16624,6 +16630,8 @@
 </li>
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel18evaluatePowerModelEP24PowerNodeUsageMsgPayload">SimpleSolarPanel::evaluatePowerModel (C++ function)</a>
 </li>
+      <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel18illuminationFactorE">SimpleSolarPanel::illuminationFactor (C++ member)</a>
+</li>
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel6nHat_BE">SimpleSolarPanel::nHat_B (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel9panelAreaE">SimpleSolarPanel::panelArea (C++ member)</a>
@@ -16633,8 +16641,6 @@
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel13projectedAreaE">SimpleSolarPanel::projectedArea (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel18setPanelParametersEN5Eigen8Vector3dEdd">SimpleSolarPanel::setPanelParameters (C++ function)</a>
-</li>
-      <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel12shadowFactorE">SimpleSolarPanel::shadowFactor (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/power/simpleSolarPanel/simpleSolarPanel.html#_CPPv4N16SimpleSolarPanel16SimpleSolarPanelEv">SimpleSolarPanel::SimpleSolarPanel (C++ function)</a>
 </li>
@@ -17535,6 +17541,8 @@
       <li><a href="Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#_CPPv4N18SpacecraftLocation16eclipseInMsgDataE">SpacecraftLocation::eclipseInMsgData (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#_CPPv4N18SpacecraftLocation12maximumRangeE">SpacecraftLocation::maximumRange (C++ member)</a>
+</li>
+      <li><a href="Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#_CPPv4N18SpacecraftLocation23min_illumination_factorE">SpacecraftLocation::min_illumination_factor (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#_CPPv4N18SpacecraftLocation17min_shadow_factorE">SpacecraftLocation::min_shadow_factor (C++ member)</a>
 </li>
@@ -21750,6 +21758,8 @@
       <li><a href="Documentation/simulation/onboardDataHandling/storageUnit/_UnitTest/test_partitionedStorageUnit.html#test_partitionedStorageUnit.test_set_data_buffer_partition">test_set_data_buffer_partition() (in module test_partitionedStorageUnit)</a>
 </li>
       <li><a href="Documentation/simulation/dynamics/reactionWheels/_UnitTest/test_reactionWheelStateEffector_integrated.html#test_reactionWheelStateEffector_integrated.test_setJs">test_setJs() (in module test_reactionWheelStateEffector_integrated)</a>
+</li>
+      <li><a href="Documentation/simulation/environment/eclipse/_UnitTest/test_eclipse.html#test_eclipse.test_shadow_vs_illumination_alias_and_deprecation_behavior">test_shadow_vs_illumination_alias_and_deprecation_behavior() (in module test_eclipse)</a>
 </li>
       <li><a href="Documentation/fswAlgorithms/sensorInterfaces/simpleInstrumentController/_UnitTest/test_simpleInstrumentController.html#test_simpleInstrumentController.test_simple_instrument_controller">test_simple_instrument_controller() (in module test_simpleInstrumentController)</a>
 </li>

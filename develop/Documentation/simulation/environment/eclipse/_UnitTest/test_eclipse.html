@@ -139,13 +139,26 @@
 <div class="toctree-wrapper compound">
 </div>
 <dl class="py function" id="module-test_eclipse">
+<dt class="sig sig-object py" id="test_eclipse.test_shadow_vs_illumination_alias_and_deprecation_behavior">
+<span class="sig-prename descclassname"><span class="pre">test_eclipse.</span></span><span class="sig-name descname"><span class="pre">test_shadow_vs_illumination_alias_and_deprecation_behavior</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_eclipse.html#test_shadow_vs_illumination_alias_and_deprecation_behavior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_eclipse.test_shadow_vs_illumination_alias_and_deprecation_behavior" title="Link to this definition"></a></dt>
+<dd><p>Check aliasing and deprecation behavior for EclipseMsgPayload.</p>
+<p>If this test starts failing with a BSKUrgentDeprecationWarning (or the
+deprecation utility starts treating <code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code> as an error), that is
+a signal that we have passed the deprecation deadline and should:</p>
+<ul class="simple">
+<li><p>remove support for <code class="docutils literal notranslate"><span class="pre">EclipseMsgPayload.shadowFactor</span></code>, and</p></li>
+<li><p>remove this test (or update it to only check <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code>).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="test_eclipse.test_unitEclipse">
 <span class="sig-prename descclassname"><span class="pre">test_eclipse.</span></span><span class="sig-name descname"><span class="pre">test_unitEclipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseCondition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_eclipse.html#test_unitEclipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_eclipse.test_unitEclipse" title="Link to this definition"></a></dt>
 <dd><p><strong>Test Description and Success Criteria</strong></p>
-<p>The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with expected output. It validates the computation of a shadow factor for total eclipse, partial eclipse,annular eclipse, and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then repeated for all three.</p>
+<p>The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with expected output. It validates the computation of a illumination factor for total eclipse, partial eclipse,annular eclipse, and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then repeated for all three.</p>
 <p>Earth is set as the zero base for all eclipse types to test it as the occulting body. For full, partial, and no eclipse cases, orbital elements describing the spacecraft states are then converted to Cartesian vectors. These orbital elements vary for each eclipse type since the Sun and planet states are fixed. The conversion is made using the orbitalMotion elem2rv function, where the inputs are six orbital elements (a, e, i, Omega, omega, f) and the outputs are Cartesian position and velocity vectors. For the annular eclipse case, the conversion is avoided and a Cartesian position vector is initially provided instead. The vectors are then passed into spacecraft and, subsequently, the eclipse module through the Basilisk messaging system.</p>
 <p>Testing the no eclipse case with Mars as the occulting body is the same as the Earth no eclipse test, except Mars is set as the zero base. The Mars full, partial, and annular eclipse cases, however, are like the Earth annular case where Cartesian vectors are, instead, the initial inputs. Since the test is performed as a single step process, the velocity is not necessarily needed as an input, so only a position vector is provided for these cases.</p>
-<p>The shadow factor obtained through the module is compared to the expected result, which is either trivial or calculated, depending on the eclipse type. Full eclipse and no eclipse shadow factors are compared without the need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse shadow factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using MATLAB and Spice data.</p>
+<p>The illumination factor obtained through the module is compared to the expected result, which is either trivial or calculated, depending on the eclipse type. Full eclipse and no eclipse illumination factors are compared without the need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse illumination factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using MATLAB and Spice data.</p>
 <p><strong>Test Parameters:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">eclipseCondition</span></code>: [string]
@@ -154,9 +167,9 @@ defines if the eclipse is partial, full, none or annular</p></li>
 defines which planet to use.  Options include “earth” and “mars”</p></li>
 </ul>
 <p><strong>Description of Variables Being Tested</strong></p>
-<p>In each test scenario the shadow eclipse variable</p>
+<p>In each test scenario the illumination eclipse variable</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code></p>
 </div></blockquote>
 <p>is pulled from the log data and compared to expected truth values.</p>
 </dd></dl>
@@ -165,13 +178,13 @@ defines which planet to use.  Options include “earth” and “mars”</p></li
 <dt class="sig sig-object py" id="test_eclipse.test_unitEclipseCustom">
 <span class="sig-prename descclassname"><span class="pre">test_eclipse.</span></span><span class="sig-name descname"><span class="pre">test_unitEclipseCustom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_eclipse.html#test_unitEclipseCustom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_eclipse.test_unitEclipseCustom" title="Link to this definition"></a></dt>
 <dd><p><strong>Test Description and Success Criteria</strong></p>
-<p>The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with expected output. It validates the computation of a shadow factor for total eclipse using a custom gravity body.</p>
+<p>The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with expected output. It validates the computation of a illumination factor for total eclipse using a custom gravity body.</p>
 <p>This unit test sets up a custom gravity body, the asteroid Bennu, using the planetEphemeris module (i.e. Spice is not used for this test.) An empty spice planet message is created for the sun. The spacecraft is set 500 m on the side of the asteroid opposite of the sun.</p>
-<p>The shadow factor obtained through the module is compared to the expected result, which is trivial to compute.</p>
+<p>The illumination factor obtained through the module is compared to the expected result, which is trivial to compute.</p>
 <p><strong>Description of Variables Being Tested</strong></p>
-<p>In this test scenario the shadow eclipse variable</p>
+<p>In this test scenario the illumination eclipse variable</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code></p>
 </div></blockquote>
 <p>is pulled from the log data and compared to the expected truth value.</p>
 </dd></dl>

@@ -143,7 +143,7 @@
 <span class="sd">The user is cautioned when setting a changing the standard time step</span>
 <span class="sd">as too large a time step can lead to propagated inaccuracy.</span>
 
-<span class="sd">When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,</span>
+<span class="sd">When the simulation completes several plots are shown for the eclipse illumination factor, the sun direction vector,</span>
 <span class="sd">attitude error, RW motor torque, and RW speed.</span>
 
 <span class="sd">Custom Dynamics Configurations Instructions</span>
@@ -186,10 +186,10 @@
 
 <span class="sd">    showPlots = True</span>
 
-<span class="sd">This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through</span>
+<span class="sd">This plot illustrates the illumination fraction calculated by the CSS as the spacecraft orbits Earth and passes through</span>
 <span class="sd">the Earth&#39;s shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.</span>
 
-<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_shadowFraction.svg</span>
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_illuminationFraction.svg</span>
 <span class="sd">   :align: center</span>
 
 <span class="sd">The :ref:`CSSWlsEst` module calculates the position of the sun based on input from the CSS.</span>
@@ -249,7 +249,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">scenario_AttitudeEclipse</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fswRate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dynRate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;scenario_AttitudeEclipse&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">illuminationRec</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span> <span class="o">=</span> <span class="kc">None</span>
@@ -295,7 +295,7 @@
         <span class="n">samplingTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">processTasksTimeStep</span>
 
         <span class="c1"># Dynamics process outputs: log messages below if desired.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">illuminationRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
 
         <span class="c1"># FSW process outputs</span>
@@ -303,7 +303,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">navStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">illuminationRec</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span><span class="p">)</span>
@@ -318,7 +318,7 @@
         <span class="n">num_RW</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># number of wheels used in the scenario</span>
 
         <span class="c1"># Dynamics process outputs: pull log messages below if any</span>
-        <span class="n">shadowFactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span><span class="o">.</span><span class="n">shadowFactor</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">illuminationFactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">illuminationRec</span><span class="o">.</span><span class="n">illuminationFactor</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># FSW process outputs</span>
         <span class="n">dataUsReq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="o">.</span><span class="n">motorTorque</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -336,7 +336,7 @@
         <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">omega_BR_B</span><span class="p">)</span>
         <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">RW_speeds</span><span class="p">,</span> <span class="n">num_RW</span><span class="p">)</span>
 
-        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_shadow_fraction</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">shadowFactor</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_illumination_fraction</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">illuminationFactor</span><span class="p">)</span>
         <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_sun_point</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sunPoint</span><span class="p">)</span>
 
         <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
@@ -344,7 +344,7 @@
             <span class="n">BSK_plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitudeErrorNorm&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rateError&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeed&quot;</span><span class="p">,</span> <span class="s2">&quot;shadowFraction&quot;</span><span class="p">,</span> <span class="s2">&quot;sunDirectionVector&quot;</span><span class="p">]</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitudeErrorNorm&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rateError&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeed&quot;</span><span class="p">,</span> <span class="s2">&quot;illuminationFraction&quot;</span><span class="p">,</span> <span class="s2">&quot;sunDirectionVector&quot;</span><span class="p">]</span>
             <span class="n">figureList</span> <span class="o">=</span> <span class="n">BSK_plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">figureList</span></div>

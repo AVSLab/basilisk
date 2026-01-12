@@ -184,7 +184,7 @@ provides information on what this message is used for.</p>
 </tr>
 <tr class="row-even"><td><p>eclipseInMsg</p></td>
 <td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
-<td><p>(optional) eclipse input message. Used for illumination checking if the message is connected and <code class="docutils literal notranslate"><span class="pre">min_shadow_factor</span></code> is set.</p></td>
+<td><p>(optional) eclipse input message. Used for illumination checking if the message is connected and <code class="docutils literal notranslate"><span class="pre">min_illumination_factor</span></code> is set.</p></td>
 </tr>
 <tr class="row-odd"><td><p>accessOutMsgs</p></td>
 <td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#accessmsgpayload"><span class="std std-ref">AccessMsgPayload</span></a></p></td>
@@ -246,7 +246,7 @@ of one spacecraft from another.</p>
 <p>If the <code class="docutils literal notranslate"><span class="pre">sunInMsg</span></code> is connected and <span class="math notranslate nohighlight">\(\theta_{\text{solar,max}}\)</span> is set, the illumination of the surface is considered, treating <span class="math notranslate nohighlight">\(\hat{\bf a}\)</span> as the surface normal. Taking <span class="math notranslate nohighlight">\(\hat{\bf s}\)</span> as the sun vector, the illumination incidence condition is met if</p>
 <div class="math notranslate nohighlight">
 \[\arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}\]</div>
-<p>If an eclipse message is connected and <code class="docutils literal notranslate"><span class="pre">min_shadow_factor</span></code> is set, the module will also check that the shadow factor is above this threshold.</p>
+<p>If an eclipse message is connected and <code class="docutils literal notranslate"><span class="pre">min_illumination_factor</span></code> is set, the module will also check that the shadow factor is above this threshold.</p>
 </section>
 </section>
 <section id="user-guide">
@@ -280,6 +280,12 @@ of one spacecraft from another.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataRec0</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
 <span class="n">dataRec1</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">min_shadow_factor</span></code> is <strong>deprecated</strong> in favor of <code class="docutils literal notranslate"><span class="pre">min_illumination_factor</span></code>.
+In C/C++ both names work until <strong>Dec 31, 2026</strong>. After that date, code must
+use <code class="docutils literal notranslate"><span class="pre">min_illumination_factor</span></code> exclusively.</p>
 </div>
 <hr class="docutils" />
 <dl class="cpp class">
@@ -377,9 +383,15 @@ of one spacecraft from another.</p>
 </dd></dl>
 
 <dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation23min_illumination_factorE">
+<span id="_CPPv3N18SpacecraftLocation23min_illumination_factorE"></span><span id="_CPPv2N18SpacecraftLocation23min_illumination_factorE"></span><span id="SpacecraftLocation::min_illumination_factor__double"></span><span class="target" id="class_spacecraft_location_1a13803245bbf0aa9740506a2bad789111"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">min_illumination_factor</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation23min_illumination_factorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] (optional) minimum amount of illumination due to eclipse necessary to observe </p>
+</dd></dl>
+
+<dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4N18SpacecraftLocation17min_shadow_factorE">
 <span id="_CPPv3N18SpacecraftLocation17min_shadow_factorE"></span><span id="_CPPv2N18SpacecraftLocation17min_shadow_factorE"></span><span id="SpacecraftLocation::min_shadow_factor__double"></span><span class="target" id="class_spacecraft_location_1aff9ee0088956bf48fcc8af099a3d530b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">min_shadow_factor</span></span></span><a class="headerlink" href="#_CPPv4N18SpacecraftLocation17min_shadow_factorE" title="Link to this definition"></a><br /></dt>
-<dd><p>[] (optional) minimum amount of illumination due to eclipse necessary to observe </p>
+<dd><p>[] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead. </p>
 </dd></dl>
 
 <dl class="cpp var">

@@ -195,10 +195,10 @@
 </section>
 <section id="equations">
 <h3>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h3>
-<p>The flux is calculated by scaling the flux at 1 AU and applying the <a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a> <code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code>:</p>
+<p>The flux is calculated by scaling the flux at 1 AU and applying the <a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a> <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code>:</p>
 <div class="math notranslate nohighlight">
 \[F_{\mathrm{out}} = F_{\mathrm{Earth}} * \frac{\mathrm{AU}^2}{r_{\mathrm{Sun}}^2} * f_s\]</div>
-<p>where <span class="math notranslate nohighlight">\(r_{\mathrm{Sun}}\)</span> is the distance between the spacecraft and the sun and <span class="math notranslate nohighlight">\(f_s\)</span> is the shadow factor.</p>
+<p>where <span class="math notranslate nohighlight">\(r_{\mathrm{Sun}}\)</span> is the distance between the spacecraft and the sun and <span class="math notranslate nohighlight">\(f_s\)</span> is the illumination factor.</p>
 </section>
 </section>
 <section id="user-guide">
@@ -221,6 +221,12 @@ The names below are only special in that they are useful defaults and are actual
 
 <span class="n">dataLog</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">solarFluxOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code> is <strong>deprecated</strong> in favor of <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code>.
+In C/C++ both names work until <strong>Dec 31, 2026</strong>. After that date, code must
+use <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code> exclusively.</p>
 </div>
 <hr class="docutils" />
 <dl class="cpp class">

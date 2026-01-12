@@ -339,7 +339,7 @@
     <span class="n">sunPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPositionMsgData</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
-        <span class="n">eclipseMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">(</span><span class="n">shadowFactor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">eclipseMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">(</span><span class="n">illuminationFactor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">eclipseMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMsgData</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">setupCSS</span><span class="p">(</span><span class="n">CSS</span><span class="p">):</span>
@@ -512,7 +512,7 @@
          <span class="kc">True</span><span class="p">,</span>        <span class="c1"># show_plots</span>
          <span class="kc">False</span><span class="p">,</span>       <span class="c1"># useCSSConstellation</span>
          <span class="kc">False</span><span class="p">,</span>       <span class="c1"># usePlatform</span>
-         <span class="kc">False</span><span class="p">,</span>       <span class="c1"># useEclipse</span>
+         <span class="kc">True</span><span class="p">,</span>       <span class="c1"># useEclipse</span>
          <span class="kc">False</span>        <span class="c1"># useKelly</span>
        <span class="p">)</span>
 </pre></div>
