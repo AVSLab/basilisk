@@ -38,6 +38,7 @@ EXTERNAL_KERNEL_URLS = {
     "supportData/EphemerisData/de-403-masses.tpc": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/de-403-masses.tpc",
     "supportData/EphemerisData/hst_edited.bsp": "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp",
     "supportData/EphemerisData/nh_pred_od077.bsp": "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp",
+    "supportData/SkyBrightnessData/haslam408_dsds_Remazeilles2014.fits": "https://lambda.gsfc.nasa.gov/data/foregrounds/haslam_2014/haslam408_dsds_Remazeilles2014.fits",
 }
 
 # Do not set hashes for files fetched from external URLs such as JPL NAIF as
@@ -53,6 +54,7 @@ DENTON_GEO_BASE_PATH = "DentonGEO/"
 EPHEMERIS_DATA_BASE_PATH = "EphemerisData/"
 LOCAL_GRAV_DATA_BASE_PATH = "LocalGravData/"
 MAGNETIC_FIELD_BASE_PATH = "MagneticField/"
+SKY_BRIGHTNESS_BASE_PATH = "SkyBrightnessData/"
 
 
 @functools.lru_cache(maxsize=32)
@@ -189,6 +191,8 @@ class DataFile:
     class MagneticFieldData(Enum):
         WMM = "WMM.COF"
 
+    class SkyBrightnessData(Enum):
+        skyTemperature408MHz = "haslam408_dsds_Remazeilles2014.fits"
 
 CATEGORY_BASE_PATHS = {
     "AlbedoData": ALBEDO_DATA_BASE_PATH,
@@ -197,6 +201,7 @@ CATEGORY_BASE_PATHS = {
     "EphemerisData": EPHEMERIS_DATA_BASE_PATH,
     "LocalGravData": LOCAL_GRAV_DATA_BASE_PATH,
     "MagneticFieldData": MAGNETIC_FIELD_BASE_PATH,
+    "SkyBrightnessData": SKY_BRIGHTNESS_BASE_PATH,
 }
 
 
