@@ -76,12 +76,12 @@ void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t Cu
     Eigen::Map<Eigen::MRPd> mrpd{payload.sigma_BN};
     mrpd = rot;
 
-    double res[6];
-    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res, 0);
+    double res_N[6], res_B[6];
+    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_N, 0);
+    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_B, 1);
 
-    // TODO: Double check this is right
-    std::copy_n(res, 3, payload.omega_BN_B);
-    std::copy_n(res + 3, 3, payload.v_BN_N);
+    std::copy_n(res_B, 3, payload.omega_BN_B);
+    std::copy_n(res_N + 3, 3, payload.v_BN_N);
 
     this->stateOutMsg.write(&payload, this->body.getSpec().getScene().moduleID, CurrentSimNanos);
 }
