@@ -17,6 +17,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 */
 #ifndef MESSAGING_H
 #define MESSAGING_H
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <deque>
@@ -27,6 +28,48 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <utility>
 #include "architecture/messaging/payloadEqualityTraits.h"
 
+
+struct messagePointerData{
+  void *header;
+  void *payload;
+};
+
+
+class MessageBase{
+    public:
+        messagePointerData pointers;
+        messagePointerData *reference;
+
+        messagePointerData *GetPointers(void)
+        {
+            this->reference =  (messagePointerData*)malloc(sizeof(messagePointerData));
+            this->reference->payload = pointers.payload;
+            this->reference->header = pointers.header;
+
+            return this->reference;
+        }
+};
+
+class ReadFunctorBase{
+    public :
+        void *headerVoidPtr; //! TODO: kludge to fix PITL, do we want to keep this member?
+        void *payloadVoidPtr;
+        messagePointerData *reference;
+
+        //! constructor
+        ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL), reference(NULL) {};
+
+        messagePointerData *GetPointers(void)
+        {
+            this->reference =  (messagePointerData*)malloc(sizeof(messagePointerData));
+            this->reference->header = this->headerVoidPtr;
+            this->reference->payload = this->payloadVoidPtr;
+            return this->reference;
+        }
+
+};
+
+
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
 class Message;
@@ -36,7 +79,7 @@ class Recorder;
 
 /*! Read functors have read-only access to messages*/
 template<typename messageType>
-class ReadFunctor{
+class ReadFunctor : public ReadFunctorBase{
 private:
     messageType* payloadPointer;    //!< -- pointer to the incoming msg data
     MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
@@ -131,7 +174,12 @@ public:
     ReadFunctor() : initialized(false) {};
 
     //! constructor
-    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) :
+                  payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true)
+    {
+        this->headerVoidPtr = headerPtr;
+        this->payloadVoidPtr = payloadPtr;
+    };
 
     //! destructor -- REQUIRED for the #676 keep-alive: a ReadFunctor is usually a C++ member
     //! of a module, so SWIG %extend destructors never run for it; only this real C++
@@ -327,10 +375,12 @@ public:
         MsgHeader* pt = this->headerPointer;
         this->payloadPointer = (messageType *) (++pt);
 
-
         // set flag that this input message is connected to another message
         this->initialized = true;           // set input message as linked
         this->headerPointer->isLinked = 1;  // set source output message as linked
+
+        this->payloadVoidPtr = this->payloadPointer;
+        this->headerVoidPtr = this->headerPointer;
     };
     //! Subscribe to the message located at the sourceAddr in memory
     void subscribeToAddr(uint64_t sourceAddr)
@@ -417,7 +467,7 @@ template<typename messageType>
 class WriteFunctor{
 private:
     messageType* payloadPointer;    //!< pointer to the message payload
-    MsgHeader* headerPointer;       //!< pointer to the message header
+    MsgHeader* headerPointer;      //!< pointer to the message header
 public:
     //! write functor constructor
     WriteFunctor(){};
@@ -440,12 +490,13 @@ class Recorder;
  * base class template for bsk messages
  */
 template<typename messageType>
-class Message{
+class Message : public MessageBase{
 private:
     messageType payload = {};   //!< struct defining message payload, zero'd on creation
     MsgHeader header = {};      //!< struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);  //!< read functor instance
 public:
+    Message();
     //! write functor to this message
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
     //! -- request read rights. returns reference to class ``read`` variable
@@ -476,6 +527,12 @@ public:
     uintptr_t getHeaderAddress()  { return reinterpret_cast<uintptr_t>(&header);  }
 };
 
+template<typename messageType>
+Message<messageType>::Message()
+{
+    this->pointers.payload = &payload;
+    this->pointers.header = &header;
+}
 
 template<typename messageType>
 ReadFunctor<messageType> Message<messageType>::addSubscriber(){
@@ -516,12 +573,11 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
 
-        MsgHeader* msgPt = (MsgHeader *) message;
-        MsgHeader *pt = msgPt;
-        messageType* payloadPointer;
-        payloadPointer = (messageType *) (++pt);
+        auto* headerPtr  = static_cast<MsgHeader*>(message);
+        auto* payloadPtr = reinterpret_cast<messageType*>(headerPtr + 1);
 
-        this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
+        this->readMessage = ReadFunctor<messageType>(payloadPtr, headerPtr);
+
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
