@@ -5,4 +5,3 @@
 *.i text eol=lf
 *.py text eol=lf
 *.tex text eol=lf
-supportData/EphemerisData/de430.bsp filter=lfs diff=lfs merge=lfs -text
