@@ -44,7 +44,7 @@ class BSKEnvironmentModel:
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.ephemObject = ephemerisConverter.EphemerisConverter()
         self.eclipseObject = eclipse.Eclipse()
-#        self.groundStationTron = groundLocation.GroundLocation()
+        self.groundStationBar = groundLocation.GroundLocation()
         self.groundStationSval = groundLocation.GroundLocation()
         self.magneticField = magneticFieldWMM.MagneticFieldWMM()
         self.atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
@@ -56,7 +56,7 @@ class BSKEnvironmentModel:
         SimBase.AddModelToTask(self.envTaskName, self.gravFactory.spiceObject, 200)
         SimBase.AddModelToTask(self.envTaskName, self.ephemObject, 200)
         SimBase.AddModelToTask(self.envTaskName, self.eclipseObject, 200)
-#        SimBase.AddModelToTask(self.envTaskName, self.groundStationTron, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.groundStationBar, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundStationSval, 200)
         SimBase.AddModelToTask(self.envTaskName, self.magneticField, 199)
         SimBase.AddModelToTask(self.envTaskName, self.atmosphere, 199)
@@ -112,11 +112,11 @@ class BSKEnvironmentModel:
         """
         Specify which ground locations are of interest.
         """
-#        self.groundStationTron.ModelTag = "TrondheimSation"
-#        self.groundStationTron.planetRadius = self.planetRadius
-#        self.groundStationTron.specifyLocation(np.radians(63.4172), np.radians(10.401950), 40)  # Gloeshaugen, Trondheim, Norway
-#        self.groundStationTron.minimumElevation = np.radians(15.)
-#        self.groundStationTron.maximumRange = 1e9
+        self.groundStationBar.ModelTag = "BarentsSea"  # TODO change this to mapping function from Anaïs C. to scann the Barents Sea
+        self.groundStationBar.planetRadius = self.planetRadius
+        self.groundStationBar.specifyLocation(np.radians(73.0), np.radians(20.0), 0.0)  # Gloeshaugen, Trondheim, Norway
+        self.groundStationBar.minimumElevation = np.radians(15.)
+        self.groundStationBar.maximumRange = 1e9
 
         self.groundStationSval.ModelTag = "KsatSvalbard"
         self.groundStationSval.planetRadius = self.planetRadius
