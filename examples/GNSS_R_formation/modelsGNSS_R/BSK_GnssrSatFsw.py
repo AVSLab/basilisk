@@ -26,9 +26,11 @@ from Basilisk.fswAlgorithms import (
     locationPointing,
     mrpFeedback,
     rwMotorTorque,
+    scanningInstrumentController,
     spacecraftReconfig,
     tamComm,
-    mtbMomentumManagement
+    mtbMomentumManagement,
+    scanningInstrumentController
 #    gnssrSensing # TODO add (cpp code) in src/fswAlgorithms/....
 )
 from Basilisk.utilities import fswSetupThrusters
@@ -66,8 +68,8 @@ class BSKFswModels:
         # Point the solar panels to the sun
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("solarChargingTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
-        # Point to a location on the Earth
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("locPointTask" + str(spacecraftIndex),
+        # Point nadir towards the Earth
+        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("nadirPointTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
         # Reconfigure the spacecraft formation
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("spacecraftReconfigTask" + str(spacecraftIndex),
@@ -81,26 +83,28 @@ class BSKFswModels:
         # Reaction wheel momentum dumping with magnetorquers/TAM
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("rwMomentumDumpTask" + str(spacecraftIndex),
                                                                           self.processTasksTimeStep), 5)
-        # GNSS-R sensing mode
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("GnssR" + str(spacecraftIndex),
-                                                                       self.processTasksTimeStep), 10)
+#        # GNSS-R sensing mode
+#        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("GnssR" + str(spacecraftIndex),
+#                                                                       self.processTasksTimeStep), 10)
+        # simple instrument controller
+        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("scanningInstrumentControllerTask" + str(spacecraftIndex),
+                                                                       self.processTasksTimeStep), 20)
         # Data transfer mode
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("DataTransferTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
 
-
         #--- Create module data and module wraps ---#
         # FSW "state related" modules
         # Spacecrafts after "release and detumbling"
-        self.inertial3DPoint = inertial3D.inertial3D() # Part of "inertial pointing task"
+        self.inertial3DPoint = inertial3D.inertial3D() # Inertial pointing module
         self.inertial3DPoint.ModelTag = "inertial3D"
 
         # Charging the spacecraft with solar pannels
         self.solCharging = locationPointing.locationPointing()
         self.solCharging.ModelTag = "solarCharging"
 
-        self.locPoint = locationPointing.locationPointing()
-        self.locPoint.ModelTag = "locPoint"
+        self.nadirPoint = locationPointing.locationPointing()
+        self.nadirPoint.ModelTag = "nadirPoint"
 
         self.spacecraftReconfig = spacecraftReconfig.spacecraftReconfig()
         self.spacecraftReconfig.ModelTag = "spacecraftReconfig"
@@ -121,6 +125,9 @@ class BSKFswModels:
         self.mtbMomentumManagement = mtbMomentumManagement.mtbMomentumManagement()
         self.mtbMomentumManagement.ModelTag = "mtbMomentumManagement"
 
+        self.scanningInstrumentController = scanningInstrumentController.scanningInstrumentController() #TODO what is: scanningInstrumentController.scanningInstrumentControllerConfig()
+        self.scanningInstrumentController.ModelTag = "scanningInstrumentController"
+
 #        self.gnssrSensing = gnssrSensing.GnssrSensing()
 #        self.gnssrSensing.ModelTag = "gnssrSensing"
 
@@ -138,7 +145,7 @@ class BSKFswModels:
 
         SimBase.AddModelToTask("solarChargingTask" + str(spacecraftIndex), self.solCharging, 10)
 
-        SimBase.AddModelToTask("locPointTask" + str(spacecraftIndex), self.locPoint, 10)
+        SimBase.AddModelToTask("nadirPointTask" + str(spacecraftIndex), self.nadirPoint, 10)
 
         SimBase.AddModelToTask("spacecraftReconfigTask" + str(spacecraftIndex), self.spacecraftReconfig, 10)
 
@@ -150,6 +157,8 @@ class BSKFswModels:
         SimBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.mtbMomentumManagement, 5)
         SimBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.tamComm, 5)
 
+        SimBase.AddModelToTask("scanningInstrumentControllerTask" + str(spacecraftIndex), self.scanningInstrumentController, 8)
+
 #        SimBase.AddModelToTask("gnssRTask" + str(spacecraftIndex), self.gnssrSensing, 9)
 
 #        SimBase.AddModelToTask("GnssR" + str(spacecraftIndex), self.gnssrSensing, 9)
@@ -159,6 +168,7 @@ class BSKFswModels:
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc[spacecraftIndex].disableAllTasks()
 
+        # ------------------------------------------------------------------------------------------- #
         #-- Event Definitions --# -> This are the initialization events for each type of FSW mode
 
         # The standby event should not be active while the station keeping mode is also active. Standby mode disables
@@ -246,23 +256,25 @@ class BSKFswModels:
         )
 
         SimBase.createNewEvent(
-            "initiateLocationPointing_" + str(spacecraftIndex),
+            "initiateNadirPointing_" + str(spacecraftIndex),
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].modeRequest == "locationPointing"
+                self.FSWModels[spacecraftIndex].modeRequest == "nadirPointing"
             ),
             actionFunction=lambda self: (
                 self.fswProc[spacecraftIndex].disableAllTasks(),
                 self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
-                self.enableTask(f"locPointTask{spacecraftIndex}"),
+                self.enableTask(f"nadirPointTask{spacecraftIndex}"),
                 self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
                 self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
                 self.setAllButCurrentEventActivity(
-                    f"initiateLocationPointing_{spacecraftIndex}", True, useIndex=True
+                    f"initiateNadirPointing_{spacecraftIndex}", True, useIndex=True
                 ),
             ),
         )
+
+#TODO should there be a formationReconfiguraton event
 
 #        SimBase.createNewEvent(
 #            "initiateGnssRMode_" + str(spacecraftIndex),
@@ -303,27 +315,27 @@ class BSKFswModels:
             SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.gravBodyList.index('sun')])
         messaging.AttRefMsg_C_addAuthor(self.solCharging.attRefOutMsg, self.attRefMsg)
 
-    def SetLocationPointGuidance(self, SimBase):
+    def SetNadirPointGuidance(self, SimBase):
         """
         Defines the Earth location pointing guidance module.
         """
-        self.locPoint.pHat_B = [1, 0, 0] # TODO: Confirm "Side" of the spacecraft which shall do the pointing?
-        self.locPoint.scAttInMsg.subscribeTo(
+        self.nadirPoint.pHat_B = [0, 0, -1] # Pointing "bottom" of the spacecraft to the location (GNSS-R sensors are on the 'flat underside' of the satellite)
+        self.nadirPoint.scAttInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
-        self.locPoint.scTransInMsg.subscribeTo(
+        self.nadirPoint.scTransInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.locPoint.locationInMsg.subscribeTo(
-            SimBase.EnvModel.groundStationSval.currentGroundStateOutMsg)
-        messaging.AttRefMsg_C_addAuthor(self.locPoint.attRefOutMsg, self.attRefMsg)
+        self.nadirPoint.celBodyInMsg.subscribeTo(
+            SimBase.EnvModel.ephemObject.ephemOutMsgs[SimBase.EnvModel.gravBodyList.index('earth')])
+        messaging.AttRefMsg_C_addAuthor(self.nadirPoint.attRefOutMsg, self.attRefMsg)
 
-    def SetSpacecraftOrbitReconfig(self, SimBase):
+    def SetSpacecraftOrbitReconfig(self, SimBase): #TODO check if this is correct (spacecraft should reconfigure formation in position and attitude)
         """
         Defines the station keeping module.
         """
         self.spacecraftReconfig.deputyTransInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        self.spacecraftReconfig.attRefInMsg.subscribeTo(self.attRefMsg)
-        self.spacecraftReconfig.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg)
+        self.spacecraftReconfig.attRefInMsg.subscribeTo(self.attRefMsg)                  #TODO why is this subscribed to attRefMsg? and not to the attOutMsg of the nav module?
+        self.spacecraftReconfig.thrustConfigInMsg.subscribeTo(self.fswThrusterConfigMsg) #TODO same here, why subscribe to thrusterConfigMsg from FSW and not to the thruster msg from the dynamics?
         self.spacecraftReconfig.vehicleConfigInMsg.subscribeTo(
             SimBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.spacecraftReconfig.mu = SimBase.EnvModel.mu  # [m^3/s^2]
@@ -331,8 +343,8 @@ class BSKFswModels:
         messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfig.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
-        chiefData = messaging.NavTransMsgPayload()
-        chiefMsg = messaging.NavTransMsg().write(chiefData)
+        chiefData = messaging.NavTransMsgPayload()                   #TODO Why is this needed?
+        chiefMsg = messaging.NavTransMsg().write(chiefData)          #TODO what is written to this message?
         self.spacecraftReconfig.chiefTransInMsg.subscribeTo(chiefMsg)
 
     def SetAttitudeTrackingError(self, SimBase):
@@ -432,6 +444,17 @@ class BSKFswModels:
         SimBase.DynModels[self.spacecraftIndex].mtbEff.mtbCmdInMsg.subscribeTo(self.mtbMomentumManagement.mtbCmdOutMsg)
 #        mtbDipoleCmdsLog = self.mtbMomentumManagement.mtbCmdOutMsg.recorder(samplingTime)
 
+    def setupScanningInstrumentControler(self, SimBase):
+        """
+        Defines the simple instrument controller module.
+        """
+        self.scanningInstrumentController.useRateTolerance = 1
+        self.scanningInstrumentController.rateErrTolerance = 0.01
+        self.scanningInstrumentController.attErrTolerance = 0.1
+        self.scanningInstrumentController.attGuidInMsg.subscribeTo(self.nadirPoint.attGuidOutMsg)
+        self.scanningInstrumentController.accessInMsg.subscribeTo(
+            SimBase.EnvModel.groundStationBar.accessOutMsgs[self.spacecraftIndex])
+
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         """
@@ -444,13 +467,14 @@ class BSKFswModels:
         # Initialize all modules
         self.SetInertial3DPointGuidance()
         self.SetSolarChargingGuidance(SimBase)
-        self.SetLocationPointGuidance(SimBase)
+        self.SetNadirPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedbackRWA(SimBase)
         self.SetRWMotorTorque()
         self.SetSpacecraftOrbitReconfig(SimBase)
         self.setupTamComm(SimBase)
         self.setupMtbMomentumManagement(SimBase)
+        self.setupScanningInstrumentControler(SimBase)
 
     def setupGatewayMsgs(self, SimBase):
         """create C-wrapped gateway messages such that different modules can write to this message

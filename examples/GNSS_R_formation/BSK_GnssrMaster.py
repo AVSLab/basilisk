@@ -22,6 +22,7 @@ import os
 import sys
 
 from Basilisk import __path__
+from Basilisk.architecture import messaging, sysModel
 from Basilisk.fswAlgorithms import formationBarycenter
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass, macros as mc
@@ -33,6 +34,38 @@ bskPath = __path__[0]
 # Import Dynamics and FSW models
 sys.path.append(path + '/models')
 
+class BarycenterPoint:
+    """
+    Minimal visualization point for the formation barycenter.
+    """
+    def __init__(self, navTransMsg, modelTag="barycenter"):
+        self.ModelTag = modelTag
+        self.scStateOutMsg = messaging.SCStatesMsg()
+        self._converter = _NavTransToSCStates(navTransMsg, self.scStateOutMsg)
+
+    def getConverter(self):
+        """Returns the converter module to be added to a task."""
+        return self._converter
+
+
+class _NavTransToSCStates(sysModel.SysModel):
+    """Internal converter: NavTransMsg -> SCStatesMsg for Vizard."""
+    def __init__(self, navTransMsg, scStateOutMsg):
+        super().__init__()
+        self.ModelTag = "barycenterConverter"
+        self.navTransInMsg = messaging.NavTransMsgReader()
+        self.navTransInMsg.subscribeTo(navTransMsg)
+        self.scStateOutMsg = scStateOutMsg
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        navData = self.navTransInMsg()
+        scState = messaging.SCStatesMsgPayload()
+        scState.r_BN_N = navData.r_BN_N
+        scState.v_BN_N = navData.v_BN_N
+        self.scStateOutMsg.write(scState, currentSimNanos, self.moduleID)
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
     """
@@ -72,6 +105,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.environment_added = False
         self.dynamics_added = False
         self.fsw_added = False
+        self.barycenterPoint = None
 
         # Set the formationBarycenter module if the flag is set to True
         if relativeNavigation:
@@ -131,6 +165,10 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.relativeNavigationModule = formationBarycenter.FormationBarycenter()
         self.relativeNavigationModule.ModelTag = "RelativeNavigation"
         self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, 0)
+
+        # Create barycenter visualization point
+        self.barycenterPoint = BarycenterPoint(self.relativeNavigationModule.transOutMsg)
+        self.AddModelToTask(self.relativeNavigationTaskName, self.barycenterPoint.getConverter(), -1)
 
 class BSKScenario(object):
     def __init__(self):

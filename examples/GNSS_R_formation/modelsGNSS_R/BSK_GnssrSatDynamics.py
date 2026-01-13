@@ -134,7 +134,7 @@ class BSKDynamicModels:
         """
         Adds the spacecraft to the ground location module.
         """
-#        SimBase.EnvModel.groundStationTron.addSpacecraftToModel(self.scObject.scStateOutMsg)
+        SimBase.EnvModel.groundStationBar.addSpacecraftToModel(self.scObject.scStateOutMsg)
         SimBase.EnvModel.groundStationSval.addSpacecraftToModel(self.scObject.scStateOutMsg)
 
     def SetEclipseObject(self, SimBase):
@@ -170,9 +170,9 @@ class BSKDynamicModels:
         # Define orthogonal RW pyramid
         # -- Pointing directions
         rwpyramidAngle = np.arccos(np.sqrt(1.0 / 3.0)) * mc.R2D
-        rwElAngle = np.array([rwpyramidAngle, rwpyramidAngle, rwpyramidAngle, rwpyramidAngle]) * mc.D2R # TODO update according to Nano Avionics M12P
-        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R # TODO update according to Nano Avionics M12P
-        rwPosVector = [[0.8, 0.8, 1.79070], # TODO update according to Nano Avionics M12P
+        rwElAngle = np.array([rwpyramidAngle, rwpyramidAngle, rwpyramidAngle, rwpyramidAngle]) * mc.D2R # Guesstimate
+        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R                                 # Guesstimate
+        rwPosVector = [[0.8, 0.8, 1.79070],                                                             # Guesstimate
                        [0.8, -0.8, 1.79070],
                        [-0.8, -0.8, 1.79070],
                        [-0.8, 0.8, 1.79070]]
@@ -196,7 +196,7 @@ class BSKDynamicModels:
 
         # create the thruster devices by specifying the thruster type and its location and direction
         for pos_B, dir_B in zip(location, direction):
-            self.thrusterFactory.create('MOOG_Monarc_90HT', pos_B, dir_B, useMinPulseTime=False)
+            self.thrusterFactory.create('EPSS_C2', pos_B, dir_B, useMinPulseTime=False)
 
         self.numThr = self.thrusterFactory.getNumOfDevices()
 
@@ -208,12 +208,12 @@ class BSKDynamicModels:
         Defines the fuel tank for the thrusters.
         """
         # Define the tank
-        self.tankModel = fuelTank.FuelTankModelUniformBurn() # TODO update to match NanoAvionics M12P -> check if this is the right tank model
+        self.tankModel = fuelTank.FuelTankModelUniformBurn() #|https://satcatalog.s3.amazonaws.com/components/901/SatCatalog_-_NanoAvionics_-_EPSS_C2_-_Datasheet.pdf
         self.fuelTankStateEffector.setTankModel(self.tankModel)
-        self.tankModel.propMassInit = 50.0
-        self.tankModel.maxFuelMass = 75.0
-        self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]
-        self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
+        self.tankModel.propMassInit = 0.8                          # Initial fuel mass according to Nano Avionics M12P specs (1 kg)
+        self.tankModel.maxFuelMass = 0.8                           # Fuel tank at maximum capacity at t=0 (1 kg)
+        self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]         # TODO update according to Nano Avionics M12P | position vector from tank CM to tank connection point
+        self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]  # TODO update according to Nano Avionics M12P | position vector from spacecraft body frame origin to tank connection point
         self.tankModel.radiusTankInit = 1
         self.tankModel.lengthTank = 1
 
@@ -235,7 +235,7 @@ class BSKDynamicModels:
         self.solarPanel.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.solarPanel.sunEclipseInMsg.subscribeTo(SimBase.EnvModel.eclipseObject.eclipseOutMsgs[0])  # choose the earth message
         self.solarPanel.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('sun')])
-        self.solarPanelAxis = [0, 0, -1]
+        self.solarPanelAxis = [0, 0, 1]
         self.solarPanel.setPanelParameters(self.solarPanelAxis,  # panel normal vector in the body frame
                                            2*self.l_cube * 3*self.l_cube * 3,  # area, m^2 # Solar pannel area of NanoAvionics M12P
                                            0.295)  # efficiency according to NanoAvionics GaAs Solar Panels
@@ -264,12 +264,12 @@ class BSKDynamicModels:
         """Sets up the magnetometer"""
         self.tam.ModelTag = "ThreeAxisMagnetometer" + str(self.spacecraftIndex)
         # specify the optional tam variables
-        self.tam.scaleFactor = 1.0 # TODO confirm
-        self.tam.senNoiseStd = [0.0,  0.0, 0.0] # TODO confirm
+        self.tam.scaleFactor = 1.0               # TODO confirm
+        self.tam.senNoiseStd = [0.0,  0.0, 0.0]  # TODO confirm
 
         # Add the spacecraft to the magnetic field model
-        self.tam.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)                #TODO is this in the right place?
-        self.tam.magInMsg.subscribeTo(SimBase.EnvModel.magneticField.envOutMsgs[0]) #TODO is this in the right place?
+        self.tam.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+        self.tam.magInMsg.subscribeTo(SimBase.EnvModel.magneticField.envOutMsgs[0])
 
     def SetMtbEffector(self, SimBase): # TODO: Is this already 3 orthogonally aligned MTBs?
         """Sets up the magnetorquer"""
@@ -309,7 +309,7 @@ class BSKDynamicModels:
         self.scObject.addDynamicEffector(self.dragEff)
 
         # Connect the drag effector to the atmosphere model
-        self.dragEff.atmoDensInMsg.subscribeTo(SimBase.EnvModel.atmosphere.envOutMsgs[0])
+        self.dragEff.atmoDensInMsg.subscribeTo(SimBase.EnvModel.atmosphere.envOutMsgs[self.spacecraftIndex])
 
         # Force logging (optional)
         # forceLog = dragEffector.logger("forceExternal_B", samplingTime)
