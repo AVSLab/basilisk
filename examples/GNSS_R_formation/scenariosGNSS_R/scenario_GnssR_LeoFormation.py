@@ -1,7 +1,10 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2024, Norwegian University of Science and Technology (NTNU) and
+#                      Autonomous Vehicle Systems Lab, University of Colorado
+#                      at Boulder [Oliver Hasler] based on:
+#                      -> scenario_StationKeepingMultiSat.py
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -137,6 +140,7 @@ spacecraft is plotted per simulation.
 
 import copy, inspect, math, os, sys
 
+from mypy.util import T
 import numpy as np
 from Basilisk.architecture import messaging
 # Import utilities
@@ -235,16 +239,26 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 self.vizPanels.append(tankPanel)
                 gsList.append([batteryPanel, tankPanel])
 
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                                      # , saveFile=__file__
+            lastTaskName = self.DynModels[-1].taskName  # Load Vizard with the last spacecraft's dynamics task
+            viz = vizSupport.enableUnityVisualization(self, lastTaskName, DynModelsList
+                                                      , saveFile=__file__
                                                       , rwEffectorList=rwStateEffectorList
                                                       , thrEffectorList=thDynamicEffectorList
                                                       , genericStorageList=gsList
                                                       )
+
+            # Add barycenter point for relative orbit visualization
+            if relativeNavigation:
+                barycenterVizData = vizSupport.vizInterface.VizSpacecraftData()
+                barycenterVizData.spacecraftName = self.barycenterPoint.ModelTag
+                barycenterVizData.scStateInMsg.subscribeTo(self.barycenterPoint.scStateOutMsg)
+                barycenterVizData.modelDictionaryKey = ""  # No 3D model
+                viz.scData.push_back(barycenterVizData)
+
             viz.settings.showSpacecraftLabels = True
             viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
             viz.settings.mainCameraTarget = "sat-1"
-            viz.liveSettings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
+            viz.liveSettings.relativeOrbitChief = "barycenter" if relativeNavigation else "sat-0" # set the chief for relative orbit trajectory
             for i in range(self.numberSpacecraft):
                 vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
                                                    showGenericStoragePanel=True)
@@ -253,40 +267,59 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         EnvModel = self.get_EnvModel()
         DynModels = self.get_DynModel()
 
-        # Configure initial conditions for spacecraft 0
+        # SSO parameters for 550 km altitude
+        alt = 550e3  # m
+        a_sso = EnvModel.planetRadius + alt
+        i_sso = 97.6 * macros.D2R  # SSO inclination for 550 km
+
+        # Separation in along-track
+        separation = 50  # meters
+        delta_f = separation / a_sso  # ≈ 7.2e-6 rad
+
+        # Base true anomaly (this will be the barycenter position)
+        f_base = 85.3 * macros.D2R
+
+        # SC0: AHEAD of barycenter (+50m)
         self.oe.append(orbitalMotion.ClassicElements())
-        self.oe[0].a = 1.4*EnvModel.planetRadius  # meters
-        self.oe[0].e = 0.2
-        self.oe[0].i = 45.0 * macros.D2R
+        self.oe[0].a = a_sso
+        self.oe[0].e = 0.0001
+        self.oe[0].i = i_sso
         self.oe[0].Omega = 48.2 * macros.D2R
-        self.oe[0].omega = 347.8 * macros.D2R
-        self.oe[0].f = 85.3 * macros.D2R
-        rN, vN = orbitalMotion.elem2rv(EnvModel.mu, self.oe[0])
-        orbitalMotion.rv2elem(EnvModel.mu, rN, vN)
-        DynModels[0].scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-        DynModels[0].scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        DynModels[0].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        self.oe[0].omega = 0.0
+        self.oe[0].f = f_base + delta_f  # AHEAD
+        rN0, vN0 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[0])
+        DynModels[0].scObject.hub.r_CN_NInit = rN0
+        DynModels[0].scObject.hub.v_CN_NInit = vN0
+        DynModels[0].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+        DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
-        # Configure initial conditions for spacecraft 1
-        self.oe.append(copy.deepcopy(self.oe[0]))
-        self.oe[1].f *= 1.001
-        rN2, vN2 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[1])
-        orbitalMotion.rv2elem(EnvModel.mu, rN2, vN2)
-        DynModels[1].scObject.hub.r_CN_NInit = rN2  # m   - r_CN_N
-        DynModels[1].scObject.hub.v_CN_NInit = vN2  # m/s - v_CN_N
-        DynModels[1].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[1].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        # SC1: AT barycenter (0m)
+        self.oe.append(orbitalMotion.ClassicElements())
+        self.oe[1].a = a_sso
+        self.oe[1].e = 0.0001
+        self.oe[1].i = i_sso
+        self.oe[1].Omega = 48.2 * macros.D2R
+        self.oe[1].omega = 0.0
+        self.oe[1].f = f_base  # AT BARYCENTER
+        rN1, vN1 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[1])
+        DynModels[1].scObject.hub.r_CN_NInit = rN1
+        DynModels[1].scObject.hub.v_CN_NInit = vN1
+        DynModels[1].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+        DynModels[1].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
-        # Configure initial conditions for spacecraft 2
-        self.oe.append(copy.deepcopy(self.oe[0]))
-        self.oe[2].f *= 0.999
-        rN3, vN3 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[2])
-        orbitalMotion.rv2elem(EnvModel.mu, rN3, vN3)
-        DynModels[2].scObject.hub.r_CN_NInit = rN3  # m   - r_CN_N
-        DynModels[2].scObject.hub.v_CN_NInit = vN3  # m/s - v_CN_N
-        DynModels[2].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[2].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        # SC2: BEHIND barycenter (-50m)
+        self.oe.append(orbitalMotion.ClassicElements())
+        self.oe[2].a = a_sso
+        self.oe[2].e = 0.0001
+        self.oe[2].i = i_sso
+        self.oe[2].Omega = 48.2 * macros.D2R
+        self.oe[2].omega = 0.0
+        self.oe[2].f = f_base - delta_f  # BEHIND
+        rN2, vN2 = orbitalMotion.elem2rv(EnvModel.mu, self.oe[2])
+        DynModels[2].scObject.hub.r_CN_NInit = rN2
+        DynModels[2].scObject.hub.v_CN_NInit = vN2
+        DynModels[2].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+        DynModels[2].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     def log_outputs(self, relativeNavigation):
         # Process outputs
@@ -493,11 +526,14 @@ def runScenario(scenario, relativeNavigation):
     # Get the environment model
     EnvModel = scenario.get_EnvModel()
 
-    # Configure initial FSW attitude modes
-    scenario.FSWModels[0].modeRequest = "sunPointing"            # Charging solar panels
-    scenario.FSWModels[1].modeRequest = "inertialPointing"       # Satellites point to each other for data exchange
-    scenario.FSWModels[2].modeRequest = "locationPointing"       # Earth pointing for GNSS-R | TODO does this make sense?
+    # Phase 0: Initial attitude mode -> Inertial pointing
+    scenario.FSWModels[0].modeRequest = "inertialPointing"
+    scenario.FSWModels[1].modeRequest = "inertialPointing"
+    scenario.FSWModels[2].modeRequest = "inertialPointing"
 
+    # ===================================
+    # Configure station keeping
+    # ===================================
     # Configure station keeping module
     for spacecraft in range(scenario.numberSpacecraft): #| TODO understand this
         if relativeNavigation:
@@ -515,34 +551,64 @@ def runScenario(scenario, relativeNavigation):
     # Configure the relative navigation module
     if relativeNavigation:
         scenario.relativeNavigationModule.useOrbitalElements = False
-        scenario.relativeNavigationModule.mu = EnvModel.mu #| TODO why mu?
+        scenario.relativeNavigationModule.mu = EnvModel.mu #| TODO why mu set only in relative navigation case?
 
     # Set up the station keeping requirements
-    if relativeNavigation: #| TODO understand this
+    if relativeNavigation:
         scenario.FSWModels[0].stationKeeping = "ON"
-        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.000]
+        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0, 0.0, 7.2e-6, 0.0, 0.0, 0.0] #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
     scenario.FSWModels[1].stationKeeping = "ON"
-    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0000, 0.005, 0.0000, 0.0000, 0.0000, -0.003]
+    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0, 0.0, -3.6e-6, 0.0, 0.0, 6.3e-6]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
     scenario.FSWModels[2].stationKeeping = "ON"
-    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.003]
+    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0, 0.0, -3.6e-6, 0.0, 0.0, -6.3e-6]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
 
+    # ===================================
     # Initialize simulation
+    # ===================================
     scenario.InitializeSimulation()
 
-    # Configure run time and execute simulation
-    simulationTime = macros.hour2nano(2.)
-    scenario.ConfigureStopTime(simulationTime)
+    # ===================================
+    # Run simulation phases
+    # ===================================
+    simulationTime0 = macros.min2nano(5.) # 5 minutes
+    scenario.ConfigureStopTime(simulationTime0)
     scenario.ExecuteSimulation()
 
-    # Reconfigure FSW attitude modes
-    scenario.FSWModels[0].modeRequest = "locationPointing"
-    scenario.FSWModels[1].modeRequest = "sunPointing"
-    scenario.FSWModels[2].modeRequest = "inertialPointing"
+    # Phase 1: Sun pointing (charging batteries)
+    scenario.FSWModels[0].modeRequest = "solarCharging"
+    scenario.FSWModels[1].modeRequest = "solarCharging"
+    scenario.FSWModels[2].modeRequest = "solarCharging"
 
-    # Execute the simulation
-    scenario.ConfigureStopTime(2 * simulationTime)
+    simulationTime1 = macros.hour2nano(0.5) # 30 minutes (35 minutes)
+    scenario.ConfigureStopTime(simulationTime0 + simulationTime1)
     scenario.ExecuteSimulation()
 
+    # Phase 2: Reconfigure formation (station keeping -> ON)
+
+    scenario.FSWModels[0].modeRequest = "initiateStationKeeping_"
+    scenario.FSWModels[1].modeRequest = "initiateStationKeeping_"
+    scenario.FSWModels[2].modeRequest = "initiateStationKeeping_"
+
+    simulationTime2 = macros.hour2nano(24.0) # 24 minutes (24 hours 35 minutes)
+    scenario.ConfigureStopTime(simulationTime0 + simulationTime1 + simulationTime2)
+    scenario.ExecuteSimulation()
+
+    # Phase 3: location pointing (GNSS-R operations)
+    scenario.FSWModels[0].modeRequest = "nadirPoint"  # TODO seems to be not working?
+    scenario.FSWModels[1].modeRequest = "nadirPoint"
+    scenario.FSWModels[2].modeRequest = "nadirPoint"
+
+    simulationTime3 = macros.hour2nano(2.0) # 2 hours
+    scenario.ConfigureStopTime(simulationTime0 + simulationTime1 + simulationTime2 + simulationTime3)
+    scenario.ExecuteSimulation()
+
+    # Phase 4: Downlinking (nadirPoint pointing), station keeping OFF
+    simulationTime4 = macros.hour2nano(5.0) # 5 hours
+    scenario.FSWModels[0].stationKeeping = "OFF"
+    scenario.FSWModels[1].stationKeeping = "OFF"
+    scenario.FSWModels[2].stationKeeping = "OFF"
+    scenario.ConfigureStopTime(simulationTime0 + simulationTime1 + simulationTime2 + simulationTime3 + simulationTime4)
+    scenario.ExecuteSimulation()
 
 def run(showPlots, numberSpacecraft, relativeNavigation, txConstTleData):
     """
@@ -568,6 +634,6 @@ if __name__ == "__main__":
 
     run(showPlots=True,
         numberSpacecraft=3,
-        relativeNavigation=True,   # If False, the chief is spacecraft 0; if True, the chief is the barycenter
+        relativeNavigation=True,    # If False, the chief is spacecraft 0; if True, the chief is the barycenter
         txConstTleData=[gpsTleData] # can be any of ['GPS', 'Galileo', 'Beidou', 'Glonass']
         )
