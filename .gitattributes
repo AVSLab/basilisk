@@ -5,3 +5,6 @@
 *.i text eol=lf
 *.py text eol=lf
 *.tex text eol=lf
+
+supportData/** text eol=lf
+supportData/**/*.bsp -text
