@@ -4,6 +4,7 @@ The ``scCharging`` module computes spacecraft equilibrium (floating) electric po
 
 The charging and electron-beam coupling equations used by this module follow Hammerl and Schaub’s coupled spacecraft charging model [Hammerl2024]_ and the references cited therein as well as the Dr. Lai's book: "Fundamentals of Spacecraft Charging".
 
+A Python unit test script is provided to verify expected charging trends for a coupled two-spacecraft case (see User Guide).
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -359,6 +360,34 @@ Running the simulation
 
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
+
+Verification and Unit Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+A Python trend/unit test script (``test_scCharging.py``) is provided in the module’s ``_UnitTest`` directory to exercise the coupled two-spacecraft charging logic and catch regressions.
+
+The script:
+
+- Loads the tabulated plasma environment and surface yield tables from the accompanying ``Support/`` folder (energy grid, electron/ion flux distributions, SEE yields for electrons/ions, and backscatter yields).
+- Builds a two-spacecraft scenario using the required indexing convention (servicer = index ``0``, target = index ``1``) and a fixed relative separation.
+- Optionally connects an electron-beam message to the servicer (index ``0``) to enable the coupled beam-charging terms.
+- Runs a baseline case and then scales the ambient electron and ion flux to verify expected qualitative behavior:
+
+  - increasing electron flux drives the equilibrium potential more negative
+  - increasing ion flux drives the equilibrium potential more positive
+
+- Optionally produces a voltage time-history plot (``show_plots=True``).
+
+To run the script directly:
+
+.. code-block:: bash
+
+    python test_scCharging.py
+
+To run through the unit-test framework (example):
+
+.. code-block:: bash
+
+    pytest -k scCharging
 
 
 References
