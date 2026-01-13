@@ -97,7 +97,7 @@ def run_two_sc_case(scale_e=1.0, scale_i=1.0, show_plots=False, label="baseline"
     beam_payload = messaging.ElectronBeamMsgPayload()
     beam_payload.energyEB = 33000.0
     beam_payload.currentEB = 0.0000045 # 4.5 microAmps
-    beam_payload.alphaEB = 1.1
+    beam_payload.alphaEB = 1.0
 
     beam_msg = messaging.ElectronBeamMsg().write(beam_payload)
     # Subscribe the servicer (index 0) to the beam message

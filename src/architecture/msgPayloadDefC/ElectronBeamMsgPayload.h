@@ -22,7 +22,7 @@
 typedef struct {
     double energyEB;   //!< [eV] Energy of the primary electron beam
     double currentEB;  //!< [A]  Primary beam current (positive value represents electrons leaving)
-    double alphaEB;    //!< [rad] Beam divergence/opening half-angle
+    double alphaEB;    //!< [-] A number from [0,1] representing the fraction of current actually reaching the target (to simulate beam divergence)
 } ElectronBeamMsgPayload;
 
 #endif

@@ -222,7 +222,7 @@ The target beam current follows Hammerl’s reachability condition and exponenti
       0, & E_{\mathrm{EB}} \le \phi_S-\phi_T
     \end{cases}
 
-where :math:`\alpha` is modeled as a divergence/geometry factor (provided as ``alphaEB`` in the message payload), and :math:`T_{\mathrm{EB}}` is represented by the model parameter ``Teb``.
+where :math:`\alpha` is modeled as a geometry factor representing the fraction of Ebeam current reaching the target (provided as ``alphaEB`` in the message payload), and :math:`T_{\mathrm{EB}}` is represented by the model parameter ``Teb``.
 
 
 Electron beam current on the servicer
@@ -336,7 +336,7 @@ Create and publish an :ref:`ElectronBeamMsgPayload` and connect it to the desire
     beamPayload = messaging.ElectronBeamMsgPayload()
     beamPayload.energyEB  = 20000.0   # [eV]
     beamPayload.currentEB = 1.0e-6    # [A]
-    beamPayload.alphaEB   = 1.0       # divergence/geometry factor
+    beamPayload.alphaEB   = 1.0       # fraction of Ebeam current reaching the target
 
     beamMsg = messaging.ElectronBeamMsg().write(beamPayload)
     chg.eBeamInMsgs[0].subscribeTo(beamMsg)
