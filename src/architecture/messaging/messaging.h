@@ -35,15 +35,13 @@ struct messagePointerData{
 class MessageBase{
     public:
         messagePointerData pointers;
-        messagePointerData *reference;
+        messagePointerData reference;
 
         messagePointerData *GetPointers(void)
         {
-            this->reference =  (messagePointerData*)malloc(sizeof(messagePointerData));
-            this->reference->payload = pointers.payload;
-            this->reference->header = pointers.header;
-
-            return this->reference;
+            reference.payload =  pointers.payload;
+            reference.header = pointers.header;
+            return &reference;
         }
 };
 
@@ -51,17 +49,16 @@ class ReadFunctorBase{
     public :
         void *headerVoidPtr; //! TODO: kludge to fix PITL, do we want to keep this member?
         void *payloadVoidPtr;
-        messagePointerData *reference;
+        messagePointerData reference;
 
         //! constructor
-        ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL), reference(NULL) {};
+        ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL) {}
 
         messagePointerData *GetPointers(void)
         {
-            this->reference =  (messagePointerData*)malloc(sizeof(messagePointerData));
-            this->reference->header = this->headerVoidPtr;
-            this->reference->payload = this->payloadVoidPtr;
-            return this->reference;
+            reference.header  = headerVoidPtr;
+            reference.payload = payloadVoidPtr;
+            return &reference;
         }
 
 };
