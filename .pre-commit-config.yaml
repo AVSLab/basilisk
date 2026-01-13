@@ -14,7 +14,7 @@ repos:
     hooks:
       -   id: check-supportdata-registry
           name: Ensure supportData registrySnippet.py is updated
-          entry: python Basilisk/utilities/supportDataTools/checkSync.py
+          entry: python src/utilities/supportDataTools/checkSync.py
           language: python
           files: ^supportData/
           pass_filenames: false
