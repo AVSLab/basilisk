@@ -22,6 +22,8 @@ Version |release|
   Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
 - :ref:`gravityEffector` had a typo where the total gravity potential contribution of the celestial bodies
   was not being computed properly. Fixed now.
+- :ref:`MJSite` hade an issue where the angular velocity that was being written into the stateOutMsg
+  was in the inertial frame components not the body frame components.  This is now fixed.
 - The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
   list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
   method.  If the script was directly manipulating the :ref:`vizSupport` list that functionality no longer works.
