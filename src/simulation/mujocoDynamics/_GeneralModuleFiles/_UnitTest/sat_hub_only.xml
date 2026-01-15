@@ -1,0 +1,16 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<asset>
+		<texture name="checker" builtin="checker" width="10" height="10"/>
+		<material name="checker" texture="checker" />
+	</asset>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" density="200" rgba="1 0 0 0.5"/>
+		</body>
+	</worldbody>
+
+</mujoco>
