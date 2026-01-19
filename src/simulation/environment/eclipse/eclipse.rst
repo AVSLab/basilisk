@@ -34,7 +34,7 @@ provides information on what this message is used for.
 
 Detailed Module Description
 ---------------------------
-The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body's position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a shadow factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.
+The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body's position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a illumination factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.
 
 To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are read in. The planets desired to be used in the module are specified through the python method ``addPlanetToModel()``, where the planet spice state message is the input.  If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.  The figure below illustrates how the states are represented and will be identified in the mathematical model. Calculations in this model are taken from Montenbruck and Gill's text `Satellite Orbits Models, Methods and Applications <http://doi.org/10.1007/978-3-642-58351-3>`__.
 
@@ -61,7 +61,7 @@ The initial step in the eclipse module is to obtain the celestial bodies' state 
 
 The previous three equations provide coordinates for the sun with respect to both the occulting planet and occulted spacecraft as well as the spacecraft's position with respect to the planet, respectively. The parameters on the right side of these equations come from the input state data where :math:`\mathbf{r}_{N/H}`, :math:`\mathbf{r}_{N/P}`, and :math:`\mathbf{r}_{N/B}` are the sun, planet, and spacecraft positions in the inertial frame.
 
-This module supports the use of multiple occulting bodies, so it is important to analyze only the planet with the highest potential to cause an eclipse. Thus, the closest planet is determined by comparing the magnitude of each planet's distance to the spacecraft, :math:`|\mathbf{s}_{P/B}|`. Note that if the spacecraft is closer to the sun than the planet, i.e. :math:`|\mathbf{r}_{B/H}| < |\mathbf{s}_{P/H}|`, an eclipse is not possible and the shadow fraction is immediately set to 1.0.
+This module supports the use of multiple occulting bodies, so it is important to analyze only the planet with the highest potential to cause an eclipse. Thus, the closest planet is determined by comparing the magnitude of each planet's distance to the spacecraft, :math:`|\mathbf{s}_{P/B}|`. Note that if the spacecraft is closer to the sun than the planet, i.e. :math:`|\mathbf{r}_{B/H}| < |\mathbf{s}_{P/H}|`, an eclipse is not possible and the illumination fraction is immediately set to 1.0.
 
 Eclipse Conditions
 ~~~~~~~~~~~~~~~~~~
@@ -109,7 +109,7 @@ Total and annular eclipses both require the spacecraft to be relatively close to
 Percent Shadow
 ~~~~~~~~~~~~~~
 
-With the eclipse type determined, the shadow fraction can now be found. To find the shadow fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by :math:`a`, :math:`b`, and :math:`c` in the equations below.
+With the eclipse type determined, the illumination fraction can now be found. To find the illumination fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by :math:`a`, :math:`b`, and :math:`c` in the equations below.
 
 .. math:: a = \arcsin(\frac{r_H}{| \mathbf{r}_{B/H}|})
     :label: eq:elipse:15
@@ -131,15 +131,15 @@ With the eclipse type determined, the shadow fraction can now be found. To find 
 Total Eclipse (:math:`c < b-a`)
 """""""""""""""""""""""""""""""
 
-This type assumes that the apparent radius of the planet is larger than that of the sun (:math:`b>a`). A total eclipse produces a total shadow, so the shadow fraction is 0.0.
+This type assumes that the apparent radius of the planet is larger than that of the sun (:math:`b>a`). A total eclipse produces a total shadow, so the illumination fraction is 0.0.
 
 
 Annular Eclipse ($c < a-b$)
 """""""""""""""""""""""""""
 
-This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`). Use the equation for a circular area, :math:`A = \pi r^2`, to find the area of the sun and planet faces, replacing :math:`r` with the corresponding apparent radius. The shadow fraction is then just the ratio of the planet's area to the sun's area.
+This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`). Use the equation for a circular area, :math:`A = \pi r^2`, to find the area of the sun and planet faces, replacing :math:`r` with the corresponding apparent radius. The illumination fraction is then just the ratio of the planet's area to the sun's area.
 \begin{equation} \label{eq:18}
-Shadow Fraction = \frac{A_P}{A_H}
+Illumination Fraction = \frac{A_P}{A_H}
 \end{equation}
 
 Partial Eclipse ($c < a+ b$)
@@ -158,9 +158,9 @@ Parameters :math:`a`, :math:`b`, and :math:`c` are those calculated previously i
 .. math:: y = \sqrt{a^2 - x^2}
     :label: eq:elipse:21
 
-Like with the annular partial eclipse, the shadow factor for this type is the ratio between the occulted area and the sun's apparent area. This is given by the equation below.
+Like with the annular partial eclipse, the illumination factor for this type is the ratio between the occulted area and the sun's apparent area. This is given by the equation below.
 
-.. math:: \text{Shadow Fraction} = 1 - \frac{A}{\pi a^2}
+.. math:: \text{Illumination Fraction} = 1 - \frac{A}{\pi a^2}
     :label: eq:elipse:22
 
 
@@ -205,7 +205,7 @@ The planet state input message is of type :ref:`SpicePlanetStateMsgPayload`.  To
 
     addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])
 
-At least one planet must be specified.  If there are multiple planets, then the shadow factor is only computed relative to the closest planet.
+At least one planet must be specified.  If there are multiple planets, then the illumination factor is only computed relative to the closest planet.
 
 Setting the Sun State Input Message (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,4 +221,4 @@ The ``eclipse`` module will output a series of messages of type :ref:`EclipseMsg
     eclipseObject.eclipseOutMsgs[1]
     eclipseObject.eclipseOutMsgs[2]
 
-where ``0`` indicates the first spacecraft shadow factor messages, etc.
+where ``0`` indicates the first spacecraft illumination factor messages, etc.

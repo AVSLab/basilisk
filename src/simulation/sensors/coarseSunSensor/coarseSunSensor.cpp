@@ -263,7 +263,7 @@ void CoarseSunSensor::computeTrueOutput()
     // apply sun distance factor (adjust based on flux at current distance from sun)
     this->trueValue *= this->sunDistanceFactor;
 
-    // Also apply shadow factor. Basically, correct the intensity of the light.
+    // Also apply illumination factor. Basically, correct the intensity of the light.
     this->trueValue *= this->sunVisibilityFactor.illuminationFactor;
 
     // Adding albedo value (if defined by the user)
