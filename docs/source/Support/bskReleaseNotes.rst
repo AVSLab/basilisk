@@ -131,6 +131,7 @@ Version |release|
 - Removed ``supportData`` files from wheels and source distributions to reduce package size.
 - Made :ref:`FacetSRPDynamicEffector` variables ``numFacets`` and ``numArticulatedFacets`` private
   variables.  Their use as public variables has been deprecated since December 2024.
+- Deprecated use of ``shadowFactor`` in favor of ``illuminationFactor``
 
 
 Version 2.8.0 (August 30, 2025)
