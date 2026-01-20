@@ -181,7 +181,7 @@ provides information on what this message is used for.</p>
 </section>
 <section id="detailed-module-description">
 <h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
-<p>The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body’s position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a shadow factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.</p>
+<p>The eclipse module is responsible for determining whether or not a spacecraft is within the shadow of a solar eclipse and if so, how much. The module finds the states of the sun, spacecraft and planets of interest, allowing each body’s position to be related and the construction of the conical shadow model. This provides the means for computing what percent of the spacecraft is illuminated where a illumination factor of 0.0 represents a total eclipse and 1.0 represents no eclipse.</p>
 <p>To determine the states of the bodies in question, messages are passed into the code. For the spacecraft, Cartesian vectors provide the position and velocity of its center of mass. For the sun and planets their ephemeris messages are read in. The planets desired to be used in the module are specified through the python method <code class="docutils literal notranslate"><span class="pre">addPlanetToModel()</span></code>, where the planet spice state message is the input.  If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.  The figure below illustrates how the states are represented and will be identified in the mathematical model. Calculations in this model are taken from Montenbruck and Gill’s text <a class="reference external" href="http://doi.org/10.1007/978-3-642-58351-3">Satellite Orbits Models, Methods and Applications</a>.</p>
 <figure class="align-center" id="id2">
 <span id="conshad"></span><img alt="../../../../_images/conical_shadow.svg" src="../../../../_images/conical_shadow.svg" />
@@ -199,7 +199,7 @@ provides information on what this message is used for.</p>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-3">
 <span class="eqno">(3)<a class="headerlink" href="#equation-eq-elipse-3" title="Link to this equation"></a></span>\[\mathbf{s}_{P/B} = \mathbf{r}_{N/B} - \mathbf{r}_{N/P}\]</div>
 <p>The previous three equations provide coordinates for the sun with respect to both the occulting planet and occulted spacecraft as well as the spacecraft’s position with respect to the planet, respectively. The parameters on the right side of these equations come from the input state data where <span class="math notranslate nohighlight">\(\mathbf{r}_{N/H}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{r}_{N/P}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{r}_{N/B}\)</span> are the sun, planet, and spacecraft positions in the inertial frame.</p>
-<p>This module supports the use of multiple occulting bodies, so it is important to analyze only the planet with the highest potential to cause an eclipse. Thus, the closest planet is determined by comparing the magnitude of each planet’s distance to the spacecraft, <span class="math notranslate nohighlight">\(|\mathbf{s}_{P/B}|\)</span>. Note that if the spacecraft is closer to the sun than the planet, i.e. <span class="math notranslate nohighlight">\(|\mathbf{r}_{B/H}| &lt; |\mathbf{s}_{P/H}|\)</span>, an eclipse is not possible and the shadow fraction is immediately set to 1.0.</p>
+<p>This module supports the use of multiple occulting bodies, so it is important to analyze only the planet with the highest potential to cause an eclipse. Thus, the closest planet is determined by comparing the magnitude of each planet’s distance to the spacecraft, <span class="math notranslate nohighlight">\(|\mathbf{s}_{P/B}|\)</span>. Note that if the spacecraft is closer to the sun than the planet, i.e. <span class="math notranslate nohighlight">\(|\mathbf{r}_{B/H}| &lt; |\mathbf{s}_{P/H}|\)</span>, an eclipse is not possible and the illumination fraction is immediately set to 1.0.</p>
 </section>
 <section id="eclipse-conditions">
 <h3>Eclipse Conditions<a class="headerlink" href="#eclipse-conditions" title="Link to this heading"></a></h3>
@@ -229,7 +229,7 @@ provides information on what this message is used for.</p>
 </section>
 <section id="percent-shadow">
 <h3>Percent Shadow<a class="headerlink" href="#percent-shadow" title="Link to this heading"></a></h3>
-<p>With the eclipse type determined, the shadow fraction can now be found. To find the shadow fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> in the equations below.</p>
+<p>With the eclipse type determined, the illumination fraction can now be found. To find the illumination fraction, the apparent radii of the sun and planet and the apparent separation of both bodies are needed. These are given, respectively, by <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> in the equations below.</p>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-15">
 <span class="eqno">(12)<a class="headerlink" href="#equation-eq-elipse-15" title="Link to this equation"></a></span>\[a = \arcsin(\frac{r_H}{| \mathbf{r}_{B/H}|})\]</div>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-16">
@@ -245,28 +245,30 @@ provides information on what this message is used for.</p>
 </figure>
 <section id="total-eclipse-c-b-a">
 <h4>Total Eclipse (<span class="math notranslate nohighlight">\(c &lt; b-a\)</span>)<a class="headerlink" href="#total-eclipse-c-b-a" title="Link to this heading"></a></h4>
-<p>This type assumes that the apparent radius of the planet is larger than that of the sun (<span class="math notranslate nohighlight">\(b&gt;a\)</span>). A total eclipse produces a total shadow, so the shadow fraction is 0.0.</p>
+<p>This type assumes that the apparent radius of the planet is larger than that of the sun (<span class="math notranslate nohighlight">\(b&gt;a\)</span>). A total eclipse produces a total shadow, so the illumination fraction is 0.0.</p>
 </section>
 <section id="annular-eclipse-c-a-b">
-<h4>Annular Eclipse ($c &lt; a-b$)<a class="headerlink" href="#annular-eclipse-c-a-b" title="Link to this heading"></a></h4>
-<p>This type assumes the apparent radius of the sun is larger than that of the planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>). Use the equation for a circular area, <span class="math notranslate nohighlight">\(A = \pi r^2\)</span>, to find the area of the sun and planet faces, replacing <span class="math notranslate nohighlight">\(r\)</span> with the corresponding apparent radius. The shadow fraction is then just the ratio of the planet’s area to the sun’s area.
-begin{equation} label{eq:18}
-Shadow Fraction = frac{A_P}{A_H}
-end{equation}</p>
+<h4>Annular Eclipse (<span class="math notranslate nohighlight">\(c &lt; a-b\)</span>)<a class="headerlink" href="#annular-eclipse-c-a-b" title="Link to this heading"></a></h4>
+<p>This type assumes the apparent radius of the sun is larger than that of the planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).
+Use the equation for a circular area, <span class="math notranslate nohighlight">\(A = \pi r^2\)</span>, to find the area of the sun and
+planet faces, replacing <span class="math notranslate nohighlight">\(r\)</span> with the corresponding apparent radius. The illumination
+fraction is then just the ratio of the planet’s area to the sun’s area.</p>
+<div class="math notranslate nohighlight" id="equation-eq-18">
+<span class="eqno">(15)<a class="headerlink" href="#equation-eq-18" title="Link to this equation"></a></span>\[\text{Illumination Fraction} = \frac{A_P}{A_H}\]</div>
 </section>
 <section id="partial-eclipse-c-a-b">
-<h4>Partial Eclipse ($c &lt; a+ b$)<a class="headerlink" href="#partial-eclipse-c-a-b" title="Link to this heading"></a></h4>
-<p>For a partial eclipse, the occulted area is given by Eq. <a class="reference internal" href="#equation-eq-elipse-19">(15)</a>.</p>
+<h4>Partial Eclipse (<span class="math notranslate nohighlight">\(c &lt; a+ b\)</span>)<a class="headerlink" href="#partial-eclipse-c-a-b" title="Link to this heading"></a></h4>
+<p>For a partial eclipse, the occulted area is given by Eq. <a class="reference internal" href="#equation-eq-elipse-19">(16)</a>.</p>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-19">
-<span class="eqno">(15)<a class="headerlink" href="#equation-eq-elipse-19" title="Link to this equation"></a></span>\[A = a^2 \arccos(\frac{x}{a}) + b^2 \arccos(\frac{c-x}{b}) - cy\]</div>
+<span class="eqno">(16)<a class="headerlink" href="#equation-eq-elipse-19" title="Link to this equation"></a></span>\[A = a^2 \arccos(\frac{x}{a}) + b^2 \arccos(\frac{c-x}{b}) - cy\]</div>
 <p>Parameters <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> are those calculated previously in Eq. <a class="reference internal" href="#equation-eq-elipse-15">(12)</a>, <a class="reference internal" href="#equation-eq-elipse-16">(13)</a>, and <a class="reference internal" href="#equation-eq-elipse-17">(14)</a>. The values <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are given by the following equations.</p>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-20">
-<span class="eqno">(16)<a class="headerlink" href="#equation-eq-elipse-20" title="Link to this equation"></a></span>\[x = \frac{c^2 + a^2 - b^2}{2c}\]</div>
+<span class="eqno">(17)<a class="headerlink" href="#equation-eq-elipse-20" title="Link to this equation"></a></span>\[x = \frac{c^2 + a^2 - b^2}{2c}\]</div>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-21">
-<span class="eqno">(17)<a class="headerlink" href="#equation-eq-elipse-21" title="Link to this equation"></a></span>\[y = \sqrt{a^2 - x^2}\]</div>
-<p>Like with the annular partial eclipse, the shadow factor for this type is the ratio between the occulted area and the sun’s apparent area. This is given by the equation below.</p>
+<span class="eqno">(18)<a class="headerlink" href="#equation-eq-elipse-21" title="Link to this equation"></a></span>\[y = \sqrt{a^2 - x^2}\]</div>
+<p>Like with the annular partial eclipse, the illumination factor for this type is the ratio between the occulted area and the sun’s apparent area. This is given by the equation below.</p>
 <div class="math notranslate nohighlight" id="equation-eq-elipse-22">
-<span class="eqno">(18)<a class="headerlink" href="#equation-eq-elipse-22" title="Link to this equation"></a></span>\[\text{Shadow Fraction} = 1 - \frac{A}{\pi a^2}\]</div>
+<span class="eqno">(19)<a class="headerlink" href="#equation-eq-elipse-22" title="Link to this equation"></a></span>\[\text{Illumination Fraction} = 1 - \frac{A}{\pi a^2}\]</div>
 </section>
 </section>
 </section>
@@ -315,7 +317,7 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>At least one planet must be specified.  If there are multiple planets, then the shadow factor is only computed relative to the closest planet.</p>
+<p>At least one planet must be specified.  If there are multiple planets, then the illumination factor is only computed relative to the closest planet.</p>
 </section>
 <section id="setting-the-sun-state-input-message-optional">
 <h3>Setting the Sun State Input Message (Optional)<a class="headerlink" href="#setting-the-sun-state-input-message-optional" title="Link to this heading"></a></h3>
@@ -332,7 +334,7 @@ planet (<span class="math notranslate nohighlight">\(a&gt;b\)</span>).</p></li>
 <span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">0</span></code> indicates the first spacecraft shadow factor messages, etc.</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">0</span></code> indicates the first spacecraft illumination factor messages, etc.</p>
 <hr class="docutils" />
 <dl class="cpp class">
 <dt class="sig sig-object cpp" id="_CPPv47Eclipse">

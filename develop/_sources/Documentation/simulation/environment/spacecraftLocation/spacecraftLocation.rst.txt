@@ -128,7 +128,7 @@ If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, t
 .. math::
     \arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}
 
-If an eclipse message is connected and ``min_illumination_factor`` is set, the module will also check that the shadow factor is above this threshold.
+If an eclipse message is connected and ``min_illumination_factor`` is set, the module will also check that the illumination factor is above this threshold.
 
 User Guide
 ----------
