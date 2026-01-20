@@ -134,16 +134,19 @@ Total Eclipse (:math:`c < b-a`)
 This type assumes that the apparent radius of the planet is larger than that of the sun (:math:`b>a`). A total eclipse produces a total shadow, so the illumination fraction is 0.0.
 
 
-Annular Eclipse ($c < a-b$)
-"""""""""""""""""""""""""""
+Annular Eclipse (:math:`c < a-b`)
+"""""""""""""""""""""""""""""""""
 
-This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`). Use the equation for a circular area, :math:`A = \pi r^2`, to find the area of the sun and planet faces, replacing :math:`r` with the corresponding apparent radius. The illumination fraction is then just the ratio of the planet's area to the sun's area.
-\begin{equation} \label{eq:18}
-Illumination Fraction = \frac{A_P}{A_H}
-\end{equation}
+This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`).
+Use the equation for a circular area, :math:`A = \pi r^2`, to find the area of the sun and
+planet faces, replacing :math:`r` with the corresponding apparent radius. The illumination
+fraction is then just the ratio of the planet's area to the sun's area.
 
-Partial Eclipse ($c < a+ b$)
-""""""""""""""""""""""""""""
+.. math:: \text{Illumination Fraction} = \frac{A_P}{A_H}
+    :label: eq:18
+
+Partial Eclipse (:math:`c < a+ b`)
+""""""""""""""""""""""""""""""""""
 
 For a partial eclipse, the occulted area is given by Eq. :eq:`eq:elipse:19`.
 
