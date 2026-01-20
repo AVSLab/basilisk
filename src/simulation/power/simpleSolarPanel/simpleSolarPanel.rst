@@ -40,7 +40,7 @@ The following table lists additional module input messages beyond those specifie
       - Describes spacecraft position, attitude.
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
-      - (optional) Describes shadow factor due to planetary bodies.
+      - (optional) Describes illumination factor due to planetary bodies.
 
 
 
@@ -49,7 +49,7 @@ User Guide
 This module inherits the user guide from the PowerNodeBase base class.  Module specific instructions include:
 
 - must connect ``sunInMsg`` and ``stateInMsg`` input messages
-- the ``sunEclipseInMsg`` message is optional.  If provided the modules uses the eclipse shadow factor to adjust the power generation if needed.
+- the ``sunEclipseInMsg`` message is optional.  If provided the modules uses the eclipse illumination factor to adjust the power generation if needed.
 - must specify the variables ``panelArea``, ``panelEfficiency`` and ``nHat_B``.  These there parameters can also be set at the same time through ``setPanelParameters(nHat_B, panelArea, panelEfficiency)``
 
 For more information on how to set up and use this module, see the simple power system example: :ref:`scenarioPowerDemo`

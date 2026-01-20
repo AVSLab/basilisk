@@ -77,7 +77,7 @@ which is a model based on an average albedo value that can be specified with ``A
 and used for any planet. If ``ALB_avg`` is not specified albedo module uses the default value defined for each planet.
 
 An optional input is the solar eclipse case ``eclipseCase``.
-If it is specified as True, then the shadow factor is calculated by the albedo module automatically.
+If it is specified as True, then the illumination factor is calculated by the albedo module automatically.
 
 When the simulation completes, one to three plots are shown depending on the case. First one always show the
 albedo value at the instrument (instrument's signal) with or without the instrument's total signal. In case of
