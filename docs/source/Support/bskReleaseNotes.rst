@@ -56,6 +56,8 @@ Version |release|
 - Added new module :ref:`MJJointReactionForces` to extract the reaction forces and torques acting on the joints from a MuJoCo simulation.
 - Added new module :ref:`hingedJointArrayMotor` to determine the motor torques for an array of hinged joints.
 - Added new module :ref:`jointMotionCompensator` to determine the hub torques required to negate the effect of hinged joint motor torques on the spacecraft hub motion.
+- Updated :ref:`locationPointing` module to save ``omega_RN_B`` to the ``attGuidOutMsg``. This may effect
+  the performance of other modules that use this output message.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
