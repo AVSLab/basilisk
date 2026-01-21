@@ -24,6 +24,8 @@ Version |release|
   was not being computed properly. Fixed now.
 - :ref:`MJSite` hade an issue where the angular velocity that was being written into the stateOutMsg
   was in the inertial frame components not the body frame components.  This is now fixed.
+- :ref:`locationPointing` was calculating the value of ``omega_RN_B`` but not saving it to the
+  ``attGuidOutMsg``. This value is now being saved properly.
 - The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
   list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
   method.  If the script was directly manipulating the :ref:`vizSupport` list that functionality no longer works.

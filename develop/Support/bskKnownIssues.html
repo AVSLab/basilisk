@@ -150,6 +150,8 @@ Basilisk with Python 3.13 or above, we automatically default to using the newer 
 was not being computed properly. Fixed now.</p></li>
 <li><p><a class="reference internal" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJSite.html#mjsite"><span class="std std-ref">Module: MJSite</span></a> hade an issue where the angular velocity that was being written into the stateOutMsg
 was in the inertial frame components not the body frame components.  This is now fixed.</p></li>
+<li><p><a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> was calculating the value of <code class="docutils literal notranslate"><span class="pre">omega_RN_B</span></code> but not saving it to the
+<code class="docutils literal notranslate"><span class="pre">attGuidOutMsg</span></code>. This value is now being saved properly.</p></li>
 <li><p>The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
 list of locations and only incremental changes have to be sent using the <code class="docutils literal notranslate"><span class="pre">vizSupport.changeLocation()</span></code>
 method.  If the script was directly manipulating the <a class="reference internal" href="../Documentation/utilities/vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a> list that functionality no longer works.
