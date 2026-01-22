@@ -55,9 +55,15 @@ def main():
             "supportData directory not found. Run this script from the project root."
         )
 
-    files = sorted(p for p in ROOT.rglob("*") if p.is_file() and should_include(p))
+    files = [p for p in ROOT.rglob("*") if p.is_file() and should_include(p)]
 
+    def registry_key(p: Path) -> tuple[str, str]:
+        rel_posix = p.relative_to(ROOT.parent).as_posix()
+        return (rel_posix.casefold(), rel_posix)
+
+    files.sort(key=registry_key)
     entries = []
+
     for path in files:
         rel = path.relative_to(ROOT.parent)
         digest = md5_hex(path)
