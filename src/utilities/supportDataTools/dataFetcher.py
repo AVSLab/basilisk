@@ -115,9 +115,14 @@ def get_path(file_enum: Enum) -> Path:
         local = LOCAL_SUPPORT / _local_rel(rel)
         if local.exists():
             return local
-        raise FileNotFoundError(f"Support data file not found: {local}")
 
-    return Path(POOCH.fetch(rel))
+    # Fall back to pooch cache or remote source
+    try:
+        return Path(POOCH.fetch(rel))
+    except Exception as e:
+        raise FileNotFoundError(
+            f"Support data file not found locally or via pooch: {rel}"
+        ) from e
 
 
 class DataFile:
