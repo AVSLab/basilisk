@@ -388,12 +388,13 @@ class BSKFswModels:
         """
         Imports the thrusters configuration information.
         """
-        fswSetupThrusters.clearSetup()
-        for key, th in SimBase.DynModels[self.spacecraftIndex].thrusterFactory.thrusterList.items():
-            loc_B_tmp = list(itertools.chain.from_iterable(th.thrLoc_B))
-            dir_B_tmp = list(itertools.chain.from_iterable(th.thrDir_B))
-            fswSetupThrusters.create(loc_B_tmp, dir_B_tmp, th.MaxThrust)
-        self.fswThrusterConfigMsg = fswSetupThrusters.writeConfigMessage()
+        self.fswThrusterConfigMsg = SimBase.DynModels[self.spacecraftIndex].thrusterFactory.getConfigMessage()
+#        fswSetupThrusters.clearSetup()
+#        for key, th in SimBase.DynModels[self.spacecraftIndex].thrusterFactory.thrusterList.items():
+#            loc_B_tmp = list(itertools.chain.from_iterable(th.thrLoc_B))
+#            dir_B_tmp = list(itertools.chain.from_iterable(th.thrDir_B))
+#            fswSetupThrusters.create(loc_B_tmp, dir_B_tmp, th.MaxThrust)
+#        self.fswThrusterConfigMsg = fswSetupThrusters.writeConfigMessage()
 
     def SetMtbConfigMsg(self, SimBase):
         """
