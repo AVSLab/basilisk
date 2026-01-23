@@ -55,7 +55,7 @@ typedef enum {
  *
  *     # Configure noise (Tesla)
  *     magSensor.senNoiseStd = [0.001, 0.001, 0.001]  # Standard deviation per axis
- *     magSensor.setWalkBounds([0.01, 0.01, 0.01])    # Maximum error bounds
+ *     magSensor.walkBounds([0.01, 0.01, 0.01])    # Maximum error bounds
  *
  *     # Optional: Set static bias (Tesla)
  *     magSensor.senBias = [0.0001, 0.0001, 0.0001]

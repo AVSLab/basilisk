@@ -74,12 +74,14 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     testModule = magnetometer.Magnetometer()
     testModule.ModelTag = "TAM_sensor"
     NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
+    WalkBounds = [1e-8, 1e-8, 1e-8]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
     maxOut = 1e-4  # Tesla
 
     if useNoiseStd:
         testModule.senNoiseStd = NoiseStd
+        testModule.walkBounds = WalkBounds
     if useBias:
         testModule.senBias = bias
     if useScaleFactor:
