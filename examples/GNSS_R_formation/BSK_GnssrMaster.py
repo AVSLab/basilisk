@@ -42,6 +42,7 @@ class BarycenterPoint:
         self.ModelTag = modelTag
         self.scStateOutMsg = messaging.SCStatesMsg()
         self._converter = _NavTransToSCStates(navTransMsg, self.scStateOutMsg)
+        self._converter.this.disown() # Prevent memory leaks
 
     def getConverter(self):
         """Returns the converter module to be added to a task."""
@@ -164,11 +165,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the formationBarycenter module
         self.relativeNavigationModule = formationBarycenter.FormationBarycenter()
         self.relativeNavigationModule.ModelTag = "RelativeNavigation"
-        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, 0)
 
         # Create barycenter visualization point
         self.barycenterPoint = BarycenterPoint(self.relativeNavigationModule.transOutMsg)
-        self.AddModelToTask(self.relativeNavigationTaskName, self.barycenterPoint.getConverter(), -1)
 
 class BSKScenario(object):
     def __init__(self):
