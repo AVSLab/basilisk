@@ -1,0 +1,103 @@
+%module(threads="1") {type}Payload
+%{{
+    #include "{baseDir}/{type}Payload.h"
+    #include "architecture/messaging/messaging.h"
+    #include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
+    #include "architecture/msgPayloadDefC/RWConfigElementMsgPayload.h"
+    #include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
+    #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
+    #include <stdint.h>
+    #include <vector>
+    #include <string>
+%}}
+%include "messaging/newMessaging.ih"
+
+%include "std_vector.i"
+%include "std_string.i"
+%include "_GeneralModuleFiles/swig_eigen.i"
+%include "_GeneralModuleFiles/swig_conly_data.i"
+%include "stdint.i"
+%template(TimeVector) std::vector<unsigned long long, std::allocator<unsigned long long>>;
+%template(DoubleVector) std::vector<double, std::allocator<double>>;
+%template(StringVector) std::vector<std::string, std::allocator<std::string>>;
+
+%include "architecture/utilities/macroDefinitions.h"
+%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
+ARRAYASLIST(FSWdeviceAvailability, PyLong_FromLong, PyLong_AsLong)
+STRUCTASLIST(CSSUnitConfigMsgPayload)
+STRUCTASLIST(AccPktDataMsgPayload)
+STRUCTASLIST(RWConfigElementMsgPayload)
+STRUCTASLIST(CSSArraySensorMsgPayload)
+
+%include "messaging/messaging.h"
+%include "_GeneralModuleFiles/sys_model.h"
+
+%array_functions(THRConfigMsgPayload, ThrustConfigArray);
+%array_functions(RWConfigElementMsgPayload, RWConfigArray);
+%array_functions(ReconfigBurnInfoMsgPayload, ReconfigBurnArray);
+
+%rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
+%rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
+%rename(__is_subscribed_to) isSubscribedTo;  // we want the users to have a unified "isSubscribedTo" interface
+%rename(__is_subscribed_to_C) isSubscribedToC;  // we want the users to have a unified "isSubscribedTo" interface
+%rename(__time_vector) times;  // It's not really useful to give the user back a time vector
+%rename(__timeWritten_vector) timesWritten;
+%rename(__record_vector) record;
+
+%pythoncode %{{
+import numpy as np
+%}};
+%include "{baseDir}/{type}Payload.h"
+{extraContent}
+INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
+%template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
+%template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
+%template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;
+%pythoncode %{{
+if "{type}" == "EclipseMsg":
+    from . import _{type}Payload as _m
+    from Basilisk.utilities import deprecated
+
+    # ----- Payload aliasing -----
+    def _get_illum(self):
+        return _m.{type}Payload_shadowFactor_get(self)
+
+    def _set_illum(self, v):
+        _m.{type}Payload_shadowFactor_set(self, v)
+
+    {type}Payload.illuminationFactor = property(_get_illum, _set_illum)
+
+    # Deprecate the old shadowFactor name
+    def _warn_get_shadow(self):
+        deprecated.deprecationWarn(
+            "EclipseMsgPayload.shadowFactor",
+            "2026/12/31",
+            "Use EclipseMsgPayload.illuminationFactor instead (0=fully eclipsed, 1=fully sunlit)."
+        )
+        return _m.{type}Payload_shadowFactor_get(self)
+
+    def _warn_set_shadow(self, v):
+        deprecated.deprecationWarn(
+            "EclipseMsgPayload.shadowFactor",
+            "2026/12/31",
+            "Use EclipseMsgPayload.illuminationFactor instead (0=fully eclipsed, 1=fully sunlit)."
+        )
+        _m.{type}Payload_shadowFactor_set(self, v)
+
+    {type}Payload.shadowFactor = property(_warn_get_shadow, _warn_set_shadow)
+
+    # ----- Recorder aliasing so logs can use illuminationFactor -----
+    try:
+        _orig_rec_getattr = EclipseMsgRecorder.__getattr__
+
+        def _rec_getattr_with_alias(self, name):
+            if name == "illuminationFactor":
+                # Delegate to the original implementation but ask for shadowFactor
+                return _orig_rec_getattr(self, "shadowFactor")
+            return _orig_rec_getattr(self, name)
+
+        EclipseMsgRecorder.__getattr__ = _rec_getattr_with_alias
+    except Exception:
+        pass
+%}}

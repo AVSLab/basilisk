@@ -60,11 +60,6 @@ venv/
 *.vscode_debug_path/
 lib/*
 
-# Headers staged by sdk/tools/sync_headers.py (duplicates of src/)
-sdk/src/bsk_sdk/include/Basilisk/architecture/_GeneralModuleFiles/
-sdk/src/bsk_sdk/include/Basilisk/architecture/messaging/
-sdk/src/bsk_sdk/include/Basilisk/architecture/utilities/
-
 # Python packaging
 *.egg-info
 build/

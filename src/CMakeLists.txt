@@ -607,18 +607,6 @@ set(AllLibs "")
 generate_package_libraries("${CMAKE_SOURCE_DIR}" "${AllLibs}") # This finds GeneralModuleFiles and generates a library
                                                                # of the parentDirectory name
 
-# Update architectureLib with msgTypeRegistry.cpp, now that generate_package_libraries has defined it.
-# This assumes generate_package_libraries handles architectureLib creation.
-if(TARGET architectureLib)
-    target_sources(architectureLib PRIVATE
-        "${PROJECT_SOURCE_DIR}/architecture/messaging/msgTypeRegistry.cpp"
-    )
-    target_include_directories(architectureLib PUBLIC
-        "${PROJECT_SOURCE_DIR}/architecture/messaging"
-    )
-    target_compile_definitions(architectureLib PRIVATE BASILISK_ARCH_EXPORTS=1)
-endif()
-
 set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
 # SIMULATION
@@ -728,6 +716,9 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/utilities")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/plugins")
+file(GLOB pluginsPy "${CMAKE_SOURCE_DIR}/plugins/*.py" "${CMAKE_SOURCE_DIR}/plugins/**")
+create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/plugins" ${pluginsPy})
 
 if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
@@ -749,13 +740,6 @@ else()
       "    __version__ = '0.0.0'\n")
 endif()
 
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/modules")
-configure_file(
-  "${CMAKE_SOURCE_DIR}/modules/__init__.py"
-  "${CMAKE_BINARY_DIR}/Basilisk/modules/__init__.py"
-  COPYONLY
-)
-
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bsk_core")
 file(GLOB BSK_CORE_SOURCES "${CMAKE_SOURCE_DIR}/bsk_core/*.py" "${CMAKE_SOURCE_DIR}/bsk_core/**")
 if(BSK_CORE_SOURCES)
@@ -766,9 +750,12 @@ endif()
 file(
   GLOB_RECURSE DIST_DIRECTORIES
   LIST_DIRECTORIES true
-  "${CMAKE_BINARY_DIR}/Basilisk/*")
+  "${CMAKE_BINARY_DIR}/Basilisqk/*")
 
 foreach(DIR ${DIST_DIRECTORIES})
+  if(DIR MATCHES "/Basilisk/architecture/messaging$")
+    continue()
+  endif()
   if(IS_DIRECTORY ${DIR})
     file(
       GLOB DIST_DIR_FILES

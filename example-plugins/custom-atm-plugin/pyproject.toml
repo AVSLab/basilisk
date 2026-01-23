@@ -1,0 +1,10 @@
+[build-system]
+requires = ["scikit-build-core>=0.9.3", "bsk-sdk>=1.0.0"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "bsk-plugin-exponential-atmosphere"
+version = "0.1.0"
+
+[tool.scikit-build]
+wheel.packages = ["custom_atm"]

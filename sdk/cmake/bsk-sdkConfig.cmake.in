@@ -1,0 +1,31 @@
+@PACKAGE_INIT@
+
+get_filename_component(_bsk_sdk_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_bsk_sdk_cmake_dir  "${_bsk_sdk_config_dir}" PATH)   # .../cmake
+get_filename_component(_bsk_sdk_lib_dir    "${_bsk_sdk_cmake_dir}" PATH)    # .../lib
+get_filename_component(_bsk_sdk_pkg_dir    "${_bsk_sdk_lib_dir}" PATH)      # <pkg root>
+
+set(BSK_SDK_PKG_DIR            "${_bsk_sdk_pkg_dir}"                CACHE PATH "bsk-sdk package root")
+set(BSK_SDK_INCLUDE_DIR        "${BSK_SDK_PKG_DIR}/include"         CACHE PATH "bsk-sdk include root")
+set(BSK_SDK_COMPAT_INCLUDE_DIR "${BSK_SDK_INCLUDE_DIR}/compat"      CACHE PATH "bsk-sdk compat include dir")
+set(BSK_SDK_RUNTIME_MIN_DIR    "${BSK_SDK_PKG_DIR}/runtime_min"     CACHE PATH "bsk-sdk runtime_min dir (if shipped)")
+set(BSK_SDK_SWIG_DIR           "${BSK_SDK_PKG_DIR}/swig"            CACHE PATH "bsk-sdk swig dir")
+set(BSK_SDK_TOOLS_DIR          "${BSK_SDK_PKG_DIR}/tools"           CACHE PATH "bsk-sdk tools dir")
+
+include("${_bsk_sdk_config_dir}/bsk-sdkTargets.cmake")
+
+function(_bsk_sdk_make_alias_if_needed alias_name real_name)
+  if(TARGET "${real_name}" AND NOT TARGET "${alias_name}")
+    add_library("${alias_name}" ALIAS "${real_name}")
+  endif()
+endfunction()
+
+_bsk_sdk_make_alias_if_needed(bsk::sdk_headers  bsk::bsk_sdk_headers)
+_bsk_sdk_make_alias_if_needed(bsk::arch_min     bsk::bsk_arch_min)
+_bsk_sdk_make_alias_if_needed(bsk::runtime_min  bsk::bsk_runtime_min)
+_bsk_sdk_make_alias_if_needed(bsk::plugin       bsk::bsk_plugin)
+
+include("${_bsk_sdk_config_dir}/bsk_add_swig_module.cmake")
+include("${_bsk_sdk_config_dir}/bsk_generate_messages.cmake")
+
+check_required_components(bsk-sdk)

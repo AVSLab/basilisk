@@ -1,0 +1,41 @@
+%{
+#include "cMsgCInterface/{type}_C.h"
+#include "architecture/messaging/messaging.h"
+%}
+
+%include "cMsgCInterface/{type}_C.h"
+%include "architecture/messaging/msgHeader.h"
+
+%extend {type}_C {
+    Recorder<{type}Payload> recorder(uint64_t timeDiff = 0) {
+        self->header.isLinked = 1;
+        return Recorder<{type}Payload>{static_cast<void*>(self), timeDiff};
+    }
+
+%pythoncode %{
+
+def subscribeTo(self, source):
+    """Subscribe to another {type} message (same type only)."""
+    if not isinstance(source, self.__class__):
+        raise TypeError(f"{self.__class__.__name__}.subscribeTo expects same message type")
+    {type}_C_subscribe(self, source)
+    return self
+
+def unsubscribe(self):
+    """Unsubscribe from the connected message (noop if none)."""
+    {type}_unsubscribe(self)
+    return self
+
+def write(self, payload, time=0, moduleID=0):
+    """Write payload to this message and return self (chainable)."""
+    # Optional: only if your C side requires an author registration
+    {type}_C_addAuthor(self, self)
+    {type}_C_write(payload, self, moduleID, time)
+    return self
+
+def read(self):
+    """Read payload from this message."""
+    return {type}_C_read(self)
+
+%}
+};

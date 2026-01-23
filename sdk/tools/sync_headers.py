@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
+
+#
+#  ISC License
+#
+#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+
 """
 Synchronize a curated subset of Basilisk source headers into the SDK package.
 
 This script copies selected directories from the main Basilisk `src/` tree into:
 
     sdk/src/bsk_sdk/include/Basilisk/
-
-so that external plugin builds can depend solely on the `bsk-sdk` Python package
-without vendoring the full Basilisk repository.
 
 This script is intended to be run by Basilisk maintainers when updating the SDK.
 """
@@ -28,6 +45,11 @@ DIRECTORIES = [
     "architecture/_GeneralModuleFiles",
     "architecture/messaging",
     "architecture/utilities",
+    "architecture/msgPayloadDefC",
+    "architecture/msgPayloadDefCpp",
+    "fswAlgorithms/fswUtilities",
+    "simulation/environment/_GeneralModuleFiles",
+    "simulation/dynamics/reactionWheels",
 ]
 
 # Things that must be excluded from the SDK
@@ -38,6 +60,8 @@ IGNORE_PATTERNS = [
     "*.swg",
     "*.i",
     "*.py",
+    "*.cpp",
+    "*.c",
 ]
 
 
