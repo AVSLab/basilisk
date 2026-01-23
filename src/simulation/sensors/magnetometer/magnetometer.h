@@ -100,9 +100,9 @@ public:
     Eigen::Vector3d     tamTrue_S;              //!< [T] Measurement without perturbations
     double              scaleFactor;            //!< [-] Scale factor applied to sensor
     Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
-    Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector
+    Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector, can be changed during simulation
 
-    Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
+    Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states, can be changed during simulation
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
     Eigen::Vector3d     stuckValue;             //!< [T] Value for mag sensor to get stuck at
