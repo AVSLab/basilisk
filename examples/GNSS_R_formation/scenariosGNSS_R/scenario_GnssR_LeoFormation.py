@@ -240,20 +240,35 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 gsList.append([batteryPanel, tankPanel])
 
             lastTaskName = self.DynModels[-1].taskName  # Load Vizard with the last spacecraft's dynamics task
+
+            # Add barycenter modules to dynamics task for proper Vizard sync
+            if relativeNavigation:
+                self.AddModelToTask(lastTaskName, self.relativeNavigationModule, 5)
+                self.AddModelToTask(lastTaskName, self.barycenterPoint.getConverter(), 4)
+
             viz = vizSupport.enableUnityVisualization(self, lastTaskName, DynModelsList
                                                       , saveFile=__file__
                                                       , rwEffectorList=rwStateEffectorList
                                                       , thrEffectorList=thDynamicEffectorList
                                                       , genericStorageList=gsList
                                                       )
-
-            # Add barycenter point for relative orbit visualization
             if relativeNavigation:
-                barycenterVizData = vizSupport.vizInterface.VizSpacecraftData()
-                barycenterVizData.spacecraftName = self.barycenterPoint.ModelTag
-                barycenterVizData.scStateInMsg.subscribeTo(self.barycenterPoint.scStateOutMsg)
-                barycenterVizData.modelDictionaryKey = ""  # No 3D model
-                viz.scData.push_back(barycenterVizData)
+                # Create VizSpacecraftData for the barycenter
+                self.barycenterVizData = vizSupport.vizInterface.VizSpacecraftData()
+                self.barycenterVizData.spacecraftName = self.barycenterPoint.ModelTag
+                self.barycenterVizData.scStateInMsg.subscribeTo(self.barycenterPoint.scStateOutMsg)
+
+                # Explicitly set empty thruster configuration to prevent memory leak
+                self.barycenterVizData.thrInMsgs = messaging.THROutputMsgInMsgsVector([])
+                self.barycenterVizData.thrInfo = vizSupport.vizInterface.ThrClusterVector([])
+
+                # Add to viz
+                viz.scData.push_back(self.barycenterVizData)
+                # Hide the barycenter model using zero scale
+                vizSupport.createCustomModel(viz,
+                    modelPath="SPHERE",
+                    simBodiesToModify=["barycenter"],
+                    scale=[0.1, 0.1, 0.1])
 
             viz.settings.showSpacecraftLabels = True
             viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
@@ -555,12 +570,13 @@ def runScenario(scenario, relativeNavigation):
 
     # Set up the station keeping requirements
     if relativeNavigation:
+        delta_e = 1.5e-5  # eccentricity difference for spacecraft 0
         scenario.FSWModels[0].stationKeeping = "ON"
-        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0, 0.0, 7.2e-6, 0.0, 0.0, 0.0] #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
+        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0,  delta_e, 0.0, 0.0, 0.0, 0.0] #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
     scenario.FSWModels[1].stationKeeping = "ON"
-    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0, 0.0, -3.6e-6, 0.0, 0.0, 6.3e-6]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
+    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0, -0.5*delta_e, 0.0, 0.0, +np.sqrt(3)/2*delta_e, 0.0]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
     scenario.FSWModels[2].stationKeeping = "ON"
-    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0, 0.0, -3.6e-6, 0.0, 0.0, -6.3e-6]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
+    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0, -0.5*delta_e, 0.0, 0.0, -np.sqrt(3)/2*delta_e, 0.0]  #| Δa/a, Δe, Δi, ΔΩ, Δω, ΔM
 
     # ===================================
     # Initialize simulation
