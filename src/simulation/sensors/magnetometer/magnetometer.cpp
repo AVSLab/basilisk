@@ -157,6 +157,17 @@ void Magnetometer::applySensorErrors()
             anyNoiseComponentUninitialized = true;
         }
     }
+    if (this->walkBounds.norm() > 0 || this->senNoiseStd.norm() > 0) {
+        this->noiseModel.setUpperBounds(this->walkBounds);
+
+        Eigen::MatrixXd nMatrix;
+        nMatrix.resize(3,3);
+        nMatrix.setZero();
+        nMatrix(0,0) = this->senNoiseStd(0);
+        nMatrix(1,1) = this->senNoiseStd(1);
+        nMatrix(2,2) = this->senNoiseStd(2);
+        this->noiseModel.setNoiseMatrix(nMatrix);
+    }
     if (anyNoiseComponentUninitialized) {
         this->tamSensed_S = this->tamTrue_S;
     } else {

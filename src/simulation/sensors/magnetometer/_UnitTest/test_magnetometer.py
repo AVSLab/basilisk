@@ -74,12 +74,14 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     testModule = magnetometer.Magnetometer()
     testModule.ModelTag = "TAM_sensor"
     NoiseStd = [3e-9, 3e-9, 3e-9]  # Tesla
+    WalkBounds = [1e-8, 1e-8, 1e-8]  # Tesla
     bias = [1e-6, 1e-6, 1e-5]  # Tesla
     minOut = -1e-4  # Tesla
     maxOut = 1e-4  # Tesla
 
     if useNoiseStd:
         testModule.senNoiseStd = NoiseStd
+        testModule.walkBounds = WalkBounds
     if useBias:
         testModule.senBias = bias
     if useScaleFactor:
@@ -139,6 +141,11 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
+    # Increase the noise and walk bounds for the next step
+    testModule.senNoiseStd = 3 * np.array(NoiseStd)
+    testModule.walkBounds = 3 * np.array(WalkBounds)
+    unitTestSim.TotalSim.SingleStepProcesses()
+
     # This pulls the actual data log from the simulation run.
     tamData = dataLog.tam_S
     print(tamData)
@@ -148,6 +155,9 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
         if not unitTestSupport.isArrayEqualRelative(tamData[0], trueTam_S, 3, errTol):
             testFailCount += 1
             testMessages.append(f"TAM data with noise failed comparison with {errTol*100}% tolerance")
+        if not unitTestSupport.isArrayEqualRelative(tamData[1], trueTam_S, 3, errTol*2):
+            testFailCount += 1
+            testMessages.append(f"TAM data with noise failed comparison with {errTol*100}% tolerance after increasing noise")
     else:
         # For non-noisy data we can use stricter comparison
         if not unitTestSupport.isArrayEqual(tamData[0], trueTam_S, 3, errTol):
@@ -159,7 +169,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
         print("PASSED: " + testModule.ModelTag)
     else:
         print("Failed: " + testModule.ModelTag)
-    print("This test uses a relative accuracy value of " + str(errTol*100) + " percent")
+    print("This test uses a relative accuracy value of " + str(errTol*100) + " percent and " + str(errTol*100*2) + " percent after increasing noise.")
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -175,5 +185,5 @@ if __name__ == "__main__":
                  True,   # useMinOut
                  True,   # useMaxOut
                  True,   # useScaleFactor
-                 1e-2    # errTol
+                 5e-2    # errTol
                )
