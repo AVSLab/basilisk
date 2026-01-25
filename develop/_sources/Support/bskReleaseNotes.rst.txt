@@ -133,6 +133,7 @@ Version |release|
 - Removed ``supportData`` files from wheels and source distributions to reduce package size.
 - Made :ref:`FacetSRPDynamicEffector` variables ``numFacets`` and ``numArticulatedFacets`` private
   variables.  Their use as public variables has been deprecated since December 2024.
+- Adds support for updating noise parameters in :ref:`magnetometer` during simulation
 - Deprecated use of ``shadowFactor`` in favor of ``illuminationFactor``
 
 

@@ -348,7 +348,7 @@ from <span class="math notranslate nohighlight">\(\cal B\)</span> to <span class
 
 <span class="c1"># Configure noise (Tesla)</span>
 <span class="n">magSensor</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># Standard deviation per axis</span>
-<span class="n">magSensor</span><span class="o">.</span><span class="n">setWalkBounds</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>    <span class="c1"># Maximum error bounds</span>
+<span class="n">magSensor</span><span class="o">.</span><span class="n">walkBounds</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>    <span class="c1"># Maximum error bounds</span>
 
 <span class="c1"># Optional: Set static bias (Tesla)</span>
 <span class="n">magSensor</span><span class="o">.</span><span class="n">senBias</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">]</span>
@@ -532,13 +532,13 @@ from <span class="math notranslate nohighlight">\(\cal B\)</span> to <span class
 <dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11senNoiseStdE">
 <span id="_CPPv3N12Magnetometer11senNoiseStdE"></span><span id="_CPPv2N12Magnetometer11senNoiseStdE"></span><span id="Magnetometer::senNoiseStd__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a436d8d30b2fbf3eb1bd9d6c1dab1d0db"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">senNoiseStd</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer11senNoiseStdE" title="Link to this definition"></a><br /></dt>
-<dd><p>[T] Sensor noise standard deviation vector </p>
+<dd><p>[T] Sensor noise standard deviation vector, can be changed during simulation </p>
 </dd></dl>
 
 <dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10walkBoundsE">
 <span id="_CPPv3N12Magnetometer10walkBoundsE"></span><span id="_CPPv2N12Magnetometer10walkBoundsE"></span><span id="Magnetometer::walkBounds__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a93d046a1b1b474cba335482906c6a354"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walkBounds</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer10walkBoundsE" title="Link to this definition"></a><br /></dt>
-<dd><p>[T] “3-sigma” errors to permit for states </p>
+<dd><p>[T] “3-sigma” errors to permit for states, can be changed during simulation </p>
 </dd></dl>
 
 <dl class="cpp var">
