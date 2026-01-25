@@ -135,6 +135,8 @@ Version |release|
   variables.  Their use as public variables has been deprecated since December 2024.
 - Adds support for updating noise parameters in :ref:`magnetometer` during simulation
 - Deprecated use of ``shadowFactor`` in favor of ``illuminationFactor``
+- Added :ref:`scenarioAttitudeFeedbackRWMuJoCo`, similar to :ref:`scenarioAttitudeFeedbackRW` but using
+  MuJoCo dynamics.
 
 
 Version 2.8.0 (August 30, 2025)
