@@ -21,7 +21,12 @@
 
 import sys
 import os
+import inspect
 import importlib
+from Basilisk.utilities import unitTestSupport
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 import pytest
 
@@ -49,8 +54,13 @@ sys.path.append(SCENARIO_FOLDER)
 @pytest.mark.scenarioTest
 def test_scenarios(scenario: str):
     module = importlib.import_module(scenario)
-    module.run()  # Every mujoco scenario should have a run function
+    figureList = module.run()  # Every mujoco scenario should have a run function
+    if figureList is None:
+        return
 
+    for pltName, plt in figureList.items():
+        print(f"Saving MuJoCo scenario figure: {pltName} (from '{scenario}')")
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
 if __name__ == "__main__":
     pytest.main([__file__])
