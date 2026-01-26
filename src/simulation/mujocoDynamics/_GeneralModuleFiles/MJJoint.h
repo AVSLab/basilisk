@@ -77,6 +77,13 @@ public:
     virtual ~MJJoint() {}
 
     /**
+     * @brief Retrieves the body that this joint is attached to
+     *
+     * @return Reference to the `MJScene`.
+     */
+    MJBody& getBody() { return this->body; }
+
+    /**
      * @brief Configures the joint within a given MuJoCo model.
      *
      * @param m Pointer to the MuJoCo model used for configuration.
