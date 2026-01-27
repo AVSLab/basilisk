@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_simpleAntenna &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_simpleAntenna</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_simpleAntenna</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleAntenna</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Constants</span>
+<span class="n">K_BOLTZMANN</span> <span class="o">=</span> <span class="mf">1.38064852e-23</span>
+<span class="n">ACCURACY</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">earth_horizon_sigma</span><span class="p">():</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+        <span class="o">/</span> <span class="p">((</span><span class="mi">800</span> <span class="o">+</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">])</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="test_simpleAntenna">
+<a class="viewcode-back" href="../Documentation/simulation/communication/simpleAntenna/_UnitTest/test_simpleAntenna.html#test_simpleAntenna.test_simpleAntenna">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;ACCURACY&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-6</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_OFF</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_TX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="c1"># Case with pointing Earth and sun blocked</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="c1"># Case with pointing Earth and sun is visible but not in the cone</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.660060787285246</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="c1"># Case with pointing Moon</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">37.82128898104384</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="c1"># Case with pointing Sun and sun in the cone</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">147.9662263230431</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">earth_horizon_sigma</span><span class="p">(),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="c1"># Case with pointing Earth with partial coverage</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_simpleAntenna</span><span class="p">(</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">T_AmbientSet</span><span class="p">,</span> <span class="n">useHaslamMap</span><span class="p">,</span> <span class="n">T_sky_true</span><span class="p">,</span> <span class="n">eclipseValue</span><span class="p">,</span> <span class="n">sigma_AB</span><span class="p">,</span> <span class="n">scPosUnit</span><span class="p">,</span> <span class="n">ACCURACY</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test validates the thermal noise temperature and sky contribution</span>
+<span class="sd">    computed by the ``simpleAntenna`` module under a variety of antenna operating</span>
+<span class="sd">    modes, environmental configurations, and pointing geometries. The test</span>
+<span class="sd">    verifies correct behavior when the antenna is transmitting, receiving,</span>
+<span class="sd">    both transmitting and receiving, or turned off, as well as when different</span>
+<span class="sd">    celestial bodies (Earth, Sun, Moon) are inside or outside the antenna field</span>
+<span class="sd">    of view.</span>
+
+<span class="sd">    The test also exercises eclipse handling, ambient temperature settings,</span>
+<span class="sd">    and antenna orientation effects using direction cosine matrices.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    The test is fully parameterized to cover multiple combinations of antenna</span>
+<span class="sd">    state, environment type, ambient temperature configuration, and antenna</span>
+<span class="sd">    pointing geometry.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        antennaState (int):</span>
+<span class="sd">            Antenna operational mode. One of</span>
+<span class="sd">            ``ANTENNA_OFF``, ``ANTENNA_RX``, ``ANTENNA_TX``,</span>
+<span class="sd">            or ``ANTENNA_RXTX``.</span>
+
+<span class="sd">        env_type (int):</span>
+<span class="sd">            Environment selection flag. This controls where antenna is attached:</span>
+<span class="sd">            - 0: Spacecraft environment</span>
+<span class="sd">            - 1: Ground station environment</span>
+
+<span class="sd">        T_AmbientSet (float or None):</span>
+<span class="sd">            Ambient antenna temperature in Kelvin. If ``None``, the module</span>
+<span class="sd">            computes the ambient temperature internally using environmental</span>
+<span class="sd">            models.</span>
+
+<span class="sd">        useHaslamMap (bool):</span>
+<span class="sd">            Flag indicating whether the Haslam sky map is used to model</span>
+<span class="sd">            galactic background noise.</span>
+
+<span class="sd">        T_sky_true (float):</span>
+<span class="sd">            Truth value for the expected sky noise temperature (K) used</span>
+<span class="sd">            for validation.</span>
+
+<span class="sd">        eclipseValue (float):</span>
+<span class="sd">            Eclipse factor in the range [0, 1], where 0 indicates full eclipse</span>
+<span class="sd">            (Sun completely blocked) and 1 indicates no eclipse.</span>
+
+<span class="sd">        sigma_AB (array-like or ``Eigen::MRP``):</span>
+<span class="sd">            Antenna orientation relative to the spacecraft body frame,</span>
+<span class="sd">            expressed as Modified Rodrigues Parameters (MRPs). This defines</span>
+<span class="sd">            the antenna boresight direction used to determine which celestial</span>
+<span class="sd">            bodies fall within the antenna cone.</span>
+
+<span class="sd">        scPosUnit (array-like, shape (3,)):</span>
+<span class="sd">            Unit vector of the spacecraft position expressed in the inertial</span>
+<span class="sd">            frame. This is used to define the relative geometry between the</span>
+<span class="sd">            spacecraft, Earth, Sun, and Moon.</span>
+
+<span class="sd">        ACCURACY (float):</span>
+<span class="sd">            Absolute numerical tolerance used when comparing the computed</span>
+<span class="sd">            sky temperature against the truth value.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This test validates:</span>
+<span class="sd">    - Correct handling of antenna operational modes (OFF, RX, TX, RXTX)</span>
+<span class="sd">    - Ground station vs. spacecraft environment configurations</span>
+<span class="sd">    - Proper eclipse handling when the Sun is partially or fully blocked</span>
+<span class="sd">    - Correct use of antenna pointing geometry via DCM/MRP transformations</span>
+<span class="sd">    - Robust behavior when ambient temperature is user-specified or internally computed</span>
+<span class="sd">    - Numerical ACCURACY of sky temperature computation within the specified tolerance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">,</span> <span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="n">simpleAntennaTestFunction</span><span class="p">(</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">T_AmbientSet</span><span class="p">,</span> <span class="n">useHaslamMap</span><span class="p">,</span> <span class="n">T_sky_true</span><span class="p">,</span> <span class="n">eclipseValue</span><span class="p">,</span> <span class="n">sigma_AB</span><span class="p">,</span> <span class="n">scPosUnit</span><span class="p">,</span> <span class="n">ACCURACY</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+<div class="viewcode-block" id="test_simpleAntenna_haslamMap_three_runs_and_pointing_difference">
+<a class="viewcode-back" href="../Documentation/simulation/communication/simpleAntenna/_UnitTest/test_simpleAntenna.html#test_simpleAntenna.test_simpleAntenna_haslamMap_three_runs_and_pointing_difference">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_simpleAntenna_haslamMap_three_runs_and_pointing_difference</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Haslam map coverage:</span>
+<span class="sd">    Run one sim instance and change pointing while Haslam is enabled.</span>
+<span class="sd">    Verify that sky temperature changes with pointing direction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># --- Fixed configuration ---</span>
+    <span class="n">antennaState</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span>
+    <span class="n">env_type</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">T_AmbientSet</span> <span class="o">=</span> <span class="mf">150.0</span>
+    <span class="n">eclipseValue</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">scPosUnit</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># consistent with other tests</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>
+    <span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">5e6</span>
+    <span class="n">T_E</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">eta_r</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="n">useHaslamMap</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Direction A: identity (boresight along +Z in body frame as you use [0,0,1] for antenna position)</span>
+    <span class="n">sigma_AB_A</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Direction B: rotate so body +Z maps to +Y (same matrix you used)</span>
+    <span class="n">sigma_AB_B</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+
+    <span class="c1"># --- 1) Setup ONE simulation instance ---</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTaskHaslam&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcessHaslam&quot;</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;simpleAntennaHaslamTag&quot;</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaName</span><span class="p">(</span><span class="s2">&quot;simpleAntenna&quot;</span><span class="p">)</span>
+
+    <span class="c1"># --- 2) Messages (same style as your main test) ---</span>
+    <span class="c1"># Sun</span>
+    <span class="n">sunMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;sun&quot;</span>
+    <span class="n">sunMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMessage</span><span class="p">)</span>
+
+    <span class="c1"># Earth</span>
+    <span class="n">earthMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">earthMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">earthMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">earthMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthMessage</span><span class="p">)</span>
+
+    <span class="c1"># Moon</span>
+    <span class="n">moonMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">moonMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;moon&quot;</span>
+    <span class="n">moonMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">+</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">SMA_MOON</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">moonMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">moonMessage</span><span class="p">)</span>
+
+    <span class="c1"># Eclipse</span>
+    <span class="n">eclipseMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
+    <span class="n">eclipseMessage</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="n">eclipseValue</span>
+    <span class="n">eclipseMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMessage</span><span class="p">)</span>
+
+    <span class="c1"># Antenna state</span>
+    <span class="n">antennaStateData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaStateMsgPayload</span><span class="p">()</span>
+    <span class="n">antennaStateData</span><span class="o">.</span><span class="n">antennaState</span> <span class="o">=</span> <span class="n">antennaState</span>
+    <span class="n">antennaStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">antennaStateData</span><span class="p">)</span>
+
+    <span class="c1"># Spacecraft state</span>
+    <span class="n">scMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">altitude</span> <span class="o">=</span> <span class="mi">800</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># [m]</span>
+    <span class="n">scPos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scPosUnit</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">altitude</span> <span class="o">+</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+    <span class="n">scMessage</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">scPos</span>
+    <span class="n">scMessage</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scMessage</span><span class="p">)</span>
+
+    <span class="c1"># Subscribe</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">antennaSetStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antennaStateMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">eclipseMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">earthMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">moonMsg</span><span class="p">)</span>
+
+    <span class="c1"># --- 3) Module parameters ---</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaFrequency</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaBandwidth</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaDirectivity_dB</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaHpbwRatio</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaP_Tx</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaP_Rx</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaEquivalentNoiseTemp</span><span class="p">(</span><span class="n">T_E</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaRadEfficiency</span><span class="p">(</span><span class="n">eta_r</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaPositionBodyFrame</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaEnvironmentTemperature</span><span class="p">(</span><span class="n">T_AmbientSet</span><span class="p">)</span>
+
+    <span class="c1"># Turn Haslam ON for this test (do not rely on the helper)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setUseHaslamMap</span><span class="p">(</span><span class="n">useHaslamMap</span><span class="p">)</span>
+
+    <span class="c1"># Add to task + recorder</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">tsky_from_last_log</span><span class="p">():</span> <span class="c1">#reverse engineer the sky temperature from the noise</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer sky temperature from last logged noise power.&quot;&quot;&quot;</span>
+        <span class="n">p_noise</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">T_S_sim</span> <span class="o">=</span> <span class="n">p_noise</span> <span class="o">/</span> <span class="p">(</span><span class="n">K_BOLTZMANN</span> <span class="o">*</span> <span class="n">bandwidth</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">T_S_sim</span> <span class="o">-</span> <span class="n">T_E</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">T_AmbientSet</span><span class="p">)</span> <span class="o">/</span> <span class="n">eta_r</span>
+
+    <span class="c1"># --- RUN A: Direction A ---</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaOrientationBodyFrame</span><span class="p">(</span><span class="n">sigma_AB_A</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">Tsky_on_A</span> <span class="o">=</span> <span class="n">tsky_from_last_log</span><span class="p">()</span>
+
+    <span class="c1"># --- RUN B: Direction B (same sim, continue)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaOrientationBodyFrame</span><span class="p">(</span><span class="n">sigma_AB_B</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">Tsky_on_B</span> <span class="o">=</span> <span class="n">tsky_from_last_log</span><span class="p">()</span>
+
+    <span class="c1"># --- RUN C: Direction A again to test repeatability in the same run</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaOrientationBodyFrame</span><span class="p">(</span><span class="n">sigma_AB_A</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.5</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">Tsky_on_A2</span> <span class="o">=</span> <span class="n">tsky_from_last_log</span><span class="p">()</span>
+
+    <span class="c1"># --- Prints before asserts (as requested) ---</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tsky_on_A  = </span><span class="si">{</span><span class="n">Tsky_on_A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tsky_on_B  = </span><span class="si">{</span><span class="n">Tsky_on_B</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tsky_on_A2 = </span><span class="si">{</span><span class="n">Tsky_on_A2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># --- Assertions ---</span>
+    <span class="c1"># Haslam should produce sky temps above CMB baseline in most directions</span>
+    <span class="k">assert</span> <span class="n">Tsky_on_A</span> <span class="o">&gt;</span> <span class="mf">2.7</span>
+    <span class="k">assert</span> <span class="n">Tsky_on_B</span> <span class="o">&gt;</span> <span class="mf">2.7</span>
+
+    <span class="c1"># Make sure pointing changes the value by a noticeable amount</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Tsky_on_A</span> <span class="o">-</span> <span class="n">Tsky_on_B</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span>
+    <span class="c1"># Make sure same inertial pointing as before but different timestep has similar temperature</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Tsky_on_A</span> <span class="o">-</span> <span class="n">Tsky_on_A2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span></div>
+
+
+<div class="viewcode-block" id="simpleAntennaTestFunction">
+<a class="viewcode-back" href="../Documentation/simulation/communication/simpleAntenna/_UnitTest/test_simpleAntenna.html#test_simpleAntenna.simpleAntennaTestFunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simpleAntennaTestFunction</span><span class="p">(</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">T_AmbientSet</span><span class="p">,</span> <span class="n">useHaslamMap</span><span class="p">,</span> <span class="n">T_sky_true</span><span class="p">,</span> <span class="n">eclipseValue</span><span class="p">,</span> <span class="n">sigma_AB</span><span class="p">,</span> <span class="n">scPosUnit</span><span class="p">,</span> <span class="n">ACCURACY</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test method&quot;&quot;&quot;</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Set up module to be tested</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;simpleAntennaTag&quot;</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaName</span><span class="p">(</span><span class="s2">&quot;simpleAntenna&quot;</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># Set up Sun message</span>
+    <span class="n">sunMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;sun&quot;</span>
+    <span class="n">sunMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMessage</span><span class="p">)</span>
+
+    <span class="c1"># Set up Earth message</span>
+    <span class="n">earthMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">earthMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">earthMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">earthMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthMessage</span><span class="p">)</span>
+
+    <span class="c1"># Set up Moon message</span>
+    <span class="n">moonMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">moonMessage</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;moon&quot;</span>
+    <span class="n">moonMessage</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span><span class="o">+</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">SMA_MOON</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">moonMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">moonMessage</span><span class="p">)</span>
+
+    <span class="c1"># Set up eclipse message</span>
+    <span class="n">eclipseMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
+    <span class="n">eclipseMessage</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="n">eclipseValue</span>  <span class="c1"># Set it to be totally in shadow</span>
+    <span class="n">eclipseMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMessage</span><span class="p">)</span>
+
+    <span class="c1"># Set up antenna state message (ANTENNA_OFF = 0, ANTENNA_RX = 1, ANTENNA_TX = 2, ANTENNA_RXTX = 3)</span>
+    <span class="n">antennaStateData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaStateMsgPayload</span><span class="p">()</span>
+    <span class="n">antennaStateData</span><span class="o">.</span><span class="n">antennaState</span> <span class="o">=</span> <span class="n">antennaState</span>
+    <span class="n">antennaStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AntennaStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">antennaStateData</span><span class="p">)</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="k">if</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># space environment</span>
+        <span class="c1"># Set up spacecraft message</span>
+        <span class="n">scMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+        <span class="n">altitude</span> <span class="o">=</span> <span class="mi">800</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># [m] 800 km altitude</span>
+        <span class="n">scPos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scPosUnit</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">altitude</span> <span class="o">+</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">scMessage</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">scPos</span>  <span class="c1"># [m] position of spacecraft in inertial frame</span>
+        <span class="n">scMessage</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scMessage</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># ground station environment</span>
+        <span class="c1"># Set up ground station message</span>
+        <span class="n">groundMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">GroundStateMsgPayload</span><span class="p">()</span>
+        <span class="n">groundMessage</span><span class="o">.</span><span class="n">r_LN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">groundMessage</span><span class="o">.</span><span class="n">r_LP_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">groundMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">GroundStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">groundMessage</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">groundStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">groundMsg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Error: invalid env_type&quot;</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">antennaSetStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antennaStateMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">earthMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">moonMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">eclipseMsg</span><span class="p">)</span>
+
+    <span class="c1"># use setters to set module parameters</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>       <span class="c1"># Hz</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaFrequency</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">5e6</span>                  <span class="c1"># Hz</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaBandwidth</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">)</span>
+    <span class="n">directivity</span> <span class="o">=</span> <span class="mf">20.0</span>              <span class="c1"># dB</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaDirectivity_dB</span><span class="p">(</span><span class="n">directivity</span><span class="p">)</span>
+    <span class="n">hpbwRatio</span> <span class="o">=</span> <span class="mf">1.0</span>                 <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaHpbwRatio</span><span class="p">(</span><span class="n">hpbwRatio</span><span class="p">)</span>
+    <span class="n">P_Tx</span> <span class="o">=</span> <span class="mf">100.0</span>                    <span class="c1"># W</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaP_Tx</span><span class="p">(</span><span class="n">P_Tx</span><span class="p">)</span>
+    <span class="n">P_Rx</span> <span class="o">=</span> <span class="mf">10.0</span>                      <span class="c1"># W</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaP_Rx</span><span class="p">(</span><span class="n">P_Rx</span><span class="p">)</span>
+    <span class="n">T_E</span> <span class="o">=</span> <span class="mf">50.0</span>           <span class="c1"># K</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaEquivalentNoiseTemp</span><span class="p">(</span><span class="n">T_E</span><span class="p">)</span>
+    <span class="n">eta_r</span> <span class="o">=</span> <span class="mf">0.6</span>          <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaRadEfficiency</span><span class="p">(</span><span class="n">eta_r</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaPositionBodyFrame</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="c1"># m</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setAntennaOrientationBodyFrame</span><span class="p">(</span><span class="n">sigma_AB</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setUseHaslamMap</span><span class="p">(</span><span class="n">useHaslamMap</span><span class="p">)</span> <span class="c1"># Try both true and false</span>
+
+    <span class="k">if</span>  <span class="n">T_AmbientSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">T_Ambient</span> <span class="o">=</span> <span class="n">T_AmbientSet</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">setAntennaEnvironmentTemperature</span><span class="p">(</span><span class="n">T_Ambient</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># space environment</span>
+            <span class="n">T_Ambient</span> <span class="o">=</span> <span class="mi">150</span>  <span class="c1"># K</span>
+        <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># ground station environment</span>
+            <span class="n">T_ground</span> <span class="o">=</span> <span class="mf">288.15</span> <span class="c1"># [K]</span>
+            <span class="n">T_Ambient</span> <span class="o">=</span> <span class="n">T_ground</span>
+    <span class="c1"># setup output message recorder objects</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">t_sky_test</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">calculateTsky</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;t_sky_test&#39;</span><span class="p">,</span> <span class="n">t_sky_test</span><span class="p">)</span>
+
+    <span class="c1"># compute truth values</span>
+    <span class="n">dir_lin</span>  <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">directivity</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">HPBW_el</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dir_lin</span> <span class="o">*</span> <span class="n">hpbwRatio</span><span class="p">))</span>
+    <span class="n">HPBW_az</span>  <span class="o">=</span> <span class="n">hpbwRatio</span> <span class="o">*</span> <span class="n">HPBW_el</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">HPBW_el</span><span class="p">)</span>
+
+    <span class="n">T_ant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">T_Ambient</span> <span class="o">+</span> <span class="n">eta_r</span> <span class="o">*</span> <span class="n">T_sky_true</span>
+    <span class="n">T_S</span> <span class="o">=</span> <span class="n">T_E</span> <span class="o">+</span> <span class="n">T_ant</span>
+    <span class="n">G_TN</span> <span class="o">=</span> <span class="n">directivity</span> <span class="o">+</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">eta_r</span><span class="p">)</span> <span class="o">-</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T_S</span><span class="p">)</span>
+    <span class="n">P_N</span> <span class="o">=</span> <span class="n">K_BOLTZMANN</span> <span class="o">*</span> <span class="n">T_S</span> <span class="o">*</span> <span class="n">bandwidth</span>
+    <span class="n">P_eirp</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">P_Tx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">eta_r</span><span class="p">)</span> <span class="o">+</span> <span class="n">directivity</span>
+
+    <span class="c1"># Compute expected location and attitude values</span>
+    <span class="k">if</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">r_AP_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">scPos</span>  <span class="c1"># [m] position of spacecraft in inertial frame</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">r_AB_N</span> <span class="o">=</span> <span class="n">dcm_BN</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">r_AN_N</span> <span class="o">=</span> <span class="n">r_BN_N</span> <span class="o">+</span> <span class="n">r_AB_N</span>
+        <span class="n">dcm_AB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_AB</span><span class="p">)</span>
+        <span class="n">dcm_AN</span> <span class="o">=</span> <span class="n">dcm_AB</span> <span class="o">@</span> <span class="n">dcm_BN</span>
+        <span class="n">sigma_AN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcm_AN</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">r_AN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">r_AP_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">sigma_AN</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># check results</span>
+    <span class="n">checks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">antennaState</span><span class="p">,</span> <span class="s2">&quot;antennaState&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="s2">&quot;bandwidth&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">HPBW_el</span><span class="p">,</span> <span class="n">HPBW_el</span><span class="p">,</span> <span class="s2">&quot;HPBW_el&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">HPBW_az</span><span class="p">,</span> <span class="n">HPBW_az</span><span class="p">,</span> <span class="s2">&quot;HPBW_az&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_Tx</span><span class="p">,</span>    <span class="n">P_Tx</span><span class="p">,</span>    <span class="s2">&quot;P_Tx&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_Rx</span><span class="p">,</span>    <span class="n">P_Rx</span><span class="p">,</span>    <span class="s2">&quot;P_Rx&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">DdB</span><span class="p">,</span>    <span class="n">directivity</span><span class="p">,</span>    <span class="s2">&quot;DdB&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">G_TN</span><span class="p">,</span>    <span class="n">G_TN</span><span class="p">,</span>    <span class="s2">&quot;G_TN&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_N</span><span class="p">,</span>     <span class="n">P_N</span><span class="p">,</span>     <span class="s2">&quot;P_N&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_eirp_dB</span><span class="p">,</span> <span class="n">P_eirp</span><span class="p">,</span> <span class="s2">&quot;P_eirp_dB&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">T_Ambient</span><span class="p">,</span> <span class="n">T_Ambient</span><span class="p">,</span> <span class="s2">&quot;T_Ambient&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">r_AN_N</span><span class="p">,</span> <span class="n">r_AN_N</span><span class="p">,</span> <span class="s2">&quot;r_AN_N&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_AN</span><span class="p">,</span> <span class="n">sigma_AN</span><span class="p">,</span> <span class="s2">&quot;sigma_AN&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">r_AP_N</span><span class="p">,</span> <span class="n">r_AP_N</span><span class="p">,</span> <span class="s2">&quot;r_AP_N&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># When Haslam is enabled, sky temperature is computed internally from the map, so G_TN/P_N is not validated  against a hard-coded T_sky_true.</span>
+    <span class="k">if</span> <span class="n">useHaslamMap</span><span class="p">:</span>
+        <span class="n">checks</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">checks</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;G_TN&quot;</span><span class="p">,</span> <span class="s2">&quot;P_N&quot;</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">sim_val</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># If sim_val is iterable (like a vector), compare component-wise</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># vector case</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sim_val</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sim_val</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="n">ACCURACY</span><span class="p">):</span>
+                        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">] not set correctly at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;(got </span><span class="si">{</span><span class="n">sim_val</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="n">truth</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   <span class="c1"># scalar case</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sim_val</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">truth</span><span class="p">),</span> <span class="n">ACCURACY</span><span class="p">):</span>
+                    <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not set correctly at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;(got </span><span class="si">{</span><span class="n">sim_val</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="n">truth</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="c1"># Infer sky temperature from the module output noise power P_N.</span>
+    <span class="n">P_N_sim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">P_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">T_S_sim</span> <span class="o">=</span> <span class="n">P_N_sim</span> <span class="o">/</span> <span class="p">(</span><span class="n">K_BOLTZMANN</span> <span class="o">*</span> <span class="n">bandwidth</span><span class="p">)</span>
+    <span class="n">T_sky_sim</span> <span class="o">=</span> <span class="p">(</span><span class="n">T_S_sim</span> <span class="o">-</span> <span class="n">T_E</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">T_Ambient</span><span class="p">)</span> <span class="o">/</span> <span class="n">eta_r</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">),</span> <span class="n">T_sky_sim</span><span class="p">]</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_cases</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_OFF</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_TX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mf">5.45</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">5.660060787285246</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">37.82128898104384</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">147.9662263230431</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">earth_horizon_sigma</span><span class="p">(),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+<span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running all test_simpleAntenna parametrized cases&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">T_AmbientSet</span><span class="p">,</span> <span class="n">useHaslamMap</span><span class="p">,</span> <span class="n">T_sky_true</span><span class="p">,</span> <span class="n">eclipseValue</span><span class="p">,</span> <span class="n">sigma_AB</span><span class="p">,</span> <span class="n">scPosUnit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_cases</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test_simpleAntenna</span><span class="p">(</span><span class="n">antennaState</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">T_AmbientSet</span><span class="p">,</span> <span class="n">useHaslamMap</span><span class="p">,</span> <span class="n">T_sky_true</span><span class="p">,</span> <span class="n">eclipseValue</span><span class="p">,</span> <span class="n">sigma_AB</span><span class="p">,</span> <span class="n">scPosUnit</span><span class="p">,</span> <span class="n">ACCURACY</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Case </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">: PASSED&quot;</span><span class="p">)</span>
+            <span class="n">passed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Case </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">: FAILED - </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">failed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;test_simpleAntenna: </span><span class="si">{</span><span class="n">passed</span><span class="si">}</span><span class="s2"> passed, </span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2"> failed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running test_simpleAntenna_haslamMap_three_runs_and_pointing_difference&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="c1"># ADD THIS:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">test_simpleAntenna_haslamMap_three_runs_and_pointing_difference</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  FAILED - </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

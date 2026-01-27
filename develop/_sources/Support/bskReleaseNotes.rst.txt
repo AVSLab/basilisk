@@ -137,6 +137,7 @@ Version |release|
 - Deprecated use of ``shadowFactor`` in favor of ``illuminationFactor``
 - Added :ref:`scenarioAttitudeFeedbackRWMuJoCo`, similar to :ref:`scenarioAttitudeFeedbackRW` but using
   MuJoCo dynamics.
+- Added the modules :ref:`simpleAntenna` and :ref:`antennaPower`.
 
 
 Version 2.8.0 (August 30, 2025)
@@ -256,7 +257,6 @@ Version 2.7.0 (April 20, 2025)
 - Updated ``THRSimConfig`` to use a shared pointer to avoid duplication of configuration data across the simulation and to enable access and updates to the parameters during simulation. This change has been implemented in both the ``thrusterDynamicsEffector`` and ``thrusterStateEffector`` modules.
 - :beta:`Mujoco Support`: Added ``StatefulSysModel`` for models in the dynamics task of ``MJScene`` that need to declare
   continuous-time states. Modified :ref:`scenarioDeployPanels` to illustrate the use of ``StatefulSysModel``.
-
 
 Version  2.6.0  (Feb. 21, 2025)
 -------------------------------

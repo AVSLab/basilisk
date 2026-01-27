@@ -129,6 +129,7 @@
     <span class="s2">&quot;supportData/EphemerisData/de-403-masses.tpc&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/de-403-masses.tpc&quot;</span><span class="p">,</span>
     <span class="s2">&quot;supportData/EphemerisData/hst_edited.bsp&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp&quot;</span><span class="p">,</span>
     <span class="s2">&quot;supportData/EphemerisData/nh_pred_od077.bsp&quot;</span><span class="p">:</span> <span class="s2">&quot;https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supportData/SkyBrightnessData/haslam408_dsds_Remazeilles2014.fits&quot;</span><span class="p">:</span> <span class="s2">&quot;https://lambda.gsfc.nasa.gov/data/foregrounds/haslam_2014/haslam408_dsds_Remazeilles2014.fits&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c1"># Do not set hashes for files fetched from external URLs such as JPL NAIF as</span>
@@ -144,6 +145,7 @@
 <span class="n">EPHEMERIS_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;EphemerisData/&quot;</span>
 <span class="n">LOCAL_GRAV_DATA_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;LocalGravData/&quot;</span>
 <span class="n">MAGNETIC_FIELD_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;MagneticField/&quot;</span>
+<span class="n">SKY_BRIGHTNESS_BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;SkyBrightnessData/&quot;</span>
 
 
 <div class="viewcode-block" id="tag_exists">
@@ -289,6 +291,8 @@
     <span class="k">class</span><span class="w"> </span><span class="nc">MagneticFieldData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
         <span class="n">WMM</span> <span class="o">=</span> <span class="s2">&quot;WMM.COF&quot;</span>
 
+    <span class="k">class</span><span class="w"> </span><span class="nc">SkyBrightnessData</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">skyTemperature408MHz</span> <span class="o">=</span> <span class="s2">&quot;haslam408_dsds_Remazeilles2014.fits&quot;</span>
 
 <span class="n">CATEGORY_BASE_PATHS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;AlbedoData&quot;</span><span class="p">:</span> <span class="n">ALBEDO_DATA_BASE_PATH</span><span class="p">,</span>
@@ -297,6 +301,7 @@
     <span class="s2">&quot;EphemerisData&quot;</span><span class="p">:</span> <span class="n">EPHEMERIS_DATA_BASE_PATH</span><span class="p">,</span>
     <span class="s2">&quot;LocalGravData&quot;</span><span class="p">:</span> <span class="n">LOCAL_GRAV_DATA_BASE_PATH</span><span class="p">,</span>
     <span class="s2">&quot;MagneticFieldData&quot;</span><span class="p">:</span> <span class="n">MAGNETIC_FIELD_BASE_PATH</span><span class="p">,</span>
+    <span class="s2">&quot;SkyBrightnessData&quot;</span><span class="p">:</span> <span class="n">SKY_BRIGHTNESS_BASE_PATH</span><span class="p">,</span>
 <span class="p">}</span>
 
 

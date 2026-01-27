@@ -13,6 +13,7 @@ simulation
    :maxdepth: 1
    :caption: Directories:
 
+   communication/index
    deviceInterface/index
    dynamics/index
    environment/index

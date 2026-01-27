@@ -4,5 +4,5 @@ Module: BodyToHubInfo
 =====================
 
 .. autodoxygenfile:: BodyToHubInfo.h
-   :project: _GeneralModuleFiles3
+   :project: _GeneralModuleFiles4
 

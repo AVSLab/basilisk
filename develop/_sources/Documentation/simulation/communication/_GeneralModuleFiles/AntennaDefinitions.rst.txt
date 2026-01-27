@@ -1,0 +1,8 @@
+.. _AntennaDefinitions:
+
+Module: AntennaDefinitions
+==========================
+
+.. autodoxygenfile:: AntennaDefinitions.h
+   :project: _GeneralModuleFiles3
+

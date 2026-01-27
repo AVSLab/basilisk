@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-01-26T15:36:17.867720</dc:date>
+    <dc:date>2026-01-27T01:01:23.504994</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -760,7 +760,7 @@ L 263.982986 255.707458
 L 268.004196 252.941868 
 L 269.309925 251.976841 
 L 269.309925 251.976841 
-" clip-path="url(#p89374c38fa)" style="fill: none; stroke: #2b737e; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p6083abfce1)" style="fill: none; stroke: #2b737e; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_14">
     <path d="M 226.099463 109.99311 
@@ -980,7 +980,7 @@ L 260.71704 257.344137
 L 264.850759 254.701898 
 L 268.182297 252.348693 
 L 268.182297 252.348693 
-" clip-path="url(#p89374c38fa)" style="fill: none; stroke: #5ea04b; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p6083abfce1)" style="fill: none; stroke: #5ea04b; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_15">
     <path d="M 226.376517 110.063633 
@@ -1201,11 +1201,11 @@ L 264.213843 255.549962
 L 268.226188 252.77218 
 L 269.528762 251.803142 
 L 269.528762 251.803142 
-" clip-path="url(#p89374c38fa)" style="fill: none; stroke: #bdab62; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p6083abfce1)" style="fill: none; stroke: #bdab62; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="Path3DCollection_1">
     <defs>
-     <path id="mf2026b1ed9" d="M 0 2.236068 
+     <path id="m31e0819363" d="M 0 2.236068 
 C 0.593012 2.236068 1.161816 2.000462 1.581139 1.581139 
 C 2.000462 1.161816 2.236068 0.593012 2.236068 0 
 C 2.236068 -0.593012 2.000462 -1.161816 1.581139 -1.581139 
@@ -1217,8 +1217,8 @@ C -1.161816 2.000462 -0.593012 2.236068 0 2.236068
 z
 " style="stroke: #1e90ff"/>
     </defs>
-    <g clip-path="url(#p89374c38fa)">
-     <use xlink:href="#mf2026b1ed9" x="219.953564" y="188.164561" style="fill: #1e90ff; stroke: #1e90ff"/>
+    <g clip-path="url(#p6083abfce1)">
+     <use xlink:href="#m31e0819363" x="219.953564" y="188.164561" style="fill: #1e90ff; stroke: #1e90ff"/>
     </g>
    </g>
    <g id="text_13">
@@ -1779,7 +1779,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p89374c38fa">
+  <clipPath id="p6083abfce1">
    <rect x="69.718125" y="45.83625" width="292.56375" height="292.56375"/>
   </clipPath>
  </defs>

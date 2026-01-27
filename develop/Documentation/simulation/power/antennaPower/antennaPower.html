@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: antennaPower &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="antennaPower" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">power</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ReactionWheelPower/index.html">ReactionWheelPower</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">antennaPower</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleBattery/index.html">simpleBattery</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simplePowerMonitor/index.html">simplePowerMonitor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simplePowerSink/index.html">simplePowerSink</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleSolarPanel/index.html">simpleSolarPanel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">power</a></li>
+          <li class="breadcrumb-item"><a href="index.html">antennaPower</a></li>
+      <li class="breadcrumb-item active">Module: antennaPower</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/power/antennaPower/antennaPower.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-antennapower">
+<span id="antennapower"></span><h1>Module: antennaPower<a class="headerlink" href="#module-antennapower" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module evaluates the power draw of an antenna device. It reads the <code class="docutils literal notranslate"><span class="pre">antennaSetStateInMsg</span></code> containing the current antenna state and calculates the power draw accordingly.</p>
+<p>This module is a sub-class of <a class="reference internal" href="../_GeneralModuleFiles/powerNodeBase.html#powernodebase"><span class="std std-ref">Module: powerNodeBase</span></a>. As such it:</p>
+<ol class="arabic simple">
+<li><p>Writes out a <a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#powernodeusagemsgpayload"><span class="std std-ref">PowerNodeUsageMsgPayload</span></a> describing its power consumption at each sim update</p></li>
+<li><p>Can be switched on or off using an optional message of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/DeviceStatusMsgPayload.html#devicestatusmsgpayload"><span class="std std-ref">DeviceStatusMsgPayload</span></a></p></li>
+</ol>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id1">
+<span id="moduleio-antenna-power"></span><img alt="../../../../_images/PowerAnt.svg" src="../../../../_images/PowerAnt.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">antennaPower()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 16.7%" />
+<col style="width: 16.7%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>antennaSetStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a></p></td>
+<td><p>Antenna state input message providing current
+antenna state and power values.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The antenna power consumption depends on its operational state:</p>
+<ul class="simple">
+<li><p><strong>ANTENNA_OFF</strong>: Only base power is consumed (default 0.0 W)</p></li>
+<li><p><strong>ANTENNA_RX</strong>: Base power and receive power <code class="docutils literal notranslate"><span class="pre">P_Rx</span></code> are consumed</p></li>
+<li><p><strong>ANTENNA_TX</strong>: Base power and transmit power <code class="docutils literal notranslate"><span class="pre">P_Tx</span></code> are consumed</p></li>
+<li><p><strong>ANTENNA_RXTX</strong>: Base power and both <code class="docutils literal notranslate"><span class="pre">P_Rx</span></code> and <code class="docutils literal notranslate"><span class="pre">P_Tx</span></code> power are consumed</p></li>
+</ul>
+<p>The net power output is:</p>
+<div class="math notranslate nohighlight">
+\[p_{\text{out}} = -(p_{\text{base}} + p_{\text{mode}})\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_{\text{mode}}\)</span> is zero, <code class="docutils literal notranslate"><span class="pre">P_Rx</span></code>, <code class="docutils literal notranslate"><span class="pre">P_Tx</span></code>, or <code class="docutils literal notranslate"><span class="pre">P_Rx</span> <span class="pre">+</span> <span class="pre">P_Tx</span></code> depending on the antenna state.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This module must be connected to an antenna module that outputs the <a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a> message.</p>
+<section id="minimum-module-setup">
+<h3>Minimum Module Setup<a class="headerlink" href="#minimum-module-setup" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">antPower</span> <span class="o">=</span> <span class="n">antennaPower</span><span class="o">.</span><span class="n">AntennaPower</span><span class="p">()</span>
+<span class="n">antPower</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;antennaPower&quot;</span>
+<span class="n">antPower</span><span class="o">.</span><span class="n">basePowerNeed</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [W] baseline power draw (optional, default = 0.0 W)</span>
+<span class="n">antPower</span><span class="o">.</span><span class="n">antennaSetStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antenna</span><span class="o">.</span><span class="n">antennaLogOutMsg</span><span class="p">)</span>
+<span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">antPower</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">basePowerNeed</span></code> parameter specifies the base power consumption in Watts when the antenna is powered on (should be non-negative).</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412AntennaPower">
+<span id="_CPPv312AntennaPower"></span><span id="_CPPv212AntennaPower"></span><span id="AntennaPower"></span><span class="target" id="class_antenna_power"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AntennaPower</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/powerNodeBase.html#_CPPv413PowerNodeBase" title="PowerNodeBase"><span class="n"><span class="pre">PowerNodeBase</span></span></a><a class="headerlink" href="#_CPPv412AntennaPower" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;antennaPower.h&gt;</em></div>
+<p>Antenna power class. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower12AntennaPowerEv">
+<span id="_CPPv3N12AntennaPower12AntennaPowerEv"></span><span id="_CPPv2N12AntennaPower12AntennaPowerEv"></span><span id="AntennaPower::AntennaPower"></span><span class="target" id="class_antenna_power_1a26d69d9518c462b9104a872fe3eef6e8"></span><span class="sig-name descname"><span class="n"><span class="pre">AntennaPower</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AntennaPower12AntennaPowerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPowerD0Ev">
+<span id="_CPPv3N12AntennaPowerD0Ev"></span><span id="_CPPv2N12AntennaPowerD0Ev"></span><span id="AntennaPower::~AntennaPower"></span><span class="target" id="class_antenna_power_1a5eb0e928d2fd8bed7ca5a73bb7e4facd"></span><span class="sig-name descname"><span class="n"><span class="pre">~AntennaPower</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AntennaPowerD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower11customResetE8uint64_t">
+<span id="_CPPv3N12AntennaPower11customResetE8uint64_t"></span><span id="_CPPv2N12AntennaPower11customResetE8uint64_t"></span><span id="AntennaPower::customReset__uint64_t"></span><span class="target" id="class_antenna_power_1a6412e68bd49c98994fb8193b387ebf57"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AntennaPower11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom reset method. </p>
+<p>This method is used to reset the module. Here variables are checked for correct values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower18customReadMessagesEv">
+<span id="_CPPv3N12AntennaPower18customReadMessagesEv"></span><span id="_CPPv2N12AntennaPower18customReadMessagesEv"></span><span id="AntennaPower::customReadMessages"></span><span class="target" id="class_antenna_power_1ae8911609c0153e12062115873c632f0a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AntennaPower18customReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom read method, similar to customSelfInit; returns `true’ by default. </p>
+<p>This method is used to read incoming antenna state message. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower20antennaSetStateInMsgE">
+<span id="_CPPv3N12AntennaPower20antennaSetStateInMsgE"></span><span id="_CPPv2N12AntennaPower20antennaSetStateInMsgE"></span><span id="AntennaPower::antennaSetStateInMsg__ReadFunctor:AntennaLogMsgPayload:"></span><span class="target" id="class_antenna_power_1a2f24a4d03446b14acb65e55e5aa68160"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaSetStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12AntennaPower20antennaSetStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Antenna state input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower13basePowerNeedE">
+<span id="_CPPv3N12AntennaPower13basePowerNeedE"></span><span id="_CPPv2N12AntennaPower13basePowerNeedE"></span><span id="AntennaPower::basePowerNeed__double"></span><span class="target" id="class_antenna_power_1a5054bb90edbe3fccedb6a326e0f82983"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">basePowerNeed</span></span></span><a class="headerlink" href="#_CPPv4N12AntennaPower13basePowerNeedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] base electrical power required to operate an antenna (positive value) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower9bskLoggerE">
+<span id="_CPPv3N12AntennaPower9bskLoggerE"></span><span id="_CPPv2N12AntennaPower9bskLoggerE"></span><span id="AntennaPower::bskLogger__BSKLogger"></span><span class="target" id="class_antenna_power_1a71ce95b608519fb7175949a6fdc020fe"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12AntennaPower9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower18evaluatePowerModelEP24PowerNodeUsageMsgPayload">
+<span id="_CPPv3N12AntennaPower18evaluatePowerModelEP24PowerNodeUsageMsgPayload"></span><span id="_CPPv2N12AntennaPower18evaluatePowerModelEP24PowerNodeUsageMsgPayload"></span><span id="AntennaPower::evaluatePowerModel__PowerNodeUsageMsgPayloadP"></span><span class="target" id="class_antenna_power_1ade8d310f57875a1c9f8239e967f03b50"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluatePowerModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#_CPPv424PowerNodeUsageMsgPayload" title="PowerNodeUsageMsgPayload"><span class="n"><span class="pre">PowerNodeUsageMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">powerUsageMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AntennaPower18evaluatePowerModelEP24PowerNodeUsageMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the antenna power load. Determines the netPower attribute in powerUsageSimMessage. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12AntennaPower22antennaStatusMsgBufferE">
+<span id="_CPPv3N12AntennaPower22antennaStatusMsgBufferE"></span><span id="_CPPv2N12AntennaPower22antennaStatusMsgBufferE"></span><span id="AntennaPower::antennaStatusMsgBuffer__AntennaLogMsgPayload"></span><span class="target" id="class_antenna_power_1a9331ad97ecc4c3ac02259a171c56ba6e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaStatusMsgBuffer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12AntennaPower22antennaStatusMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>copy of the antenna status message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="antennaPower" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -25,5 +25,5 @@ how to run it, as well as testing.
 ----
 
 .. autodoxygenfile:: svIntegratorRK4.h
-   :project: _GeneralModuleFiles3
+   :project: _GeneralModuleFiles4
 
