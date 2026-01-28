@@ -2,7 +2,8 @@ Executive Summary
 -----------------
 The ``scCharging`` module computes spacecraft equilibrium (floating) electric potentials in a plasma environment using the bivariate **root solving method** (by enforcing a zero net current condition on each spacecraft surface). The model includes ambient plasma electron/ion collection, photoelectron emission, and secondary electron emission (SEE), electron backscattering and electron beam (from one spacecraft to another).
 
-The charging and electron-beam coupling equations used by this module follow Hammerl and Schaub’s coupled spacecraft charging model [Hammerl2024]_ and the references cited therein as well as the Dr. Lai's book: "Fundamentals of Spacecraft Charging".
+The charging and electron-beam coupling equations used by this module follow Hammerl and Schaub’s coupled spacecraft charging model [Hammerl2024]_ and the references cited therein as well as the Dr. Lai's book: "Fundamentals of Spacecraft Charging". Additional background references on plasma interactions and modeling include [Hippler2001]_, [DavisMandell2016]_, [DraineSalpeter1979]_, and [RomeroCalvo2022]_.
+
 
 A Python unit test script is provided to verify expected charging trends for a coupled two-spacecraft case (see User Guide).
 
@@ -52,7 +53,6 @@ Planned/Preparation Messages (not active yet)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The module includes commented placeholders for future message-driven capabilities such as:
 
-- sunlit facet area per spacecraft (e.g., ``SCSunlitFacetAreaMsgPayload``)
 - output messages for current components (e.g., photoelectric current)
 
 
@@ -411,3 +411,6 @@ References
 
 .. [RomeroCalvo2022] Romero-Calvo, Á., Cano-Gómez, G., and Schaub, H.,
    “Simulation and Uncertainty Quantification of Electron Beams in Active Spacecraft Charging Scenarios,” 2022.
+
+API Reference
+-------------
