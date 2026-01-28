@@ -29,9 +29,11 @@ simpleAntenna dependencies.
 - Carrier-to-Noise Ratio (CNR) calculations
 - Pointing loss calculations
 - Frequency offset loss calculations
+- Atmospheric attenuation (space-to-ground links)
 - Space-to-space and space-to-ground link configurations
 - Antenna state handling (Tx/Rx/RxTx combinations)
-- Edge cases (no bandwidth overlap, co-located antennas, etc.)
+- Edge cases (no bandwidth overlap, grazing angles, extreme distances, etc.)
+- Robustness tests (invalid inputs, boundary conditions)
 
 """
 
@@ -53,6 +55,7 @@ bskPath = __path__[0]
 # =============================================================================
 SPEED_LIGHT = 299792458.0       # [m/s]
 K_BOLTZMANN = 1.38064852e-23    # [J/K]
+REQ_EARTH = 6378136.3           # [m] Earth equatorial radius (matches Basilisk)
 
 # Test tolerances
 ACCURACY = 1e-6
@@ -68,6 +71,9 @@ ANTENNA_RXTX = 3
 # Environment enums
 ENV_SPACE = 0
 ENV_EARTH = 1
+
+# CNR value when link is invalid (based on code review - linkValid flag sets CNR to 0.0)
+CNR_INVALID = 0.0
 
 
 # =============================================================================
@@ -257,6 +263,43 @@ def apply_pointing_error(base_sigma, error_az_rad, error_el_rad):
     return sigma_new.tolist()
 
 
+def compute_bandwidth_overlap(f1, B1, f2, B2):
+    """
+    Compute the overlapping bandwidth between two antennas.
+
+    Args:
+        f1: Center frequency of antenna 1 [Hz]
+        B1: Bandwidth of antenna 1 [Hz]
+        f2: Center frequency of antenna 2 [Hz]
+        B2: Bandwidth of antenna 2 [Hz]
+
+    Returns:
+        Overlapping bandwidth [Hz] (can be negative if no overlap)
+    """
+    f_low = max(f1 - B1/2, f2 - B2/2)
+    f_high = min(f1 + B1/2, f2 + B2/2)
+    return f_high - f_low
+
+
+def compute_frequency_loss(B_overlap, B_min):
+    """
+    Compute frequency offset loss.
+
+    Args:
+        B_overlap: Overlapping bandwidth [Hz]
+        B_min: Smaller of the two bandwidths [Hz]
+
+    Returns:
+        Frequency loss [dB] (negative or zero)
+    """
+    if B_overlap <= 0:
+        return float('inf')
+    elif B_overlap >= B_min:
+        return 0.0
+    else:
+        return 10.0 * np.log10(B_overlap / B_min)
+
+
 # =============================================================================
 # Helper Functions - Message Creation
 # =============================================================================
@@ -366,14 +409,14 @@ def create_antenna_msg_payload(
     return payload, params
 
 
-def setup_link_budget_sim(ant1_payload, ant2_payload, earth_pos=[0, 0, 0]):
+def setup_link_budget_sim(ant1_payload, ant2_payload, enable_atm=False):
     """
     Set up a simulation with linkBudget module and two antenna messages.
 
     Args:
         ant1_payload: AntennaLogMsgPayload for antenna 1
         ant2_payload: AntennaLogMsgPayload for antenna 2
-        earth_pos: Earth position for spice message [m]
+        enable_atm: Enable atmospheric attenuation calculation
 
     Returns:
         (unitTestSim, linkBudgetModule, linkDataLog)
@@ -393,19 +436,16 @@ def setup_link_budget_sim(ant1_payload, ant2_payload, earth_pos=[0, 0, 0]):
     # Create link budget module
     linkBudgetModule = linkBudget.LinkBudget()
     linkBudgetModule.ModelTag = "linkBudget"
+
+    # Enable atmospheric attenuation if requested
+    if enable_atm:
+        linkBudgetModule.atmosAtt = True
+
     unitTestSim.AddModelToTask(unitTaskName, linkBudgetModule)
 
     # Subscribe to antenna messages
     linkBudgetModule.antennaInPayload_1.subscribeTo(ant1Msg)
     linkBudgetModule.antennaInPayload_2.subscribeTo(ant2Msg)
-
-    # Earth/planet state message (required by linkBudget)
-    earthPayload = messaging.SpicePlanetStateMsgPayload()
-    earthPayload.PlanetName = "earth"
-    earthPayload.PositionVector = earth_pos
-    earthPayload.J20002Pfix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    earthMsg = messaging.SpicePlanetStateMsg().write(earthPayload)
-    linkBudgetModule.spicePlanetStateInMsg.subscribeTo(earthMsg)
 
     # Output recorder
     linkDataLog = linkBudgetModule.linkBudgetOutPayload.recorder()
@@ -445,13 +485,13 @@ def run_simulation(unitTestSim, duration_sec=1.0):
         # Space-to-ground link
         (ANTENNA_TX, ANTENNA_RX, "space_ground", 400, 0, 0),  # LEO pass
 
-        # Both antennas OFF - CNR should be -1
+        # Both antennas OFF - CNR should be 0
         (ANTENNA_OFF, ANTENNA_OFF, "space_space", 1000, 0, 0),
 
-        # Mismatched states - TX to TX (no receiver) - both CNR should be -1
+        # Mismatched states - TX to TX (no receiver) - both CNR should be 0
         (ANTENNA_TX, ANTENNA_TX, "space_space", 1000, 0, 0),
 
-        # RX to RX (no transmitter) - CNR should be low/zero
+        # RX to RX (no transmitter) - CNR should be 0
         (ANTENNA_RX, ANTENNA_RX, "space_space", 1000, 0, 0),
     ]
 )
@@ -534,7 +574,7 @@ def linkBudgetTestFunction(ant1_state, ant2_state, link_type, distance_km,
 
     # For ground station, set surface properties
     if link_type == "space_ground":
-        r_AP_N = [orbitalMotion.REQ_EARTH * 1000, 0, 0]
+        r_AP_N = [REQ_EARTH, 0, 0]
         nHat = [1, 0, 0]
         T_Ambient_2 = 288.0  # Ground temperature
         T_sky_2 = 200.0      # Ground sky temperature
@@ -580,7 +620,7 @@ def linkBudgetTestFunction(ant1_state, ant2_state, link_type, distance_km,
     # === Validate Results ===
 
     # 1. Check distance
-    if abs(dist_sim - distance_m) > ACCURACY:  # 1 meter tolerance
+    if abs(dist_sim - distance_m) > ACCURACY:
         testFailCount += 1
         testMessages.append(
             f"Distance error: got {dist_sim/1e3:.3f} km, expected {distance_km:.3f} km"
@@ -607,9 +647,9 @@ def linkBudgetTestFunction(ant1_state, ant2_state, link_type, distance_km,
             testMessages.append(f"CNR1 should be positive when ant1=RX and ant2=TX, got {cnr1_sim}")
     # When ant1 is TX only or OFF, CNR1 should be 0
     elif not ant1_is_rx:
-        if cnr1_sim != 0.0:
+        if cnr1_sim != CNR_INVALID:
             testFailCount += 1
-            testMessages.append(f"CNR1 should be 0 when ant1 is not RX, got {cnr1_sim}")
+            testMessages.append(f"CNR1 should be {CNR_INVALID} when ant1 is not RX, got {cnr1_sim}")
 
     # CNR2: Antenna 2 receiving from Antenna 1
     if ant2_is_rx and ant1_is_tx:
@@ -618,9 +658,9 @@ def linkBudgetTestFunction(ant1_state, ant2_state, link_type, distance_km,
             testMessages.append(f"CNR2 should be positive when ant2=RX and ant1=TX, got {cnr2_sim}")
     # When ant2 is TX only or OFF, CNR2 should be 0
     elif not ant2_is_rx:
-        if cnr2_sim != -1.0:
+        if cnr2_sim != CNR_INVALID:
             testFailCount += 1
-            testMessages.append(f"CNR2 should be -1 when ant2 is not RX, got {cnr2_sim}")
+            testMessages.append(f"CNR2 should be {CNR_INVALID} when ant2 is not RX, got {cnr2_sim}")
 
     # 4. Check pointing loss (only for space-space with pointing error)
     if pointing_error_deg > 0 and link_type == "space_space":
@@ -670,6 +710,7 @@ def test_linkBudget_fspl_analytical():
         (1000e3, 8.0e9, "1000 km at X-band"),
         (1000e3, 400e6, "1000 km at UHF"),
         (100e3, 2.2e9, "100 km at S-band"),
+        (1000e3, 26e9, "1000 km at Ka-band"),
     ]
 
     for distance_m, frequency_Hz, desc in test_cases:
@@ -866,7 +907,7 @@ def test_linkBudget_pointing_loss():
 def test_linkBudget_no_bandwidth_overlap():
     """
     Test behavior when antennas have no overlapping bandwidth.
-    CNR should be 0 or indicate link failure.
+    CNR should be 0 to indicate link failure.
     """
     testFailCount = 0
     testMessages = []
@@ -904,11 +945,11 @@ def test_linkBudget_no_bandwidth_overlap():
             f"Expected zero or negative bandwidth overlap, got {bandwidth_overlap/1e6:.2f} MHz"
         )
 
-    # CNR should indicate failed link (0 or very small)
-    if cnr1 > 1e-10 or cnr2 > 1e-10:
+    # CNR should indicate failed link (0)
+    if cnr1 != CNR_INVALID or cnr2 != CNR_INVALID:
         testFailCount += 1
         testMessages.append(
-            f"Expected CNR~0 for no bandwidth overlap, got CNR1={cnr1}, CNR2={cnr2}"
+            f"Expected CNR={CNR_INVALID} for no bandwidth overlap, got CNR1={cnr1}, CNR2={cnr2}"
         )
 
     if testFailCount == 0:
@@ -1209,6 +1250,9 @@ def test_linkBudget_fspl_vs_frequency():
 def test_linkBudget_antenna_state_transitions():
     """
     Test that CNR values correctly reflect antenna state combinations.
+
+    NOTE: CNR is set to 0.0 (not -1.0) when antenna is not in receive mode
+    or when link is invalid, based on the linkValid flag behavior in the code.
     """
     testFailCount = 0
     testMessages = []
@@ -1261,10 +1305,11 @@ def test_linkBudget_antenna_state_transitions():
                     f"State {ant1_state}/{ant2_state}: CNR1 should be positive, got {cnr1}"
                 )
         else:
-            if cnr1 > 0 and cnr1 != -1.0:
+            # CNR should be 0 when link is invalid (based on code review)
+            if cnr1 != CNR_INVALID:
                 testFailCount += 1
                 testMessages.append(
-                    f"State {ant1_state}/{ant2_state}: CNR1 should be -1 or 0, got {cnr1}"
+                    f"State {ant1_state}/{ant2_state}: CNR1 should be {CNR_INVALID}, got {cnr1}"
                 )
 
         # Check CNR2
@@ -1275,10 +1320,11 @@ def test_linkBudget_antenna_state_transitions():
                     f"State {ant1_state}/{ant2_state}: CNR2 should be positive, got {cnr2}"
                 )
         else:
-            if cnr2 > 0 and cnr2 != -1.0:
+            # CNR should be 0 when link is invalid (based on code review)
+            if cnr2 != CNR_INVALID:
                 testFailCount += 1
                 testMessages.append(
-                    f"State {ant1_state}/{ant2_state}: CNR2 should be -1 or 0, got {cnr2}"
+                    f"State {ant1_state}/{ant2_state}: CNR2 should be {CNR_INVALID}, got {cnr2}"
                 )
 
     if testFailCount == 0:
@@ -1287,6 +1333,578 @@ def test_linkBudget_antenna_state_transitions():
         print(f"FAILED: {testFailCount} errors")
         for msg in testMessages:
             print(f"  {msg}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+# =============================================================================
+# Atmospheric Attenuation Tests
+# =============================================================================
+
+def test_linkBudget_atmospheric_attenuation_space_ground():
+    """
+    Test that atmospheric attenuation is computed for space-to-ground links
+    when enabled.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    # Spacecraft at 400 km altitude
+    spacecraft_alt = 400e3
+    pos_spacecraft = [REQ_EARTH + spacecraft_alt, 0, 0]
+    pos_ground = [REQ_EARTH, 0, 0]
+
+    frequency = 10e9  # X-band (higher atmospheric effect)
+
+    # Create spacecraft antenna
+    ant_sc, _ = create_antenna_msg_payload(
+        name="SC_Ant", state=ANTENNA_TX,
+        environment=ENV_SPACE,
+        frequency=frequency,
+        position=pos_spacecraft, target_position=pos_ground
+    )
+
+    # Create ground antenna
+    ant_gnd, _ = create_antenna_msg_payload(
+        name="GND_Ant", state=ANTENNA_RX,
+        environment=ENV_EARTH,
+        frequency=frequency,
+        position=pos_ground, target_position=pos_spacecraft,
+        r_AP_N=pos_ground,
+        nHat_LP_N=[1, 0, 0]  # Surface normal pointing radially outward
+    )
+
+    # Test WITH atmospheric attenuation enabled
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant_sc, ant_gnd, enable_atm=True
+    )
+    run_simulation(unitTestSim)
+
+    L_atm = linkBudgetModule.getL_atm()
+    cnr_with_atm = float(linkDataLog.CNR2[-1])
+
+    # Test WITHOUT atmospheric attenuation
+    unitTestSim2, linkBudgetModule2, linkDataLog2 = setup_link_budget_sim(
+        ant_sc, ant_gnd, enable_atm=False
+    )
+    run_simulation(unitTestSim2)
+
+    L_atm_disabled = linkBudgetModule2.getL_atm()
+    cnr_without_atm = float(linkDataLog2.CNR2[-1])
+
+    # Check that atmospheric attenuation is positive when enabled
+    if L_atm <= 0:
+        testFailCount += 1
+        testMessages.append(f"L_atm should be > 0 when enabled, got {L_atm:.3f} dB")
+
+    # Check that atmospheric attenuation is 0 when disabled
+    if L_atm_disabled != 0.0:
+        testFailCount += 1
+        testMessages.append(f"L_atm should be 0 when disabled, got {L_atm_disabled:.3f} dB")
+
+    # CNR with attenuation should be lower than without
+    if cnr_with_atm >= cnr_without_atm and L_atm > 0:
+        testFailCount += 1
+        testMessages.append(
+            f"CNR with atm ({cnr_with_atm:.4e}) should be < CNR without ({cnr_without_atm:.4e})"
+        )
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_atmospheric_attenuation_space_ground (L_atm={L_atm:.2f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_atmospheric_attenuation_space_space():
+    """
+    Test that atmospheric attenuation is NOT computed for space-to-space links
+    even when the flag is enabled.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    distance_m = 1000e3
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    # Both antennas in space
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX,
+        environment=ENV_SPACE,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX,
+        environment=ENV_SPACE,
+        position=pos2, target_position=pos1
+    )
+
+    # Enable atmospheric attenuation (should be ignored for space-space)
+    unitTestSim, linkBudgetModule, _ = setup_link_budget_sim(
+        ant1_payload, ant2_payload, enable_atm=True
+    )
+    run_simulation(unitTestSim)
+
+    L_atm = linkBudgetModule.getL_atm()
+
+    # Atmospheric attenuation should be 0 for space-to-space links
+    if L_atm != 0.0:
+        testFailCount += 1
+        testMessages.append(f"L_atm should be 0 for space-space link, got {L_atm:.3f} dB")
+
+    if testFailCount == 0:
+        print("PASSED: test_linkBudget_atmospheric_attenuation_space_space")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_atmospheric_attenuation_frequency_dependence():
+    """
+    Test that atmospheric attenuation increases with frequency.
+    Higher frequencies experience more atmospheric absorption.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    # Spacecraft at 400 km altitude, directly overhead
+    spacecraft_alt = 400e3
+    pos_spacecraft = [REQ_EARTH + spacecraft_alt, 0, 0]
+    pos_ground = [REQ_EARTH, 0, 0]
+
+    # Test at different frequencies (should see increasing attenuation)
+    frequencies = [2e9, 10e9, 20e9]  # S-band, X-band, K-band
+    L_atm_values = []
+
+    for freq in frequencies:
+        ant_sc, _ = create_antenna_msg_payload(
+            name="SC_Ant", state=ANTENNA_TX,
+            environment=ENV_SPACE,
+            frequency=freq,
+            position=pos_spacecraft, target_position=pos_ground
+        )
+        ant_gnd, _ = create_antenna_msg_payload(
+            name="GND_Ant", state=ANTENNA_RX,
+            environment=ENV_EARTH,
+            frequency=freq,
+            position=pos_ground, target_position=pos_spacecraft,
+            r_AP_N=pos_ground,
+            nHat_LP_N=[1, 0, 0]
+        )
+
+        unitTestSim, linkBudgetModule, _ = setup_link_budget_sim(
+            ant_sc, ant_gnd, enable_atm=True
+        )
+        run_simulation(unitTestSim)
+
+        L_atm_values.append(linkBudgetModule.getL_atm())
+
+    # Check that attenuation generally increases with frequency
+    # (Note: there can be local variations due to absorption lines)
+    if L_atm_values[0] >= L_atm_values[2]:
+        testFailCount += 1
+        testMessages.append(
+            f"L_atm should generally increase with frequency: "
+            f"2 GHz={L_atm_values[0]:.3f} dB, 20 GHz={L_atm_values[2]:.3f} dB"
+        )
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_atmospheric_attenuation_frequency_dependence "
+              f"(L_atm: {L_atm_values[0]:.3f} -> {L_atm_values[2]:.3f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+# =============================================================================
+# Robustness / Edge Case Tests
+# =============================================================================
+
+def test_linkBudget_very_short_distance():
+    """
+    Test behavior with very short distances (near-field concerns).
+    Module should still compute valid FSPL.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    # Very short distance: 100 m (note: may be outside far-field region)
+    distance_m = 100.0
+    frequency_Hz = 2.2e9
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency_Hz,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency_Hz,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    fspl_sim = linkBudgetModule.getL_FSPL()
+    fspl_truth = compute_fspl(distance_m, frequency_Hz)
+    cnr = float(linkDataLog.CNR2[-1])
+
+    # FSPL should still match analytical formula
+    if abs(fspl_sim - fspl_truth) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"FSPL at 100m: got {fspl_sim:.2f} dB, expected {fspl_truth:.2f} dB"
+        )
+
+    # CNR should be positive (and quite large due to short distance)
+    if cnr <= 0:
+        testFailCount += 1
+        testMessages.append(f"CNR should be positive at short distance, got {cnr}")
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_very_short_distance (FSPL={fspl_sim:.2f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_very_long_distance():
+    """
+    Test behavior with very long distances (deep space communication).
+    """
+    testFailCount = 0
+    testMessages = []
+
+    # Very long distance: lunar distance (~384,400 km)
+    distance_m = 384400e3
+    frequency_Hz = 8.4e9  # X-band, typical for deep space
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    # Use high-gain antennas for deep space
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency_Hz,
+        directivity_dB=45.0, P_Tx=400.0,  # DSN-like
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency_Hz,
+        directivity_dB=45.0,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    fspl_sim = linkBudgetModule.getL_FSPL()
+    fspl_truth = compute_fspl(distance_m, frequency_Hz)
+    dist_sim = float(linkDataLog.distance[-1])
+
+    # Distance should be computed correctly
+    if abs(dist_sim - distance_m) / distance_m > 1e-6:
+        testFailCount += 1
+        testMessages.append(
+            f"Distance: got {dist_sim/1e3:.1f} km, expected {distance_m/1e3:.1f} km"
+        )
+
+    # FSPL should match analytical formula
+    if abs(fspl_sim - fspl_truth) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"FSPL at lunar distance: got {fspl_sim:.2f} dB, expected {fspl_truth:.2f} dB"
+        )
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_very_long_distance (FSPL={fspl_sim:.2f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_high_frequency():
+    """
+    Test behavior at high frequencies (within ITU-R P.676 valid range: 1-1000 GHz).
+    """
+    testFailCount = 0
+    testMessages = []
+
+    distance_m = 1000e3
+    frequency_Hz = 100e9  # 100 GHz (W-band)
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency_Hz,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency_Hz,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    fspl_sim = linkBudgetModule.getL_FSPL()
+    fspl_truth = compute_fspl(distance_m, frequency_Hz)
+    cnr = float(linkDataLog.CNR2[-1])
+
+    # FSPL should match analytical formula
+    if abs(fspl_sim - fspl_truth) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"FSPL at 100 GHz: got {fspl_sim:.2f} dB, expected {fspl_truth:.2f} dB"
+        )
+
+    # CNR should be computed (even if small due to high FSPL)
+    if cnr <= 0:
+        testFailCount += 1
+        testMessages.append(f"CNR should be positive at high frequency, got {cnr}")
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_high_frequency (FSPL={fspl_sim:.2f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_low_frequency():
+    """
+    Test behavior at low frequencies (within ITU-R P.676 valid range: 1-1000 GHz).
+    """
+    testFailCount = 0
+    testMessages = []
+
+    distance_m = 1000e3
+    frequency_Hz = 1e9  # 1 GHz (L-band)
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency_Hz,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency_Hz,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    fspl_sim = linkBudgetModule.getL_FSPL()
+    fspl_truth = compute_fspl(distance_m, frequency_Hz)
+
+    # FSPL should match analytical formula
+    if abs(fspl_sim - fspl_truth) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"FSPL at 1 GHz: got {fspl_sim:.2f} dB, expected {fspl_truth:.2f} dB"
+        )
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_low_frequency (FSPL={fspl_sim:.2f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_different_bandwidths():
+    """
+    Test frequency overlap calculation with different bandwidths on each antenna.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    frequency = 2.2e9
+    bandwidth1 = 20e6   # 20 MHz
+    bandwidth2 = 5e6    # 5 MHz (smaller)
+
+    distance_m = 1000e3
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency, bandwidth=bandwidth1,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency, bandwidth=bandwidth2,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    bandwidth_overlap = float(linkDataLog.bandwidth[-1])
+    L_freq = linkBudgetModule.getL_freq()
+
+    # Overlap should be the smaller bandwidth
+    expected_overlap = min(bandwidth1, bandwidth2)
+    if abs(bandwidth_overlap - expected_overlap) > 1e3:
+        testFailCount += 1
+        testMessages.append(
+            f"Bandwidth overlap: got {bandwidth_overlap/1e6:.3f} MHz, "
+            f"expected {expected_overlap/1e6:.3f} MHz"
+        )
+
+    # Frequency loss should be 0 since overlap equals the smaller bandwidth
+    if abs(L_freq) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"Frequency loss: got {L_freq:.3f} dB, expected 0 dB"
+        )
+
+    if testFailCount == 0:
+        print("PASSED: test_linkBudget_different_bandwidths")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_combined_pointing_errors():
+    """
+    Test pointing loss with both azimuth and elevation errors.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    frequency_Hz = 2.2e9
+    distance_m = 1000e3
+    directivity_dB = 20.0
+    k = 1.0
+
+    params = compute_antenna_derived_params(
+        directivity_dB, k, 100.0, 0.6, 50.0, 150.0, 5.0, 5e6
+    )
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    # Apply both azimuth and elevation pointing errors
+    error_az_deg = 3.0
+    error_el_deg = 4.0
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_TX, frequency=frequency_Hz,
+        directivity_dB=directivity_dB, k=k,
+        position=pos1, target_position=pos2,
+        pointing_error_az_deg=error_az_deg,
+        pointing_error_el_deg=error_el_deg
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RX, frequency=frequency_Hz,
+        directivity_dB=directivity_dB, k=k,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, _ = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    L_point_sim = linkBudgetModule.getL_point()
+
+    # Expected pointing loss with both az and el errors
+    error_az_rad = np.deg2rad(error_az_deg)
+    error_el_rad = np.deg2rad(error_el_deg)
+    L_point_truth = compute_pointing_loss(
+        error_az_rad, error_el_rad, params['HPBW_az'], params['HPBW_el']
+    )
+
+    if abs(L_point_sim - L_point_truth) > ACCURACY_DB:
+        testFailCount += 1
+        testMessages.append(
+            f"Combined pointing loss: got {L_point_sim:.3f} dB, "
+            f"expected {L_point_truth:.3f} dB"
+        )
+
+    if testFailCount == 0:
+        print(f"PASSED: test_linkBudget_combined_pointing_errors (L_point={L_point_sim:.3f} dB)")
+    else:
+        print(f"FAILED: {testMessages}")
+
+    assert testFailCount == 0, "\n".join(testMessages)
+
+
+def test_linkBudget_output_message_structure():
+    """
+    Verify all expected fields in the output message are populated.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    distance_m = 1000e3
+    frequency = 2.2e9
+    bandwidth = 5e6
+
+    pos1 = [0.0, 0.0, 0.0]
+    pos2 = [0.0, 0.0, distance_m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1", state=ANTENNA_RXTX, frequency=frequency, bandwidth=bandwidth,
+        position=pos1, target_position=pos2
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2", state=ANTENNA_RXTX, frequency=frequency, bandwidth=bandwidth,
+        position=pos2, target_position=pos1
+    )
+
+    unitTestSim, linkBudgetModule, linkDataLog = setup_link_budget_sim(
+        ant1_payload, ant2_payload
+    )
+    run_simulation(unitTestSim)
+
+    # Check all output fields
+    fields_to_check = {
+        'distance': distance_m,
+        'bandwidth': bandwidth,
+        'frequency': frequency,
+    }
+
+    for field_name, expected_value in fields_to_check.items():
+        actual_value = float(getattr(linkDataLog, field_name)[-1])
+        if abs(actual_value - expected_value) / expected_value > 1e-6:
+            testFailCount += 1
+            testMessages.append(
+                f"Field '{field_name}': got {actual_value}, expected {expected_value}"
+            )
+
+    # Check CNR values are positive for RXTX <-> RXTX
+    cnr1 = float(linkDataLog.CNR1[-1])
+    cnr2 = float(linkDataLog.CNR2[-1])
+    if cnr1 <= 0 or cnr2 <= 0:
+        testFailCount += 1
+        testMessages.append(f"CNR values should be positive: CNR1={cnr1}, CNR2={cnr2}")
+
+    if testFailCount == 0:
+        print("PASSED: test_linkBudget_output_message_structure")
+    else:
+        print(f"FAILED: {testMessages}")
 
     assert testFailCount == 0, "\n".join(testMessages)
 
@@ -1366,4 +1984,71 @@ if __name__ == "__main__":
 
     print("-" * 70)
     print(f"Focused tests: {passed_focused} passed, {failed_focused} failed")
+    print()
+
+    # Atmospheric attenuation tests
+    print("=" * 70)
+    print("Running atmospheric attenuation tests")
+    print("=" * 70)
+
+    atm_tests = [
+        ("Atm Atten Space-Ground", test_linkBudget_atmospheric_attenuation_space_ground),
+        ("Atm Atten Space-Space (should be 0)", test_linkBudget_atmospheric_attenuation_space_space),
+        ("Atm Atten Frequency Dependence", test_linkBudget_atmospheric_attenuation_frequency_dependence),
+    ]
+
+    passed_atm = 0
+    failed_atm = 0
+    for name, test_func in atm_tests:
+        try:
+            test_func()
+            passed_atm += 1
+        except AssertionError as e:
+            print(f"  {name}: FAILED")
+            failed_atm += 1
+        except Exception as e:
+            print(f"  {name}: ERROR - {type(e).__name__}: {e}")
+            failed_atm += 1
+
+    print("-" * 70)
+    print(f"Atmospheric tests: {passed_atm} passed, {failed_atm} failed")
+    print()
+
+    # Robustness tests
+    print("=" * 70)
+    print("Running robustness / edge case tests")
+    print("=" * 70)
+
+    robustness_tests = [
+        ("Very Short Distance", test_linkBudget_very_short_distance),
+        ("Very Long Distance", test_linkBudget_very_long_distance),
+        ("High Frequency (100 GHz)", test_linkBudget_high_frequency),
+        ("Low Frequency (1 GHz)", test_linkBudget_low_frequency),
+        ("Different Bandwidths", test_linkBudget_different_bandwidths),
+        ("Combined Pointing Errors", test_linkBudget_combined_pointing_errors),
+        ("Output Message Structure", test_linkBudget_output_message_structure),
+    ]
+
+    passed_robust = 0
+    failed_robust = 0
+    for name, test_func in robustness_tests:
+        try:
+            test_func()
+            passed_robust += 1
+        except AssertionError as e:
+            print(f"  {name}: FAILED")
+            failed_robust += 1
+        except Exception as e:
+            print(f"  {name}: ERROR - {type(e).__name__}: {e}")
+            failed_robust += 1
+
+    print("-" * 70)
+    print(f"Robustness tests: {passed_robust} passed, {failed_robust} failed")
+    print("=" * 70)
+
+    # Summary
+    total_passed = passed + passed_focused + passed_atm + passed_robust
+    total_failed = failed + failed_focused + failed_atm + failed_robust
+    print()
+    print(f"TOTAL: {total_passed} passed, {total_failed} failed")
     print("=" * 70)
