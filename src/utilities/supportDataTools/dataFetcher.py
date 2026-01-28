@@ -55,6 +55,7 @@ EPHEMERIS_DATA_BASE_PATH = "EphemerisData/"
 LOCAL_GRAV_DATA_BASE_PATH = "LocalGravData/"
 MAGNETIC_FIELD_BASE_PATH = "MagneticField/"
 SKY_BRIGHTNESS_BASE_PATH = "SkyBrightnessData/"
+ITU_ATMOSPHERE_RADIOFREQ_DAMPENING_BASE_PATH = "AtmRadioFreqDampData/"
 
 
 @functools.lru_cache(maxsize=32)
@@ -194,6 +195,10 @@ class DataFile:
     class SkyBrightnessData(Enum):
         skyTemperature408MHz = "haslam408_dsds_Remazeilles2014.fits"
 
+    class AtmRadioFreqDampData(Enum):
+        oxygen = "oxygen.json"
+        waterVapor = "waterVapor.json"
+
 CATEGORY_BASE_PATHS = {
     "AlbedoData": ALBEDO_DATA_BASE_PATH,
     "AtmosphereData": ATMOSPHERE_DATA_BASE_PATH,
@@ -202,6 +207,7 @@ CATEGORY_BASE_PATHS = {
     "LocalGravData": LOCAL_GRAV_DATA_BASE_PATH,
     "MagneticFieldData": MAGNETIC_FIELD_BASE_PATH,
     "SkyBrightnessData": SKY_BRIGHTNESS_BASE_PATH,
+    "AtmRadioFreqDampData": ITU_ATMOSPHERE_RADIOFREQ_DAMPENING_BASE_PATH,
 }
 
 
