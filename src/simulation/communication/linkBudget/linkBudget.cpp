@@ -169,6 +169,9 @@ void LinkBudget::calculateLinkBudget()
         // bandwidth overlap and center frequency for FSPL calculation
         this->B_overlap = std::min(this->antennaIn_1.B, this->antennaIn_2.B);                 // [Hz] If frequency loss disabled, assume full bandwidth overlap
         this->centerfreq = (this->antennaIn_1.frequency + this->antennaIn_2.frequency) / 2.0; // [Hz] Average frequency
+        if (this->B_overlap > 0.0) {
+            this->linkValid = true;
+        }
     }
     // Free Space Path Loss is always calculated
     this->calculateFSPL();
@@ -311,6 +314,7 @@ void LinkBudget::calculateFrequencyOffsetLoss()
     if (this->B_overlap <= smaller_bandwidth && this->B_overlap > 0.0) {
         // Partial overlapping bandwidth -> calculate frequency offset loss
         this->L_freq = 10.0 * std::log10(this->B_overlap / smaller_bandwidth); // [dB] Frequency offset loss
+        this->linkValid = true;
         return;
     } else if (this->B_overlap <= 0.0) {
         // No overlapping bandwidth -> 100% loss
