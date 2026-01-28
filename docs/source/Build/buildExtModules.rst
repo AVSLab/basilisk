@@ -11,7 +11,7 @@ Motivation
 ----------
 .. sidebar:: Source Code
 
-    An example external folder with custom Basilisk modules and message definitions can be downloaded :download:`here </../../docs/source/Install/External.zip>`.
+    An example external folder with custom Basilisk modules and message definitions can be downloaded :download:`here </../../docs/source/Build/External.zip>`.
 
 
 It is preferred that the user not put their own modules inside the official Basilisk folder unless this module is intended to be pushed back to the repository.  This keeps the official Basilisk folder free from local customizations and thus easier to keep up to date.  With Basilisk 2.0 and onwards the user has the ability to create modules which are not included in basilisk repository.  The new build system allows a single folder containing custom BSK modules to be included into a single Basilisk build. This document outlines how this is done.  The resulting build product will contain both the official Basilisk modules as well as modules available within this external folder.
@@ -70,5 +70,3 @@ Frequently Asked Questions
     - The custom Basilisk modules are built into a ``Basilisk.ExternalModules`` package.  For example, to load a module called ``customCppModule``, use::
 
         from Basilisk.ExternalModules import customCppModule
-
-

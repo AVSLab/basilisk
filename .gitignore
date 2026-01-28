@@ -65,4 +65,8 @@ lib/*
 build/
 !.github/actions/build/
 !.github/actions/build/**
+
+# Documentation
+!docs/source/Build/
+
 *.git-template
