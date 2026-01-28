@@ -18,7 +18,7 @@
 
 import numpy as np
 from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse, magneticFieldWMM, exponentialAtmosphere #msisAtmosphere
+from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse, magneticFieldWMM, exponentialAtmosphere, simpleAntenna #msisAtmosphere
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import macros as mc, simIncludeGravBody, unitTestSupport
 
@@ -143,6 +143,23 @@ class BSKEnvironmentModel:
         """
         self.atmosphere.ModelTag = "ExpAtmo"
 
+    def SetSimpleAntenna(self):
+        """
+        Sets up a simple antenna for ground station use
+        """
+        self.simpleAntenna = simpleAntenna.SimpleAntenna()
+        self.simpleAntenna.setAntennaName("groundSimpleAntenna")
+        self.simpleAntenna.setAntennaDirectivity_dB(50.0)                # [dBi] 14 dBi, Guesstimate for ground station S-Band antenna
+        self.simpleAntenna.setAntennaFrequency(2.1e9)                    # [Hz]  2.1GHz, S-Band according to Nano Avionics M12P specs
+        self.simpleAntenna.setAntennaBandwidth(2.0e6)                    # [Hz]  2.0MHz, S-Band (typical S-Band bandwidth)
+        self.simpleAntenna.setAntennaHpbwRatio(1.0)                      # [-]   Symetrical antenna beam.
+        self.simpleAntenna.setAntennaP_Tx(500.0)                         # [W]   0.5kW transmit power, typical for ground station
+        self.simpleAntenna.setAntennaRadEfficiency(0.8)                  # [-]   80% efficiency
+        self.simpleAntenna.setAntennaEquivalentNoiseTemp(40.0)           # [K]   290K equivalent noise temperature, typical for ground station
+        self.simpleAntenna.setAntennaPositionBodyFrame([0.0, 0.0, 0.0])  # [m]   body fixed position
+        self.simpleAntenna.groundStateInMsg.subscribeTo(self.groundStationSval.currentGroundStateOutMsg)  # Svalbard ground station access message
+
+    # ------------------------------------------------------------------------------------------- #
     def InitAllEnvObjects(self, epochTimeStr):
         self.SetGravityBodies(epochTimeStr)
         self.SetEpochObject()
@@ -150,3 +167,4 @@ class BSKEnvironmentModel:
         self.SetGroundLocations()
         self.SetMagneticFieldObject(epochTimeStr)
         self.SetAtmosphereObject()
+        self.SetSimpleAntenna()

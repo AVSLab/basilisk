@@ -22,7 +22,7 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
                                  thrusterDynamicEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower, magnetometer, MtbEffector, dragDynamicEffector, simpleInstrument,
-                                 partitionedStorageUnit, spaceToGroundTransmitter)
+                                 partitionedStorageUnit, spaceToGroundTransmitter, simpleAntenna, antennaPower)
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
 
@@ -257,6 +257,7 @@ class BSKDynamicModels:
         # attach the sources/sinks to the battery
         self.powerMonitor.addPowerNodeToModel(self.solarPanel.nodePowerOutMsg)
         self.powerMonitor.addPowerNodeToModel(self.powerSink.nodePowerOutMsg)
+        self.powerMonitor.addPowerNodeToModel(self.simpleAntennaPower.nodePowerOutMsg)
         for item in range(self.numRW):
             self.powerMonitor.addPowerNodeToModel(self.rwPowerList[item].nodePowerOutMsg)
 
@@ -339,6 +340,30 @@ class BSKDynamicModels:
         self.dataMonitor.addPartition("GNSS-R Partition 1")
         self.dataMonitor.addPartition("GNSS-R Partition 2")
 
+    def SetSimpleAntenna(self, SimBase):
+        """Sets up the simple antenna"""
+        self.simpleAntenna = simpleAntenna.SimpleAntenna()
+        self.simpleAntenna.setAntennaName("spaceSimpleAntenna" + str(self.spacecraftIndex))
+        self.simpleAntenna.setAntennaDirectivity_dB(10.0)                # [dBi] 10 dBi, Guesstimate for smallSat S-Band antenna
+        self.simpleAntenna.setAntennaFrequency(2.1e9)                    # [Hz]  2.1GHz, S-Band according to Nano Avionics M12P specs
+        self.simpleAntenna.setAntennaBandwidth(2.0e6)                    # [Hz]  2.0MHz, S-Band (typical S-Band bandwidth)
+        self.simpleAntenna.setAntennaHpbwRatio(1.0)                      # [-]   Symetrical antenna beam.
+        self.simpleAntenna.setAntennaP_Tx(6.0)                           # [W]   6W, according to Nano Avionics M12P specs
+        self.simpleAntenna.setAntennaP_Rx(0.1)                           # [W]   0.1W, Guesstimate
+        self.simpleAntenna.setAntennaRadEfficiency(0.7)                  # [-]   Guesstimate (typical antenna efficiency)
+        self.simpleAntenna.setAntennaEquivalentNoiseTemp(50)             # [K]   Guesstimate, noise temperature of the antenna
+        self.simpleAntenna.setAntennaPositionBodyFrame([0.5, 0.0, 0.0])  # [m]   body fixed position
+        self.simpleAntenna.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+        self.simpleAntenna.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('sun')])
+        self.simpleAntenna.addPlanetToModel(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('earth')])
+        self.simpleAntenna.addPlanetToModel(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('moon')])
+
+    def setSimpleAntennaPower(self):
+        """Sets up the simple antenna power consumption"""
+        self.simpleAntennaPower = antennaPower.AntennaPower()
+        self.simpleAntennaPower.ModelTag = "AntennaPower" + str(self.spacecraftIndex)
+        self.simpleAntennaPower.antennaSetStateInMsg.subscribeTo(self.simpleAntenna.antennaOutMsg)
+        self.simpleAntennaPower.basePowerNeed = 0.0  # Watt
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):
@@ -362,6 +387,8 @@ class BSKDynamicModels:
         self.SetSimpleMassPropsObject()
         self.SetSolarPanel(SimBase)
         self.SetPowerSink()
+        self.SetSimpleAntenna(SimBase)
+        self.setSimpleAntennaPower()
         self.SetBattery()
         self.SetTam(SimBase)
         self.SetMtbEffector(SimBase)
@@ -369,5 +396,4 @@ class BSKDynamicModels:
         self.SetInstrument()
         self.SetTransmitter(SimBase)
         self.SetDataMonitor()
-# self.SetsimpleAntenna()
-# self.SetLinkBudget()
+#        self.SetLinkBudget()
