@@ -18,6 +18,8 @@
 
 import itertools
 
+from bokeh.util import terminal
+from mypy.dmypy.client import ActionFunction
 import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (
@@ -33,9 +35,55 @@ from Basilisk.fswAlgorithms import (
     scanningInstrumentController
 #    gnssrSensing # TODO add (cpp code) in src/fswAlgorithms/....
 )
+from Basilisk.simulation import simpleAntenna
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import macros as mc
 
+########################################################
+#####             Helper functions                 #####
+########################################################
+def illuminatedBySun(SimBase, spacecraftIndex):
+    """
+    Check if the spacecraft is illuminated by the sun.
+
+    Returns:
+        bool: True if illuminated (not in eclipse), False if in shadow.
+    """
+    eclipseMsg = SimBase.EnvModel.eclipseObject.eclipseOutMsgs[spacecraftIndex].read()
+    return eclipseMsg.shadowFactor > 0
+#    return eclipseMsg.illuminationFactor > 0 # TODO update once possible in Basilisk
+
+def batteryLevelAboveThreshold(SimBase, spacecraftIndex, threshold):
+    """
+    Check if the spacecraft battery level is above a certain threshold.
+    """
+    batteryMsg = SimBase.DynModels[spacecraftIndex].powerMonitor.batPowerOutMsg.read()
+
+    # Handle case where message hasn't been written yet
+    if batteryMsg.storageCapacity == 0:
+        # Fall back to initial values before simulation has run
+        chargeFraction = SimBase.DynModels[spacecraftIndex].powerMonitor.storedCharge_Init / SimBase.DynModels[spacecraftIndex].powerMonitor.storageCapacity
+    else:
+        chargeFraction = batteryMsg.storageLevel / batteryMsg.storageCapacity
+    return chargeFraction >= threshold
+
+def reachedCommunicationsWindowWithGroundStation(SimBase, spacecraftIndex):
+    """
+    Check if the spacecraft is in communication window with the ground station.
+    """
+    accessMsg = SimBase.EnvModel.groundStationSval.accessOutMsgs[spacecraftIndex].read()
+    return accessMsg.hasAccess > 0
+
+def reachedLattitude(SimBase, spacecraftIndex, latLimit):
+    """
+    Check if the spacecraft has reached a certain latitude.
+    """
+    navMsg = SimBase.DynModels[spacecraftIndex].simpleNavObject.transOutMsg.read()
+    r_BN_N = navMsg.r_BN_N
+    # Convert position to spherical coordinates to get latitude
+    r = np.linalg.norm(r_BN_N)
+    lat = np.arcsin(r_BN_N[2] / r) * mc.R2D  # in degrees
+    return abs(lat) >= latLimit
 
 class BSKFswModels:
     """Defines the FSW class"""
@@ -56,6 +104,7 @@ class BSKFswModels:
         self.attGuidMsg = None
         self.cmdRwMotorMsg = None
         self.mtbParamsInMsg = None
+        self.antennaStateMsg = None
 
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName[spacecraftIndex]
@@ -66,7 +115,7 @@ class BSKFswModels:
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("inertialPointTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
         # Point the solar panels to the sun
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("solarChargingTask" + str(spacecraftIndex),
+        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("chargeBatteryTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
         # Point nadir towards the Earth
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("nadirPointTask" + str(spacecraftIndex),
@@ -90,7 +139,7 @@ class BSKFswModels:
         SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("scanningInstrumentControllerTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
         # Data transfer mode
-        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("DataTransferTask" + str(spacecraftIndex),
+        SimBase.fswProc[spacecraftIndex].addTask(SimBase.CreateNewTask("dataTransferTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 20)
 
         #--- Create module data and module wraps ---#
@@ -101,10 +150,13 @@ class BSKFswModels:
 
         # Charging the spacecraft with solar pannels
         self.solCharging = locationPointing.locationPointing()
-        self.solCharging.ModelTag = "solarCharging"
+        self.solCharging.ModelTag = "chargeBattery"
 
         self.nadirPoint = locationPointing.locationPointing()
         self.nadirPoint.ModelTag = "nadirPoint"
+
+        self.svalbardStationPoint = locationPointing.locationPointing()
+        self.svalbardStationPoint.ModelTag = "pointingToSvalbardGroundStation"
 
         self.spacecraftReconfig = spacecraftReconfig.spacecraftReconfig()
         self.spacecraftReconfig.ModelTag = "spacecraftReconfig"
@@ -143,7 +195,7 @@ class BSKFswModels:
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("inertialPointTask" + str(spacecraftIndex), self.inertial3DPoint, 10)
 
-        SimBase.AddModelToTask("solarChargingTask" + str(spacecraftIndex), self.solCharging, 10)
+        SimBase.AddModelToTask("chargeBatteryTask" + str(spacecraftIndex), self.solCharging, 10)
 
         SimBase.AddModelToTask("nadirPointTask" + str(spacecraftIndex), self.nadirPoint, 10)
 
@@ -157,13 +209,12 @@ class BSKFswModels:
         SimBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.mtbMomentumManagement, 5)
         SimBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.tamComm, 5)
 
+        SimBase.AddModelToTask("dataTransferTask" + str(spacecraftIndex), self.svalbardStationPoint, 9)
+
         SimBase.AddModelToTask("scanningInstrumentControllerTask" + str(spacecraftIndex), self.scanningInstrumentController, 8)
 
-#        SimBase.AddModelToTask("gnssRTask" + str(spacecraftIndex), self.gnssrSensing, 9)
+#        SimBase.AddModelToTask("gnssrTask" + str(spacecraftIndex), self.gnssrSensing, 9)
 
-#        SimBase.AddModelToTask("GnssR" + str(spacecraftIndex), self.gnssrSensing, 9)
-
-#        SimBase.AddModelToTask("DataTransferTask" + str(spacecraftIndex), self.dataTransfer, 9)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc[spacecraftIndex].disableAllTasks()
@@ -214,12 +265,13 @@ class BSKFswModels:
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].modeRequest == "solarCharging"
+                self.FSWModels[spacecraftIndex].modeRequest == "chargeBattery" and
+                illuminatedBySun(SimBase, spacecraftIndex)
             ),
             actionFunction=lambda self: (
                 self.fswProc[spacecraftIndex].disableAllTasks(),
                 self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
-                self.enableTask(f"solarChargingTask{spacecraftIndex}"),
+                self.enableTask(f"chargeBatteryTask{spacecraftIndex}"),
                 self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
                 self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
                 self.setAllButCurrentEventActivity(
@@ -233,11 +285,13 @@ class BSKFswModels:
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].stationKeeping == "ON"
+#                self.FSWModels[spacecraftIndex].modeRequest == "initiateStationKeeping" and
+                batteryLevelAboveThreshold(SimBase, spacecraftIndex, threshold=0.9)
             ),
             actionFunction=lambda self: (
                 self.enableTask(f"spacecraftReconfigTask{spacecraftIndex}"),
                 self.setEventActivity(f"stopStationKeeping_{spacecraftIndex}", True),
+                setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'ON'),
             ),
         )
         SimBase.createNewEvent(
@@ -245,13 +299,12 @@ class BSKFswModels:
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].stationKeeping == "OFF"
+                self.FSWModels[spacecraftIndex].modeRequest == "stopStationKeeping"
             ),
             actionFunction=lambda self: (
                 self.disableTask(f"spacecraftReconfigTask{spacecraftIndex}"),
-                self.setEventActivity(
-                    f"initiateStationKeeping_{spacecraftIndex}", True
-                ),
+                self.setEventActivity(f"initiateStationKeeping_{spacecraftIndex}", True),
+                setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'OFF'),
             ),
         )
 
@@ -274,24 +327,51 @@ class BSKFswModels:
             ),
         )
 
-#TODO should there be a formationReconfiguraton event
+        SimBase.createNewEvent(
+            "initiateDataTransfer_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "dataTransfer" and
+                reachedCommunicationsWindowWithGroundStation(SimBase, spacecraftIndex)
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.enableTask(f"dataTransferTask{spacecraftIndex}"),
+                self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
+                self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
+                self.FSWModels[spacecraftIndex].antennaStateMsg.write(
+                    messaging.AntennaStateMsgPayload(antennaState=simpleAntenna.ANTENNA_TX)
+                ),
+                self.setAllButCurrentEventActivity(
+                    f"initiateDataTransfer_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
-#        SimBase.createNewEvent(
-#            "initiateGnssRMode_" + str(spacecraftIndex),
-#            self.processTasksTimeStep,
-#            True,
-#            conditionFunction=lambda self: (
-#                self.FSWModels[spacecraftIndex].modeRequest == "gnssrSensing"
-#            ),
-#            actionFunction=lambda self: (
-#                self.fswProc[spacecraftIndex].disableAllTasks(),
-#                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
-#                self.enableTask(f"gnssRTask{spacecraftIndex}"),
-#                self.setAllButCurrentEventActivity(
-#                    f"initiateGnssRMode_{spacecraftIndex}", True, useIndex=True
-#                ),
-#            ),
-#        )
+# TODO add PID-formation control event here
+
+        SimBase.createNewEvent(
+            "initiateGnssRMode_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "startGnssrSensing"
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.enableTask(f"nadirPointTask{spacecraftIndex}"),
+                self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
+                self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
+                self.enableTask(f"scanningInstrumentControllerTask{spacecraftIndex}"),  # Enable instrument task
+                self.setEventActivity(f"stopStationKeeping_{spacecraftIndex}", True),   # Stop station keeping
+                self.setAllButCurrentEventActivity(
+                    f"initiateGnssRMode_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -302,7 +382,7 @@ class BSKFswModels:
         self.inertial3DPoint.sigma_R0N = [0.1, 0.2, -0.3]
         messaging.AttRefMsg_C_addAuthor(self.inertial3DPoint.attRefOutMsg, self.attRefMsg)
 
-    def SetSolarChargingGuidance(self, SimBase):
+    def SetchargeBatteryGuidance(self, SimBase):
         """
         Defines the solar-cells to sun pointing guidance module.
         """
@@ -431,8 +511,8 @@ class BSKFswModels:
         """
         Defines the MTB momentum management module.
         """
-        self.mtbMomentumManagement.wheelSpeedBiases = [0.0, 0.0, 0.0, 0.0] # TODO is this feasible? confirm
-        self.mtbMomentumManagement.cGain = 0.003 # TODO understand what this is
+        self.mtbMomentumManagement.wheelSpeedBiases = [0.0, 0.0, 0.0, 0.0]  #TODO is this feasible? confirm
+        self.mtbMomentumManagement.cGain = 0.003                            #TODO understand what this is
 
         self.mtbMomentumManagement.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.mtbMomentumManagement.mtbParamsInMsg.subscribeTo(self.mtbParamsInMsg)
@@ -444,6 +524,20 @@ class BSKFswModels:
         SimBase.DynModels[self.spacecraftIndex].mtbEff.mtbParamsInMsg.subscribeTo(self.mtbParamsInMsg)
         SimBase.DynModels[self.spacecraftIndex].mtbEff.mtbCmdInMsg.subscribeTo(self.mtbMomentumManagement.mtbCmdOutMsg)
 #        mtbDipoleCmdsLog = self.mtbMomentumManagement.mtbCmdOutMsg.recorder(samplingTime)
+
+    def setupDataTransferSvalbard(self, SimBase):
+        """
+        Defines the data transfer module.
+        """
+        self.svalbardStationPoint.pHat_B = [1, 0, 0]  # Point antenna axis toward ground station (adjust based on your antenna mounting)
+        self.svalbardStationPoint.scAttInMsg.subscribeTo(
+            SimBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg)
+        self.svalbardStationPoint.scTransInMsg.subscribeTo(
+            SimBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
+        # Use ground station location message
+        self.svalbardStationPoint.locationInMsg.subscribeTo(
+            SimBase.EnvModel.groundStationSval.currentGroundStateOutMsg)
+        messaging.AttRefMsg_C_addAuthor(self.svalbardStationPoint.attRefOutMsg, self.attRefMsg)
 
     def setupScanningInstrumentControler(self, SimBase):
         """
@@ -467,7 +561,7 @@ class BSKFswModels:
         self.SetMtbConfigMsg(SimBase)
         # Initialize all modules
         self.SetInertial3DPointGuidance()
-        self.SetSolarChargingGuidance(SimBase)
+        self.SetchargeBatteryGuidance(SimBase)
         self.SetNadirPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedbackRWA(SimBase)
@@ -476,12 +570,18 @@ class BSKFswModels:
         self.setupTamComm(SimBase)
         self.setupMtbMomentumManagement(SimBase)
         self.setupScanningInstrumentControler(SimBase)
+        self.setupDataTransferSvalbard(SimBase)
 
     def setupGatewayMsgs(self, SimBase):
         """create C-wrapped gateway messages such that different modules can write to this message
         and provide a common input msg for down-stream modules"""
         self.attRefMsg = messaging.AttRefMsg_C()
         self.attGuidMsg = messaging.AttGuidMsg_C()
+
+        # Create antenna state message BEFORE zeroGateWayMsgs (default OFF)
+        antennaStateData = messaging.AntennaStateMsgPayload()
+        antennaStateData.antennaState = simpleAntenna.ANTENNA_OFF
+        self.antennaStateMsg = messaging.AntennaStateMsg().write(antennaStateData)
 
         self.zeroGateWayMsgs()
 
@@ -492,6 +592,9 @@ class BSKFswModels:
             self.spacecraftReconfig.onTimeOutMsg) #                             TODO what is the "on Time Out Msg"?
         SimBase.DynModels[self.spacecraftIndex].mtbEff.mtbCmdInMsg.subscribeTo(
             self.mtbMomentumManagement.mtbCmdOutMsg)
+        # Connect antenna state message to dynamics
+        SimBase.DynModels[self.spacecraftIndex].simpleAntenna.antennaSetStateInMsg.subscribeTo(
+            self.antennaStateMsg)
 
     def zeroGateWayMsgs(self):
         """Zero all FSW gateway message payloads"""
@@ -502,3 +605,7 @@ class BSKFswModels:
         self.rwMotorTorque.rwMotorTorqueOutMsg.write(messaging.ArrayMotorTorqueMsgPayload())
         self.spacecraftReconfig.onTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
         self.mtbMomentumManagement.mtbCmdOutMsg.write(messaging.MTBCmdMsgPayload())
+        # Turn antenna OFF
+        self.antennaStateMsg.write(
+            messaging.AntennaStateMsgPayload(antennaState=simpleAntenna.ANTENNA_OFF)
+        )
