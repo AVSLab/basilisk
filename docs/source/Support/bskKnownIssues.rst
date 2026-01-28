@@ -9,8 +9,8 @@ Basilisk Known Issues
     The use of ``cMsgCInterfacePy`` is depreciated.  Use ``messaging`` instead.
 
 
-Version |release|
------------------
+Version |release| (Jan. 28, 2026)
+---------------------------------
 - The denton flux model API has changed. The module now uses the new data fetching
   API and thus relies on users passing in the correct support data location via
   ``configureDentonFiles``. Previously, the module automatically searched for the
