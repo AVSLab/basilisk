@@ -474,6 +474,7 @@ void SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload *output)
     output->P_Tx           = this->P_Tx;
     output->P_Rx           = this->P_Rx;
     output->DdB            = this->DdB;
+    output->eta_r          = this->eta_r;
     output->G_TN           = this->G_TN;
     // above is just mapping
     output->P_N            = this->P_N;
