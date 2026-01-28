@@ -603,10 +603,19 @@ void LinkBudget::calculateCNR()
     auto state1 = static_cast<AntennaTypes::AntennaStateEnum>(this->antennaIn_1.antennaState);
     auto state2 = static_cast<AntennaTypes::AntennaStateEnum>(this->antennaIn_2.antennaState);
 
+    // Helper booleans for readability
+    bool ant1_rx = (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
+                    state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant1_tx = (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_TX ||
+                    state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant2_rx = (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
+                    state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant2_tx = (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_TX ||
+                    state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+
     // Calculate the recived power P_Rx for the receiver
     // Check which antenna is the receiver
-    if (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
-        state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX) {
+    if (ant1_rx && ant2_tx) {
         // Calculate the noise power for antenna 1
         // P_Rx = P_Tx + G_Tx + G_Rx - L_FSPL - L_atm - L_point - L_freq // TODO add antenna efficiency to the antenna message and include it here
         double G_Rx_dB1 = this->antennaIn_1.DdB + 10.0 * std::log10(this->antennaIn_1.eta_r);
@@ -619,8 +628,7 @@ void LinkBudget::calculateCNR()
         this->CNR1 = 0.0; // Indicate that antenna 1 is not a receiver
     }
 
-    if (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
-        state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX) {
+    if (ant2_rx && ant1_tx) {
         // Calculate the noise power for antenna 2
         // P_Rx = P_Tx + G_Tx + G_Rx - L_FSPL - L_atm - L_point - L_freq
         double G_Rx_dB2 = this->antennaIn_2.DdB + 10.0 * std::log10(this->antennaIn_2.eta_r);
