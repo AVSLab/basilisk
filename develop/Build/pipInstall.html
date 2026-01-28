@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced: Building Pre-Compiled Basilisk Wheels &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Learning Basilisk" href="../Learn.html" />
+    <link rel="prev" title="Advanced: Directly Building the Software Framework Using Conan" href="installBuildConan.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Build.html">Building from Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pullCloneBSK.html">Download Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnLinux.html">Setup On Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnMacOS.html">Setup On macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnWindows.html">Setup On Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuild.html">Building the Software Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buildExtModules.html">Building Custom Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customPython.html">Using a Custom Python Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuildConan.html">Advanced: Directly Building the Software Framework Using Conan</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Advanced: Building Pre-Compiled Basilisk Wheels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-wheels-and-installing-with-pip">Building Wheels and Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-basilisk-wheel-file">Building Basilisk <code class="docutils literal notranslate"><span class="pre">wheel</span></code> File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#for-maintainers-overview-of-implementation">For Maintainers: Overview of Implementation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Build.html">Building from Source</a></li>
+      <li class="breadcrumb-item active">Advanced: Building Pre-Compiled Basilisk Wheels</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Build/pipInstall.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="advanced-building-pre-compiled-basilisk-wheels">
+<span id="pipinstall"></span><h1>Advanced: Building Pre-Compiled Basilisk Wheels<a class="headerlink" href="#advanced-building-pre-compiled-basilisk-wheels" title="Link to this heading"></a></h1>
+<p>The following instructions explain how to build wheels with Basilisk.
+While we distribute pre-compiled wheels already in <a class="reference internal" href="../Install.html#bskinstall"><span class="std std-ref">Install</span></a>,
+you can also build them manually using the steps below. This is desirable if
+you want to use Python wheels but still need to enable custom build options
+or link against a custom external module location.</p>
+<section id="building-wheels-and-installing-with-pip">
+<h2>Building Wheels and Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code><a class="headerlink" href="#building-wheels-and-installing-with-pip" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All commands are called from the Basilisk root directory.</p>
+</div>
+<p>A clean Basilisk wheel can be built and installed using standard Python packaging tools <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> such as <code class="docutils literal notranslate"><span class="pre">pip</span></code>.
+Note that this will always result in a clean build.
+The simplest usage is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">v</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This command compiles and installs Basilisk into the user’s current Python environment. Note that the optional <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag is
+added to display verbose compilation messages, otherwise it can look like the installation process is stuck.</p>
+<p>Build options (as passed to <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> and described in <a class="reference internal" href="installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>) can be provided using the
+<code class="docutils literal notranslate"><span class="pre">CONAN_ARGS</span></code> environment variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONAN_ARGS</span><span class="o">=</span><span class="s2">&quot;--pathToExternalModules=&#39;/path/to/external&#39; --opNav True&quot;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">v</span> <span class="o">.</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For backwards compatibility reasons, and due to issues arising from temporary build environments, editable
+installations (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code>) are not currently supported. Please follow the standard
+<a class="reference internal" href="installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a> process.</p>
+</div>
+</section>
+<section id="building-basilisk-wheel-file">
+<h2>Building Basilisk <code class="docutils literal notranslate"><span class="pre">wheel</span></code> File<a class="headerlink" href="#building-basilisk-wheel-file" title="Link to this heading"></a></h2>
+<p>Using <code class="docutils literal notranslate"><span class="pre">pip</span></code>, the command below will generate a <code class="docutils literal notranslate"><span class="pre">bsk-*.whl</span></code> file in the current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">wheel</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">deps</span> <span class="o">-</span><span class="n">v</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>The resulting wheel file can then be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">bsk</span><span class="o">-*.</span><span class="n">whl</span>
+</pre></div>
+</div>
+<p>This allows the user to create a custom Basilisk wheel to distribute within their organization.</p>
+<p>To keep the wheel size smaller, the BSK data files are not installed by default.  If the user
+wants to use script that assumes they are included into the Basilisk python package, then go to the
+command line, change the current directory to be inside the environment where Basilisk was <code class="docutils literal notranslate"><span class="pre">pip</span></code> installed,
+and run the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bskLargeData</span>
+</pre></div>
+</div>
+<p>This command runs a python file stored in the <code class="docutils literal notranslate"><span class="pre">src/utilities</span></code> folder.
+The <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> process automatically
+creates this console command in the current python environment to call this python file.  The file
+directly downloads the missing BSK data files and put them into a local pooch cache.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the computer does not have local internet access and the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> is done via
+a local wheel, then these missing Spice <code class="docutils literal notranslate"><span class="pre">*.bsp</span></code> data files can be manually added to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.11</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">Basilisk</span><span class="o">/</span><span class="n">supportData</span><span class="o">/</span><span class="n">EphemerisData</span>
+</pre></div>
+</div>
+</div>
+<p>If installing Basilisk via a wheel the user does not have direct access to the full Basilisk source
+folder which contains the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder.  The Terminal command <code class="docutils literal notranslate"><span class="pre">bskExamples</span></code>
+will download a copy of the examples folder into the local directory.</p>
+<p>Alternatively, if you download a zip’d folder of the Basilisk source code you can install it via <code class="docutils literal notranslate"><span class="pre">pip</span></code>
+using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">Basilisk</span><span class="o">*.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>The following command is used to both download the code and compile Basilisk with pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">AVSLab</span><span class="o">/</span><span class="n">basilisk</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</section>
+<section id="for-maintainers-overview-of-implementation">
+<h2>For Maintainers: Overview of Implementation<a class="headerlink" href="#for-maintainers-overview-of-implementation" title="Link to this heading"></a></h2>
+<p>Python packaging support is provided through the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file as specified by the <a class="reference external" href="https://peps.python.org/pep-0517/">PEP-517</a> standard. This file defines the desired “back-end” tool used to build
+Basilisk, as well as other packaging settings including which Python packages are required for building
+and running Basilisk.</p>
+<p>At the time of this writing, the build backend is <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>, which invokes the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file to
+perform the build. In <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>, the Python extension builder is overridden with a custom builder that
+computes an appropriate Python Limited C API version (based on the minimum supported Python version
+specified in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>). The builder then invokes <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span></code>, setting the
+<code class="docutils literal notranslate"><span class="pre">--managePipEnvironment</span> <span class="pre">False</span></code> option so that Conan does not directly manipulate the user’s <code class="docutils literal notranslate"><span class="pre">pip</span></code>
+environment. The main reasons for this setting was to maintain the current default behaviour of
+<code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code>-based installation.</p>
+<p>Editable installations (i.e. <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code>) are are partially supported. Python code changes are reflected
+automatically with this flag, but C++ components are not automatically rebuilt.</p>
+<p>This limitation exists because editable mode still routes through <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span></code>, but skips C++ rebuilds
+once the initial build exists. This avoids long native rebuilds and preserves the Conan/CMake configuration.
+…</p>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>“Standard Python packaging tools” are those which comply with modern Python packaging standards
+such as <a class="reference external" href="https://peps.python.org/pep-0517/">PEP-517</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installBuildConan.html" class="btn btn-neutral float-left" title="Advanced: Directly Building the Software Framework Using Conan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Learn.html" class="btn btn-neutral float-right" title="Learning Basilisk" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

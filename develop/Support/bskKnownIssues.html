@@ -51,6 +51,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../Support.html">Support</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="bskReleaseNotes.html">Basilisk Release Notes</a></li>
@@ -572,11 +573,11 @@ $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-
 </pre></div>
 </div>
 </li>
-<li><p>If running Windows the path to the Basilisk library destination folder must be set, see <a class="reference internal" href="../Install/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.</p></li>
+<li><p>If running Windows the path to the Basilisk library destination folder must be set, see <a class="reference internal" href="../Build/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.</p></li>
 <li><p>On Linux and Windows the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> and all <code class="docutils literal notranslate"><span class="pre">opNav</span></code> related modules is not properly linking.
 Thus, all associated modules, including saving to Vizard binaries, is not working in this version.</p></li>
 <li><p>If running Windows, be sure to use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">conan</span></code> to get conan, and don’t download the binary installer,
-see <a class="reference internal" href="../Install/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.   The binary installer causes several issues with this new build system in that
+see <a class="reference internal" href="../Build/installOnWindows.html#installwindows"><span class="std std-ref">Setup On Windows</span></a>.   The binary installer causes several issues with this new build system in that
 it contains its own copy of Python, and thus checking for required python packages does work.</p></li>
 <li><p>The new build system provides many speed improvements in doing a clean or partial build, but some small changes are
 required to update BSK python simulation scripts to be compatible with the new build system.
