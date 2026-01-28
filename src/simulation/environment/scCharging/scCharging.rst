@@ -33,16 +33,16 @@ the message is used.
       - Msg Type
       - Description
     * - plasmaFluxInMsg
-      - :ref:`PlasmaFluxMsgPayload`
+      - :cpp:struct:`PlasmaFluxMsgPayload`
       - plasma environment input message containing the energy grid and particle flux distributions used to compute ambient electron/ion collection currents and yield-weighted emission currents
     * - scStateInMsgs
-      - :ref:`SCStatesMsgPayload`
+      - :cpp:struct:`SCStatesMsgPayload`
       - vector of spacecraft state input messages; entries are appended via ``addSpacecraft()``
     * - eBeamInMsgs
-      - :ref:`ElectronBeamMsgPayload`
+      - :cpp:struct:`ElectronBeamMsgPayload`
       - vector of electron beam parameter input messages (optional). If a spacecraft’s beam message is linked, its gun parameters are read from the message and used in beam-coupled charging terms
     * - voltOutMsgs
-      - :ref:`VoltMsgPayload`
+      - :cpp:struct:`VoltMsgPayload`
       - output vector of equilibrium spacecraft potentials (voltage), one per spacecraft
     * - scSunlitAreaInMsgs
       - :cpp:struct:`SCSunlitFacetAreaMsgPayload`
@@ -60,7 +60,7 @@ Detailed Module Description
 ---------------------------
 
 Overview: zero net current equilibrium
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The module computes equilibrium potential(s) by requiring the **total current** to each spacecraft to be zero:
 
 .. math::
@@ -96,7 +96,7 @@ The current is computed as:
 where :math:`A` is the area exposed to plasma, :math:`q` is the elementary charge, and :math:`F_e(E)` is the electron flux distribution provided by ``plasmaFluxInMsg``.
 
 Numerical details (as implemented)
-"""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""
 - The integrand used in code is::
 
     (E/(E - phi)) * getFlux(E - phi, "electron")
@@ -126,7 +126,7 @@ The ion collection current is computed in the same numerical style using the tab
     I_i(\phi) = +q\,A \int_{E_{\min}}^{E_{\max}} \left(\frac{E}{E+\phi}\right)\,F_i(E+\phi)\,dE
 
 Numerical details (as implemented)
-"""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""
 - The integrand used in code is::
 
     (E/(E + phi)) * getFlux(E + phi, "ion")

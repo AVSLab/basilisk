@@ -24,34 +24,43 @@
 class chargedSpaceCraft: public SysModel {
 // public functions
 public:
-    void setID(std::string IDtype, int inputID);              //! < setter function for ID
-    int getID(std::string IDtype);                            //! < getter function for ID
+    /*! Set the spacecraft identifier.
+        @param IDtype string specifying which ID is being set
+        @param inputID integer value of the ID
+    */
+    void setID(std::string IDtype, int inputID);
+
+    /*! Get the spacecraft identifier.
+        @param IDtype string specifying which ID is requested
+        @return integer value of the requested ID
+    */
+    int getID(std::string IDtype);
 // private functions
 private:
 
 
 // public variables
 public:
-    std::string name;                       //! < spacecraft name
-    int priority;                           //! < value assigning order in which spacecraft equilibrium potential is calculated
+    std::string name;                       //!< spacecraft name
+    int priority;                           //!< value assigning order in which spacecraft equilibrium potential is calculated
 
-    std::string electronGunScName;          //! name of the spacecraft that emits an electron beam
-    bool emitsEB;                           //! boolean that tells whether or not the craft emits an electron beam
+    std::string electronGunScName;          //!< name of the spacecraft that emits an electron beam
+    bool emitsEB;                           //!< boolean that tells whether or not the craft emits an electron beam
     struct {
         double alphaEB;
         double currentEB;
         double energyEB;
-    } electronGun;
+    } electronGun;                          //!< electron gun parameters
 
-    double A;                               //! < surface area of spacecraft
-    double A_sunlit;                        //! < surface area of spacecraft used in photoelectric current
+    double A;                               //!< surface area of spacecraft
+    double A_sunlit;                        //!< surface area of spacecraft used in photoelectric current
 
     BSKLogger bskLogger;                    //!< -- BSK Logging
 
 // private variables
 private:
-    int ID;                                 //! < integer corresponding to spacecraft
-    int electronGunScID;                    //! ID of the spacecraft that emits an electron beam
+    int ID;                                 //!< integer corresponding to spacecraft
+    int electronGunScID;                    //!< ID of the spacecraft that emits an electron beam
 };
 
 #endif /* chargedSpaceCraft_h */

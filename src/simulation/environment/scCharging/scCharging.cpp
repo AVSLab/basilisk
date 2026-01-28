@@ -50,7 +50,6 @@ ScCharging::~ScCharging()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connected.
- @return void
  @param CurrentSimNanos current simulation time in nano-seconds
 */
 void ScCharging::Reset(uint64_t CurrentSimNanos)
@@ -88,8 +87,7 @@ void ScCharging::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-/*! This is the main method that gets called every time the module is updated.  Calculates total current and finds equilibrium potential.
- @return void
+/*! This method updates the state of the module
  @param CurrentSimNanos current simulation time in nano-seconds
 */
 void ScCharging::UpdateState(uint64_t CurrentSimNanos)
@@ -241,10 +239,9 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-/*!   Add spacecraft to charging module
- @return void
- @param tmpScMsg spacecraft state input message
- */
+/*! This method adds a spacecraft to the charging model
+    @param tmpScMsg spacecraft state message
+*/
 void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
 {
     /* add the message reader to the vector of input spacecraft state messages */
@@ -536,11 +533,13 @@ double ScCharging::electronBeamBackscattering(double phiS, double phiT, double E
     return IbsEB;
 }
 
-/*!  This function takes in a given vector of data and an x-value and performs linear interpolation to find the closest corresponding y-value
- @return double
- @param data vector containing datapoints to use in linear interpolation (y-values)
- @param x x-value being linear interpolated to
- */
+/*! This function takes in a given set of discrete data points and an x-value
+    and performs linear interpolation to compute the corresponding y-value.
+    @param xVector vector containing the independent variable data points
+    @param yVector vector containing the dependent variable data points
+    @param x x-value at which the data is linearly interpolated
+    @return interpolated y-value
+*/
 double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, double x)
 {
     // find the index corresponding to the first element in xVector that is greater than x
