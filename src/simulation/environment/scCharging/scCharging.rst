@@ -44,6 +44,9 @@ the message is used.
     * - voltOutMsgs
       - :ref:`VoltMsgPayload`
       - output vector of equilibrium spacecraft potentials (voltage), one per spacecraft
+    * - scSunlitAreaInMsgs
+      - :cpp:struct:`SCSunlitFacetAreaMsgPayload`
+      - vector of optional sunlit facet area input messages, one per spacecraft. If linked and written, this overrides the default or fallback sunlit area used in charging calculations.
 
 Planned/Preparation Messages (not active yet)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

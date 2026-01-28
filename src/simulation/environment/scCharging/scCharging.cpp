@@ -72,11 +72,20 @@ void ScCharging::Reset(uint64_t CurrentSimNanos)
     if (this->numSat < 1) {
         bskLogger.bskLog(BSK_ERROR, "ScCharging must have 1 or more spacecraft added. You added %lu.", this->numSat);
     }
-//    // Check sunlit area messages
-//    for (uint32_t i=0; i < this->numSat; i++) {
-//        if (!this->scSunlitAreaInMsgs[i].isLinked()) {
-//            bskLogger.bskLog(BSK_WARNING, "scSunlitAreaInMsgs[%d] not linked. Using hardcoded defaults.", i);
-//        }
+
+    // Warn if sunlit area inputs are missing
+    for (uint32_t i = 0; i < this->numSat; i++) {
+
+        const bool msgLinked = (i < this->scSunlitAreaInMsgs.size()) && this->scSunlitAreaInMsgs[i].isLinked();
+        const bool defaultSet = (i < this->scSunlitAreaDefaults.size()) && std::isfinite(this->scSunlitAreaDefaults[i]);
+
+        if (!msgLinked && !defaultSet && i < this->scSunlitAreaWarned.size() && !this->scSunlitAreaWarned[i]) {
+            bskLogger.bskLog(BSK_WARNING,
+                "ScCharging: sunlit area not provided for spacecraft %d (no msg linked and no default set). Using fallback default.",
+                i);
+            this->scSunlitAreaWarned[i] = true;
+        }
+    }
 }
 
 /*! This is the main method that gets called every time the module is updated.  Calculates total current and finds equilibrium potential.
@@ -105,7 +114,26 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     //Populate SpaceCraft-Beam data from Messages
     for (int i = 0; i < (int)this->numSat; i++) {
         spaceCrafts[i].A = 50.264; // Area will come from message
-        spaceCrafts[i].A_sunlit = 25.132; // Sunlit-Area will come from computeSCSunlitFacetArea module
+
+        // Sunlit-area input (msg overrides default overrides fallback)
+        double sunlitArea_m2 = 25.132;  // fallback hard-coded default
+
+        // If user supplied a per-spacecraft default, use it
+        if (i < (int)this->scSunlitAreaDefaults.size() && std::isfinite(this->scSunlitAreaDefaults[i])) {
+            sunlitArea_m2 = this->scSunlitAreaDefaults[i];
+        }
+
+        // If message is linked and written, it overrides defaults
+        if (i < (int)this->scSunlitAreaInMsgs.size()
+            && this->scSunlitAreaInMsgs[i].isLinked()
+            && this->scSunlitAreaInMsgs[i].isWritten())
+        {
+            SCSunlitFacetAreaMsgPayload sunBuf = this->scSunlitAreaInMsgs[i]();
+            sunlitArea_m2 = sunBuf.area;
+        }
+
+        spaceCrafts[i].A_sunlit = sunlitArea_m2;
+
         if (this->eBeamInMsgs[i].isLinked()) {
             ElectronBeamMsgPayload beam = this->eBeamInMsgs[i]();
             spaceCrafts[i].electronGun.currentEB = beam.currentEB;
@@ -225,7 +253,10 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
     ReadFunctor<ElectronBeamMsgPayload> beamMsg;
     this->eBeamInMsgs.push_back(beamMsg);
 //    // Create slot for sunlit area input
-//    this->scSunlitAreaInMsgs.emplace_back();
+    this->scSunlitAreaInMsgs.emplace_back();
+    this->scSunlitAreaDefaults.push_back(NAN);   // NAN = "not set by user"
+    this->scSunlitAreaWarned.push_back(false);
+
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
     this->r_BN_NList.push_back(zero);

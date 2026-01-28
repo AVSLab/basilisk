@@ -41,8 +41,8 @@ struct PlasmaFluxMsg_C;
 struct VoltMsg_C;
 %include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
 struct ElectronBeamMsg_C;
-// %include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h"
-// struct SCSunlitFacetAreaMsg_C;
+%include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h"
+struct SCSunlitFacetAreaMsg_C;
 
 
 

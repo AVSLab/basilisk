@@ -103,6 +103,20 @@ def run_two_sc_case(scale_e=1.0, scale_i=1.0, show_plots=False, label="baseline"
     # Subscribe the servicer (index 0) to the beam message
     module.eBeamInMsgs[0].subscribeTo(beam_msg)
 
+    # Sunlit facet area messages (plumbing only; not validated in this unit test)
+    if hasattr(module, "scSunlitAreaInMsgs") and hasattr(messaging, "SCSunlitFacetAreaMsgPayload") and hasattr(messaging, "SCSunlitFacetAreaMsg"):
+        # Servicer sunlit area (sc0)
+        sc0_sun = messaging.SCSunlitFacetAreaMsgPayload()
+        sc0_sun.area = 25.132  # [m^2] placeholder for half-surface of a 2m sphere
+        sc0_sun_msg = messaging.SCSunlitFacetAreaMsg().write(sc0_sun)
+        module.scSunlitAreaInMsgs[0].subscribeTo(sc0_sun_msg)
+
+        # Target sunlit area (sc1)
+        sc1_sun = messaging.SCSunlitFacetAreaMsgPayload()
+        sc1_sun.area = 25.132  # [m^2] placeholder for half-surface of a 2m sphere
+        sc1_sun_msg = messaging.SCSunlitFacetAreaMsg().write(sc1_sun)
+        module.scSunlitAreaInMsgs[1].subscribeTo(sc1_sun_msg)
+
     # Recorders for both spacecraft voltages
     v_rec0 = module.voltOutMsgs[0].recorder()  # servicer
     v_rec1 = module.voltOutMsgs[1].recorder()  # target

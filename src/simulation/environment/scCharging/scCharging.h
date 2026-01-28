@@ -32,7 +32,7 @@
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "simulation/environment/scCharging/chargedSpaceCraft.h"
 #include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
-//#include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h" //adding Leah's messages for dynamic message inputs
+#include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h"
 #include <vector>
 #include <Eigen/Dense>
 
@@ -83,9 +83,13 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg;          //!< plasma flux input message
     std::vector<ReadFunctor<ElectronBeamMsgPayload>> eBeamInMsgs; //!< vector of E_beam parameters
-//    std::vector<ReadFunctor<SCSunlitFacetAreaMsgPayload>> scSunlitAreaInMsgs; //!< vector of sunlit area per spacecraft
+    std::vector<ReadFunctor<SCSunlitFacetAreaMsgPayload>> scSunlitAreaInMsgs; //!< vector of sunlit area per spacecraft
 
     std::vector<Message<VoltMsgPayload>*> voltOutMsgs;          //!< vector of voltage output messages
+
+    // Optional defaults for sunlit area (used when messages are not linked/written)
+    std::vector<double> scSunlitAreaDefaults;     //!< [m^2] default sunlit area per spacecraft (optional)
+    std::vector<bool> scSunlitAreaWarned;         //!< latch to warn only once per spacecraft
 
     BSKLogger bskLogger;                                        //!< -- BSK Logging
 
