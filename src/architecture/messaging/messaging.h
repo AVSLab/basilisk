@@ -26,17 +26,20 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <stdlib.h>
 
 
+/*! Holds type-erased pointers to a message's header and payload */
 struct messagePointerData{
-  void *header;
-  void *payload;
+  void *header;   //!< pointer to the message header
+  void *payload;  //!< pointer to the message payload
 };
 
 
+/*! A base class for Message that enables type-erased pointer access */
 class MessageBase{
     public:
-        messagePointerData pointers;
-        messagePointerData reference;
+        messagePointerData pointers;    //!< stores the message's header/payload pointers
+        messagePointerData reference;   //!< copy returned by GetPointers to avoid dangling
 
+        //! Returns pointer to struct containing type-erased message header and payload pointers
         messagePointerData *GetPointers(void)
         {
             reference.payload =  pointers.payload;
@@ -45,15 +48,17 @@ class MessageBase{
         }
 };
 
+/*! A base class for ReadFunctor that enables type-erased pointer access */
 class ReadFunctorBase{
     public :
-        void *headerVoidPtr; //! TODO: kludge to fix PITL, do we want to keep this member?
-        void *payloadVoidPtr;
-        messagePointerData reference;
+        void *headerVoidPtr;  //!< type-erased header pointer for external interface access
+        void *payloadVoidPtr; //!< type-erased payload pointer for external interface access
+        messagePointerData reference; //!< copy returned by GetPointers
 
         //! constructor
         ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL) {}
 
+        //! Returns pointer to struct containing type-erased header and payload pointers
         messagePointerData *GetPointers(void)
         {
             reference.header  = headerVoidPtr;
@@ -334,6 +339,8 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
 
+        // C messages store header followed immediately by payload in memory.
+        // Advance past header to get payload pointer.
         auto* headerPtr  = static_cast<MsgHeader*>(message);
         auto* payloadPtr = reinterpret_cast<messageType*>(headerPtr + 1);
 
