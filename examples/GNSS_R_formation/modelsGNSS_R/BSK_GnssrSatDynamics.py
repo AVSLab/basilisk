@@ -83,7 +83,9 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, 100)
         SimBase.AddModelToTask(self.taskName, self.solarPanel, 100)
         SimBase.AddModelToTask(self.taskName, self.powerSink, 100)
-        SimBase.AddModelToTask(self.taskName, self.powerMonitor, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleAntenna, 100)
+        SimBase.AddModelToTask(self.taskName, self.simpleAntennaPower, 100)
+        SimBase.AddModelToTask(self.taskName, self.powerMonitor, 99)
         SimBase.AddModelToTask(self.taskName, self.fuelTankStateEffector, 100)
         SimBase.AddModelToTask(self.taskName, self.tam, 100)
         SimBase.AddModelToTask(self.taskName, self.mtbEff, 100)
@@ -191,8 +193,8 @@ class BSKDynamicModels:
         """
         Defines the thruster state effector. | EPSS C2 thruster model
         """
-        location = [[0.0, 0.0, 0.0]]
-        direction = [[0.0, 0.0, 1.0]]
+        location = [[-0.15, 0.0, 0.0]]
+        direction = [[1.0, 0.0, 0.0]]
 
         # create the thruster devices by specifying the thruster type and its location and direction
         for pos_B, dir_B in zip(location, direction):
@@ -235,7 +237,7 @@ class BSKDynamicModels:
         self.solarPanel.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.solarPanel.sunEclipseInMsg.subscribeTo(SimBase.EnvModel.eclipseObject.eclipseOutMsgs[0])  # choose the earth message
         self.solarPanel.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('sun')])
-        self.solarPanelAxis = [0, 0, 1]
+        self.solarPanelAxis = [0, 0, -1]
         self.solarPanel.setPanelParameters(self.solarPanelAxis,  # panel normal vector in the body frame
                                            2*self.l_cube * 3*self.l_cube * 3,  # area, m^2 # Solar pannel area of NanoAvionics M12P
                                            0.295)  # efficiency according to NanoAvionics GaAs Solar Panels
@@ -336,27 +338,31 @@ class BSKDynamicModels:
         self.dataMonitor.ModelTag = "GnssDataMonitor" + str(self.spacecraftIndex)
         self.dataMonitor.storageCapacity = 32e9  # 32 GB | Nano Avionics M12P max data storage capacity is 32 GB NAND
         self.dataMonitor.addDataNodeToModel(self.instrument.nodeDataOutMsg)
-#        self.dataMonitor.addDataNodeToModel(self.transmitter.nodeDataOutMsg) # TODO add transmitter when available
-        self.dataMonitor.addPartition("GNSS-R Partition 1")
-        self.dataMonitor.addPartition("GNSS-R Partition 2")
+        self.dataMonitor.addDataNodeToModel(self.transmitter.nodeDataOutMsg) # TODO add transmitter when available (remove comment)
+        self.dataMonitor.addPartition("GPS-R L1")
+        self.dataMonitor.addPartition("GPS-R L5")
+        self.dataMonitor.addPartition(("Galileo E1"))
+        self.dataMonitor.addPartition(("Galileo E5a"))
 
     def SetSimpleAntenna(self, SimBase):
         """Sets up the simple antenna"""
         self.simpleAntenna = simpleAntenna.SimpleAntenna()
         self.simpleAntenna.setAntennaName("spaceSimpleAntenna" + str(self.spacecraftIndex))
-        self.simpleAntenna.setAntennaDirectivity_dB(10.0)                # [dBi] 10 dBi, Guesstimate for smallSat S-Band antenna
-        self.simpleAntenna.setAntennaFrequency(2.1e9)                    # [Hz]  2.1GHz, S-Band according to Nano Avionics M12P specs
-        self.simpleAntenna.setAntennaBandwidth(2.0e6)                    # [Hz]  2.0MHz, S-Band (typical S-Band bandwidth)
-        self.simpleAntenna.setAntennaHpbwRatio(1.0)                      # [-]   Symetrical antenna beam.
-        self.simpleAntenna.setAntennaP_Tx(6.0)                           # [W]   6W, according to Nano Avionics M12P specs
-        self.simpleAntenna.setAntennaP_Rx(0.1)                           # [W]   0.1W, Guesstimate
-        self.simpleAntenna.setAntennaRadEfficiency(0.7)                  # [-]   Guesstimate (typical antenna efficiency)
-        self.simpleAntenna.setAntennaEquivalentNoiseTemp(50)             # [K]   Guesstimate, noise temperature of the antenna
-        self.simpleAntenna.setAntennaPositionBodyFrame([0.5, 0.0, 0.0])  # [m]   body fixed position
+        self.simpleAntenna.setAntennaDirectivity_dB(10.0)                  # [dBi] 10 dBi, Guesstimate for smallSat S-Band antenna
+        self.simpleAntenna.setAntennaFrequency(2.1e9)                      # [Hz]  2.1GHz, S-Band according to Nano Avionics M12P specs
+        self.simpleAntenna.setAntennaBandwidth(2.0e6)                      # [Hz]  2.0MHz, S-Band (typical S-Band bandwidth)
+        self.simpleAntenna.setAntennaHpbwRatio(1.0)                        # [-]   Symetrical antenna beam.
+        self.simpleAntenna.setAntennaP_Tx(6.0)                             # [W]   6W, according to Nano Avionics M12P specs
+        self.simpleAntenna.setAntennaP_Rx(0.1)                             # [W]   0.1W, Guesstimate
+        self.simpleAntenna.setAntennaRadEfficiency(0.7)                    # [-]   Guesstimate (typical antenna efficiency)
+        self.simpleAntenna.setAntennaEquivalentNoiseTemp(50)               # [K]   Guesstimate, noise temperature of the antenna
+        self.simpleAntenna.setAntennaPositionBodyFrame([0.15, 0.0, 0.0])   # [m]   body fixed position
+        self.simpleAntenna.setAntennaOrientationBodyFrame([0.0, 0.0, 1.0]) # [-]   body fixed orientation (boresight along z-axis)
         self.simpleAntenna.scStateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.simpleAntenna.sunInMsg.subscribeTo(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('sun')])
         self.simpleAntenna.addPlanetToModel(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('earth')])
         self.simpleAntenna.addPlanetToModel(SimBase.EnvModel.gravFactory.spiceObject.planetStateOutMsgs[SimBase.EnvModel.gravBodyList.index('moon')])
+        # TODO once added protection for ground based antenna is added: -> Check if eclipse message subscription is needed
 
     def setSimpleAntennaPower(self):
         """Sets up the simple antenna power consumption"""

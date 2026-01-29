@@ -296,3 +296,63 @@ def plot_orbital_element_differences(timeData, oed, id=None):
     plt.legend()
     plt.xlabel("time [orbit]")
     plt.ylabel("Orbital Element Difference")
+
+def plot_data_storage(timeData, storageLevel, storedData, partitionNames, id=None):
+    """Plot data storage levels over time."""
+    plt.figure(id)
+    plt.plot(timeData, storageLevel / 8e9, 'k-', linewidth=2, label="Total Storage")
+
+    # Plot each partition if available
+    if storedData is not None and len(storedData.shape) > 1:
+        numPartitions = storedData.shape[1]
+        for i in range(numPartitions):
+            if i < len(partitionNames):
+                plt.plot(timeData, storedData[:, i] / 8e9,
+                        color=unitTestSupport.getLineColor(i, numPartitions),
+                        label=partitionNames[i])
+            else:
+                plt.plot(timeData, storedData[:, i] / 8e9,
+                        color=unitTestSupport.getLineColor(i, numPartitions),
+                        label=f"Partition {i}")
+
+    plt.xlabel("Time [min]")
+    plt.ylabel("Data Stored [GB]")
+    plt.title("Data Storage Levels")
+    plt.legend(loc='upper left')
+    plt.grid(True)
+    return
+
+
+def plot_data_rates(timeData, netBaud, id=None):
+    """Plot data rates over time."""
+    plt.figure(id)
+    plt.plot(timeData, netBaud / 1e6, color=color_x, label="Net Baud Rate")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Data Rate [Mbps]")
+    plt.title("Data Transfer Rate")
+    plt.legend(loc='upper right')
+    plt.grid(True)
+    return
+
+
+def plot_ground_access(timeData, hasAccess, slantRange, elevation, id=None):
+    """Plot ground station access and geometry."""
+    fig, axes = plt.subplots(3, 1, figsize=(10, 8), num=id)
+
+    axes[0].plot(timeData, hasAccess, color=color_x)
+    axes[0].set_ylabel("Access [-]")
+    axes[0].set_title("Ground Station Access")
+    axes[0].grid(True)
+    axes[0].set_ylim([-0.1, 1.1])
+
+    axes[1].plot(timeData, slantRange / 1e3, color=color_y)
+    axes[1].set_ylabel("Slant Range [km]")
+    axes[1].grid(True)
+
+    axes[2].plot(timeData, np.degrees(elevation), color=color_z)
+    axes[2].set_xlabel("Time [min]")
+    axes[2].set_ylabel("Elevation [deg]")
+    axes[2].grid(True)
+
+    plt.tight_layout()
+    return
