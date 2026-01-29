@@ -73,15 +73,18 @@ def tag_exists(tag_url: str) -> bool:
 def find_local_support_data() -> Optional[Path]:
     """
     Return the path to the local ``supportData`` directory if running
-    from a cloned repo in editable mode, otherwise return ``None``.
+    from a cloned repo, otherwise return ``None``.
 
-    Editable installs place modules under ``dist3/Basilisk/``, while the
-    repo's ``supportData`` directory lives at the project root.
+    Works whether running from source (src/) or from built modules (dist3/Basilisk/).
     """
     module_path = Path(__file__).resolve()
-    repo_root = module_path.parents[3]
-    support_data = repo_root / "supportData"
-    return support_data if support_data.is_dir() else None
+    # Walk up the directory tree looking for supportData. From src/ it's 4
+    # levels up, from dist3/Basilisk/ it's 5 levels up.
+    for parent in list(module_path.parents)[:6]:
+        support_data = parent / "supportData"
+        if support_data.is_dir():
+            return support_data
+    return None
 
 
 # Compute the base GitHub URL once at import time.
@@ -118,13 +121,18 @@ def get_path(file_enum: Enum) -> Path:
         if local.exists():
             return local
 
-    # Fall back to pooch cache or remote source
+        # When running locally, allow remote fetch for external URLs like the
+        # large NAIF kernels not included in the repo.
+        if rel in EXTERNAL_KERNEL_URLS:
+            return Path(POOCH.fetch(rel))
+
+        raise FileNotFoundError(f"Support data file not found in local repo: {local}")
+
+    # No local repo - fetch from remote (installed from wheel)
     try:
         return Path(POOCH.fetch(rel))
     except Exception as e:
-        raise FileNotFoundError(
-            f"Support data file not found locally or via pooch: {rel}"
-        ) from e
+        raise FileNotFoundError(f"Support data file not found via pooch: {rel}") from e
 
 
 class DataFile:
@@ -193,6 +201,7 @@ class DataFile:
 
     class SkyBrightnessData(Enum):
         skyTemperature408MHz = "haslam408_dsds_Remazeilles2014.fits"
+
 
 CATEGORY_BASE_PATHS = {
     "AlbedoData": ALBEDO_DATA_BASE_PATH,
