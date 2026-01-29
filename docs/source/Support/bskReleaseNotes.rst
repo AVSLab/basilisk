@@ -142,6 +142,10 @@ Version |release|
 - Added :ref:`scenarioAttitudeFeedbackRWMuJoCo`, similar to :ref:`scenarioAttitudeFeedbackRW` but using
   MuJoCo dynamics.
 - Added the modules :ref:`simpleAntenna` and :ref:`antennaPower`.
+- Added :ref:`DragGeometryMsgPayload`, which contains geometry information of a body necessary to
+  compute the drag acting on such body.
+- Added :ref:`cannonballDrag`, a model intended to be used with MuJoCo dynamics to model
+  cannonball aerodynamic drag forces and torques acting on bodies.
 
 
 Version 2.8.0 (August 30, 2025)
