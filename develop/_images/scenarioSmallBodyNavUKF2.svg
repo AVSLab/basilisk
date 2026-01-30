@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-01-28T20:15:19.166191</dc:date>
+    <dc:date>2026-01-30T00:51:49.566727</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -4094,7 +4094,7 @@ L 266.283104 176.325756
 L 269.015666 178.682072 
 L 271.454492 181.068502 
 L 271.454492 181.068502 
-" clip-path="url(#p1117af9bdc)" style="fill: none; stroke: #0000ff; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p3686d9f981)" style="fill: none; stroke: #0000ff; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_19">
     <!-- Small body fixed frame -->
@@ -4380,7 +4380,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p1117af9bdc">
+  <clipPath id="p3686d9f981">
    <rect x="81.359063" y="25.918125" width="251.281875" height="251.281875"/>
   </clipPath>
  </defs>

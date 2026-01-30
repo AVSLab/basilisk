@@ -66,13 +66,10 @@ Support Data Files
 **EphemerisData**
 
 - MVN_SCLKSCET.00000.tsc
-- de-403-masses.tpc
 - de430.bsp
 - hst_edited.bsp
 - naif0011.tls
-- naif0012.tls
 - nh_pred_od077.bsp
-- pck00010.tpc
 
 **LocalGravData**
 
