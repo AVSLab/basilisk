@@ -17,6 +17,7 @@ The high level steps to release a new version of Basilisk are as follows:
 #. Ensure documentation builds without warnings or errors.
 #. Push branch to origin and do a PR.
 #. Merge ``develop`` into ``master``
+#. Add release tag to ``master``
 #. Create a Release on GitHub
 
 To prepare ``develop`` for the next beta cycle:
