@@ -117,22 +117,24 @@ void SimpleAntenna::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "SimpleAntenna.sunInMsg was not linked while planetInMsgs is not empty. Sun data is required to calculate sky noise.");
     }
 
-
     // WARNINGS
     if (!this->antennaSetStateInMsg.isLinked()) {
         // Antenna state message is NOT linked -> Antenna remains OFF and cannot be switched on! (warning only)
         bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.antennaSetStateInMsg was not linked (Antenna is by default OFF). --> Antenna state can only be changed through setter.");
     }
-    if (!this->sunInMsg.isLinked()) {
-        // Sun data message is NOT linked -> space background temperature is uniform (warning only)
-        bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.sunInMsg was not linked --> Space background temperature is set to uniform temperature.");
-    }
-    if (this->planetInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.planetInMsgs is empty --> Space background temperature is set based on just space and sun.");
-    }
-    if (!this->sunEclipseInMsg.isLinked()) {
-        // Sun eclipse message is NOT linked -> ground antenna cannot determine eclipse state (warning only)
-        bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.sunEclipseInMsg was not linked --> Ground antenna cannot determine eclipse state.");
+    if (this->scStateInMsg.isLinked()) {
+        // SPACE antenna
+        if (!this->sunInMsg.isLinked()) {
+            // Sun data message is NOT linked -> space background temperature is uniform (warning only)
+            bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.sunInMsg was not linked --> Space background temperature is set to uniform temperature.");
+        }
+        if (this->planetInMsgs.size() == 0) {
+            bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.planetInMsgs is empty --> Space background temperature is set based on just space and sun.");
+        }
+        if (!this->sunEclipseInMsg.isLinked()) {
+            // Sun eclipse message is NOT linked for a space antenna -> cannot determine if Sun is eclipsed
+            bskLogger.bskLog(BSK_INFORMATION, "SimpleAntenna.sunEclipseInMsg was not linked --> Space antenna cannot determine eclipse state.");
+        }
     }
 
     // initialize antenna environment

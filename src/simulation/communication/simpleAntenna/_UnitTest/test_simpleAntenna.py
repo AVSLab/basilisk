@@ -49,25 +49,27 @@ def earth_horizon_sigma():
 
 @pytest.mark.parametrize("ACCURACY", [1e-6])
 @pytest.mark.parametrize(
-    "antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit",
+    "antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, eclipseMsgLinked",
     [
-        (simpleAntenna.ANTENNA_OFF, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_TX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  1, 150, False, 200, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, None, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  1, None, False, 200, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, True, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 0.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [1, 0, 0]), # Case with pointing Earth and sun blocked
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 1.0, rbk.C2MRP(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])), [0, 1, 0]), # Case with pointing Earth and sun is visible but not in the cone
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.660060787285246, 1.0, rbk.C2MRP(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])), [1, 0, 0]), # Case with pointing Moon
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 37.82128898104384, 1.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [-1, 0, 0]), # Case with pointing Sun and sun in the cone
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 147.9662263230431, 0.0, earth_horizon_sigma(), [1, 0, 0]), # Case with pointing Earth with partial coverage
+        (simpleAntenna.ANTENNA_OFF, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_TX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  1, 150, False, 200, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, None, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  1, None, False, 200, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, True, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 0.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [1, 0, 0], True), # Case with pointing Earth and sun blocked
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 1.0, rbk.C2MRP(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])), [0, 1, 0], True), # Case with pointing Earth and sun is visible but not in the cone
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.660060787285246, 1.0, rbk.C2MRP(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])), [1, 0, 0], True), # Case with pointing Moon
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 37.82128898104384, 1.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [-1, 0, 0], True), # Case with pointing Sun and sun in the cone
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 147.9662263230431, 0.0, earth_horizon_sigma(), [1, 0, 0], True), # Case with pointing Earth with partial coverage
+        (simpleAntenna.ANTENNA_RXTX, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], False),  # space w/o eclipse
+        (simpleAntenna.ANTENNA_RXTX, 1, 150, False, 200.0, 1.0, [0,0,0], [1,0,0], False), # ground w/o eclipse
     ]
 )
 
-def test_simpleAntenna(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY):
+def test_simpleAntenna(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, eclipseMsgLinked, ACCURACY):
     r"""
     **Validation Test Description**
 
@@ -141,7 +143,7 @@ def test_simpleAntenna(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky
     - Robust behavior when ambient temperature is user-specified or internally computed
     - Numerical ACCURACY of sky temperature computation within the specified tolerance
     """
-    [testResults, testMessage, _] = simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY)
+    [testResults, testMessage, _] = simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY, eclipseMsgLinked)
     assert testResults < 1, testMessage
 
 def test_simpleAntenna_haslamMap_three_runs_and_pointing_difference():
@@ -287,7 +289,7 @@ def test_simpleAntenna_haslamMap_three_runs_and_pointing_difference():
     # Make sure same inertial pointing as before but different timestep has similar temperature
     assert abs(Tsky_on_A - Tsky_on_A2) < 0.1
 
-def simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY):
+def simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY, eclipseMsgLinked):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -358,7 +360,8 @@ def simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap
     module.sunInMsg.subscribeTo(sunMsg)
     module.addPlanetToModel(earthMsg)
     module.addPlanetToModel(moonMsg)
-    module.sunEclipseInMsg.subscribeTo(eclipseMsg)
+    if eclipseMsgLinked:
+        module.sunEclipseInMsg.subscribeTo(eclipseMsg)
 
     # use setters to set module parameters
     frequency = 2.2e9       # Hz
@@ -487,19 +490,22 @@ def simpleAntennaTestFunction(antennaState, env_type, T_AmbientSet, useHaslamMap
 
 if __name__ == "__main__":
     test_cases = [
-        (simpleAntenna.ANTENNA_OFF, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_TX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  1, 150, False, 200, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, None, False, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  1, None, False, 200, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, True, 5.45, 1.0, [0,0,0], [1,0,0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 0.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [1, 0, 0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 1.0, rbk.C2MRP(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])), [0, 1, 0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.660060787285246, 1.0, rbk.C2MRP(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])), [1, 0, 0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 37.82128898104384, 1.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [-1, 0, 0]),
-        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 147.9662263230431, 0.0, earth_horizon_sigma(), [1, 0, 0]),
+        (simpleAntenna.ANTENNA_OFF, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_TX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  1, 150, False, 200, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, None, False, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  1, None, False, 200, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, True, 5.45, 1.0, [0,0,0], [1,0,0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 0.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [1, 0, 0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 300.0, 1.0, rbk.C2MRP(np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])), [0, 1, 0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 5.660060787285246, 1.0, rbk.C2MRP(np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])), [1, 0, 0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 37.82128898104384, 1.0, rbk.C2MRP(np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])), [-1, 0, 0], True),
+        (simpleAntenna.ANTENNA_RXTX,  0, 150, False, 147.9662263230431, 0.0, earth_horizon_sigma(), [1, 0, 0], True),
+        (simpleAntenna.ANTENNA_RXTX, 0, 150, False, 5.45, 1.0, [0,0,0], [1,0,0], False),  # space w/o eclipse
+        (simpleAntenna.ANTENNA_RXTX, 1, 150, False, 200.0, 1.0, [0,0,0], [1,0,0], False), # ground w/o eclipse
+
 ]
 
     print("=" * 60)
@@ -508,9 +514,9 @@ if __name__ == "__main__":
 
     passed = 0
     failed = 0
-    for i, (antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit) in enumerate(test_cases):
+    for i, (antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, eclipseMsgLinked) in enumerate(test_cases):
         try:
-            test_simpleAntenna(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, ACCURACY)
+            test_simpleAntenna(antennaState, env_type, T_AmbientSet, useHaslamMap, T_sky_true, eclipseValue, sigma_AB, scPosUnit, eclipseMsgLinked, ACCURACY)
             print(f"  Case {i+1:2d}: PASSED")
             passed += 1
         except AssertionError as e:
