@@ -23,9 +23,12 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
+Version |release|
+-----------------
+- text here
 
-Version |release| (Jan. 28 2026)
---------------------------------
+Version 2.9.0 (Jan. 28 2026)
+----------------------------
 - Deploy both release docs at https://avslab.github.io/basilisk and developer beta
   docs at https://avslab.github.io/basilisk/developer.
 - Added :ref:`releaseGuide` on releasing a new version of Basilisk.

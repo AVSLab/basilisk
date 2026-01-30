@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release Guide &mdash; Basilisk 2.9.0
+  <title>Release Guide &mdash; Basilisk 2.10.0-beta
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=182a64a0"></script>
+      <script src="../../_static/documentation_options.js?v=b0911c87"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -136,7 +136,7 @@ and <code class="docutils literal notranslate"><span class="pre">docs/source/Sup
 <li><p>Ensure documentation builds without warnings or errors.</p></li>
 <li><p>Push branch to origin and do a PR.</p></li>
 <li><p>Merge <code class="docutils literal notranslate"><span class="pre">develop</span></code> into <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
-<li><p>Add release tag to <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+<li><p>Add release tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> to <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
 <li><p>Create a Release on GitHub</p></li>
 </ol>
 <p>To prepare <code class="docutils literal notranslate"><span class="pre">develop</span></code> for the next beta cycle:</p>
@@ -214,11 +214,10 @@ so the next release line also contains the change.</p></li>
 <ol class="arabic simple">
 <li><p>Go to “Code” tab, on right column select Releases</p></li>
 <li><p>Select “Draft new Release”</p></li>
-<li><p>Select correct commit on <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
-<li><p>Add title “Basilisk v2.x.x”</p></li>
+<li><p>Select correct tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> on <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+<li><p>Add title “Basilisk v2.X.Y”</p></li>
 <li><p>Add release notes</p></li>
 <li><p>Remove all <code class="docutils literal notranslate"><span class="pre">:ref:</span></code> statements from release notes</p></li>
-<li><p>Add release tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code>.</p></li>
 <li><p>Bottom of page, press “Publish Release” button</p></li>
 </ol>
 <p>This will make the release official and provide users with information about the new version.</p>

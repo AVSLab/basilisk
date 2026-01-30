@@ -17,7 +17,7 @@ The high level steps to release a new version of Basilisk are as follows:
 #. Ensure documentation builds without warnings or errors.
 #. Push branch to origin and do a PR.
 #. Merge ``develop`` into ``master``
-#. Add release tag to ``master``
+#. Add release tag ``v2.X.Y`` to ``master``
 #. Create a Release on GitHub
 
 To prepare ``develop`` for the next beta cycle:
@@ -98,11 +98,10 @@ After pushing the release tag, create a new release on GitHub:
 
 #. Go to “Code” tab, on right column select Releases
 #. Select “Draft new Release”
-#. Select correct commit on ``master``
-#. Add title “Basilisk v2.x.x”
+#. Select correct tag ``v2.X.Y`` on ``master``
+#. Add title “Basilisk v2.X.Y”
 #. Add release notes
 #. Remove all ``:ref:`` statements from release notes
-#. Add release tag ``v2.X.Y``.
 #. Bottom of page, press “Publish Release” button
 
 This will make the release official and provide users with information about the new version.
