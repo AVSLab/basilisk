@@ -12,6 +12,7 @@ _UnitTest
    test_integration
    test_mass_update
    test_objects
+   test_site_velocity
    test_stateful_sys_model
    test_vis
 .. toctree::

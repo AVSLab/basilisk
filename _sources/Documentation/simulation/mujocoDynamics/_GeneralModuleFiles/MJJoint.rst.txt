@@ -4,5 +4,5 @@ Module: MJJoint
 ===============
 
 .. autodoxygenfile:: MJJoint.h
-   :project: _GeneralModuleFiles5
+   :project: _GeneralModuleFiles6
 

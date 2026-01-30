@@ -53,5 +53,5 @@ User Guide
 ----
 
 .. autodoxygenfile:: powerStorageBase.h
-   :project: _GeneralModuleFiles7
+   :project: _GeneralModuleFiles8
 

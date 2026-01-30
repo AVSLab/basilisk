@@ -1,0 +1,1309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: simpleAntenna &mdash; Basilisk 2.9.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=182a64a0"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="simpleAntenna" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">communication</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">simpleAntenna</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">communication</a></li>
+          <li class="breadcrumb-item"><a href="index.html">simpleAntenna</a></li>
+      <li class="breadcrumb-item active">Module: simpleAntenna</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/communication/simpleAntenna/simpleAntenna.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-simpleantenna">
+<span id="simpleantenna"></span><h1>Module: simpleAntenna<a class="headerlink" href="#module-simpleantenna" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><span class="beta-label">[BETA] simpleAntenna</span> is a beta module in an initial public release. This module might be
+subject to changes in future releases.</p>
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document describes how the simpleAntenna module operates within the Basilisk astrodynamics simulation framework. The purpose of this module is to provide a simplified representation of an antenna for spacecraft-to-spacecraft and spacecraft-to-ground communication. The module abstracts away complex antenna parameters, such as detailed radiation patterns, and replaces them with general assumptions that enable simulation of typical satellite communication systems. The simplified antenna model is based on a 2D Gaussian beam pattern (see <a class="reference internal" href="#figure-1">Figure 1</a>), sidelobes are neglected (see also <a class="reference internal" href="#module-assumptions"><span class="std std-ref">Module Assumptions and Limitations</span></a>).</p>
+<p>This module enables users to simulate an antenna mounted on a spacecraft or placed in a ground environment (Earth) by configuring a set of key parameters (see <a class="reference internal" href="#detailed-module-description"><span class="std std-ref">Detailed Module Description</span></a>). The module must be connected to either a spacecraft state message (for space-based antennas) or a ground state message (for ground-based antennas).</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 19.0%" />
+<col style="width: 28.6%" />
+<col style="width: 38.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scInStateMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>spacecraft state</p></td>
+<td><p>Required for space based antennas</p></td>
+</tr>
+<tr class="row-odd"><td><p>groundInStateMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#groundstatemsgpayload"><span class="std std-ref">GroundStateMsgPayload</span></a></p></td>
+<td><p>ground state</p></td>
+<td><p>Required for ground based antennas</p></td>
+</tr>
+<tr class="row-even"><td><p>antennaInStateMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaStateMsgPayload.html#antennastatemsgpayload"><span class="std std-ref">AntennaStateMsgPayload</span></a></p></td>
+<td><p>setting antenna to [off / Rx / Tx / RxTx]</p></td>
+<td><p>optional, default is ‘Off’</p></td>
+</tr>
+<tr class="row-odd"><td><p>sunInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>sun ephemeris data input message</p></td>
+<td><p>optional, required for advanced sky noise temperature calculation (see <a class="reference internal" href="#detailed-module-description"><span class="std std-ref">Detailed Module Description</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p>planetInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>vector of planet ephemeris data input messages</p></td>
+<td><p>optional, required for advanced sky noise temperature calculation (see <a class="reference internal" href="#detailed-module-description"><span class="std std-ref">Detailed Module Description</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>sunEclipseInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
+<td><p>sun eclipse state input Message</p></td>
+<td><p>optional, required for advanced sky noise temperature calculation (see <a class="reference internal" href="#detailed-module-description"><span class="std std-ref">Detailed Module Description</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p>antennaOutStateMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a></p></td>
+<td><p>output msg description</p></td>
+<td><p>output message containing antenna state information</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<span id="id1"></span><h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The simpleAntenna module simulates a directional antenna for spacecraft communication systems. It provides a simplified representation of antenna behavior by abstracting away complex antenna properties, such as detailed radiation patterns and receiver noise modeling. Instead, the radiation pattern is approximated using a 2D Gaussian field response (see <a class="reference internal" href="#figure-1">Figure 1</a> and <a class="reference external" href="https://www.mathworks.com/help/phased/ref/phased.gaussianantennaelement-system-object.html">MATLAB Gaussian Antenna Element</a>).</p>
+<p>The module computes key antenna performance metrics including the Equivalent Isotropically Radiated Power (EIRP), the Gain-To-Noise Temperature (G/T), and the Noise Power. These outputs can be used to evaluate link budgets for spacecraft communication systems.</p>
+<p>The following parameters must be configured by the user:</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Module Parameters</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Valid range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Antenna name</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>Name of the antenna</p></td>
+<td><p>Max. 20 characters</p></td>
+</tr>
+<tr class="row-odd"><td><p>Frequency</p></td>
+<td><p><span class="math notranslate nohighlight">\(f\)</span></p></td>
+<td><p>Hz</p></td>
+<td><p>Operating frequency of the antenna</p></td>
+<td><p><span class="math notranslate nohighlight">\(30\,\mathrm{MHz} &lt; f &lt; 60\,\mathrm{GHz}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Bandwidth</p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span></p></td>
+<td><p>Hz</p></td>
+<td><p>Bandwidth of the antenna</p></td>
+<td><p><span class="math notranslate nohighlight">\(B &gt; 0\;\mathrm{Hz}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Directivity</p></td>
+<td><p><span class="math notranslate nohighlight">\(D_\mathrm{dB}\)</span></p></td>
+<td><p>dB</p></td>
+<td><p>Antenna directivity in <span class="math notranslate nohighlight">\(\mathrm{dB}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(D_\mathrm{dB} &gt; 9\,\mathrm{dB}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Beam cross section shape</p></td>
+<td><p><span class="math notranslate nohighlight">\(k\)</span></p></td>
+<td><p>-</p></td>
+<td><p>Ratio between HPBW in azimuth <span class="math notranslate nohighlight">\(\phi\)</span> and elevation <span class="math notranslate nohighlight">\(\theta\)</span> direction (for a rotation symmetrical beam, <span class="math notranslate nohighlight">\(k=1\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(0.5 &lt; k &lt; 5\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Transmission power</p></td>
+<td><p><span class="math notranslate nohighlight">\(P_\mathrm{Tx}\)</span></p></td>
+<td><p>W</p></td>
+<td><p>Transmission power of the antenna (The power which is drawn from the spacecraft power system)</p></td>
+<td><p><span class="math notranslate nohighlight">\(P_\mathrm{Tx} &gt; 0\,\mathrm{W}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Reception power (optional)</p></td>
+<td><p><span class="math notranslate nohighlight">\(P_\mathrm{Rx}\)</span></p></td>
+<td><p>W</p></td>
+<td><p>Reception power of the antenna (The power which is drawn from the spacecraft power system) (default: 0W)</p></td>
+<td><p><span class="math notranslate nohighlight">\(P_\mathrm{Rx} \geq 0\,\mathrm{W}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Equivalent noise temperature</p></td>
+<td><p><span class="math notranslate nohighlight">\(T_\mathrm{E}\)</span></p></td>
+<td><p>K</p></td>
+<td><p>Equivalent noise temperature of the receiver system</p></td>
+<td><p><span class="math notranslate nohighlight">\(T_\mathrm{E} &gt; 0\,\mathrm{K}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Antenna efficiency</p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{r}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>Antenna radiation efficiency</p></td>
+<td><p><span class="math notranslate nohighlight">\(0 &lt; \eta_\mathrm{r} \leq 1\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Ambient temperature (optional)</p></td>
+<td><p><span class="math notranslate nohighlight">\(T_\mathrm{Ambient}\)</span></p></td>
+<td><p>K</p></td>
+<td><p>Ambient temperature of the antenna. If not set by the user, this value is calculated</p></td>
+<td><p><span class="math notranslate nohighlight">\(T_\mathrm{Ambient} &gt; 0\,\mathrm{K}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Use Haslam Map (optional)</p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">useHaslamMap</span></code></p></td>
+<td><p>[bool]</p></td>
+<td><p>Enable/Disable the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation. If false a omnidirectional galactic noise temperature is used. (default: <code class="code docutils literal notranslate"><span class="pre">False</span></code>)</p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">True</span></code> or <code class="code docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Antenna position vector in body frame (optional)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{r}_\mathrm{AB}^\mathrm{B}\)</span></p></td>
+<td><p>m</p></td>
+<td><p>Position vector of the antenna with respect to the spacecraft body frame</p></td>
+<td><p>default: <span class="math notranslate nohighlight">\(\mathbf{r}_\mathrm{AB}^\mathrm{B} = [0,0,0]^\mathrm{T}\)</span> (see <a class="reference internal" href="#figure-coord"><span class="std std-ref">Figure 1: Illustration of the antenna coordinate frame {A}</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p>MRP from body to antenna coordinate frame (optional)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_\mathrm{AB}\)</span></p></td>
+<td><p>-</p></td>
+<td><p>MRP representing the rotation from the spacecraft body frame <span class="math notranslate nohighlight">\(\mathrm{B}\)</span> to the antenna coordinate frame <span class="math notranslate nohighlight">\(\mathrm{A}\)</span></p></td>
+<td><p>default: <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_\mathrm{AB} = [0,0,0]^\mathrm{T}\)</span> (see <a class="reference internal" href="#figure-coord"><span class="std std-ref">Figure 1: Illustration of the antenna coordinate frame {A}</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-center" id="id6">
+<span id="figure-coord"></span><a class="reference internal image-reference" href="../../../../_images/CoordinateFrame.svg"><img alt="Shematic antenna coordinate frame :math:`\mathrm{A}` definition" src="../../../../_images/CoordinateFrame.svg" style="width: 25%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Illustration of the antenna coordinate frame <span class="math notranslate nohighlight">\({A}\)</span></span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The simpleAntenna module allows users to place an antenna either on a spacecraft or in a ground environment. The environment is automatically determined by which state message is connected (spacecraft state or ground state); exactly one must be linked.</p>
+<p>The module supports the following communication configurations:</p>
+<ul class="simple">
+<li><p>Spacecraft &lt;–&gt; Spacecraft</p></li>
+<li><p>Spacecraft &lt;–&gt; Ground (Earth)</p></li>
+</ul>
+<p>Ground &lt;–&gt; Ground communication is not yet supported (see <a class="reference internal" href="#module-assumptions"><span class="std std-ref">Module Assumptions and Limitations</span></a>).</p>
+<dl class="simple">
+<dt>The antenna can be in either state:</dt><dd><ul class="simple">
+<li><p><strong>Off</strong> : no transmission or reception</p></li>
+<li><p><strong>Tx</strong> : transmission only</p></li>
+<li><p><strong>Rx</strong> : reception only</p></li>
+<li><p><strong>RxTx</strong> : transmission and reception</p></li>
+</ul>
+</dd>
+</dl>
+<p>These states can either be set via the <code class="code docutils literal notranslate"><span class="pre">antennaInStateMsg</span></code> input message or by setting the state directly with the setter for this property.</p>
+<section id="radiation-pattern-model">
+<h3>Radiation Pattern Model<a class="headerlink" href="#radiation-pattern-model" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id7">
+<span id="figure-1"></span><a class="reference internal image-reference" href="../../../../_images/DocumentationBSKsimpleAntenna.svg"><img alt="Shematic of SimpleAntenna beam pattern" src="../../../../_images/DocumentationBSKsimpleAntenna.svg" style="width: 60%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Illustration of simpleAntenna 2D Gaussian beam pattern</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The antenna radiation pattern is modeled as a 2D Gaussian beam pattern (see also <a class="reference internal" href="#module-assumptions"><span class="std std-ref">Module Assumptions and Limitations</span></a>).</p>
+<p>The antenna radiation pattern is modeled as a 2D Gaussian beam. The radiation pattern is defined by the following equation (linear, voltage pattern):</p>
+<div class="math notranslate nohighlight">
+\[   f(\theta,\phi) = f_{0} \cdot \exp\Bigg[
+    -2 \cdot \ln(2) \Bigg(
+        \Big( \frac{\theta}{\theta_{\mathrm{HPBW}}} \Big)^2
+        +
+        \Big( \frac{\phi}{\phi_{\mathrm{HPBW}}} \Big)^2
+    \Bigg)
+\Bigg]\]</div>
+<p>The power gain as a function of off-boresight angles is:</p>
+<div class="math notranslate nohighlight">
+\[G(\theta,\phi) = G_{0} \cdot \exp\Bigg[
+    -4 \cdot \ln(2) \Bigg(
+        \Big( \frac{\theta}{\theta_{\mathrm{HPBW}}} \Big)^2
+        +
+        \Big( \frac{\phi}{\phi_{\mathrm{HPBW}}} \Big)^2
+    \Bigg)
+\Bigg]\]</div>
+<p>Where <span class="math notranslate nohighlight">\(G_{0}\)</span> is the boresight power gain (see <a class="reference internal" href="#figure-1"><span class="std std-ref">Figure 1: Illustration of simpleAntenna 2D Gaussian beam pattern</span></a>).</p>
+<div class="math notranslate nohighlight">
+\[k\,\mathrm{[-]} = \frac{\phi_\mathrm{HPBW}}{\theta_\mathrm{HPBW}}\]</div>
+<section id="setting-of-the-radiation-pattern-parameters">
+<h4>Setting of the radiation pattern parameters<a class="headerlink" href="#setting-of-the-radiation-pattern-parameters" title="Link to this heading"></a></h4>
+<p>To set the radiation-pattern specific parameters, the user can set the directivity <span class="math notranslate nohighlight">\(D_\mathrm{dB}\)</span> and the beam cross-section shape <span class="math notranslate nohighlight">\(k\)</span>. From these two parameters, the Half-Power BeamWidths (HPBW) in elevation <span class="math notranslate nohighlight">\(\theta_\mathrm{HPBW}\)</span> and azimuth <span class="math notranslate nohighlight">\(\phi_\mathrm{HPBW}\)</span> are calculated:</p>
+<p>The unit less directivity <span class="math notranslate nohighlight">\(D\)</span> and the boresight power gain <span class="math notranslate nohighlight">\(G_{0}\)</span> are calculated from <span class="math notranslate nohighlight">\(D_\mathrm{dB}\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}D\,\mathrm{[-]} = 10^{D_\mathrm{dB}/10}\\G_{0}\,\mathrm{[-]} = D \cdot \eta_\mathrm{r}\end{aligned}\end{align} \]</div>
+<p><span class="math notranslate nohighlight">\(\theta_\mathrm{HPBW}\)</span> and <span class="math notranslate nohighlight">\(\phi_\mathrm{HPBW}\)</span> are then calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\theta_\mathrm{HPBW}\,\mathrm{[rad]} = \sqrt{\frac{\ln(2) \cdot 16}{D \cdot k}}\\\phi_\mathrm{HPBW}\,\mathrm{[rad]} = \theta_\mathrm{HPBW} \cdot k\end{aligned}\end{align} \]</div>
+</section>
+</section>
+<section id="calculation-of-the-equivalent-isotropically-radiated-power-eirp-p-mathrm-eirp">
+<h3>Calculation of the Equivalent Isotropically Radiated Power (EIRP) / <span class="math notranslate nohighlight">\(P_\mathrm{EIRP}\)</span><a class="headerlink" href="#calculation-of-the-equivalent-isotropically-radiated-power-eirp-p-mathrm-eirp" title="Link to this heading"></a></h3>
+<p>The antenna metric for transmitting antennas, <span class="math notranslate nohighlight">\(P_\mathrm{EIRP}\)</span> is calculated as shown below:</p>
+<div class="math notranslate nohighlight">
+\[P_\mathrm{EIRP}\,\mathrm{[dB]} = 10 \cdot \log_{10}(P_\mathrm{Tx}) + D_\mathrm{dB} + 10 \cdot \log_{10}(\eta_\mathrm{r})\]</div>
+<ul class="simple">
+<li><p>where <span class="math notranslate nohighlight">\(P_\mathrm{Tx}\)</span> is the transmission power in [W], <span class="math notranslate nohighlight">\(D_\mathrm{dB}\)</span> is the antenna directivity in [dB], and <span class="math notranslate nohighlight">\(\eta_\mathrm{r}\)</span> is the antenna efficiency [-].</p></li>
+</ul>
+</section>
+<section id="calculation-of-frac-g-t-mathrm-s">
+<h3>Calculation of <span class="math notranslate nohighlight">\(\frac{G}{T_\mathrm{S}}\)</span><a class="headerlink" href="#calculation-of-frac-g-t-mathrm-s" title="Link to this heading"></a></h3>
+<p><span class="math notranslate nohighlight">\(\frac{G}{T_\mathrm{S}}\)</span> is a key performance metric for a receiving antenna, it is calculated as shown below:</p>
+<div class="math notranslate nohighlight">
+\[\frac{G}{T_\mathrm{S}}[dB/K] = D_\mathrm{dB} + 10 \cdot \log_{10}(\eta_\mathrm{r}) - 10 \cdot \log_{10}(T_\mathrm{S})\]</div>
+<ul class="simple">
+<li><p>where <span class="math notranslate nohighlight">\(D_\mathrm{dB}\)</span> is the antenna directivity in [dB], <span class="math notranslate nohighlight">\(\eta_\mathrm{r}\)</span> is the antenna efficiency [-], and <span class="math notranslate nohighlight">\(T_\mathrm{S}\)</span> is the system noise temperature (antenna + receiver) in [K] (see also: <a class="reference internal" href="#calculation-of-noise-power"><span class="std std-ref">Calculation of the noise-power at the antenna</span></a>).</p></li>
+</ul>
+</section>
+<section id="calculation-of-the-noise-power-at-the-antenna">
+<span id="calculation-of-noise-power"></span><h3>Calculation of the noise-power at the antenna<a class="headerlink" href="#calculation-of-the-noise-power-at-the-antenna" title="Link to this heading"></a></h3>
+<p>The noise power is the power generated by the noise sources at the antenna and receiver. This property is important for the calculation of the Signal-To-Noise ratio (SNR) at the receiver.</p>
+<p>The noise power <span class="math notranslate nohighlight">\(P_\mathrm{N}\)</span> at the antenna is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[P_\mathrm{N}\,\mathrm{[W]} = k_\mathrm{B} \cdot T_\mathrm{S} \cdot B\]</div>
+<ul class="simple">
+<li><p>where <span class="math notranslate nohighlight">\(k_\mathrm{B}\)</span> is the Boltzmann constant, <span class="math notranslate nohighlight">\(T_\mathrm{S}\)</span> is the system noise temperature (antenna + receiver), and <span class="math notranslate nohighlight">\(B\)</span> is the antenna bandwidth</p></li>
+</ul>
+</section>
+<section id="calculation-of-noise-temperatures">
+<h3>Calculation of noise temperatures<a class="headerlink" href="#calculation-of-noise-temperatures" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The system noise temperature <span class="math notranslate nohighlight">\(T_\mathrm{S}\)</span> is computed as the sum of the Antenna Noise Temperature <span class="math notranslate nohighlight">\(T_\mathrm{Ant}\)</span> and the Equivalent Noise Temperature of the receiver <span class="math notranslate nohighlight">\(T_\mathrm{E}\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{S} = T_\mathrm{Ant} + T_\mathrm{E}\]</div>
+<p>The Equivalent Noise Temperature <span class="math notranslate nohighlight">\(T_\mathrm{E}\)</span> is a user defined parameter representing the noise contribution of the receiver system.</p>
+<p>The Antenna Noise Temperature <span class="math notranslate nohighlight">\(T_\mathrm{Ant}\)</span> depends on the sky noise temperature <span class="math notranslate nohighlight">\(T_\mathrm{Sky}\)</span> and the Environment Temperature <span class="math notranslate nohighlight">\(T_\mathrm{Ambient}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{Ant} = (1 - \eta_\mathrm{r}) \cdot T_\mathrm{Ambient} + \eta_\mathrm{r} \cdot T_\mathrm{Sky}\]</div>
+<section id="for-space-based-antennas">
+<h4>For space-based antennas:<a class="headerlink" href="#for-space-based-antennas" title="Link to this heading"></a></h4>
+<p><span class="math notranslate nohighlight">\(T_\mathrm{Sky}\)</span> depends on the antenna pointing direction and is computed as a weighted sum of the Galactic Noise Temperature <span class="math notranslate nohighlight">\(T_\mathrm{Galaxy}\)</span> and the Noise Temperature of the celestial bodies within the antenna beam coverage, <span class="math notranslate nohighlight">\(T_\mathrm{Planet}\)</span>.
+The weights are given by the antenna beam coverage fractions <span class="math notranslate nohighlight">\(C_\mathrm{Galaxy}\)</span> and <span class="math notranslate nohighlight">\(C_\mathrm{Planet}\)</span> (see also <a class="reference internal" href="#module-overlap-area-computation"><span class="std std-ref">Overlap Area Computation</span></a>). The antenna gain <span class="math notranslate nohighlight">\(G(\theta, \phi)\)</span> is not considered at this stage (see also <a class="reference internal" href="#module-assumptions"><span class="std std-ref">Module Assumptions and Limitations</span></a>).</p>
+<ul class="simple">
+<li><p>For space-based antennas, <span class="math notranslate nohighlight">\(T_\mathrm{Ambient}\)</span> can be set by the user (optional) if it is not set, a default value of <span class="math notranslate nohighlight">\(T_\mathrm{Ambient} = 150.0K\)</span> is used.</p></li>
+<li><p>The caculation of <span class="math notranslate nohighlight">\(T_\mathrm{Sky}\)</span> is described in <a class="reference internal" href="#calculation-of-tsky"><span class="std std-ref">Calculation of T_sky</span></a>.</p></li>
+</ul>
+</section>
+<section id="for-ground-based-antennas">
+<h4>For ground-based antennas:<a class="headerlink" href="#for-ground-based-antennas" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Based on the International Standard Atmosphere (ISA) model, <span class="math notranslate nohighlight">\(T_\mathrm{Ambient}\)</span> for ground-based antennas is calculated as a function of altitude <span class="math notranslate nohighlight">\(h\)</span> (in [m]):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{Ambient}[K] =
+   T_\mathrm{0} - \frac{dT}{dh} \cdot h\]</div>
+<ul class="simple">
+<li><p>where <span class="math notranslate nohighlight">\(T_\mathrm{0} = 288.15 [K]\)</span> is the sea-level standard temperature according to ISA, and <span class="math notranslate nohighlight">\(\frac{dT}{dh} = 0.0065 [K/m]\)</span> is the temperature lapse rate for an ISA atmosphere (Earth).</p></li>
+</ul>
+</section>
+</section>
+<section id="calculation-of-t-mathrm-sky">
+<span id="calculation-of-tsky"></span><h3>Calculation of <span class="math notranslate nohighlight">\(T_\mathrm{sky}\)</span><a class="headerlink" href="#calculation-of-t-mathrm-sky" title="Link to this heading"></a></h3>
+<section id="id2">
+<h4>For space-based antennas<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<p>The sky noise temperature for a spacecraft-mounted antenna is calculated based on the antenna position and orientation with respect to the Earth, Sun and Moon (other celestial bodies are at the moment not incuded). If the setting <code class="code docutils literal notranslate"><span class="pre">useHaslamMap=True</span></code> is enabled, the galactic noise temperature is calculated using the Haslam 408 MHz all-sky survey map. if <code class="code docutils literal notranslate"><span class="pre">useHaslamMap=False</span></code>, a simple model with a frequency dependent, omnidirectional galactic noise temperature is used.</p>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{Sky} = T_\mathrm{Sun} \cdot C_\mathrm{Sun} + T_\mathrm{Earth} \cdot C_\mathrm{Earth} + T_\mathrm{Moon} \cdot C_\mathrm{Moon} + T_\mathrm{Galaxy} \cdot C_\mathrm{Galaxy}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T_\mathrm{Sun}\)</span>, <span class="math notranslate nohighlight">\(T_\mathrm{Earth}\)</span>, <span class="math notranslate nohighlight">\(T_\mathrm{Moon}\)</span> are the brightness temperatures of the Sun, Earth, and Moon, respectively, obtained from lookup tables as a function of frequency.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_\mathrm{Galaxy}\)</span> is the galactic background noise temperature (see below).</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_\mathrm{Sun}\)</span>, <span class="math notranslate nohighlight">\(C_\mathrm{Earth}\)</span>, <span class="math notranslate nohighlight">\(C_\mathrm{Moon}\)</span>, <span class="math notranslate nohighlight">\(C_\mathrm{Galaxy}\)</span> are the beam coverage fractions for each source (see <a class="reference internal" href="#module-overlap-area-computation"><span class="std std-ref">Overlap Area Computation</span></a>).</p></li>
+</ul>
+<p>The galactic coverage fraction is computed as:</p>
+<div class="math notranslate nohighlight">
+\[C_\mathrm{Galaxy} = 1 - C_\mathrm{Sun} - C_\mathrm{Earth} - C_\mathrm{Moon}\]</div>
+<p><strong>Galactic noise temperature calculation:</strong></p>
+<p>The galactic noise temperature <span class="math notranslate nohighlight">\(T_\mathrm{Galaxy}\)</span> depends on the <code class="docutils literal notranslate"><span class="pre">useHaslamMap</span></code> setting:</p>
+<ul>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">useHaslamMap=True</span></code>: The galactic noise temperature is calculated using the <a class="reference external" href="https://lambda.gsfc.nasa.gov/product/foreground/fg_2014_haslam_408_info.html">Haslam 408 MHz all-sky survey map</a>. The brightness temperature at 408 MHz is obtained based on the antenna boresight direction and beam size, then scaled to the operating frequency using a spectral index of <span class="math notranslate nohighlight">\(\beta = -2.7\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{Galaxy} = T_\mathrm{408MHz} \cdot \left( \frac{f}{408\,\mathrm{MHz}} \right)^{\beta} + T_\mathrm{CMB}\]</div>
+</li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">useHaslamMap=False</span></code>: A simplified omnidirectional galactic noise model is used, where the brightness temperature is obtained from a lookup table as a function of frequency:</p>
+<div class="math notranslate nohighlight">
+\[T_\mathrm{Galaxy} = T_\mathrm{Galaxy,table}(f) + T_\mathrm{CMB}\]</div>
+</li>
+</ul>
+<p>where <span class="math notranslate nohighlight">\(T_\mathrm{CMB} = 2.725\,\mathrm{K}\)</span> is the Cosmic Microwave Background temperature.</p>
+<p><strong>Eclipse handling:</strong></p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">sunEclipseInMsg</span></code> is connected and the spacecraft is in full eclipse (shadow factor = 0), the sun coverage is set to zero:</p>
+<div class="math notranslate nohighlight">
+\[C_\mathrm{Sun} = 0 \quad \text{(during eclipse)}\]</div>
+</section>
+<section id="id3">
+<h4>For ground-based antennas<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>For ground based antennas, <span class="math notranslate nohighlight">\(T_\mathrm{sky}\)</span> is always assumed to be <span class="math notranslate nohighlight">\(T_\mathrm{sky} = 200K\)</span>.</p></li>
+</ul>
+</section>
+</section>
+<section id="overlap-area-computation">
+<span id="module-overlap-area-computation"></span><h3>Overlap Area Computation<a class="headerlink" href="#overlap-area-computation" title="Link to this heading"></a></h3>
+<p>In normalized beam space, the antenna beam is represented as a unit circle
+with radius</p>
+<div class="math notranslate nohighlight">
+\[R = 1\]</div>
+<p>and the apparent planet disk is represented as a circle of radius <span class="math notranslate nohighlight">\(r\)</span>
+whose center lies at distance <span class="math notranslate nohighlight">\(d\)</span> from the beam center.</p>
+<p>Depending on the relative values of <span class="math notranslate nohighlight">\(d\)</span>, <span class="math notranslate nohighlight">\(R\)</span>, and <span class="math notranslate nohighlight">\(r\)</span>,
+three cases are distinguished.</p>
+<section id="no-overlap">
+<h4>No Overlap<a class="headerlink" href="#no-overlap" title="Link to this heading"></a></h4>
+<p>If the two circles do not intersect,</p>
+<div class="math notranslate nohighlight">
+\[d \ge R + r\]</div>
+<p>then the planet does not contribute to the antenna beam coverage and</p>
+<div class="math notranslate nohighlight">
+\[A_{\text{overlap}} = 0.\]</div>
+</section>
+<section id="planet-fully-inside-the-beam">
+<h4>Planet Fully Inside the Beam<a class="headerlink" href="#planet-fully-inside-the-beam" title="Link to this heading"></a></h4>
+<p>If the planet disk lies entirely inside the beam,</p>
+<div class="math notranslate nohighlight">
+\[d \le |R - r|\]</div>
+<p>then the overlap area is simply the area of the planet disk,</p>
+<div class="math notranslate nohighlight">
+\[A_{\text{overlap}} = \pi r^2.\]</div>
+</section>
+<section id="partial-overlap">
+<h4>Partial Overlap<a class="headerlink" href="#partial-overlap" title="Link to this heading"></a></h4>
+<p>If the two circles partially overlap,</p>
+<div class="math notranslate nohighlight">
+\[|R - r| &lt; d &lt; R + r,\]</div>
+<p>the overlap area is computed using the standard closed-form
+circle–circle intersection formula (<a class="reference external" href="https://mathworld.wolfram.com/Circle-CircleIntersection.html">Weisstein, Eric W. “Circle-Circle Intersection.” From MathWorld–A Wolfram Resource.</a>),</p>
+<div class="math notranslate nohighlight">
+\[A_{\text{overlap}} =
+R^2 \cos^{-1}\!\left(
+   \frac{d^2 + R^2 - r^2}{2 d R}
+\right)
++
+r^2 \cos^{-1}\!\left(
+   \frac{d^2 + r^2 - R^2}{2 d r}
+\right)
+-
+\frac{1}{2}
+\sqrt{
+   (-d + R + r)
+   ( d + R - r)
+   ( d - R + r)
+   ( d + R + r)
+}.\]</div>
+</section>
+<section id="coverage-fraction">
+<h4>Coverage Fraction<a class="headerlink" href="#coverage-fraction" title="Link to this heading"></a></h4>
+<p>The antenna beam coverage fraction due to the planet is obtained by normalizing
+the overlap area by the beam area,</p>
+<div class="math notranslate nohighlight">
+\[C_p = \frac{A_{\text{overlap}}}{\pi R^2}.\]</div>
+<p>Since <span class="math notranslate nohighlight">\(R = 1\)</span> in normalized beam space, this reduces to</p>
+<div class="math notranslate nohighlight">
+\[C_p = \frac{A_{\text{overlap}}}{\pi}.\]</div>
+<p>The coverage fraction is clamped to the interval <span class="math notranslate nohighlight">\([0, 1]\)</span>.</p>
+</section>
+</section>
+</section>
+<section id="module-assumptions-and-limitations">
+<span id="module-assumptions"></span><h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The following assumptions and limitations apply to the simpleAntenna module:</p>
+<ul class="simple">
+<li><p>The antennas radiation pattern is modelled as a simple 2D Gaussian beam pattern. This has the following implications:
+- Sidelobes are neglected, and thus any noise, interference or signal received through sidelobes is not considered.
+- The main-lobe is approximated as a Gaussian function in both elevation and azimuth direction <span class="math notranslate nohighlight">\(\rightarrow\)</span> The antenna gain is computed as a function of the angle off boresight in both elevation and azimuth direction.</p></li>
+<li><p>For the calculation of <span class="math notranslate nohighlight">\(T_\mathrm{Sky}\)</span> the antenna gain is not used to weight the sky and planet noise temperatures, instead the beam coverage fractions are used (see also <a class="reference internal" href="#module-overlap-area-computation"><span class="std std-ref">Overlap Area Computation</span></a>). A uniform gain across the beam is assumed for this step.</p></li>
+<li><p>The antenna can be placed either on a spacecraft or on Earth (ground). It is not (yet) possible to place the antenna on other celestial bodies.</p></li>
+<li><p>For ground based antennas, the sky noise temperature is always assumed to be <span class="math notranslate nohighlight">\(T_\mathrm{Sky} = 200K\)</span>. This is because the ground antenna does not have a pointing direction. It is assumed that the ground based antenna is always precisely pointed at the spacecraft antenna.</p></li>
+<li><p>Doppler shift between two antennas is not (yet) considered.</p></li>
+<li><p>Noise due to lightning and other static electrical discharges is neglected.</p></li>
+<li><p>Man-made radio noise is neglected.</p></li>
+<li><p>Solar activity variations are neglected.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="setting-the-antenna-environment">
+<h3>Setting the Antenna Environment<a class="headerlink" href="#setting-the-antenna-environment" title="Link to this heading"></a></h3>
+<p>The antenna environment is determined by which state message is connected. The module must be connected to either a spacecraft state message or a ground state message, but not both.</p>
+<p><strong>For a space-based antenna</strong>, connect the spacecraft state message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The spacecraft state message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a>.</p>
+<p><strong>For a ground-based antenna</strong>, connect the ground state message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">groundStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">groundStation</span><span class="o">.</span><span class="n">currentGroundStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ground state message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#groundstatemsgpayload"><span class="std std-ref">GroundStateMsgPayload</span></a>.</p>
+</section>
+<section id="setting-required-antenna-parameters">
+<h3>Setting Required Antenna Parameters<a class="headerlink" href="#setting-required-antenna-parameters" title="Link to this heading"></a></h3>
+<p>The following parameters must be set before the simulation is initialized:
+(here shown with example values for a typical S-band communication antenna)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaName</span><span class="p">(</span><span class="s2">&quot;CommAntenna&quot;</span><span class="p">)</span>                   <span class="c1"># [-]  Antenna name</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaFrequency</span><span class="p">(</span><span class="mf">2.2e9</span><span class="p">)</span>                      <span class="c1"># [Hz] Operating frequency</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaBandwidth</span><span class="p">(</span><span class="mf">5e6</span><span class="p">)</span>                        <span class="c1"># [Hz] Bandwidth</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaDirectivity_dB</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>                  <span class="c1"># [dB] Directivity (must be &gt; 9 dB)</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaHpbwRatio</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>                        <span class="c1"># [-]  Beam shape ratio k</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaP_Tx</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>                           <span class="c1"># [W]  Transmit power</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaEquivalentNoiseTemp</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>             <span class="c1"># [K]  Receiver noise temperature</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaRadEfficiency</span><span class="p">(</span><span class="mf">0.55</span><span class="p">)</span>                   <span class="c1"># [-]  Radiation efficiency</span>
+</pre></div>
+</div>
+</section>
+<section id="setting-optional-antenna-parameters">
+<h3>Setting Optional Antenna Parameters<a class="headerlink" href="#setting-optional-antenna-parameters" title="Link to this heading"></a></h3>
+<p>The following parameters are optional:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaP_Rx</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>                            <span class="c1"># [W]    Receive power (default: 0)</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaEnvironmentTemperature</span><span class="p">(</span><span class="mf">290.0</span><span class="p">)</span>         <span class="c1"># [K]    Ambient temperature (default: calculated based on ISA (ground) or 150K (space))</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setUseHaslamMap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>                           <span class="c1"># [bool] Enable Haslam sky map (default: False)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Calling <code class="code docutils literal notranslate"><span class="pre">antenna.setUseHaslamMap(True)`</span></code> enables the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation, and calles the function <code class="code docutils literal notranslate"><span class="pre">configureBrightnessFile(&lt;filepath&gt;)</span></code> internally.
+If the user wants to use a custom brightness temperature map file, they must call <code class="code docutils literal notranslate"><span class="pre">antenna.configureBrightnessFile(&lt;custom</span> <span class="pre">filePath&gt;)</span></code> after calling <code class="code docutils literal notranslate"><span class="pre">antenna.setUseHaslamMap(True)</span></code>.</p>
+</div>
+</section>
+<section id="setting-the-antenna-position-and-orientation-space-based-only">
+<h3>Setting the Antenna Position and Orientation (Space-Based Only)<a class="headerlink" href="#setting-the-antenna-position-and-orientation-space-based-only" title="Link to this heading"></a></h3>
+<p>For space-based antennas, the antenna position and orientation relative to the spacecraft body frame can be set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaPositionBodyFrame</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>    <span class="c1"># [m]    Position offset (default: antenna is at B = [0,0,0])</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaOrientationBodyFrame</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span> <span class="c1"># [-]    MRP rotation (default: antenna is aligned with body frame)</span>
+</pre></div>
+</div>
+</section>
+<section id="setting-the-antenna-state">
+<h3>Setting the Antenna State<a class="headerlink" href="#setting-the-antenna-state" title="Link to this heading"></a></h3>
+<p>The antenna state can be set via an input message or directly using a setter. To connect an antenna state input message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">antennaSetStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antennaController</span><span class="o">.</span><span class="n">antennaStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The antenna state message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaStateMsgPayload.html#antennastatemsgpayload"><span class="std std-ref">AntennaStateMsgPayload</span></a>.</p>
+<p>Alternatively, the state can be set directly using the setter method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">setAntennaState</span><span class="p">(</span><span class="n">simpleAntenna</span><span class="o">.</span><span class="n">AntennaTypes</span><span class="o">.</span><span class="n">ANTENNA_RXTX</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Valid states are <code class="docutils literal notranslate"><span class="pre">ANTENNA_OFF</span></code> (0), <code class="docutils literal notranslate"><span class="pre">ANTENNA_RX</span></code> (1), <code class="docutils literal notranslate"><span class="pre">ANTENNA_TX</span></code> (2), and <code class="docutils literal notranslate"><span class="pre">ANTENNA_RXTX</span></code> (3). The default state is <code class="docutils literal notranslate"><span class="pre">ANTENNA_OFF</span></code>.</p>
+</section>
+<section id="adding-celestial-bodies-for-sky-noise-calculation-optional">
+<h3>Adding Celestial Bodies for Sky Noise Calculation (Optional)<a class="headerlink" href="#adding-celestial-bodies-for-sky-noise-calculation-optional" title="Link to this heading"></a></h3>
+<p>For more accurate sky noise temperature calculations, celestial body positions can be provided. To add the sun:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To add planets (e.g., Earth, Moon) for beam coverage calculations, use the <code class="docutils literal notranslate"><span class="pre">addPlanetToModel</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># Earth</span>
+<span class="n">antenna</span><span class="o">.</span><span class="n">addPlanetToModel</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># Moon</span>
+</pre></div>
+</div>
+<p>The planet state messages are of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a>.</p>
+<p>To account for eclipse conditions affecting solar noise contribution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antenna</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The eclipse message is of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a>.</p>
+</section>
+<section id="antenna-output-message">
+<h3>Antenna Output Message<a class="headerlink" href="#antenna-output-message" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">simpleAntenna</span></code> module outputs an antenna state message of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a>. To subscribe to this output:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">antennaLog</span> <span class="o">=</span> <span class="n">antenna</span><span class="o">.</span><span class="n">antennaOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">antennaLog</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After running the simulation, the logged data can be accessed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">P_eirp</span> <span class="o">=</span> <span class="n">antennaLog</span><span class="o">.</span><span class="n">P_eirp_dB</span>   <span class="c1"># [dB]   EIRP</span>
+<span class="n">G_T</span> <span class="o">=</span> <span class="n">antennaLog</span><span class="o">.</span><span class="n">G_TN</span>           <span class="c1"># [dB/K] Figure of merit (G/T)</span>
+<span class="n">P_N</span> <span class="o">=</span> <span class="n">antennaLog</span><span class="o">.</span><span class="n">P_N</span>            <span class="c1"># [W]    Noise power</span>
+<span class="n">r_AN_N</span> <span class="o">=</span> <span class="n">antennaLog</span><span class="o">.</span><span class="n">r_AN_N</span>      <span class="c1"># [m]    Antenna position in inertial frame</span>
+<span class="n">sigma_AN</span> <span class="o">=</span> <span class="n">antennaLog</span><span class="o">.</span><span class="n">sigma_AN</span>  <span class="c1"># [-]    Antenna orientation (MRP)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413SimpleAntenna">
+<span id="_CPPv313SimpleAntenna"></span><span id="_CPPv213SimpleAntenna"></span><span id="SimpleAntenna"></span><span class="target" id="class_simple_antenna"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SimpleAntenna</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv413SimpleAntenna" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;simpleAntenna.h&gt;</em></div>
+<p>This module describes how the simple antenna model operates within the simulation environment.The purpose of this module is to provide a basic representation of antenna behavior for spacecraft communication systems.The antenna is based on a simple model (2D Gaussian beam pattern). The user is able to set directivity, HPBW (elevation and azimuth), power demand for Tx and Rx, radiation efficiency, bandwidth and system noise temperature. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna13SimpleAntennaEv">
+<span id="_CPPv3N13SimpleAntenna13SimpleAntennaEv"></span><span id="_CPPv2N13SimpleAntenna13SimpleAntennaEv"></span><span id="SimpleAntenna::SimpleAntenna"></span><span class="target" id="class_simple_antenna_1af1e93b58017fd32644ca3d4db5600711"></span><span class="sig-name descname"><span class="n"><span class="pre">SimpleAntenna</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna13SimpleAntennaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntennaD0Ev">
+<span id="_CPPv3N13SimpleAntennaD0Ev"></span><span id="_CPPv2N13SimpleAntennaD0Ev"></span><span id="SimpleAntenna::~SimpleAntenna"></span><span class="target" id="class_simple_antenna_1a92ffd99f6e0643249d44ecd58a8bf2e7"></span><span class="sig-name descname"><span class="n"><span class="pre">~SimpleAntenna</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13SimpleAntennaD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna5ResetE8uint64_t">
+<span id="_CPPv3N13SimpleAntenna5ResetE8uint64_t"></span><span id="_CPPv2N13SimpleAntenna5ResetE8uint64_t"></span><span id="SimpleAntenna::Reset__uint64_t"></span><span class="target" id="class_simple_antenna_1ae2c147563fd1b950b088d3fa450dd3e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna11UpdateStateE8uint64_t">
+<span id="_CPPv3N13SimpleAntenna11UpdateStateE8uint64_t"></span><span id="_CPPv2N13SimpleAntenna11UpdateStateE8uint64_t"></span><span id="SimpleAntenna::UpdateState__uint64_t"></span><span class="target" id="class_simple_antenna_1abbbafee40ebc527d0f39a6059834071d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. Provide an appropriate description. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE">
+<span id="_CPPv3N13SimpleAntenna16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="_CPPv2N13SimpleAntenna16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE"></span><span id="SimpleAntenna::addPlanetToModel__Message:SpicePlanetStateMsgPayload:P"></span><span class="target" id="class_simple_antenna_1a18d6400bea1b911c2f247c0b62ac1619"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpSpMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna16addPlanetToModelEP7MessageI26SpicePlanetStateMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds planet state data message names to a vector. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpSpMsg</strong> – The planet name </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna23configureBrightnessFileERKNSt6stringE">
+<span id="_CPPv3N13SimpleAntenna23configureBrightnessFileERKNSt6stringE"></span><span id="_CPPv2N13SimpleAntenna23configureBrightnessFileERKNSt6stringE"></span><span id="SimpleAntenna::configureBrightnessFile__ssCR"></span><span class="target" id="class_simple_antenna_1a02ebbd3736c49dfe13a9520ec58ed7fe"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">configureBrightnessFile</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">file</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna23configureBrightnessFileERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Configure the path to the Haslam 408 MHz all-sky brightness temperature FITS file. This must be called before setUseHaslamMap(true). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> – Full path to the Haslam FITS file </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna13calculateTskyEv">
+<span id="_CPPv3N13SimpleAntenna13calculateTskyEv"></span><span id="_CPPv2N13SimpleAntenna13calculateTskyEv"></span><span id="SimpleAntenna::calculateTsky"></span><span class="target" id="class_simple_antenna_1a7b8f29b991b7d5a98cc213c32e0aa883"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateTsky</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna13calculateTskyEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna14getAntennaNameEv">
+<span id="_CPPv3NK13SimpleAntenna14getAntennaNameEv"></span><span id="_CPPv2NK13SimpleAntenna14getAntennaNameEv"></span><span id="SimpleAntenna::getAntennaNameC"></span><span class="target" id="class_simple_antenna_1acf3ce51dcd8dc7b6f667484f2dc4352e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna14getAntennaNameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getters getter for antennaName </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna21getAntennaEnvironmentEv">
+<span id="_CPPv3NK13SimpleAntenna21getAntennaEnvironmentEv"></span><span id="_CPPv2NK13SimpleAntenna21getAntennaEnvironmentEv"></span><span id="SimpleAntenna::getAntennaEnvironmentC"></span><span class="target" id="class_simple_antenna_1a1f43ea42ceb9abcda2b4714b9ae470da"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes15EnvironmentTypeE" title="AntennaTypes::EnvironmentType"><span class="n"><span class="pre">EnvironmentType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaEnvironment</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna21getAntennaEnvironmentEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">environment</span></code> property (space, ground, unknown) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna15getAntennaStateEv">
+<span id="_CPPv3NK13SimpleAntenna15getAntennaStateEv"></span><span id="_CPPv2NK13SimpleAntenna15getAntennaStateEv"></span><span id="SimpleAntenna::getAntennaStateC"></span><span class="target" id="class_simple_antenna_1ae75a7f70ea52e7674b00db7df4ee5723"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes16AntennaStateEnumE" title="AntennaTypes::AntennaStateEnum"><span class="n"><span class="pre">AntennaStateEnum</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna15getAntennaStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">antennaState</span></code> property (off, Rx, Tx, RxTx) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna19getAntennaFrequencyEv">
+<span id="_CPPv3NK13SimpleAntenna19getAntennaFrequencyEv"></span><span id="_CPPv2NK13SimpleAntenna19getAntennaFrequencyEv"></span><span id="SimpleAntenna::getAntennaFrequencyC"></span><span class="target" id="class_simple_antenna_1a1043b2d5662f4849142b43ff99211313"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaFrequency</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna19getAntennaFrequencyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">frequency</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna19getAntennaBandwidthEv">
+<span id="_CPPv3NK13SimpleAntenna19getAntennaBandwidthEv"></span><span id="_CPPv2NK13SimpleAntenna19getAntennaBandwidthEv"></span><span id="SimpleAntenna::getAntennaBandwidthC"></span><span class="target" id="class_simple_antenna_1ad57a70cb3ffb9e4807698102e7ed4c30"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaBandwidth</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna19getAntennaBandwidthEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">B</span></code> property (bandwidth) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna13getAntennaDdBEv">
+<span id="_CPPv3NK13SimpleAntenna13getAntennaDdBEv"></span><span id="_CPPv2NK13SimpleAntenna13getAntennaDdBEv"></span><span id="SimpleAntenna::getAntennaDdBC"></span><span class="target" id="class_simple_antenna_1a5828da71b01a03f72c0648f70e6cb38a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaDdB</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna13getAntennaDdBEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">DdB</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna19getAntennaHpbwRatioEv">
+<span id="_CPPv3NK13SimpleAntenna19getAntennaHpbwRatioEv"></span><span id="_CPPv2NK13SimpleAntenna19getAntennaHpbwRatioEv"></span><span id="SimpleAntenna::getAntennaHpbwRatioC"></span><span class="target" id="class_simple_antenna_1a00b953717a3e8e3491a74e30a0968482"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaHpbwRatio</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna19getAntennaHpbwRatioEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for HPBW ratio, k </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna14getAntennaHPBWEv">
+<span id="_CPPv3NK13SimpleAntenna14getAntennaHPBWEv"></span><span id="_CPPv2NK13SimpleAntenna14getAntennaHPBWEv"></span><span id="SimpleAntenna::getAntennaHPBWC"></span><span class="target" id="class_simple_antenna_1ae84fdada50b7789ab4d019dbbc6cf470"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaHPBW</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna14getAntennaHPBWEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">HPBW</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna14getAntennaP_TxEv">
+<span id="_CPPv3NK13SimpleAntenna14getAntennaP_TxEv"></span><span id="_CPPv2NK13SimpleAntenna14getAntennaP_TxEv"></span><span id="SimpleAntenna::getAntennaP_TxC"></span><span class="target" id="class_simple_antenna_1a3abc1f7bb2ab5800052511cf1c57a97d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaP_Tx</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna14getAntennaP_TxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">P_Tx</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna14getAntennaP_RxEv">
+<span id="_CPPv3NK13SimpleAntenna14getAntennaP_RxEv"></span><span id="_CPPv2NK13SimpleAntenna14getAntennaP_RxEv"></span><span id="SimpleAntenna::getAntennaP_RxC"></span><span class="target" id="class_simple_antenna_1ae775ec64bcb9150d0f5594f597498775"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaP_Rx</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna14getAntennaP_RxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">P_Rx</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna6getT_EEv">
+<span id="_CPPv3NK13SimpleAntenna6getT_EEv"></span><span id="_CPPv2NK13SimpleAntenna6getT_EEv"></span><span id="SimpleAntenna::getT_EC"></span><span class="target" id="class_simple_antenna_1a33283aa53b722edc5a1b8f5cec791d7e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getT_E</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna6getT_EEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">T_E</span></code> property (equivalent noise temperature) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna20getAntennaNoisePowerEv">
+<span id="_CPPv3NK13SimpleAntenna20getAntennaNoisePowerEv"></span><span id="_CPPv2NK13SimpleAntenna20getAntennaNoisePowerEv"></span><span id="SimpleAntenna::getAntennaNoisePowerC"></span><span class="target" id="class_simple_antenna_1aee79d35e0333dfb60a247129a5f16d36"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaNoisePower</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna20getAntennaNoisePowerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>get antenna noise power P_N </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna23getAntennaRadEfficiencyEv">
+<span id="_CPPv3NK13SimpleAntenna23getAntennaRadEfficiencyEv"></span><span id="_CPPv2NK13SimpleAntenna23getAntennaRadEfficiencyEv"></span><span id="SimpleAntenna::getAntennaRadEfficiencyC"></span><span class="target" id="class_simple_antenna_1a361886b95f0ce92f2247eb2de2893f4d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaRadEfficiency</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna23getAntennaRadEfficiencyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">eta_rad</span></code> property (radiation efficiency) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna12getP_eirp_dBEv">
+<span id="_CPPv3NK13SimpleAntenna12getP_eirp_dBEv"></span><span id="_CPPv2NK13SimpleAntenna12getP_eirp_dBEv"></span><span id="SimpleAntenna::getP_eirp_dBC"></span><span class="target" id="class_simple_antenna_1a62f4ede57d7df1c43def745517e3db1e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getP_eirp_dB</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna12getP_eirp_dBEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">P_eirp_dB</span></code> property (effective isotropic radiated power) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna7getG_TNEv">
+<span id="_CPPv3NK13SimpleAntenna7getG_TNEv"></span><span id="_CPPv2NK13SimpleAntenna7getG_TNEv"></span><span id="SimpleAntenna::getG_TNC"></span><span class="target" id="class_simple_antenna_1a2e092c658ea075488a0021f47607a904"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getG_TN</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna7getG_TNEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">G_TN</span></code> property (antenna gain over system noise temperature) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna24getAntennaEnvTemperatureEv">
+<span id="_CPPv3NK13SimpleAntenna24getAntennaEnvTemperatureEv"></span><span id="_CPPv2NK13SimpleAntenna24getAntennaEnvTemperatureEv"></span><span id="SimpleAntenna::getAntennaEnvTemperatureC"></span><span class="target" id="class_simple_antenna_1a17da7189c8f36f23a1403e9cbb0b6d1f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaEnvTemperature</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna24getAntennaEnvTemperatureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">T_Ambient</span></code> property (ambient temperature) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna31getAntennaPositionInertialFrameEv">
+<span id="_CPPv3NK13SimpleAntenna31getAntennaPositionInertialFrameEv"></span><span id="_CPPv2NK13SimpleAntenna31getAntennaPositionInertialFrameEv"></span><span id="SimpleAntenna::getAntennaPositionInertialFrameC"></span><span class="target" id="class_simple_antenna_1ac5c715a8064f95b4a71b6c6737b15025"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaPositionInertialFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna31getAntennaPositionInertialFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>get antenna position in N frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna34getAntennaOrientationInertialFrameEv">
+<span id="_CPPv3NK13SimpleAntenna34getAntennaOrientationInertialFrameEv"></span><span id="_CPPv2NK13SimpleAntenna34getAntennaOrientationInertialFrameEv"></span><span id="SimpleAntenna::getAntennaOrientationInertialFrameC"></span><span class="target" id="class_simple_antenna_1a398c33e6ee9f2f34065f01863f446867"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaOrientationInertialFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna34getAntennaOrientationInertialFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>get antenna orientation in N frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna31getAntennaVelocityInertialFrameEv">
+<span id="_CPPv3NK13SimpleAntenna31getAntennaVelocityInertialFrameEv"></span><span id="_CPPv2NK13SimpleAntenna31getAntennaVelocityInertialFrameEv"></span><span id="SimpleAntenna::getAntennaVelocityInertialFrameC"></span><span class="target" id="class_simple_antenna_1a1b5511c3f9f3064232a69b0b08a77b5f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaVelocityInertialFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna31getAntennaVelocityInertialFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>get antenna velocity in N frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna27getAntennaPositionBodyFrameEv">
+<span id="_CPPv3NK13SimpleAntenna27getAntennaPositionBodyFrameEv"></span><span id="_CPPv2NK13SimpleAntenna27getAntennaPositionBodyFrameEv"></span><span id="SimpleAntenna::getAntennaPositionBodyFrameC"></span><span class="target" id="class_simple_antenna_1a768a29b8e221a28434ec69b4c435d31d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaPositionBodyFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna27getAntennaPositionBodyFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_AB_B</span></code> property (antenna position to SC hub) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna30getAntennaOrientationBodyFrameEv">
+<span id="_CPPv3NK13SimpleAntenna30getAntennaOrientationBodyFrameEv"></span><span id="_CPPv2NK13SimpleAntenna30getAntennaOrientationBodyFrameEv"></span><span id="SimpleAntenna::getAntennaOrientationBodyFrameC"></span><span class="target" id="class_simple_antenna_1ae569a0a4e4cbb386731013e39f8af8b8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaOrientationBodyFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna30getAntennaOrientationBodyFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">sigma_AB</span></code> property (antenna orientation to SC hub) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna44getAntennaPositionCelestialBodyInertialFrameEv">
+<span id="_CPPv3NK13SimpleAntenna44getAntennaPositionCelestialBodyInertialFrameEv"></span><span id="_CPPv2NK13SimpleAntenna44getAntennaPositionCelestialBodyInertialFrameEv"></span><span id="SimpleAntenna::getAntennaPositionCelestialBodyInertialFrameC"></span><span class="target" id="class_simple_antenna_1afff3c6731372c7136fbcabf2290e64f8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAntennaPositionCelestialBodyInertialFrame</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna44getAntennaPositionCelestialBodyInertialFrameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>get antenna position wrt to celestial body decomposed in {N}-frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13SimpleAntenna15getUseHaslamMapEv">
+<span id="_CPPv3NK13SimpleAntenna15getUseHaslamMapEv"></span><span id="_CPPv2NK13SimpleAntenna15getUseHaslamMapEv"></span><span id="SimpleAntenna::getUseHaslamMapC"></span><span class="target" id="class_simple_antenna_1a9ec19671f498570dc872c71b252bee19"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getUseHaslamMap</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13SimpleAntenna15getUseHaslamMapEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">useHaslamMap</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna14setAntennaNameERKNSt6stringE">
+<span id="_CPPv3N13SimpleAntenna14setAntennaNameERKNSt6stringE"></span><span id="_CPPv2N13SimpleAntenna14setAntennaNameERKNSt6stringE"></span><span id="SimpleAntenna::setAntennaName__ssCR"></span><span class="target" id="class_simple_antenna_1a8c772d9195c85e62eccaed8772bbe071"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaName</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna14setAntennaNameERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">antennaName</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna15setAntennaStateEN12AntennaTypes16AntennaStateEnumE">
+<span id="_CPPv3N13SimpleAntenna15setAntennaStateEN12AntennaTypes16AntennaStateEnumE"></span><span id="_CPPv2N13SimpleAntenna15setAntennaStateEN12AntennaTypes16AntennaStateEnumE"></span><span id="SimpleAntenna::setAntennaState__AntennaTypes::AntennaStateEnum"></span><span class="target" id="class_simple_antenna_1a9b953a13b138fbc4a60fd327ed11b7d5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaState</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes16AntennaStateEnumE" title="AntennaTypes::AntennaStateEnum"><span class="n"><span class="pre">AntennaStateEnum</span></span></a><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna15setAntennaStateEN12AntennaTypes16AntennaStateEnumE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">antennaState</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna24setAntennaDirectivity_dBEd">
+<span id="_CPPv3N13SimpleAntenna24setAntennaDirectivity_dBEd"></span><span id="_CPPv2N13SimpleAntenna24setAntennaDirectivity_dBEd"></span><span id="SimpleAntenna::setAntennaDirectivity_dB__double"></span><span class="target" id="class_simple_antenna_1a6f7d549d7a6099ab061124815d021cee"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaDirectivity_dB</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna24setAntennaDirectivity_dBEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">DdB</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna19setAntennaFrequencyEd">
+<span id="_CPPv3N13SimpleAntenna19setAntennaFrequencyEd"></span><span id="_CPPv2N13SimpleAntenna19setAntennaFrequencyEd"></span><span id="SimpleAntenna::setAntennaFrequency__double"></span><span class="target" id="class_simple_antenna_1a5607f8050b54472371f444117f09d200"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaFrequency</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna19setAntennaFrequencyEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for frequency property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna19setAntennaHpbwRatioEd">
+<span id="_CPPv3N13SimpleAntenna19setAntennaHpbwRatioEd"></span><span id="_CPPv2N13SimpleAntenna19setAntennaHpbwRatioEd"></span><span id="SimpleAntenna::setAntennaHpbwRatio__double"></span><span class="target" id="class_simple_antenna_1a6fc06f0478b272df1967072f5a9f56fa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaHpbwRatio</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna19setAntennaHpbwRatioEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">HPBW</span> <span class="pre">ratio</span></code> “k” property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna14setAntennaP_TxEd">
+<span id="_CPPv3N13SimpleAntenna14setAntennaP_TxEd"></span><span id="_CPPv2N13SimpleAntenna14setAntennaP_TxEd"></span><span id="SimpleAntenna::setAntennaP_Tx__double"></span><span class="target" id="class_simple_antenna_1afa93be822df27de69a61910da9f43a2c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaP_Tx</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna14setAntennaP_TxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">P_Tx</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna14setAntennaP_RxEd">
+<span id="_CPPv3N13SimpleAntenna14setAntennaP_RxEd"></span><span id="_CPPv2N13SimpleAntenna14setAntennaP_RxEd"></span><span id="SimpleAntenna::setAntennaP_Rx__double"></span><span class="target" id="class_simple_antenna_1a8f7026155127f219da950de42525d244"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaP_Rx</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna14setAntennaP_RxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">P_Rx</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna29setAntennaEquivalentNoiseTempEd">
+<span id="_CPPv3N13SimpleAntenna29setAntennaEquivalentNoiseTempEd"></span><span id="_CPPv2N13SimpleAntenna29setAntennaEquivalentNoiseTempEd"></span><span id="SimpleAntenna::setAntennaEquivalentNoiseTemp__double"></span><span class="target" id="class_simple_antenna_1a0676b658ee4d90ea513f1ae398786a9e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaEquivalentNoiseTemp</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna29setAntennaEquivalentNoiseTempEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">T_E</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna19setAntennaBandwidthEd">
+<span id="_CPPv3N13SimpleAntenna19setAntennaBandwidthEd"></span><span id="_CPPv2N13SimpleAntenna19setAntennaBandwidthEd"></span><span id="SimpleAntenna::setAntennaBandwidth__double"></span><span class="target" id="class_simple_antenna_1a3e4a63f2ee86ab20b8b504d905582e80"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaBandwidth</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna19setAntennaBandwidthEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">B</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna23setAntennaRadEfficiencyEd">
+<span id="_CPPv3N13SimpleAntenna23setAntennaRadEfficiencyEd"></span><span id="_CPPv2N13SimpleAntenna23setAntennaRadEfficiencyEd"></span><span id="SimpleAntenna::setAntennaRadEfficiency__double"></span><span class="target" id="class_simple_antenna_1ac1f5be394dc5db29fa0364769d6da504"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaRadEfficiency</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna23setAntennaRadEfficiencyEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">eta_rad</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna32setAntennaEnvironmentTemperatureEd">
+<span id="_CPPv3N13SimpleAntenna32setAntennaEnvironmentTemperatureEd"></span><span id="_CPPv2N13SimpleAntenna32setAntennaEnvironmentTemperatureEd"></span><span id="SimpleAntenna::setAntennaEnvironmentTemperature__double"></span><span class="target" id="class_simple_antenna_1af782728984d9fabef76f5731751e7caa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaEnvironmentTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna32setAntennaEnvironmentTemperatureEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">T_Ambient</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna27setAntennaPositionBodyFrameEN5Eigen8Vector3dE">
+<span id="_CPPv3N13SimpleAntenna27setAntennaPositionBodyFrameEN5Eigen8Vector3dE"></span><span id="_CPPv2N13SimpleAntenna27setAntennaPositionBodyFrameEN5Eigen8Vector3dE"></span><span id="SimpleAntenna::setAntennaPositionBodyFrame__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1a41dd09306900d36171e959a2bed97aeb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaPositionBodyFrame</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna27setAntennaPositionBodyFrameEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_AB_B</span></code> property (antenna position relative to body frame) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna30setAntennaOrientationBodyFrameEN5Eigen4MRPdE">
+<span id="_CPPv3N13SimpleAntenna30setAntennaOrientationBodyFrameEN5Eigen4MRPdE"></span><span id="_CPPv2N13SimpleAntenna30setAntennaOrientationBodyFrameEN5Eigen4MRPdE"></span><span id="SimpleAntenna::setAntennaOrientationBodyFrame__Eigen::MRPd"></span><span class="target" id="class_simple_antenna_1a70adee66647dc34f7ab542d99f3e9fd6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAntennaOrientationBodyFrame</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna30setAntennaOrientationBodyFrameEN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">sigma_AB</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna15setUseHaslamMapEb">
+<span id="_CPPv3N13SimpleAntenna15setUseHaslamMapEb"></span><span id="_CPPv2N13SimpleAntenna15setUseHaslamMapEb"></span><span id="SimpleAntenna::setUseHaslamMap__b"></span><span class="target" id="class_simple_antenna_1afe645ffcdf9cdc0f6821ca0e4d27e224"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setUseHaslamMap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna15setUseHaslamMapEb" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">useHaslamMap</span></code> property </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12scStateInMsgE">
+<span id="_CPPv3N13SimpleAntenna12scStateInMsgE"></span><span id="_CPPv2N13SimpleAntenna12scStateInMsgE"></span><span id="SimpleAntenna::scStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_simple_antenna_1af8518a2a6ba97f893b431b6152dd0921"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12scStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sc input state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna16groundStateInMsgE">
+<span id="_CPPv3N13SimpleAntenna16groundStateInMsgE"></span><span id="_CPPv2N13SimpleAntenna16groundStateInMsgE"></span><span id="SimpleAntenna::groundStateInMsg__ReadFunctor:GroundStateMsgPayload:"></span><span class="target" id="class_simple_antenna_1a3f9617f24c860b8405d5f48063d6beaa"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#_CPPv421GroundStateMsgPayload" title="GroundStateMsgPayload"><span class="n"><span class="pre">GroundStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">groundStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna16groundStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>ground state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna20antennaSetStateInMsgE">
+<span id="_CPPv3N13SimpleAntenna20antennaSetStateInMsgE"></span><span id="_CPPv2N13SimpleAntenna20antennaSetStateInMsgE"></span><span id="SimpleAntenna::antennaSetStateInMsg__ReadFunctor:AntennaStateMsgPayload:"></span><span class="target" id="class_simple_antenna_1ab06819df09b3a329aa2d9507746e388d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaStateMsgPayload.html#_CPPv422AntennaStateMsgPayload" title="AntennaStateMsgPayload"><span class="n"><span class="pre">AntennaStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaSetStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna20antennaSetStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>setting antenna to [off / Rx / Tx / RxTx] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna8sunInMsgE">
+<span id="_CPPv3N13SimpleAntenna8sunInMsgE"></span><span id="_CPPv2N13SimpleAntenna8sunInMsgE"></span><span id="SimpleAntenna::sunInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_simple_antenna_1a5eb9583e5283939b17df5ba755cee54e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna8sunInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sun data input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12planetInMsgsE">
+<span id="_CPPv3N13SimpleAntenna12planetInMsgsE"></span><span id="_CPPv2N13SimpleAntenna12planetInMsgsE"></span><span id="SimpleAntenna::planetInMsgs__std::vector:ReadFunctor:SpicePlanetStateMsgPayload::"></span><span class="target" id="class_simple_antenna_1a8c837194c3477157fffc292418f10e52"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12planetInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>A vector of planet incoming state message names ordered by the sequence in which planet are added to the module. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna15sunEclipseInMsgE">
+<span id="_CPPv3N13SimpleAntenna15sunEclipseInMsgE"></span><span id="_CPPv2N13SimpleAntenna15sunEclipseInMsgE"></span><span id="SimpleAntenna::sunEclipseInMsg__ReadFunctor:EclipseMsgPayload:"></span><span class="target" id="class_simple_antenna_1a99dc449435032f5ef0eb951c69f705ce"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEclipseInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna15sunEclipseInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Messun eclipse state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna7scStateE">
+<span id="_CPPv3N13SimpleAntenna7scStateE"></span><span id="_CPPv2N13SimpleAntenna7scStateE"></span><span id="SimpleAntenna::scState__SCStatesMsgPayload"></span><span class="target" id="class_simple_antenna_1af0c21f3b277aa56fb6b2d0e935c11071"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scState</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna7scStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Module variable where the input State Data message is stored </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna11groundStateE">
+<span id="_CPPv3N13SimpleAntenna11groundStateE"></span><span id="_CPPv2N13SimpleAntenna11groundStateE"></span><span id="SimpleAntenna::groundState__GroundStateMsgPayload"></span><span class="target" id="class_simple_antenna_1a5c60afcbe95bd19d64e271cfbecab9a1"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#_CPPv421GroundStateMsgPayload" title="GroundStateMsgPayload"><span class="n"><span class="pre">GroundStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">groundState</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna11groundStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>ground state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna15antennaStateMsgE">
+<span id="_CPPv3N13SimpleAntenna15antennaStateMsgE"></span><span id="_CPPv2N13SimpleAntenna15antennaStateMsgE"></span><span id="SimpleAntenna::antennaStateMsg__AntennaStateMsgPayload"></span><span class="target" id="class_simple_antenna_1a811bd9f4167b80a7ca11cfdb78a88ca5"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaStateMsgPayload.html#_CPPv422AntennaStateMsgPayload" title="AntennaStateMsgPayload"><span class="n"><span class="pre">AntennaStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaStateMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna15antennaStateMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>antenna output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna19spicePlanetStateMsgE">
+<span id="_CPPv3N13SimpleAntenna19spicePlanetStateMsgE"></span><span id="_CPPv2N13SimpleAntenna19spicePlanetStateMsgE"></span><span id="SimpleAntenna::spicePlanetStateMsg__SpicePlanetStateMsgPayload"></span><span class="target" id="class_simple_antenna_1ae566420a19d5f80d55d0137ceb98b159"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spicePlanetStateMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna19spicePlanetStateMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Module variable where the input Sun Data message is stored </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna13antennaOutMsgE">
+<span id="_CPPv3N13SimpleAntenna13antennaOutMsgE"></span><span id="_CPPv2N13SimpleAntenna13antennaOutMsgE"></span><span id="SimpleAntenna::antennaOutMsg__Message:AntennaLogMsgPayload:"></span><span class="target" id="class_simple_antenna_1a9ecfb400a31e12bdbdeb3274100a8bd2"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna13antennaOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna29antennaPhysicalStateMsgBufferE">
+<span id="_CPPv3N13SimpleAntenna29antennaPhysicalStateMsgBufferE"></span><span id="_CPPv2N13SimpleAntenna29antennaPhysicalStateMsgBufferE"></span><span id="SimpleAntenna::antennaPhysicalStateMsgBuffer__AntennaLogMsgPayload"></span><span class="target" id="class_simple_antenna_1abb56097fc5f72a5b77c8676d4b54178f"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaPhysicalStateMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna29antennaPhysicalStateMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna9bskLoggerE">
+<span id="_CPPv3N13SimpleAntenna9bskLoggerE"></span><span id="_CPPv2N13SimpleAntenna9bskLoggerE"></span><span id="SimpleAntenna::bskLogger__BSKLogger"></span><span class="target" id="class_simple_antenna_1aa49f8ef7dc00c96ada927af34068a55d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna9rEqCustomE">
+<span id="_CPPv3N13SimpleAntenna9rEqCustomE"></span><span id="_CPPv2N13SimpleAntenna9rEqCustomE"></span><span id="SimpleAntenna::rEqCustom__double"></span><span class="target" id="class_simple_antenna_1aaf09b7353791115b17c2e61c9359e58a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rEqCustom</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna9rEqCustomE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Custom radius </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna17initializeAntennaEv">
+<span id="_CPPv3N13SimpleAntenna17initializeAntennaEv"></span><span id="_CPPv2N13SimpleAntenna17initializeAntennaEv"></span><span id="SimpleAntenna::initializeAntenna"></span><span class="target" id="class_simple_antenna_1affc77b6760e9812f994fd4e2e40a2698"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeAntenna</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna17initializeAntennaEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna17readInputMessagesEv">
+<span id="_CPPv3N13SimpleAntenna17readInputMessagesEv"></span><span id="_CPPv2N13SimpleAntenna17readInputMessagesEv"></span><span id="SimpleAntenna::readInputMessages"></span><span class="target" id="class_simple_antenna_1aa769fb4236fb2c2ea07a35233019a24a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N13SimpleAntenna19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N13SimpleAntenna19writeOutputMessagesE8uint64_t"></span><span id="SimpleAntenna::writeOutputMessages__uint64_t"></span><span class="target" id="class_simple_antenna_1a1ae08d68f431fdf4c36a7e192fad1eb8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna23calculatePlanetCoverageEdN5Eigen8Vector3dEdd">
+<span id="_CPPv3N13SimpleAntenna23calculatePlanetCoverageEdN5Eigen8Vector3dEdd"></span><span id="_CPPv2N13SimpleAntenna23calculatePlanetCoverageEdN5Eigen8Vector3dEdd"></span><span id="SimpleAntenna::calculatePlanetCoverage__double.Eigen::Vector3d.double.double"></span><span class="target" id="class_simple_antenna_1a7d019d17a3c13914e5979e6c1403fd58"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculatePlanetCoverage</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetRadius</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_PN_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">azimuth</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">elevation</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna23calculatePlanetCoverageEdN5Eigen8Vector3dEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute fraction of antenna beam covered by object. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetRadius</strong> – </p></li>
+<li><p><strong>r_PN_N</strong> – </p></li>
+<li><p><strong>azimuth</strong> – Beam half-angle in azimuth [rad] </p></li>
+<li><p><strong>elevation</strong> – Beam half-angle in elevation [rad] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>coverage fraction [0..1] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna25getPlanetEquatorialRadiusENSt6stringE">
+<span id="_CPPv3N13SimpleAntenna25getPlanetEquatorialRadiusENSt6stringE"></span><span id="_CPPv2N13SimpleAntenna25getPlanetEquatorialRadiusENSt6stringE"></span><span id="SimpleAntenna::getPlanetEquatorialRadius__ss"></span><span class="target" id="class_simple_antenna_1a67c4c9aba183408518eb85baa37c55ed"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPlanetEquatorialRadius</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetSpiceName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna25getPlanetEquatorialRadiusENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method return planet radii. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>planetSpiceName</strong> – The planet name according to the spice NAIF Integer ID codes. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double The equatorial radius in metres associated with the given planet name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna17calculateTambientEv">
+<span id="_CPPv3N13SimpleAntenna17calculateTambientEv"></span><span id="_CPPv2N13SimpleAntenna17calculateTambientEv"></span><span id="SimpleAntenna::calculateTambient"></span><span class="target" id="class_simple_antenna_1a3937d528fb92b92b328fa8223192e755"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateTambient</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna17calculateTambientEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna17populateOutputMsgEP20AntennaLogMsgPayload">
+<span id="_CPPv3N13SimpleAntenna17populateOutputMsgEP20AntennaLogMsgPayload"></span><span id="_CPPv2N13SimpleAntenna17populateOutputMsgEP20AntennaLogMsgPayload"></span><span id="SimpleAntenna::populateOutputMsg__AntennaLogMsgPayloadP"></span><span class="target" id="class_simple_antenna_1adb8c344a0a10ec79f95f9b74c1c4a4c9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">populateOutputMsg</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msgBuffer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna17populateOutputMsgEP20AntennaLogMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna38calculateAntennaPositionAndOrientationEv">
+<span id="_CPPv3N13SimpleAntenna38calculateAntennaPositionAndOrientationEv"></span><span id="_CPPv2N13SimpleAntenna38calculateAntennaPositionAndOrientationEv"></span><span id="SimpleAntenna::calculateAntennaPositionAndOrientation"></span><span class="target" id="class_simple_antenna_1ab5c2a3a8751e4c4160ac8c8147483bd4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateAntennaPositionAndOrientation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna38calculateAntennaPositionAndOrientationEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna21calculateAntennaNoiseEv">
+<span id="_CPPv3N13SimpleAntenna21calculateAntennaNoiseEv"></span><span id="_CPPv2N13SimpleAntenna21calculateAntennaNoiseEv"></span><span id="SimpleAntenna::calculateAntennaNoise"></span><span class="target" id="class_simple_antenna_1a8fbd63fb25b9bf6def97be3bd57f791c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateAntennaNoise</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13SimpleAntenna21calculateAntennaNoiseEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna11minTresholdE">
+<span id="_CPPv3N13SimpleAntenna11minTresholdE"></span><span id="_CPPv2N13SimpleAntenna11minTresholdE"></span><span id="SimpleAntenna::minTreshold__double"></span><span class="target" id="class_simple_antenna_1a084aa4c8859d90a49305cfa62fd0851b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minTreshold</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1e-6</span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna11minTresholdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Minimum threshold for power and directivity values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna11antennaNameE">
+<span id="_CPPv3N13SimpleAntenna11antennaNameE"></span><span id="_CPPv2N13SimpleAntenna11antennaNameE"></span><span id="SimpleAntenna::antennaName__ss"></span><span class="target" id="class_simple_antenna_1a47e9e37d22fdf240de691f72193c56d5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaName</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna11antennaNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna name </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna11environmentE">
+<span id="_CPPv3N13SimpleAntenna11environmentE"></span><span id="_CPPv2N13SimpleAntenna11environmentE"></span><span id="SimpleAntenna::environment__AntennaTypes::EnvironmentType"></span><span class="target" id="class_simple_antenna_1adebf1e404cf31af894ba59d9f2e864a4"></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes15EnvironmentTypeE" title="AntennaTypes::EnvironmentType"><span class="n"><span class="pre">EnvironmentType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">environment</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna11environmentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna environment of antenna 0: SPACE, 1: EARTH, -1: UNKNOWN </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12antennaStateE">
+<span id="_CPPv3N13SimpleAntenna12antennaStateE"></span><span id="_CPPv2N13SimpleAntenna12antennaStateE"></span><span id="SimpleAntenna::antennaState__AntennaTypes::AntennaStateEnum"></span><span class="target" id="class_simple_antenna_1a3ac2c9266e7d2eb25de0a3ba597009d0"></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes16AntennaStateEnumE" title="AntennaTypes::AntennaStateEnum"><span class="n"><span class="pre">AntennaStateEnum</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaState</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12antennaStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna state: 0: off, 1: Rx, 2: Tx, 3: RxTx, -1: UNKNOWN </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12planetBufferE">
+<span id="_CPPv3N13SimpleAntenna12planetBufferE"></span><span id="_CPPv2N13SimpleAntenna12planetBufferE"></span><span id="SimpleAntenna::planetBuffer__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_simple_antenna_1afb1a263843f4d74b5ff2f1c34f6a8adb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12planetBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Buffer of the spacecraft state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna9frequencyE">
+<span id="_CPPv3N13SimpleAntenna9frequencyE"></span><span id="_CPPv2N13SimpleAntenna9frequencyE"></span><span id="SimpleAntenna::frequency__double"></span><span class="target" id="class_simple_antenna_1aa14eebe39e27de637b16f6ebd58054a5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frequency</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna9frequencyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Hz] Antenna operating frequency (center frequency) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna1BE">
+<span id="_CPPv3N13SimpleAntenna1BE"></span><span id="_CPPv2N13SimpleAntenna1BE"></span><span id="SimpleAntenna::B__double"></span><span class="target" id="class_simple_antenna_1a5a71fe3ff152116ffb2fcdfc05707c37"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna1BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Hz] Antenna bandwidth </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna3DdBE">
+<span id="_CPPv3N13SimpleAntenna3DdBE"></span><span id="_CPPv2N13SimpleAntenna3DdBE"></span><span id="SimpleAntenna::DdB__double"></span><span class="target" id="class_simple_antenna_1a018a71e3b7e14ab0b226c4fd6e38daaa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DdB</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna3DdBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Antenna gain (default 20 dBi –&gt; gain of 100 in linear scale) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna1kE">
+<span id="_CPPv3N13SimpleAntenna1kE"></span><span id="_CPPv2N13SimpleAntenna1kE"></span><span id="SimpleAntenna::k__double"></span><span class="target" id="class_simple_antenna_1ae69e470471e96976fce95f8a52b65b5f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna1kE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Elliptical Gaussian beamwidth ratio: k = HPBW_az / HPBW_el </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna4P_TxE">
+<span id="_CPPv3N13SimpleAntenna4P_TxE"></span><span id="_CPPv2N13SimpleAntenna4P_TxE"></span><span id="SimpleAntenna::P_Tx__double"></span><span class="target" id="class_simple_antenna_1a49bf18656c0ed8a040e97219b716621d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_Tx</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna4P_TxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Transmit power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna4P_RxE">
+<span id="_CPPv3N13SimpleAntenna4P_RxE"></span><span id="_CPPv2N13SimpleAntenna4P_RxE"></span><span id="SimpleAntenna::P_Rx__double"></span><span class="target" id="class_simple_antenna_1a1dcf8242db89032388b7466b2adb0306"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_Rx</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna4P_RxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Receive power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna3T_EE">
+<span id="_CPPv3N13SimpleAntenna3T_EE"></span><span id="_CPPv2N13SimpleAntenna3T_EE"></span><span id="SimpleAntenna::T_E__double"></span><span class="target" id="class_simple_antenna_1a65d983bdf971bdc324d9517f1c103fd5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_E</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna3T_EE" title="Link to this definition"></a><br /></dt>
+<dd><p>[K] Equivalent noise temperature (default 50K) =&gt; Contribution of receiver and other components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna5eta_rE">
+<span id="_CPPv3N13SimpleAntenna5eta_rE"></span><span id="_CPPv2N13SimpleAntenna5eta_rE"></span><span id="SimpleAntenna::eta_r__double"></span><span class="target" id="class_simple_antenna_1aff33c10718969ce96e905a853e4b3f15"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eta_r</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna5eta_rE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna radiation efficiency (default 0.5) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna4HPBWE">
+<span id="_CPPv3N13SimpleAntenna4HPBWE"></span><span id="_CPPv2N13SimpleAntenna4HPBWE"></span><span id="SimpleAntenna::HPBW__std::vector:double:"></span><span class="target" id="class_simple_antenna_1af24476bb0217c6176e14dc581daee112"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HPBW</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna4HPBWE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Half-power beamwidth in azimuth and elevation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna3P_NE">
+<span id="_CPPv3N13SimpleAntenna3P_NE"></span><span id="_CPPv2N13SimpleAntenna3P_NE"></span><span id="SimpleAntenna::P_N__double"></span><span class="target" id="class_simple_antenna_1ad62c4bd19363dbbdea5a2fe42314aeda"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_N</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna3P_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Antenna noise power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna9P_eirp_dBE">
+<span id="_CPPv3N13SimpleAntenna9P_eirp_dBE"></span><span id="_CPPv2N13SimpleAntenna9P_eirp_dBE"></span><span id="SimpleAntenna::P_eirp_dB__double"></span><span class="target" id="class_simple_antenna_1aa2a6b33a23410133474f45791d1dafd0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_eirp_dB</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna9P_eirp_dBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Equivalent isotropically radiated power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna4G_TNE">
+<span id="_CPPv3N13SimpleAntenna4G_TNE"></span><span id="_CPPv2N13SimpleAntenna4G_TNE"></span><span id="SimpleAntenna::G_TN__double"></span><span class="target" id="class_simple_antenna_1a4ce243ee29701f0992d7e45a57eaf7a4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">G_TN</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna4G_TNE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB/K] Antenna gain over system noise temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna9T_AmbientE">
+<span id="_CPPv3N13SimpleAntenna9T_AmbientE"></span><span id="_CPPv2N13SimpleAntenna9T_AmbientE"></span><span id="SimpleAntenna::T_Ambient__double"></span><span class="target" id="class_simple_antenna_1a2acbd82c7bbbfba6359177046201efbb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_Ambient</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna9T_AmbientE" title="Link to this definition"></a><br /></dt>
+<dd><p>[K] Ambient temperature (default ISA) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12T_AmbientSetE">
+<span id="_CPPv3N13SimpleAntenna12T_AmbientSetE"></span><span id="_CPPv2N13SimpleAntenna12T_AmbientSetE"></span><span id="SimpleAntenna::T_AmbientSet__double"></span><span class="target" id="class_simple_antenna_1a3bbff9307b4f57512eb975f635c0f711"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T_AmbientSet</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12T_AmbientSetE" title="Link to this definition"></a><br /></dt>
+<dd><p>[K] User defined Ambient temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6r_AN_NE">
+<span id="_CPPv3N13SimpleAntenna6r_AN_NE"></span><span id="_CPPv2N13SimpleAntenna6r_AN_NE"></span><span id="SimpleAntenna::r_AN_N__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1ac9f73f53a9d40bcc9a57cb35613a9b8c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_AN_N</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6r_AN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Antenna position in N frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna8sigma_ANE">
+<span id="_CPPv3N13SimpleAntenna8sigma_ANE"></span><span id="_CPPv2N13SimpleAntenna8sigma_ANE"></span><span id="SimpleAntenna::sigma_AN__Eigen::MRPd"></span><span class="target" id="class_simple_antenna_1a8216cc7b3747a9bae0c0cc452fcac148"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_AN</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna8sigma_ANE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna orientation in N frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6v_AN_NE">
+<span id="_CPPv3N13SimpleAntenna6v_AN_NE"></span><span id="_CPPv2N13SimpleAntenna6v_AN_NE"></span><span id="SimpleAntenna::v_AN_N__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1af20c2f3ec74cc8a3c07e101ad80e7c83"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_AN_N</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6v_AN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Antenna velocity in N frame (stub, future use) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6r_AB_BE">
+<span id="_CPPv3N13SimpleAntenna6r_AB_BE"></span><span id="_CPPv2N13SimpleAntenna6r_AB_BE"></span><span id="SimpleAntenna::r_AB_B__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1a330ed439d920f81498bb31d2df075e51"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_AB_B</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6r_AB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Antenna position relative to body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna8sigma_ABE">
+<span id="_CPPv3N13SimpleAntenna8sigma_ABE"></span><span id="_CPPv2N13SimpleAntenna8sigma_ABE"></span><span id="SimpleAntenna::sigma_AB__Eigen::MRPd"></span><span class="target" id="class_simple_antenna_1a9a7623df1f462111a8935a28cef6718b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_AB</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna8sigma_ABE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna orientation relative to body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6r_AP_NE">
+<span id="_CPPv3N13SimpleAntenna6r_AP_NE"></span><span id="_CPPv2N13SimpleAntenna6r_AP_NE"></span><span id="SimpleAntenna::r_AP_N__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1a764f271b533b2e80fc6fab409491e657"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_AP_N</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6r_AP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of the antenna wrt to the celestial body frame {P} (used for ground antennas only) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6r_BN_NE">
+<span id="_CPPv3N13SimpleAntenna6r_BN_NE"></span><span id="_CPPv2N13SimpleAntenna6r_BN_NE"></span><span id="SimpleAntenna::r_BN_N__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1af4e623b722019b3be19eb2930af556cd"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6r_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of the SC in the inertial frame {N} AND Spacecraft B position relative to sun S </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna6nHat_AE">
+<span id="_CPPv3N13SimpleAntenna6nHat_AE"></span><span id="_CPPv2N13SimpleAntenna6nHat_AE"></span><span id="SimpleAntenna::nHat_A__Eigen::Vector3d"></span><span class="target" id="class_simple_antenna_1a22f18faedb6159b44a05e4b47ba79d63"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_A</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna6nHat_AE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna boresight vector in antenna frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna12useHaslamMapE">
+<span id="_CPPv3N13SimpleAntenna12useHaslamMapE"></span><span id="_CPPv2N13SimpleAntenna12useHaslamMapE"></span><span id="SimpleAntenna::useHaslamMap__b"></span><span class="target" id="class_simple_antenna_1a97660d20b5e26f0e15cf3d5e3715dcf7"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useHaslamMap</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna12useHaslamMapE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bool] Flag to use Haslam sky map data structure (slower but more accurate) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna7sunDataE">
+<span id="_CPPv3N13SimpleAntenna7sunDataE"></span><span id="_CPPv2N13SimpleAntenna7sunDataE"></span><span id="SimpleAntenna::sunData__SpicePlanetStateMsgPayload"></span><span class="target" id="class_simple_antenna_1a62b8264614286ae64d9c809697568551"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunData</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna7sunDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Sun data structure </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13SimpleAntenna18illuminationFactorE">
+<span id="_CPPv3N13SimpleAntenna18illuminationFactorE"></span><span id="_CPPv2N13SimpleAntenna18illuminationFactorE"></span><span id="SimpleAntenna::illuminationFactor__double"></span><span class="target" id="class_simple_antenna_1a60d83dcd6591e7490e669661cbcac4d0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">illuminationFactor</span></span></span><a class="headerlink" href="#_CPPv4N13SimpleAntenna18illuminationFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible) </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="simpleAntenna" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

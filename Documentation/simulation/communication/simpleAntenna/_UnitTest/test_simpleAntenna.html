@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_simpleAntenna &mdash; Basilisk 2.9.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=182a64a0"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="deviceInterface" href="../../../deviceInterface/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">communication</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">simpleAntenna</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">communication</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">simpleAntenna</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_simpleAntenna</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/communication/simpleAntenna/_UnitTest/test_simpleAntenna.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-simpleantenna">
+<span id="id1"></span><h1>test_simpleAntenna<a class="headerlink" href="#test-simpleantenna" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_simpleAntenna">
+<dt class="sig sig-object py" id="test_simpleAntenna.simpleAntennaTestFunction">
+<span class="sig-prename descclassname"><span class="pre">test_simpleAntenna.</span></span><span class="sig-name descname"><span class="pre">simpleAntennaTestFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">antennaState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_AmbientSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useHaslamMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_sky_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_AB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scPosUnit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ACCURACY</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_simpleAntenna.html#simpleAntennaTestFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_simpleAntenna.simpleAntennaTestFunction" title="Link to this definition"></a></dt>
+<dd><p>Test method</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_simpleAntenna.test_simpleAntenna">
+<span class="sig-prename descclassname"><span class="pre">test_simpleAntenna.</span></span><span class="sig-name descname"><span class="pre">test_simpleAntenna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">antennaState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_AmbientSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useHaslamMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_sky_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eclipseValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_AB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scPosUnit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ACCURACY</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_simpleAntenna.html#test_simpleAntenna"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_simpleAntenna.test_simpleAntenna" title="Link to this definition"></a></dt>
+<dd><p><strong>Validation Test Description</strong></p>
+<p>This unit test validates the thermal noise temperature and sky contribution
+computed by the <code class="docutils literal notranslate"><span class="pre">simpleAntenna</span></code> module under a variety of antenna operating
+modes, environmental configurations, and pointing geometries. The test
+verifies correct behavior when the antenna is transmitting, receiving,
+both transmitting and receiving, or turned off, as well as when different
+celestial bodies (Earth, Sun, Moon) are inside or outside the antenna field
+of view.</p>
+<p>The test also exercises eclipse handling, ambient temperature settings,
+and antenna orientation effects using direction cosine matrices.</p>
+<p><strong>Test Parameters</strong></p>
+<p>The test is fully parameterized to cover multiple combinations of antenna
+state, environment type, ambient temperature configuration, and antenna
+pointing geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>antennaState</strong> (<em>int</em>) – Antenna operational mode. One of
+<code class="docutils literal notranslate"><span class="pre">ANTENNA_OFF</span></code>, <code class="docutils literal notranslate"><span class="pre">ANTENNA_RX</span></code>, <code class="docutils literal notranslate"><span class="pre">ANTENNA_TX</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">ANTENNA_RXTX</span></code>.</p></li>
+<li><p><strong>env_type</strong> (<em>int</em>) – Environment selection flag. This controls where antenna is attached:
+- 0: Spacecraft environment
+- 1: Ground station environment</p></li>
+<li><p><strong>T_AmbientSet</strong> (<em>float</em><em> or </em><em>None</em>) – Ambient antenna temperature in Kelvin. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the module
+computes the ambient temperature internally using environmental
+models.</p></li>
+<li><p><strong>useHaslamMap</strong> (<em>bool</em>) – Flag indicating whether the Haslam sky map is used to model
+galactic background noise.</p></li>
+<li><p><strong>T_sky_true</strong> (<em>float</em>) – Truth value for the expected sky noise temperature (K) used
+for validation.</p></li>
+<li><p><strong>eclipseValue</strong> (<em>float</em>) – Eclipse factor in the range [0, 1], where 0 indicates full eclipse
+(Sun completely blocked) and 1 indicates no eclipse.</p></li>
+<li><p><strong>sigma_AB</strong> (array-like or <code class="docutils literal notranslate"><span class="pre">Eigen::MRP</span></code>) – Antenna orientation relative to the spacecraft body frame,
+expressed as Modified Rodrigues Parameters (MRPs). This defines
+the antenna boresight direction used to determine which celestial
+bodies fall within the antenna cone.</p></li>
+<li><p><strong>scPosUnit</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Unit vector of the spacecraft position expressed in the inertial
+frame. This is used to define the relative geometry between the
+spacecraft, Earth, Sun, and Moon.</p></li>
+<li><p><strong>ACCURACY</strong> (<em>float</em>) – Absolute numerical tolerance used when comparing the computed
+sky temperature against the truth value.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>This test validates:
+- Correct handling of antenna operational modes (OFF, RX, TX, RXTX)
+- Ground station vs. spacecraft environment configurations
+- Proper eclipse handling when the Sun is partially or fully blocked
+- Correct use of antenna pointing geometry via DCM/MRP transformations
+- Robust behavior when ambient temperature is user-specified or internally computed
+- Numerical ACCURACY of sky temperature computation within the specified tolerance</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_simpleAntenna.test_simpleAntenna_haslamMap_three_runs_and_pointing_difference">
+<span class="sig-prename descclassname"><span class="pre">test_simpleAntenna.</span></span><span class="sig-name descname"><span class="pre">test_simpleAntenna_haslamMap_three_runs_and_pointing_difference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_simpleAntenna.html#test_simpleAntenna_haslamMap_three_runs_and_pointing_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_simpleAntenna.test_simpleAntenna_haslamMap_three_runs_and_pointing_difference" title="Link to this definition"></a></dt>
+<dd><p>Haslam map coverage:
+Run one sim instance and change pointing while Haslam is enabled.
+Verify that sky temperature changes with pointing direction.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../../deviceInterface/index.html" class="btn btn-neutral float-right" title="deviceInterface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

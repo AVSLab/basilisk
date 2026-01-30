@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>test_radiationPressure &mdash; Basilisk 2.8.41
+  <title>test_radiationPressure &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,6 +48,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
@@ -219,7 +220,7 @@
 
     <span class="k">if</span> <span class="n">eclipseOn</span><span class="p">:</span>
         <span class="n">sunEclipseMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
-        <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="mf">0.5</span>
         <span class="n">sunEclMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunEclipseMsgData</span><span class="p">)</span>
         <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunEclMsg</span><span class="p">)</span>
         <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunEclMsg</span><span class="p">)</span>
@@ -290,8 +291,8 @@
         <span class="n">truthForceExternal_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.80492463017846114E-12</span><span class="p">,</span> <span class="mf">0.50888380426172319E-12</span><span class="p">,</span> <span class="mf">0.10249431804585393E-11</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">eclipseOn</span><span class="p">:</span>
-            <span class="n">truthForceExternal_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">)</span>
-            <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthTorqueExternalPntB_B</span><span class="p">)</span>
+            <span class="n">truthForceExternal_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">)</span>
+            <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthTorqueExternalPntB_B</span><span class="p">)</span>
         <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">,</span>
                                                                     <span class="n">srpDataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
                                                                     <span class="n">errTol</span><span class="p">,</span>

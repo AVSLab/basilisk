@@ -13,6 +13,8 @@ msgPayloadDefC
    AccPktDataMsgPayload
    AccessMsgPayload
    AlbedoMsgPayload
+   AntennaLogMsgPayload
+   AntennaStateMsgPayload
    ArrayEffectorLockMsgPayload
    ArrayMotorForceMsgPayload
    ArrayMotorTorqueMsgPayload

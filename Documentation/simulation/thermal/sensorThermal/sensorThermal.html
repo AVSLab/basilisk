@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module: sensorThermal &mdash; Basilisk 2.8.41
+  <title>Module: sensorThermal &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
@@ -59,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
@@ -181,9 +183,9 @@ electrical power converted to thermal power.</p>
 radiative surface area, and <span class="math notranslate nohighlight">\(T\)</span> is the current temperature of the sensor.</p>
 <p>The radiative thermal absorption, which comes only from the sun in this module, is given by:</p>
 <div class="math notranslate nohighlight">
-\[\dot{Q}_{\text{absorb}} = shadowFactor \cdot \alpha \cdot S \cdot A_{\text{proj}}\]</div>
-<p>The <span class="math notranslate nohighlight">\(shadowFactor\)</span> is an indication of whether or not the sensor is in eclipse. A shadowFactor of 0 indicates the sensor
-is in eclipse. Likewise, a shadowFactor of 1 indicates the sensor is not in eclipse. The <span class="math notranslate nohighlight">\(\alpha\)</span> parameter
+\[\dot{Q}_{\text{absorb}} = illuminationFactor \cdot \alpha \cdot S \cdot A_{\text{proj}}\]</div>
+<p>The <span class="math notranslate nohighlight">\(illuminationFactor\)</span> is an indication of whether or not the sensor is in eclipse. An illuminationFactor of 0 indicates the sensor
+is in eclipse. Likewise, an illuminationFactor of 1 indicates the sensor is not in eclipse. The <span class="math notranslate nohighlight">\(\alpha\)</span> parameter
 is the absorptivity constant of the sensor. <span class="math notranslate nohighlight">\(S\)</span> is the solar constant, and <span class="math notranslate nohighlight">\(A_{\text{proj}}\)</span> is the projected
 area of the sensor with respect to incoming solar flux.</p>
 <p>To compute the temperature at each timestep, the following energy balance equation is used:</p>
@@ -287,6 +289,12 @@ section below. These default parameters are as follows:</p>
 <span class="linenos">3</span><span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorStatusInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sensorStatusMsg</span><span class="p">)</span>
 <span class="linenos">4</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">sensorThermalModel</span><span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code> is <strong>deprecated</strong> in favor of <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code>.
+In C/C++ both names work until <strong>Dec 31, 2026</strong>. After that date, code must
+use <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code> exclusively.</p>
 </div>
 <hr class="docutils" />
 <dl class="cpp class">
@@ -478,9 +486,9 @@ section below. These default parameters are as follows:</p>
 </dd></dl>
 
 <dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13SensorThermal12shadowFactorE">
-<span id="_CPPv3N13SensorThermal12shadowFactorE"></span><span id="_CPPv2N13SensorThermal12shadowFactorE"></span><span id="SensorThermal::shadowFactor__double"></span><span class="target" id="class_sensor_thermal_1a4da415c97f76b4ca0b953696a9ea54ab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shadowFactor</span></span></span><a class="headerlink" href="#_CPPv4N13SensorThermal12shadowFactorE" title="Link to this definition"></a><br /></dt>
-<dd><p>[-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible) </p>
+<dt class="sig sig-object cpp" id="_CPPv4N13SensorThermal18illuminationFactorE">
+<span id="_CPPv3N13SensorThermal18illuminationFactorE"></span><span id="_CPPv2N13SensorThermal18illuminationFactorE"></span><span id="SensorThermal::illuminationFactor__double"></span><span class="target" id="class_sensor_thermal_1ac30fbd57b7b29b419633a646fa0723da"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">illuminationFactor</span></span></span><a class="headerlink" href="#_CPPv4N13SensorThermal18illuminationFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] solar eclipse illumination factor from 0 (fully obscured) to 1 (fully visible) </p>
 </dd></dl>
 
 <dl class="cpp var">

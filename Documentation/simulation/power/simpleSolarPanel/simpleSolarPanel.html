@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module: simpleSolarPanel &mdash; Basilisk 2.8.41
+  <title>Module: simpleSolarPanel &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
@@ -59,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
@@ -68,6 +70,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html">power</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../ReactionWheelPower/index.html">ReactionWheelPower</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../antennaPower/index.html">antennaPower</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../simpleBattery/index.html">simpleBattery</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../simplePowerMonitor/index.html">simplePowerMonitor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../simplePowerSink/index.html">simplePowerSink</a></li>
@@ -173,7 +176,7 @@
 </tr>
 <tr class="row-even"><td><p>sunEclipseInMsg</p></td>
 <td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
-<td><p>(optional) Describes shadow factor due to planetary bodies.</p></td>
+<td><p>(optional) Describes illumination factor due to planetary bodies.</p></td>
 </tr>
 </tbody>
 </table>
@@ -183,7 +186,7 @@
 <p>This module inherits the user guide from the PowerNodeBase base class.  Module specific instructions include:</p>
 <ul class="simple">
 <li><p>must connect <code class="docutils literal notranslate"><span class="pre">sunInMsg</span></code> and <code class="docutils literal notranslate"><span class="pre">stateInMsg</span></code> input messages</p></li>
-<li><p>the <code class="docutils literal notranslate"><span class="pre">sunEclipseInMsg</span></code> message is optional.  If provided the modules uses the eclipse shadow factor to adjust the power generation if needed.</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">sunEclipseInMsg</span></code> message is optional.  If provided the modules uses the eclipse illumination factor to adjust the power generation if needed.</p></li>
 <li><p>must specify the variables <code class="docutils literal notranslate"><span class="pre">panelArea</span></code>, <code class="docutils literal notranslate"><span class="pre">panelEfficiency</span></code> and <code class="docutils literal notranslate"><span class="pre">nHat_B</span></code>.  These there parameters can also be set at the same time through <code class="docutils literal notranslate"><span class="pre">setPanelParameters(nHat_B,</span> <span class="pre">panelArea,</span> <span class="pre">panelEfficiency)</span></code></p></li>
 </ul>
 <p>For more information on how to set up and use this module, see the simple power system example: <a class="reference internal" href="../../../../examples/scenarioPowerDemo.html#scenariopowerdemo"><span class="std std-ref">scenarioPowerDemo</span></a></p>
@@ -284,7 +287,7 @@
 <dt class="sig sig-object cpp" id="_CPPv4N16SimpleSolarPanel18evaluatePowerModelEP24PowerNodeUsageMsgPayload">
 <span id="_CPPv3N16SimpleSolarPanel18evaluatePowerModelEP24PowerNodeUsageMsgPayload"></span><span id="_CPPv2N16SimpleSolarPanel18evaluatePowerModelEP24PowerNodeUsageMsgPayload"></span><span id="SimpleSolarPanel::evaluatePowerModel__PowerNodeUsageMsgPayloadP"></span><span class="target" id="class_simple_solar_panel_1affbb6a9f141724b6cc6bbae54257048d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluatePowerModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PowerNodeUsageMsgPayload.html#_CPPv424PowerNodeUsageMsgPayload" title="PowerNodeUsageMsgPayload"><span class="n"><span class="pre">PowerNodeUsageMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">powerUsageMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SimpleSolarPanel18evaluatePowerModelEP24PowerNodeUsageMsgPayload" title="Link to this definition"></a><br /></dt>
 <dd><p>This method computes the power generated by the solar panel and stores it in a PowerNodeUsageMsgPayload. This is evaluated in two steps:<ol class="lowerroman simple">
-<li><p>Compute the amount of power available at the spacecraft position using the SOLAR_FLUX_EARTH macro, distance factor, and eclipse shadow factor;</p></li>
+<li><p>Compute the amount of power available at the spacecraft position using the SOLAR_FLUX_EARTH macro, distance factor, and eclipse illumination factor;</p></li>
 <li><p>Compute how much of that power is captured and converted to power using the projectedArea and panelEfficiency attributes. </p></li>
 </ol>
 </p>
@@ -324,9 +327,9 @@
 </dd></dl>
 
 <dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N16SimpleSolarPanel12shadowFactorE">
-<span id="_CPPv3N16SimpleSolarPanel12shadowFactorE"></span><span id="_CPPv2N16SimpleSolarPanel12shadowFactorE"></span><span id="SimpleSolarPanel::shadowFactor__double"></span><span class="target" id="class_simple_solar_panel_1aece0c288a8b3caadc43b5203101f8d34"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shadowFactor</span></span></span><a class="headerlink" href="#_CPPv4N16SimpleSolarPanel12shadowFactorE" title="Link to this definition"></a><br /></dt>
-<dd><p>[-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible) </p>
+<dt class="sig sig-object cpp" id="_CPPv4N16SimpleSolarPanel18illuminationFactorE">
+<span id="_CPPv3N16SimpleSolarPanel18illuminationFactorE"></span><span id="_CPPv2N16SimpleSolarPanel18illuminationFactorE"></span><span id="SimpleSolarPanel::illuminationFactor__double"></span><span class="target" id="class_simple_solar_panel_1a1400a0e1a14b236bca6431d0600b97dc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">illuminationFactor</span></span></span><a class="headerlink" href="#_CPPv4N16SimpleSolarPanel18illuminationFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] solar eclipse illumination factor from 0 (fully obscured) to 1 (fully visible) </p>
 </dd></dl>
 
 </div>

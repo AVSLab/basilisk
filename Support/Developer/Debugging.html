@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accessing the Debugger for C/C++ Basilisk Modules &mdash; Basilisk 2.8.41
+  <title>Accessing the Debugger for C/C++ Basilisk Modules &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,6 +51,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
@@ -73,6 +74,7 @@
 <li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
 <li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releaseGuide.html">Release Guide</a></li>
 </ul>
 </li>
 </ul>
@@ -135,7 +137,7 @@
 <p class="admonition-title">Note</p>
 <p>When projects are configured to build in <code class="docutils literal notranslate"><span class="pre">Release</span></code>, the compiler automatically applies optimizations to the machine code during the build. These optimizations effectively rewrite small algorithms, and such rewrites will not necessarily be reflected in the human-readable code. This is why using debuggers to step through programs that are compiled for Release/Profiling is unstable and may yield unintuitive control flow or unreadable memory. Configuring projects for <code class="docutils literal notranslate"><span class="pre">Debug</span></code> ensures that these optimizations are not applied, such that developers can be sure that there is a direct mapping between the human-readable code and the machine code being executed.</p>
 </div>
-<p>By default, the Basilisk project will also be built using the previous command. However, if the developer prefers to build the project manually, they should add <code class="docutils literal notranslate"><span class="pre">--buildProject</span> <span class="pre">False</span></code> to the previous command and remember to explicitly build for <code class="docutils literal notranslate"><span class="pre">Debug</span></code>. More information on building the software framework can be read in <a class="reference internal" href="../../Install/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>.</p>
+<p>By default, the Basilisk project will also be built using the previous command. However, if the developer prefers to build the project manually, they should add <code class="docutils literal notranslate"><span class="pre">--buildProject</span> <span class="pre">False</span></code> to the previous command and remember to explicitly build for <code class="docutils literal notranslate"><span class="pre">Debug</span></code>. More information on building the software framework can be read in <a class="reference internal" href="../../Build/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>.</p>
 </section>
 <section id="how-to-catch-breakpoints-in-a-c-c-module">
 <h2>How to catch breakpoints in a C/C++ module<a class="headerlink" href="#how-to-catch-breakpoints-in-a-c-c-module" title="Link to this heading"></a></h2>

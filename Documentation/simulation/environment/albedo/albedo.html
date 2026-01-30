@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module: albedo &mdash; Basilisk 2.8.41
+  <title>Module: albedo &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
@@ -59,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
@@ -253,9 +255,9 @@ converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolut
 conditions.</p>
 <p>The Mars’ albedo data is obtained from <a class="reference external" href="http://www.mars.asu.edu/data/tes_albedo/">TES instrument</a> as VICAR format
 and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.</p>
-<p><code class="docutils literal notranslate"><span class="pre">shadowFactorAtdA</span></code> is optional to be calculated with eclipseCase being True or can be assigned
+<p><code class="docutils literal notranslate"><span class="pre">illuminationFactorAtdA</span></code> is optional to be calculated with eclipseCase being True or can be assigned
 directly by the user with eclipseCase False. It is used as a multiplication term in Eq. <a class="reference internal" href="#equation-eq-albedo-10">(10)</a>, if defined.
-Therefore, when using albedo output on an instrument, it should be used after the shadow factor multiplication of the
+Therefore, when using albedo output on an instrument, it should be used after the illumination factor multiplication of the
 instrument, if exists.</p>
 <p>A limit can be set in order not to compute the albedo for planets too far by <span class="math notranslate nohighlight">\(altitudeRateLimit\)</span> which is the
 limit for the rate of the instrument’s altitude to the planet’s radius.</p>
@@ -315,6 +317,12 @@ For <code class="docutils literal notranslate"><span class="pre">ALBEDO_DATA</sp
 The model can  be added to a task like other simModels.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code> is <strong>deprecated</strong> in favor of <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code>.
+In C/C++ both names work until <strong>Dec 31, 2026</strong>. After that date, code must
+use <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code> exclusively.</p>
 </div>
 <hr class="docutils" />
 <div class="breathe-sectiondef docutils container">
@@ -513,9 +521,9 @@ The model can  be added to a task like other simModels.</p>
 </dd></dl>
 
 <dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Albedo16shadowFactorAtdAE">
-<span id="_CPPv3N6Albedo16shadowFactorAtdAE"></span><span id="_CPPv2N6Albedo16shadowFactorAtdAE"></span><span id="Albedo::shadowFactorAtdA__double"></span><span class="target" id="class_albedo_1a267a6dbab1697fdba531ae63f5883a09"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shadowFactorAtdA</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo16shadowFactorAtdAE" title="Link to this definition"></a><br /></dt>
-<dd><p>[-] shadow factor at incremental area </p>
+<dt class="sig sig-object cpp" id="_CPPv4N6Albedo22illuminationFactorAtdAE">
+<span id="_CPPv3N6Albedo22illuminationFactorAtdAE"></span><span id="_CPPv2N6Albedo22illuminationFactorAtdAE"></span><span id="Albedo::illuminationFactorAtdA__double"></span><span class="target" id="class_albedo_1a2c65aabdf601afd0811b37ac3387c7e0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">illuminationFactorAtdA</span></span></span><a class="headerlink" href="#_CPPv4N6Albedo22illuminationFactorAtdAE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] illumination factor at incremental area </p>
 </dd></dl>
 
 <dl class="cpp var">
@@ -565,7 +573,7 @@ The model can  be added to a task like other simModels.</p>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
 <span id="_CPPv3N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="Albedo::computeEclipseAtdA__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_albedo_1aac3d83df6a82ba6584e7b27db9f11634"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEclipseAtdA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Rplanet</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_dAP_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_SP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Albedo18computeEclipseAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
-<dd><p>computes the shadow factor at dA </p>
+<dd><p>computes the illumination factor at dA </p>
 <p>This method computes eclipse at the incremental area if eclipseCase is defined true </p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>

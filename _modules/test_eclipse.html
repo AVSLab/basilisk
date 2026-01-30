@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>test_eclipse &mdash; Basilisk 2.8.41
+  <title>test_eclipse &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,6 +48,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
@@ -110,7 +111,7 @@
 <span class="c1"># Eclipse Condition Unit Test</span>
 <span class="c1">#</span>
 <span class="c1"># Purpose:  Test the proper function of the Eclipse environment module.</span>
-<span class="c1">#           This is done by comparing computed expected shadow factors in</span>
+<span class="c1">#           This is done by comparing computed expected illumination factors in</span>
 <span class="c1">#           particular eclipse conditions to what is simulated</span>
 <span class="c1"># Author:   Patrick Kenneally</span>
 <span class="c1"># Creation Date:  May. 31, 2017</span>
@@ -120,6 +121,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">eclipse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
@@ -130,6 +132,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.messaging</span><span class="w"> </span><span class="kn">import</span> <span class="n">EclipseMsgPayload</span>
 
 <span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -147,7 +150,7 @@
 <span class="sd">**Test Description and Success Criteria**</span>
 
 <span class="sd">The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \</span>
-<span class="sd">expected output. It validates the computation of a shadow factor for total eclipse, partial eclipse,annular eclipse, \</span>
+<span class="sd">expected output. It validates the computation of a illumination factor for total eclipse, partial eclipse,annular eclipse, \</span>
 <span class="sd">and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then \</span>
 <span class="sd">repeated for all three.</span>
 
@@ -165,9 +168,9 @@
 <span class="sd">step process, the velocity is not necessarily needed as an input, so only a position vector is provided \</span>
 <span class="sd">for these cases.</span>
 
-<span class="sd">The shadow factor obtained through the module is compared to the expected result, which is either trivial or \</span>
-<span class="sd">calculated, depending on the eclipse type. Full eclipse and no eclipse shadow factors are compared without the \</span>
-<span class="sd">need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse shadow \</span>
+<span class="sd">The illumination factor obtained through the module is compared to the expected result, which is either trivial or \</span>
+<span class="sd">calculated, depending on the eclipse type. Full eclipse and no eclipse illumination factors are compared without the \</span>
+<span class="sd">need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse illumination \</span>
 <span class="sd">factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using \</span>
 <span class="sd">MATLAB and Spice data.</span>
 
@@ -182,9 +185,9 @@
 
 <span class="sd">**Description of Variables Being Tested**</span>
 
-<span class="sd">In each test scenario the shadow eclipse variable</span>
+<span class="sd">In each test scenario the illumination eclipse variable</span>
 
-<span class="sd">    ``shadowFactor``</span>
+<span class="sd">    ``illuminationFactor``</span>
 
 <span class="sd">is pulled from the log data and compared to expected truth values.</span>
 
@@ -201,19 +204,19 @@
 <span class="sd">**Test Description and Success Criteria**</span>
 
 <span class="sd">The unit test validates the internal aspects of the Basilisk eclipse module by comparing simulated output with \</span>
-<span class="sd">expected output. It validates the computation of a shadow factor for total eclipse using a custom gravity body.</span>
+<span class="sd">expected output. It validates the computation of a illumination factor for total eclipse using a custom gravity body.</span>
 
 <span class="sd">This unit test sets up a custom gravity body, the asteroid Bennu, using the planetEphemeris module (i.e. Spice \</span>
 <span class="sd">is not used for this test.) An empty spice planet message is created for the sun. The spacecraft is set 500 m \</span>
 <span class="sd">on the side of the asteroid opposite of the sun.</span>
 
-<span class="sd">The shadow factor obtained through the module is compared to the expected result, which is trivial to compute.</span>
+<span class="sd">The illumination factor obtained through the module is compared to the expected result, which is trivial to compute.</span>
 
 <span class="sd">**Description of Variables Being Tested**</span>
 
-<span class="sd">In this test scenario the shadow eclipse variable</span>
+<span class="sd">In this test scenario the illumination eclipse variable</span>
 
-<span class="sd">    ``shadowFactor``</span>
+<span class="sd">    ``illuminationFactor``</span>
 
 <span class="sd">is pulled from the log data and compared to the expected truth value.</span>
 
@@ -346,55 +349,55 @@
     <span class="c1"># Execute the simulation for one time step</span>
     <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
 
-    <span class="n">eclipseData_0</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">shadowFactor</span>
+    <span class="n">eclipseData_0</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">illuminationFactor</span>
     <span class="c1"># Obtain body position vectors to check with MATLAB</span>
 
     <span class="n">errTol</span> <span class="o">=</span> <span class="mf">1E-12</span>
     <span class="k">if</span> <span class="n">planet</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;partial&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">0.62310760206735027</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">0.62310760206735027</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Earth partial eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Earth partial eclipse condition&quot;</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Earth full eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Earth full eclipse condition&quot;</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Earth none eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Earth none eclipse condition&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;annular&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">1.497253388113018e-04</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">1.497253388113018e-04</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Earth annular eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Earth annular eclipse condition&quot;</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">planet</span> <span class="o">==</span> <span class="s2">&quot;mars&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;partial&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">0.18745025055615416</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">0.18745025055615416</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Mars partial eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Mars partial eclipse condition&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Mars full eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Mars full eclipse condition&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Mars none eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Mars none eclipse condition&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">eclipseCondition</span> <span class="o">==</span> <span class="s2">&quot;annular&quot;</span><span class="p">:</span>
-            <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">4.245137380531894e-05</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">4.245137380531894e-05</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
                 <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for Mars annular eclipse condition&quot;</span><span class="p">)</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for Mars annular eclipse condition&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">planet</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">eclipseCondition</span><span class="p">)</span>
@@ -483,14 +486,14 @@
     <span class="c1"># Execute the simulation for one time step</span>
     <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
 
-    <span class="n">eclipseData_0</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">shadowFactor</span>
+    <span class="n">eclipseData_0</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">illuminationFactor</span>
     <span class="c1"># Obtain body position vectors to check with MATLAB</span>
 
     <span class="n">errTol</span> <span class="o">=</span> <span class="mf">1E-12</span>
-    <span class="n">truthShadowFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthShadowFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+    <span class="n">truthilluminationFactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">eclipseData_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">truthilluminationFactor</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
         <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Shadow Factor failed for custom full eclipse condition&quot;</span><span class="p">)</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Illumination Factor failed for custom full eclipse condition&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: custom-full&quot;</span><span class="p">)</span>
@@ -503,9 +506,50 @@
 
     <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
 
+<div class="viewcode-block" id="test_shadow_vs_illumination_alias_and_deprecation_behavior">
+<a class="viewcode-back" href="../Documentation/simulation/environment/eclipse/_UnitTest/test_eclipse.html#test_eclipse.test_shadow_vs_illumination_alias_and_deprecation_behavior">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_shadow_vs_illumination_alias_and_deprecation_behavior</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check aliasing and deprecation behavior for EclipseMsgPayload.</span>
+
+<span class="sd">    If this test starts failing with a BSKUrgentDeprecationWarning (or the</span>
+<span class="sd">    deprecation utility starts treating ``shadowFactor`` as an error), that is</span>
+<span class="sd">    a signal that we have passed the deprecation deadline and should:</span>
+
+<span class="sd">    * remove support for ``EclipseMsgPayload.shadowFactor``, and</span>
+<span class="sd">    * remove this test (or update it to only check ``illuminationFactor``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">EclipseMsgPayload</span><span class="p">()</span>
+
+    <span class="c1"># 1. Test Forward Direction (New -&gt; Old)</span>
+    <span class="c1"># Setting the new variable should update the old one silently (or logically).</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Reading the OLD variable (shadowFactor) triggers the warning.</span>
+    <span class="c1"># We must catch it so it doesn&#39;t fail the &quot;no warnings allowed&quot; check.</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">warns</span><span class="p">(</span><span class="ne">Warning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;.*illuminationFactor.*&quot;</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">shadowFactor</span>
+    <span class="k">assert</span> <span class="n">val</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+    <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">today</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">:</span>
+        <span class="c1"># 2. Test Backward Direction (Old -&gt; New)</span>
+        <span class="c1"># Setting the deprecated name should emit a warning.</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">warns</span><span class="p">(</span><span class="ne">Warning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.*illuminationFactor.*&quot;</span><span class="p">):</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="c1"># Verify it updated the new variable</span>
+        <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">unitEclipse</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;annular&quot;</span><span class="p">,</span> <span class="s2">&quot;mars&quot;</span><span class="p">)</span>
     <span class="n">unitEclipseCustom</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_shadow_vs_illumination_alias_and_deprecation_behavior</span><span class="p">()</span>
 </pre></div>
 
            </div>

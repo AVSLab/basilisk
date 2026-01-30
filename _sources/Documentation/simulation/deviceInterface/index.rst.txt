@@ -13,10 +13,13 @@ deviceInterface
    :maxdepth: 1
    :caption: Directories:
 
+   arrayMotorTorqueToSingleActuators/index
    encoder/index
    hingedBodyLinearProfiler/index
    motorVoltageInterface/index
    prescribedLinearTranslation/index
    prescribedRotation1DOF/index
+   saturationSingleActuator/index
+   scalarJointStatesToRWSpeed/index
    stepperMotor/index
    tempMeasurement/index

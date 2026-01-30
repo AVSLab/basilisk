@@ -24,8 +24,13 @@ Basilisk Release Notes
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
 
-Version |release|
------------------
+Version |release| (Jan. 28 2026)
+--------------------------------
+- Deploy both release docs at https://avslab.github.io/basilisk and developer beta
+  docs at https://avslab.github.io/basilisk/developer.
+- Added :ref:`releaseGuide` on releasing a new version of Basilisk.
+- Updated merge workflow to deploy develop branch documentation to https://avslab.github.io/basilisk/develop and master
+  branch documentation to https://avslab.github.io/basilisk.
 - Migrated supportData handling to a Pooch-based fetch system.
   .. warning::
 
@@ -42,6 +47,7 @@ Version |release|
   and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector`,
   :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector`.
 - Added support for :ref:`linearTranslationOneDOFStateEffector` to attach dependent effectors.
+- Improved documentation structure by separating build-from-source instructions from ``pip`` installation instructions.
 - Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
 - Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
@@ -54,6 +60,8 @@ Version |release|
 - Added new module :ref:`MJJointReactionForces` to extract the reaction forces and torques acting on the joints from a MuJoCo simulation.
 - Added new module :ref:`hingedJointArrayMotor` to determine the motor torques for an array of hinged joints.
 - Added new module :ref:`jointMotionCompensator` to determine the hub torques required to negate the effect of hinged joint motor torques on the spacecraft hub motion.
+- Updated :ref:`locationPointing` module to save ``omega_RN_B`` to the ``attGuidOutMsg``. This may effect
+  the performance of other modules that use this output message.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
@@ -129,6 +137,11 @@ Version |release|
 - Removed ``supportData`` files from wheels and source distributions to reduce package size.
 - Made :ref:`FacetSRPDynamicEffector` variables ``numFacets`` and ``numArticulatedFacets`` private
   variables.  Their use as public variables has been deprecated since December 2024.
+- Adds support for updating noise parameters in :ref:`magnetometer` during simulation
+- Deprecated use of ``shadowFactor`` in favor of ``illuminationFactor``
+- Added :ref:`scenarioAttitudeFeedbackRWMuJoCo`, similar to :ref:`scenarioAttitudeFeedbackRW` but using
+  MuJoCo dynamics.
+- Added the modules :ref:`simpleAntenna` and :ref:`antennaPower`.
 
 
 Version 2.8.0 (August 30, 2025)
@@ -248,7 +261,6 @@ Version 2.7.0 (April 20, 2025)
 - Updated ``THRSimConfig`` to use a shared pointer to avoid duplication of configuration data across the simulation and to enable access and updates to the parameters during simulation. This change has been implemented in both the ``thrusterDynamicsEffector`` and ``thrusterStateEffector`` modules.
 - :beta:`Mujoco Support`: Added ``StatefulSysModel`` for models in the dynamics task of ``MJScene`` that need to declare
   continuous-time states. Modified :ref:`scenarioDeployPanels` to illustrate the use of ``StatefulSysModel``.
-
 
 Version  2.6.0  (Feb. 21, 2025)
 -------------------------------

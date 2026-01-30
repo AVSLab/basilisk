@@ -4,5 +4,5 @@ Module: MJEquality
 ==================
 
 .. autodoxygenfile:: MJEquality.h
-   :project: _GeneralModuleFiles5
+   :project: _GeneralModuleFiles6
 

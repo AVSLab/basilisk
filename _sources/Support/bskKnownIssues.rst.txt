@@ -9,8 +9,8 @@ Basilisk Known Issues
     The use of ``cMsgCInterfacePy`` is depreciated.  Use ``messaging`` instead.
 
 
-Version |release|
------------------
+Version |release| (Jan. 28, 2026)
+---------------------------------
 - The denton flux model API has changed. The module now uses the new data fetching
   API and thus relies on users passing in the correct support data location via
   ``configureDentonFiles``. Previously, the module automatically searched for the
@@ -22,6 +22,10 @@ Version |release|
   Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
 - :ref:`gravityEffector` had a typo where the total gravity potential contribution of the celestial bodies
   was not being computed properly. Fixed now.
+- :ref:`MJSite` hade an issue where the angular velocity that was being written into the stateOutMsg
+  was in the inertial frame components not the body frame components.  This is now fixed.
+- :ref:`locationPointing` was calculating the value of ``omega_RN_B`` but not saving it to the
+  ``attGuidOutMsg``. This value is now being saved properly.
 - The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
   list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
   method.  If the script was directly manipulating the :ref:`vizSupport` list that functionality no longer works.

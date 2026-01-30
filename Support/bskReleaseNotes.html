@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basilisk Release Notes &mdash; Basilisk 2.8.41
+  <title>Basilisk Release Notes &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,11 +52,12 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../Support.html">Support</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basilisk Release Notes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#version-release">Version 2.8.41
-</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-release-jan-28-2026">Version 2.9.0
+ (Jan. 28 2026)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-8-0-august-30-2025">Version 2.8.0 (August 30, 2025)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-7-0-april-20-2025">Version 2.7.0 (April 20, 2025)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-6-0-feb-21-2025">Version  2.6.0  (Feb. 21, 2025)</a></li>
@@ -142,10 +143,15 @@ CAD asteroid or lunar surface terrain.</p></li>
 <li><p>integrating the <a class="reference external" href="https://mujoco.org">MuJoCo</a> library as an alternate dynamics engine</p></li>
 </ul>
 </aside>
-<section id="version-release">
-<h2>Version 2.8.41
-<a class="headerlink" href="#version-release" title="Link to this heading"></a></h2>
+<section id="version-release-jan-28-2026">
+<h2>Version 2.9.0
+ (Jan. 28 2026)<a class="headerlink" href="#version-release-jan-28-2026" title="Link to this heading"></a></h2>
 <ul>
+<li><p>Deploy both release docs at <a class="reference external" href="https://avslab.github.io/basilisk">https://avslab.github.io/basilisk</a> and developer beta
+docs at <a class="reference external" href="https://avslab.github.io/basilisk/developer">https://avslab.github.io/basilisk/developer</a>.</p></li>
+<li><p>Added <a class="reference internal" href="Developer/releaseGuide.html#releaseguide"><span class="std std-ref">Release Guide</span></a> on releasing a new version of Basilisk.</p></li>
+<li><p>Updated merge workflow to deploy develop branch documentation to <a class="reference external" href="https://avslab.github.io/basilisk/develop">https://avslab.github.io/basilisk/develop</a> and master
+branch documentation to <a class="reference external" href="https://avslab.github.io/basilisk">https://avslab.github.io/basilisk</a>.</p></li>
 <li><p>Migrated supportData handling to a Pooch-based fetch system.
 .. warning:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">breaking</span> <span class="n">change</span><span class="p">,</span> <span class="n">minor</span> <span class="n">changes</span> <span class="n">were</span> <span class="n">made</span> <span class="n">to</span> <span class="n">how</span> <span class="n">the</span> <span class="n">Denton</span> <span class="n">flux</span> <span class="n">model</span> <span class="n">API</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
@@ -164,6 +170,7 @@ CAD asteroid or lunar surface terrain.</p></li>
 and <a class="reference internal" href="../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a> attachable to <a class="reference internal" href="../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">Module: spinningBodyOneDOFStateEffector</span></a>,
 <a class="reference internal" href="../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">Module: spinningBodyTwoDOFStateEffector</span></a>, and <a class="reference internal" href="../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">Module: spinningBodyNDOFStateEffector</span></a>.</p></li>
 <li><p>Added support for <a class="reference internal" href="../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.html#lineartranslationonedofstateeffector"><span class="std std-ref">Module: linearTranslationOneDOFStateEffector</span></a> to attach dependent effectors.</p></li>
+<li><p>Improved documentation structure by separating build-from-source instructions from <code class="docutils literal notranslate"><span class="pre">pip</span></code> installation instructions.</p></li>
 <li><p>Added custom reaction wheel: “NanoAvionics RW0” to <code class="docutils literal notranslate"><span class="pre">src/utilities/simIncludeRW.py</span></code></p></li>
 <li><p>Added TLE handling utilities in <a class="reference internal" href="../Documentation/utilities/tleHandling.html#tlehandling"><span class="std std-ref">tleHandling</span></a> to parse TLE files and convert to orbital elements</p></li>
 <li><p>Removed deprecated use of astro constants from <code class="docutils literal notranslate"><span class="pre">src/utilities/astroFunction.py</span></code>.
@@ -176,6 +183,8 @@ Users should be astrodynamics constants from <code class="docutils literal notra
 <li><p>Added new module <a class="reference internal" href="../Documentation/simulation/mujocoDynamics/MJJointReactionForces/MJJointReactionForces.html#mjjointreactionforces"><span class="std std-ref">Module: MJJointReactionForces</span></a> to extract the reaction forces and torques acting on the joints from a MuJoCo simulation.</p></li>
 <li><p>Added new module <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.html#hingedjointarraymotor"><span class="std std-ref">Module: hingedJointArrayMotor</span></a> to determine the motor torques for an array of hinged joints.</p></li>
 <li><p>Added new module <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.html#jointmotioncompensator"><span class="std std-ref">Module: jointMotionCompensator</span></a> to determine the hub torques required to negate the effect of hinged joint motor torques on the spacecraft hub motion.</p></li>
+<li><p>Updated <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> module to save <code class="docutils literal notranslate"><span class="pre">omega_RN_B</span></code> to the <code class="docutils literal notranslate"><span class="pre">attGuidOutMsg</span></code>. This may effect
+the performance of other modules that use this output message.</p></li>
 <li><p>Refactored the CI build system scripts</p></li>
 <li><p>Removed deprecated use of <code class="docutils literal notranslate"><span class="pre">Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload</span></code>.
 Users need to use <code class="docutils literal notranslate"><span class="pre">ClassicalElements()</span></code> defined in <code class="docutils literal notranslate"><span class="pre">orbitalMotion</span></code>.</p></li>
@@ -251,6 +260,11 @@ See list of known issues for details.</p>
 <li><p>Removed <code class="docutils literal notranslate"><span class="pre">supportData</span></code> files from wheels and source distributions to reduce package size.</p></li>
 <li><p>Made <a class="reference internal" href="../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">Module: facetSRPDynamicEffector</span></a> variables <code class="docutils literal notranslate"><span class="pre">numFacets</span></code> and <code class="docutils literal notranslate"><span class="pre">numArticulatedFacets</span></code> private
 variables.  Their use as public variables has been deprecated since December 2024.</p></li>
+<li><p>Adds support for updating noise parameters in <a class="reference internal" href="../Documentation/simulation/sensors/magnetometer/magnetometer.html#magnetometer"><span class="std std-ref">Module: magnetometer</span></a> during simulation</p></li>
+<li><p>Deprecated use of <code class="docutils literal notranslate"><span class="pre">shadowFactor</span></code> in favor of <code class="docutils literal notranslate"><span class="pre">illuminationFactor</span></code></p></li>
+<li><p>Added <a class="reference internal" href="../examples/mujoco/scenarioAttitudeFeedbackRWMuJoCo.html#scenarioattitudefeedbackrwmujoco"><span class="std std-ref">scenarioAttitudeFeedbackRWMuJoCo</span></a>, similar to <a class="reference internal" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioattitudefeedbackrw"><span class="std std-ref">scenarioAttitudeFeedbackRW</span></a> but using
+MuJoCo dynamics.</p></li>
+<li><p>Added the modules <a class="reference internal" href="../Documentation/simulation/communication/simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a> and <a class="reference internal" href="../Documentation/simulation/power/antennaPower/antennaPower.html#antennapower"><span class="std std-ref">Module: antennaPower</span></a>.</p></li>
 </ul>
 </section>
 <section id="version-2-8-0-august-30-2025">
@@ -383,7 +397,7 @@ other CI systems to use these wheels for testing with Basilisk as a dependency.<
 <li><p>updated README file.  Links now point to local documentation instead of to the pages
 on the AVS lab web page that used to host the documentation.</p></li>
 <li><p>Updated <a class="reference internal" href="../examples/scenarioBasicOrbitStream.html#scenariobasicorbitstream"><span class="std std-ref">scenarioBasicOrbitStream</span></a> to add the ability to pause and resume the live BSK stream</p></li>
-<li><p>Added documenation on installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code> via source code in <a class="reference internal" href="../Install/pipInstall.html#pipinstall"><span class="std std-ref">Advanced: Building and Installing Pre-Compiled Basilisk Wheels</span></a></p></li>
+<li><p>Added documenation on installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code> via source code in <a class="reference internal" href="../Build/pipInstall.html#pipinstall"><span class="std std-ref">Advanced: Building Pre-Compiled Basilisk Wheels</span></a></p></li>
 <li><p>Updated <a class="reference internal" href="../examples/scenarioOrbitManeuver.html#scenarioorbitmaneuver"><span class="std std-ref">scenarioOrbitManeuver</span></a> to include a SPICE module that rotates the Earth</p></li>
 <li><p>Changed the way polyhedron gravity is computed to be more computationally efficient</p></li>
 <li><p>Updated <a class="reference internal" href="../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> to flush the output buffer when saving binary files to avoid truncation</p></li>
@@ -467,7 +481,7 @@ and a note on specifying sensor properties in  <a class="reference internal" hre
 <li><p>Update <a class="reference internal" href="../Learn/makingModules/makingModules-2.html#makingmodules-2"><span class="std std-ref">Creating New Message Definitions</span></a> on how to make messages available to Basilisk modules</p></li>
 <li><p>Support for Vizard release 2.2.1, including rotating frame settings and documentation for support of <code class="docutils literal notranslate"><span class="pre">.glb</span></code> shape files</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">vizProtobuffer</span></code> upgraded to use latest C++ compiler, <code class="docutils literal notranslate"><span class="pre">protobuf</span></code> Python/C++ library upgraded</p></li>
-<li><p>Updated <a class="reference internal" href="../Install/installOnLinux.html#installlinux"><span class="std std-ref">Setup On Linux</span></a> to discuss installing BSK on Fedora Linux systems.</p></li>
+<li><p>Updated <a class="reference internal" href="../Build/installOnLinux.html#installlinux"><span class="std std-ref">Setup On Linux</span></a> to discuss installing BSK on Fedora Linux systems.</p></li>
 <li><p>Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with <cite>conan2</cite>.</p></li>
 <li><p>Download <code class="docutils literal notranslate"><span class="pre">cspice</span></code> using <code class="docutils literal notranslate"><span class="pre">conan</span></code> instead of providing custom libraries.  This ensures all platforms are using
 the same version of <code class="docutils literal notranslate"><span class="pre">cspice</span></code>.</p></li>
@@ -822,7 +836,7 @@ and <code class="docutils literal notranslate"><span class="pre">opencv</span></
 <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.rigidBodyKinematics</span></code>.</p></li>
 <li><p>Fixed an issued recording the <code class="docutils literal notranslate"><span class="pre">timeWritten</span></code> information of a C-wrapped message
 with a <code class="docutils literal notranslate"><span class="pre">recorder()</span></code> module.</p></li>
-<li><p>Updated <a class="reference internal" href="../Install/pullCloneBSK.html#pullclonebsk"><span class="std std-ref">Download Source Code</span></a> to ask the user to first install <code class="docutils literal notranslate"><span class="pre">lfs</span></code> before pulling a copy
+<li><p>Updated <a class="reference internal" href="../Build/pullCloneBSK.html#pullclonebsk"><span class="std std-ref">Download Source Code</span></a> to ask the user to first install <code class="docutils literal notranslate"><span class="pre">lfs</span></code> before pulling a copy
 of the Basilisk repo due to some large files being stored in the GitHub large file storage
 system.</p></li>
 <li><p>Updated <a class="reference internal" href="../examples/scenarioGroundLocationImaging.html#scenariogroundlocationimaging"><span class="std std-ref">scenarioGroundLocationImaging</span></a> to properly save off the ground location
@@ -943,7 +957,7 @@ the planet is outside the spacecraft-spacecraft interval</p></li>
 <li><p>added new <a class="reference internal" href="../examples/scenarioAerocapture.html#scenarioaerocapture"><span class="std std-ref">scenarioAerocapture</span></a> which simulates an aerocapture scenario</p></li>
 <li><p>added new <a class="reference internal" href="../Documentation/simulation/deviceInterface/hingedBodyLinearProfiler/hingedBodyLinearProfiler.html#hingedbodylinearprofiler"><span class="std std-ref">Module: hingedBodyLinearProfiler</span></a> to provide a panel deployment angular profile</p></li>
 <li><p>added new <a class="reference internal" href="../Documentation/simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.html#hingedrigidbodymotor"><span class="std std-ref">Module: hingedRigidBodyMotor</span></a> to provide panel motor torque control</p></li>
-<li><p>added new training videos to <a class="reference internal" href="../Install/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>, installOptionalPackages, <a class="reference internal" href="../examples/scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a>,
+<li><p>added new training videos to <a class="reference internal" href="../Build/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>, installOptionalPackages, <a class="reference internal" href="../examples/scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a>,
 <a class="reference internal" href="../examples/scenarioOrbitManeuver.html#scenarioorbitmaneuver"><span class="std std-ref">scenarioOrbitManeuver</span></a>, <a class="reference internal" href="../examples/scenarioOrbitMultiBody.html#scenarioorbitmultibody"><span class="std std-ref">scenarioOrbitMultiBody</span></a>, <a class="reference internal" href="../examples/scenarioCustomGravBody.html#scenariocustomgravbody"><span class="std std-ref">scenarioCustomGravBody</span></a></p></li>
 <li><p>added support for Vizard 2.1 scripting</p></li>
 </ul>

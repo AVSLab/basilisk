@@ -42,5 +42,5 @@ provides information on what this message is used for.
 ----
 
 .. autodoxygenfile:: magneticFieldBase.h
-   :project: _GeneralModuleFiles4
+   :project: _GeneralModuleFiles5
 

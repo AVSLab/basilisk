@@ -215,6 +215,7 @@ It's recommended to study the first 6 scenarios in order:
   Landing on Asteroid with Contact Physics <mujoco/scenarioAsteroidLanding>
   Docking between Two CubeSats <mujoco/scenarioSimpleDocking>
   Branching Panel Deployment with Locking Mechanisms <mujoco/scenarioBranchingPanels>
+  Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
 
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------

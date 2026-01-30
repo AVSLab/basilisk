@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>test_solarFlux &mdash; Basilisk 2.8.41
+  <title>test_solarFlux &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,6 +48,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
@@ -118,8 +119,8 @@
 
 <div class="viewcode-block" id="test_solarFlux">
 <a class="viewcode-back" href="../Documentation/simulation/environment/solarFlux/_UnitTest/test_solarFlux.html#test_solarFlux.test_solarFlux">[docs]</a>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;positionFactor, shadowFactor, eclipseMsgName, relTol&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;eclipse_data_0&quot;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">)])</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_solarFlux</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">positionFactor</span><span class="p">,</span> <span class="n">shadowFactor</span><span class="p">,</span> <span class="n">eclipseMsgName</span><span class="p">,</span> <span class="n">relTol</span><span class="p">):</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;positionFactor, illuminationFactor, eclipseMsgName, relTol&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;eclipse_data_0&quot;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_solarFlux</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">positionFactor</span><span class="p">,</span> <span class="n">illuminationFactor</span><span class="p">,</span> <span class="n">eclipseMsgName</span><span class="p">,</span> <span class="n">relTol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Test Description**</span>
 
@@ -127,12 +128,12 @@
 <span class="sd">    To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write</span>
 <span class="sd">    the flux at ``positionFactor*AU`` and the flux is checked to be ``positionFactor**2`` of that at 1 AU to within</span>
 <span class="sd">    a relative tolerance of relTol.</span>
-<span class="sd">    The application of the shadowFactor is also checked as a multiple of the un-shadowed flux.</span>
+<span class="sd">    The application of the illuminationFactor is also checked as a multiple of the un-shadowed flux.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        positionFactor (float): positive,</span>
 <span class="sd">            a factor by which to multiply the original s/c position to check flux at a new position</span>
-<span class="sd">        shadowFactor (float): between 0 and 1,</span>
+<span class="sd">        illuminationFactor (float): between 0 and 1,</span>
 <span class="sd">            the eclipse factor by which to multiple the solar flux at a position</span>
 <span class="sd">        relTol (float): positive, the relative tolerance to which the result is checked.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -151,7 +152,7 @@
     <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPositionMessage</span><span class="p">)</span>
 
     <span class="n">eclipseMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
-    <span class="n">eclipseMessage</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">=</span> <span class="n">shadowFactor</span>
+    <span class="n">eclipseMessage</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="n">illuminationFactor</span>
     <span class="n">eclMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMessage</span><span class="p">)</span>
 
     <span class="n">sf</span> <span class="o">=</span> <span class="n">solarFlux</span><span class="o">.</span><span class="n">SolarFlux</span><span class="p">()</span>
@@ -173,7 +174,7 @@
     <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
     <span class="n">fluxOutFurther</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">flux</span>
 
-    <span class="k">assert</span> <span class="n">fluxOutFurther</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">fluxOutEarth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">shadowFactor</span> <span class="o">/</span> <span class="p">(</span><span class="n">positionFactor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">shadowFactor</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="n">relTol</span><span class="p">)</span></div>
+    <span class="k">assert</span> <span class="n">fluxOutFurther</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">fluxOutEarth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">illuminationFactor</span> <span class="o">/</span> <span class="p">(</span><span class="n">positionFactor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">illuminationFactor</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="n">relTol</span><span class="p">)</span></div>
 
 
 

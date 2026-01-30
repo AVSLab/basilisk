@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. scenario_AttEclipse &mdash; Basilisk 2.8.41
+  <title>6. scenario_AttEclipse &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">Integrated Example Scripts</a><ul class="current">
@@ -158,7 +159,7 @@ changing the <code class="docutils literal notranslate"><span class="pre">fswRat
 <p>The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
 The user is cautioned when setting a changing the standard time step
 as too large a time step can lead to propagated inaccuracy.</p>
-<p>When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
+<p>When the simulation completes several plots are shown for the eclipse illumination factor, the sun direction vector,
 attitude error, RW motor torque, and RW speed.</p>
 </section>
 <section id="custom-dynamics-configurations-instructions">
@@ -194,9 +195,9 @@ coarse sun sensors. The algorithm requires a minimum of three CSS to operate cor
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">showPlots</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+<p>This plot illustrates the illumination fraction calculated by the CSS as the spacecraft orbits Earth and passes through
 the Earth’s shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.</p>
-<img alt="../../../_images/scenario_AttEclipse_shadowFraction.svg" class="align-center" src="../../../_images/scenario_AttEclipse_shadowFraction.svg" />
+<img alt="../../../_images/scenario_AttEclipse_illuminationFraction.svg" class="align-center" src="../../../_images/scenario_AttEclipse_illuminationFraction.svg" />
 <p>The <a class="reference internal" href="../../../Documentation/fswAlgorithms/attDetermination/CSSEst/cssWlsEst.html#csswlsest"><span class="std std-ref">Module: cssWlsEst</span></a> module calculates the position of the sun based on input from the CSS.
 The corresponding vector’s three
 components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to

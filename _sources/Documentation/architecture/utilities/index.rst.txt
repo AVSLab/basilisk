@@ -14,12 +14,14 @@ utilities
    avsEigenMRP
    avsEigenSupport
    bilinearInterpolation
+   brightnessTemperatureSolarSystem
    bskLogging
    bskSemaphore
    bsk_Print
    discretize
    gauss_markov
    geodeticConversion
+   haslamBackgroundRadiation
    keplerianOrbit
    linearAlgebra
    linearInterpolation

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Basilisk: an Astrodynamics Simulation Framework &mdash; Basilisk 2.8.41
+  <title>Welcome to Basilisk: an Astrodynamics Simulation Framework &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=53003e83"></script>
+      <script src="_static/documentation_options.js?v=182a64a0"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,6 +50,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation/index.html">Documentation</a></li>
@@ -96,9 +97,21 @@
 </a>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>This documentation is for the latest release on <code class="docutils literal notranslate"><span class="pre">develop</span></code>.
-If you are looking for documenation for prior tagged releases, they can be found at
-<a class="reference external" href="https://hanspeterschaub.info/bskOlderDocs.html">here</a>.</p>
+<p>The documentation for the tagged release is found at <a class="reference external" href="https://avslab.github.io/basilisk">https://avslab.github.io/basilisk</a>,
+while the documentation for the latest beta release is found at <a class="reference external" href="https://avslab.github.io/basilisk/develop">https://avslab.github.io/basilisk/develop</a>.</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Starting with Basilisk v2.9.0 we now:</p>
+<ul class="simple">
+<li><p>create <code class="docutils literal notranslate"><span class="pre">pip</span></code> wheels on each tagged release.  These are uploaded
+automatically to <a class="reference external" href="https://pypi.org/project/bsk/">PyPI</a>.  See <a class="reference internal" href="Install.html#bskinstall"><span class="std std-ref">Install</span></a> for more info.</p></li>
+<li><p>tag major and patch releases on <code class="docutils literal notranslate"><span class="pre">master</span></code>.  The <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch is used for the beta
+cycle for the next major release.</p></li>
+<li><p>dynamically load Basilisk simulation data on demand. This keeps the wheel size acceptable
+for <a class="reference external" href="https://pypi.org/project/bsk/">PyPi</a>.  See <a class="reference internal" href="Install.html#bskinstall"><span class="std std-ref">Install</span></a> for info on using <code class="docutils literal notranslate"><span class="pre">bskLargeData</span></code> to force all data to be
+downloaded at once.</p></li>
+</ul>
 </div>
 <section id="architecture">
 <h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h2>
@@ -110,7 +123,7 @@ If you are looking for documenation for prior tagged releases, they can be found
 <p><strong>License:</strong> <a class="reference external" href="https://en.wikipedia.org/wiki/ISC_license">ISC Open Source
 License</a></p>
 <p><strong>Platforms:</strong> macOS, Linux and Windows</p>
-<p><strong>Status:</strong> version 2.8.41
+<p><strong>Status:</strong> version 2.9.0
 </p>
 <p><strong>Logo:</strong> <a class="reference download internal" download="" href="_downloads/455f585207ebd2efe529325d874df6f4/Basilisk-Logo.png"><code class="xref download docutils literal notranslate"><span class="pre">PNG</span></code></a>
 <a class="reference download internal" download="" href="_downloads/ae1011cb792c48ea0586f95db217d6ad/Basilisk-Logo.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span></code></a>
@@ -328,6 +341,7 @@ device faults may be triggered directly from the visualization.</p></li>
 <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation/index.html">Documentation</a></li>

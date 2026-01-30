@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>simIncludeThruster &mdash; Basilisk 2.8.41
+  <title>simIncludeThruster &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/documentation_options.js?v=182a64a0"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,6 +48,7 @@
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
@@ -578,6 +579,27 @@
         <span class="n">TH</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="mf">227.5</span>
         <span class="c1"># nozzle area [m^2]</span>
         <span class="n">TH</span><span class="o">.</span><span class="n">areaNozzle</span> <span class="o">=</span> <span class="mf">0.07</span>
+
+        <span class="k">return</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#    NanoAvionics EPSS C2:</span>
+    <span class="c1">#</span>
+    <span class="c1">#    Information Source:</span>
+    <span class="c1">#    https://satcatalog.s3.amazonaws.com/components/901/SatCatalog_-_NanoAvionics_-_EPSS_C2_-_Datasheet.pdf</span>
+    <span class="c1">#    https://www.youtube.com/watch?v=_YOA2swigBw</span>
+    <span class="c1">#</span>
+    <span class="c1">#    This is a NanoAvionics EPSS C2 monopropellant thruster</span>
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">EPSS_C2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TH</span><span class="p">):</span>
+        <span class="c1"># maximum thrust BOL [N]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c1"># minimum thruster on time [s]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">MinOnTime</span> <span class="o">=</span> <span class="mf">0.010</span>    <span class="c1"># Guesstimate based on similar thrusters &amp; estimate based on minimum impulse</span>
+        <span class="c1"># Isp value [s]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="mf">230.0</span>    <span class="c1"># Figure 5 of datasheet</span>
+        <span class="c1"># nozzle area [m^2]</span>
+        <span class="n">TH</span><span class="o">.</span><span class="n">areaNozzle</span> <span class="o">=</span> <span class="mf">6.0e-7</span>  <span class="c1"># [m^2] Guesstimate</span>
 
         <span class="k">return</span>
 

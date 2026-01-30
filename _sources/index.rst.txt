@@ -10,9 +10,20 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
 
 .. tip::
 
-   This documentation is for the latest release on ``develop``.
-   If you are looking for documenation for prior tagged releases, they can be found at
-   `here <https://hanspeterschaub.info/bskOlderDocs.html>`_.
+   The documentation for the tagged release is found at https://avslab.github.io/basilisk,
+   while the documentation for the latest beta release is found at https://avslab.github.io/basilisk/develop.
+
+.. attention::
+
+   Starting with Basilisk v2.9.0 we now:
+
+   - create ``pip`` wheels on each tagged release.  These are uploaded
+     automatically to `PyPI <https://pypi.org/project/bsk/>`_.  See :ref:`bskInstall` for more info.
+   - tag major and patch releases on ``master``.  The ``develop`` branch is used for the beta
+     cycle for the next major release.
+   - dynamically load Basilisk simulation data on demand. This keeps the wheel size acceptable
+     for `PyPi`_.  See :ref:`bskInstall` for info on using ``bskLargeData`` to force all data to be
+     downloaded at once.
 
 Architecture
 ------------
@@ -200,8 +211,10 @@ Related Publications
 .. toctree::
    :maxdepth: 1
    :caption: Basilisk:
+   :includehidden:
 
    Install
+   Building from Source <Build>
    Learn
    Support
    Documentation/index

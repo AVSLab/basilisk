@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Install &mdash; Basilisk 2.8.41
+  <title>Install &mdash; Basilisk 2.9.0
  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
@@ -16,7 +16,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=53003e83"></script>
+      <script src="_static/documentation_options.js?v=182a64a0"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -24,7 +24,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Download Source Code" href="Install/pullCloneBSK.html" />
+    <link rel="next" title="Building from Source" href="Build.html" />
     <link rel="prev" title="Welcome to Basilisk: an Astrodynamics Simulation Framework" href="index.html" /> 
 </head>
 
@@ -50,18 +50,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Install/pullCloneBSK.html">Download Source Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/installOnLinux.html">Setup On Linux</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/installOnMacOS.html">Setup On macOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/installOnWindows.html">Setup On Windows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/installBuild.html">Building the Software Framework</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/buildExtModules.html">Building Custom Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/customPython.html">Using a Custom Python Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/installBuildConan.html">Advanced: Directly Building the Software Framework Using Conan</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Install/pipInstall.html">Advanced: Building and Installing Pre-Compiled Basilisk Wheels</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Build.html">Building from Source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Learn.html">Learning Basilisk</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation/index.html">Documentation</a></li>
@@ -104,20 +94,63 @@
              
   <section id="install">
 <span id="bskinstall"></span><h1>Install<a class="headerlink" href="#install" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Install/pullCloneBSK.html">Download Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/installOnLinux.html">Setup On Linux</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/installOnMacOS.html">Setup On macOS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/installOnWindows.html">Setup On Windows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/installBuild.html">Building the Software Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/buildExtModules.html">Building Custom Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/customPython.html">Using a Custom Python Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/installBuildConan.html">Advanced: Directly Building the Software Framework Using Conan</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Install/pipInstall.html">Advanced: Building and Installing Pre-Compiled Basilisk Wheels</a></li>
-</ul>
+<p>Basilisk can be installed either from <a class="reference external" href="https://pypi.org/project/bsk/">PyPI</a> as
+a prebuilt wheel or built locally from source.
+The prebuilt wheels include all build options, such as optical navigation
+and MuJoCo dynamics, but do <strong>not</strong> support linking external C++ modules, as
+this requires rebuilding Basilisk.</p>
+<p>If you want to use custom C++ modules, or prefer smaller install sizes by
+excluding unused features, you must build Basilisk from source.
+See the <a class="reference internal" href="Build.html#bskinstall-build"><span class="std std-ref">Building from Source</span></a> for more information.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We are currently investigating ways to allow users to link external C++
+modules while using the prebuilt PyPI wheel. Stay tuned!</p>
 </div>
+<p>The easiest way to install Basilisk is using <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install the prebuilt
+package from PyPI. Run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bsk
+</pre></div>
+</div>
+<p>Or, if using <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> (a modern Python package manager):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>bsk
+</pre></div>
+</div>
+<p>This installs the latest stable version of Basilisk and all dependencies.
+To install a specific version, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">bsk</span><span class="o">==</span>&lt;version&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the desired release number, e.g. <code class="docutils literal notranslate"><span class="pre">2.9.0</span></code>.</p>
+<p><strong>Prebuilt wheel availability:</strong></p>
+<ul class="simple">
+<li><p><strong>Windows:</strong> Windows 10/11 (x86_64)</p></li>
+<li><p><strong>macOS:</strong> macOS 11+ (x86_64 and Apple Silicon arm64)</p></li>
+<li><p><strong>Linux:</strong> Manylinux 2.24+ (x86_64, aarch64)</p></li>
+</ul>
+<p>All wheels are built as <strong>ABI3</strong> packages for Basilisk supported Python
+versions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On unsupported systems or Python versions, <code class="docutils literal notranslate"><span class="pre">pip</span></code> will automatically
+download the source archive (<code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>) and build Basilisk locally.
+This requires a C++ compiler toolchain and standard build tools
+to be installed on your system.</p>
+</div>
+<p>To keep the wheel size smaller, the large BSK data files are not installed by
+default.  If the user wants to use a script that that needs BSK data it will
+be downloaded automatically using <code class="docutils literal notranslate"><span class="pre">pooch</span></code>.  If you want to force all data to
+be downloaded at once, then go to the command line, change the current
+directory to be inside the environment where Basilisk was <code class="docutils literal notranslate"><span class="pre">pip</span></code> installed,
+and run the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bskLargeData</span>
+</pre></div>
+</div>
+<p>This command runs a python file stored in the <code class="docutils literal notranslate"><span class="pre">src/utilities</span></code> folder.
+The <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> process automatically
+creates this console command in the current python environment to call this
+python file.  The file directly downloads the missing large BSK data files and put
+them into the local Basilisk python package installation.</p>
 </section>
 
 
@@ -125,7 +158,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Basilisk: an Astrodynamics Simulation Framework" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Install/pullCloneBSK.html" class="btn btn-neutral float-right" title="Download Source Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Build.html" class="btn btn-neutral float-right" title="Building from Source" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

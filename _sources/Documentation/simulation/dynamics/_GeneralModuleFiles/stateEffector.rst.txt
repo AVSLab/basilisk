@@ -10,5 +10,5 @@ Abstract class that is used to implement an effector attached to the dynamicObje
 ----
 
 .. autodoxygenfile:: stateEffector.h
-   :project: _GeneralModuleFiles3
+   :project: _GeneralModuleFiles4
 
