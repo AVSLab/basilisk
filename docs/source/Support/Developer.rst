@@ -16,6 +16,7 @@ The following support files help with writing Basilisk modules.
    Developer/createHtmlDocumentation
    Developer/bskModuleCheckoutList
    Developer/UnderstandingBasilisk
+   Developer/bskSdkV1
    Developer/migratingBskModuleToBsk2
    Developer/MigratingToPython3
    Developer/addSupportData

@@ -96,6 +96,7 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
 
+
 # Dependency
 generate_messages(msgPayloadDefCpp "False")
 generate_messages(msgPayloadDefC "True")

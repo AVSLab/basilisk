@@ -195,6 +195,10 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
+    if(${LIB_NAME} STREQUAL "architectureLib")
+      target_compile_definitions(${LIB_NAME} PRIVATE BASILISK_ARCH_EXPORTS=1)
+    endif()
+
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
@@ -594,6 +598,7 @@ add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("architecture/messaging/cMsgCInterface")
 add_subdirectory("architecture/messaging/")
 
+
 # TODO: I'd call this generate_libraries(), because it really does find all of them. TODO: I'd like for all generated
 # libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way
 # to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions
@@ -712,6 +717,10 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/utilities")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/plugins")
+file(GLOB pluginsPy "${CMAKE_SOURCE_DIR}/plugins/*.py" "${CMAKE_SOURCE_DIR}/plugins/**")
+create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/plugins" ${pluginsPy})
 
 if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
@@ -733,13 +742,22 @@ else()
       "    __version__ = '0.0.0'\n")
 endif()
 
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bsk_core")
+file(GLOB BSK_CORE_SOURCES "${CMAKE_SOURCE_DIR}/bsk_core/*.py" "${CMAKE_SOURCE_DIR}/bsk_core/**")
+if(BSK_CORE_SOURCES)
+  create_symlinks("${CMAKE_BINARY_DIR}/bsk_core" ${BSK_CORE_SOURCES})
+endif()
+
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist
 file(
   GLOB_RECURSE DIST_DIRECTORIES
   LIST_DIRECTORIES true
-  "${CMAKE_BINARY_DIR}/Basilisk/*")
+  "${CMAKE_BINARY_DIR}/Basilisqk/*")
 
 foreach(DIR ${DIST_DIRECTORIES})
+  if(DIR MATCHES "/Basilisk/architecture/messaging$")
+    continue()
+  endif()
   if(IS_DIRECTORY ${DIR})
     file(
       GLOB DIST_DIR_FILES
