@@ -39,19 +39,19 @@ provides information on what this message is used for.
     * - sunInMsg
       - :ref:`SpicePlanetStateMsgPayload`
       - sun ephemeris data input message
-      - optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`)
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
     * - planetInMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet ephemeris data input messages
-      - optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`)
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
       - sun eclipse state input Message
-      - optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`)
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
     * - antennaOutStateMsg
       - :ref:`AntennaLogMsgPayload`
       - output msg description
-      - output message containing antenna state information
+      - Output message containing antenna state information
 
 .. _detailed-module-description:
 
