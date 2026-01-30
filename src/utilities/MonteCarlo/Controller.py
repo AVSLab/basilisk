@@ -30,6 +30,8 @@ import shutil
 import sys
 import traceback
 import warnings
+import ast
+import re
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
@@ -285,6 +287,16 @@ class Controller:
 
         for case in cases:
             yield self.getRetainedData(case)  # call this method recursively, yielding the result
+
+    def setRecordSimParams(self, recordSimParams):
+        """
+        Record attributes from dispersions list after the dispersions are applied
+
+        Args:
+            recordSimParams: bool
+                Whether to save the attributes .json file.
+        """
+        self.simParams.recordSimParams = recordSimParams
 
     def getParameters(self, caseNumber):
         """
@@ -728,6 +740,7 @@ class SimulationParameters():
         self.dispersionMag = {}
         self.saveDispMag = False
         self.showProgressBar = showProgressBar
+        self.recordSimParams = False
 
 
 
@@ -828,7 +841,18 @@ class SimulationExecutor:
             for variable, value in list(modifications.items()):
                 if simParams.verbose:
                     print(f"Setting attribute {variable} to {value} on simInstance")
-                setattr(simInstance, variable, value)
+                parsedValue = ast.literal_eval(value)
+                cls.setNestedAttr(simInstance, variable, parsedValue)
+
+            # save attributes for verification
+            if simParams.recordSimParams == True:
+                setAttributes = {}
+                for variable in modifications.keys():
+                    setAttribute = cls.getNestedAttr(simInstance, variable)
+                    setAttributes[variable] = str(setAttribute)
+                recordFileName = simParams.filename + "attributes.json"
+                with open(recordFileName, 'w') as outfile:
+                    json.dump(setAttributes, outfile, indent=4)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
@@ -873,6 +897,49 @@ class SimulationExecutor:
             print("Error in worker thread", e)
             traceback.print_exc()
             return (False, simParams.index)  # there was an error
+
+    @staticmethod
+    def setNestedAttr(obj, attrString, value):
+        """
+        A helper function to set a nested attribute on an object using a string.
+        Handles both attribute access ('.') and item access ('[]').
+        """
+        parts = re.split(r'\.|\[(\d+)\]', attrString)
+        parts = [p for p in parts if p is not None and p != '']
+        currentObj = obj
+
+        # traverse all parts except the last one to get the parent object
+        for part in parts[:-1]:
+            if part.isdigit():
+                currentObj = currentObj[int(part)]
+            else:
+                currentObj = getattr(currentObj, part)
+
+        # set the final attribute on the parent object
+        lastPart = parts[-1]
+        if lastPart.isdigit():
+            currentObj[int(lastPart)] = value
+        else:
+            setattr(currentObj, lastPart, value)
+
+    @staticmethod
+    def getNestedAttr(obj, attrString):
+        """
+        A helper function to get a nested attribute value on an object using a string.
+        Handles both attribute access ('.') and item access ('[]').
+        """
+        parts = re.split(r'\.|\[(\d+)\]', attrString)
+        parts = [p for p in parts if p is not None and p != '']
+        currentObj = obj
+
+        # traverse all parts to get the final object/value
+        for part in parts:
+            if part.isdigit():
+                currentObj = currentObj[int(part)]
+            else:
+                currentObj = getattr(currentObj, part)
+
+        return currentObj
 
     @staticmethod
     def disperseSeeds(simInstance):
