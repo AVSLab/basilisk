@@ -15,6 +15,8 @@ Version |release|
   SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
   definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
   Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+- The :ref:`simpleAntenna` module raises a warning for each of the following messages not being connected: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg``, even for ground based antennas.
+  These messages are not relevant for ground based antennas and the warning should therefore not be risen for an antenna on ground.
 
 
 Version 2.9.0

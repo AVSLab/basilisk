@@ -25,7 +25,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Warnings for not connected messages of types: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg`` in the :ref:`simpleAntenna` module for ground based antennas are not raised anymore.
+
 
 Version 2.9.0 (Jan. 28 2026)
 ----------------------------
