@@ -76,7 +76,7 @@ from Basilisk.architecture import messaging
 @pytest.mark.parametrize("stateEffector, isParent", [
     ("hingedRigidBodies",             True),
     # ("dualHingedRigidBodies",           True),
-    # ("nHingedRigidBodies",              True),
+    ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
@@ -253,6 +253,10 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "hingedRigidBodies":
         stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
         segment = 1
+    elif stateEffector == "nHingedRigidBodies":
+        stateEff, stateEffProps = setup_hingedRigidBodyNDOF()
+        segment = 3
+        print("set up complete")
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff, stateEffProps = setup_translatingBodiesOneDOF()
         segment = 1
@@ -317,8 +321,12 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
 
     # Log the effector's inertial properties
     if segment == 1:
+        print("stateEffProps.inertialPropLogName: ", stateEffProps.inertialPropLogName)
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}").recorder()
     else:
+        # if stateEffProps.inertialPropLogName == "nHingedBodyConfigLogOutMsgs": 
+        #     inertialPropLog = stateEff.getConfigLogMsgs()[segment-1].recorder()
+        # else: 
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}")[segment-1].recorder()
     unitTestSim.AddModelToTask(unitTaskName, inertialPropLog)
 
@@ -373,7 +381,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
-    # Grab effector's inertial position
+    # Grab effector's inertial position.   
     if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
         r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
         for i in range(len(inertialPropLog.sigma_BN)):
@@ -488,6 +496,7 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
         return getattr(dynamicEff, f"getPropName_inertial{propType}")()
 
 def getStateEffInertialPropName(segment, stateEff, propType):
+    print("IN getStateEffInertialPropName !!!!!!!!!!!!!!!!!!!")
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
@@ -737,7 +746,7 @@ def setup_spinningBodiesNDOF():
                                  [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
         if idx == 0:
-            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])
+            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]]) # like R_HB_B
         else:
             spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])
         spinningBody.setSHat_S([[1], [0], [0]])
@@ -769,6 +778,7 @@ def setup_spinningBodiesNDOF():
 
         # Compute COM offset contribution, to be divided by the hub mass
         mr_ScB_B -= spinningBody.getMass() * (r_ScB_B + dcm_SB.transpose() @ spinningBody.getR_ScS_S())
+        print("size of mr_ScB_B: ", mr_ScB_B.shape)
 
     spinningBodyEffector.ModelTag = "spinningBody"
 
@@ -810,6 +820,67 @@ def setup_hingedRigidBodyStateEffector():
     stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
 
     return(hingedBody, stateEffProps)
+
+def setup_hingedRigidBodyNDOF(): 
+    hingedBodyEffector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 hinged bodies here
+    massSubPanel = 100.0 / numberOfSegments
+    lengthSubPanel = 18.0 / numberOfSegments
+    widthSubPanel =  3.0
+    thicknessSubPanel = 0.3
+    dcm_SB = np.eye(3)
+    mr_ScB_B = np.zeros(3)
+    hingedBodyEffector.r_HB_B = [-2,0,0]
+
+    
+    r_hinge_B = np.asarray(hingedBodyEffector.r_HB_B, dtype=float).reshape(3,)
+
+    # r_hinge_B = np.array(hingedBodyEffector.r_HB_B)
+
+    r_ScB_B = np.array([0,0,0])
+
+    for idx in range(numberOfSegments):
+        hingedPanel = nHingedRigidBodyStateEffector.HingedPanel()
+        hingedPanel.mass = massSubPanel
+        hingedPanel.IPntS_S = [[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],
+                                   [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
+                                   [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]]
+        hingedPanel.d = 1.0
+        d = np.array([hingedPanel.d,0,0])    
+        hingedPanel.thetaInit = (2.0 * macros.D2R)
+        hingedPanel.thetaDotInit = (-0.5 * macros.D2R)
+        hingedPanel.k = 10
+        hingedPanel.c = 8
+        hingedBodyEffector.addHingedPanel(hingedPanel)
+
+        # print("dcm_SB: ", hingedPanel.dcm_SB)
+        # print("r_HB_B: ", hingedBodyEffector.r_HB_B)
+        # print("d shape: ", d.shape)
+        # print("_____________________________________________________")
+        
+        # COM of current panel
+        r_ScB_B = np.array(r_hinge_B) + dcm_SB.transpose() @ d
+
+        # Advance hinge to next panel
+        r_hinge_B += dcm_SB.transpose() @ (2 * d)
+        
+        #how to update? for just one panel instead of 2?
+        dcm_SB = rbk.PRV2C(hingedPanel.thetaInit * np.array(hingedPanel.sHat_S)) @ dcm_SB  
+
+        # Compute COM offset contribution, to be divided by the hub mass
+        r_SB_B = np.asarray(hingedPanel.r_SB_B, dtype=float).reshape(3,) # this fixes the shape error but not sure if its right
+
+        mr_ScB_B -= hingedPanel.mass * (r_ScB_B + r_SB_B) # ???? r_ScB_B + r_SB_B
+
+    hingedBodyEffector.ModelTag = "hingedBody"
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = massSubPanel * numberOfSegments
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = r_ScB_B - hingedPanel.r_SB_B #???
+    stateEffProps.r_PcP_P = hingedPanel.r_SB_B #???
+    stateEffProps.inertialPropLogName = "nHingedBodyConfigLogOutMsgs" # error has to do with this 
+
+    return(hingedBodyEffector, stateEffProps)
 
 def setup_translatingBodiesOneDOF():
     translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
@@ -875,4 +946,4 @@ class stateEffectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "nHingedRigidBodies", True, "extForceTorque", True)
