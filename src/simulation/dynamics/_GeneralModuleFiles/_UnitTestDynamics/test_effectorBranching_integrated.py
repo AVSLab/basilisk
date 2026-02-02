@@ -77,7 +77,7 @@ from Basilisk.architecture import messaging
 @pytest.mark.parametrize("stateEffector, isParent", [
     ("hingedRigidBodies",             True),
     # ("dualHingedRigidBodies",           True),
-    # ("nHingedRigidBodies",              True),
+    ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
@@ -254,6 +254,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "hingedRigidBodies":
         stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
         segment = 1
+    elif stateEffector == "nHingedRigidBodies":
+        stateEff, stateEffProps = setup_hingedRigidBodyNDOF()
+        segment = 3
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff, stateEffProps = setup_translatingBodiesOneDOF()
         segment = 1
@@ -385,31 +388,24 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
-    # Grab effector's inertial position
-    if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
-        r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
-        for i in range(len(inertialPropLog.sigma_BN)):
-            sigmai_SN = inertialPropLog.sigma_BN[i, :] # MRP at timestep i and S is the parent frame not B
-            dcm_NS = np.transpose(rbk.MRP2C(sigmai_SN))
-            r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
-    else:
-        r_ScN_N_log = inertialPropLog.r_BN_N
-
-    # Grab effector's attitude properties
+    r_ScN_N_log = inertialPropLog.r_BN_N
     sigma_SN_log = inertialPropLog.sigma_BN
 
     # Compute conservation quantities using the state and dynamic effector's logged properties
     n = rotAngMom_N.shape[0]-1 # length of log minus 1 as the inertial property log lags by a timestep
     extTorque = np.empty((n,3))
     dV = np.empty((n,3))
+
     for idx in range(n):
         dcm_NS = np.transpose(rbk.MRP2C(sigma_SN_log[idx,:]))
+
         # Compute the total accumulated deltaV
         if idx == 0:
             dV[idx,:] = [0.0, 0.0, 0.0]
         else:
             dV[idx,:] = (dV[idx-1,:] + (dcm_NS @ np.array(dynamicEff.extForce_B).flatten())
                        / (scObject.hub.mHub + stateEffProps.totalMass) * timestep)
+
         # Compute the total external torque on the vehicle
         if stateEffector == "linearTranslationBodiesOneDOF" or stateEffector == "linearTranslationBodiesNDOF":
             extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
@@ -424,7 +420,6 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
                                 - datLog.r_CN_N[idx,:], dcm_NS
                                 @ np.array(dynamicEff.extForce_B).flatten()))
 
-    # Integrate the torque to find accumulated change in angular momentum
     dx = np.ones(n-1)*timestep
     y_avg = 0.5 * (extTorque[1:] + extTorque[:-1])
     integral = np.cumsum(y_avg * dx[:, None], axis=0)
@@ -496,18 +491,18 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     elif dynamicEffector == "constraintEffectorOneHub" or dynamicEffector == "constraintEffectorNoHubs":
         propList = getattr(dynamicEff, f"getPropName_inertial{propType}")()
         return propList[0]
-    else:
-        return getattr(dynamicEff, f"getPropName_inertial{propType}")()
+    elif dynamicEffector == "extForceTorque":
+        name = getattr(dynamicEff, f"getPropName_inertial{propType}")()
+        return name
 
 def getStateEffInertialPropName(segment, stateEff, propType):
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
-    elif segment == 4:
+    elif segment == 3:
         try:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
-            scObject.dynManager.getPropertyReference(propName)
+            propName = stateEff.ModelTag + "Inertial" + propType + "1_3"
         except BasiliskError:
             return "notHandedCorrectly"
         return propName
@@ -749,7 +744,7 @@ def setup_spinningBodiesNDOF():
                                  [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
         if idx == 0:
-            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])
+            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]]) # like R_HB_B
         else:
             spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])
         spinningBody.setSHat_S([[1], [0], [0]])
@@ -944,4 +939,4 @@ class stateEffectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "nHingedRigidBodies", True, "extForceTorque", True)
