@@ -228,6 +228,7 @@ from Basilisk.utilities import (
     unitTestSupport,
     vizSupport,
 )
+# import the pooch python package data fetching tools
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 # always import the Basilisk messaging support
@@ -298,6 +299,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         planet = gravFactory.createMarsBarycenter()
         planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
+            # the get_path() method returns the data path to supportData folder
+            # if the repository was closed, and to the pooch cached file if a
+            # wheel install was performed.
             ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
             planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)
 

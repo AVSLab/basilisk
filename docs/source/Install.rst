@@ -56,6 +56,9 @@ versions.
    This requires a C++ compiler toolchain and standard build tools
    to be installed on your system.
 
+Basilisk Support Data
+---------------------
+
 To keep the wheel size smaller, the large BSK data files are not installed by
 default.  If the user wants to use a script that that needs BSK data it will
 be downloaded automatically using ``pooch``.  If you want to force all data to
@@ -70,3 +73,11 @@ The ``pip install`` process automatically
 creates this console command in the current python environment to call this
 python file.  The file directly downloads the missing large BSK data files and put
 them into the local Basilisk python package installation.
+
+Basilisk Examples
+-----------------
+
+If you want to run the example files provided by the Basilisk repository can be downloaded to the local
+directory using the command line::
+
+    bskExamples

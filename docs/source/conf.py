@@ -28,70 +28,56 @@ def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 roles.register_local_role('beta', beta_role)
 
 #
-# create RST showing supportData folder information
+# create RST file showing supportData folder information
 #
-folder_path = "../../supportData"
+from collections import defaultdict
+from pathlib import Path, PurePosixPath
+
+from Basilisk.utilities.supportDataTools.dataFetcher import POOCH
+def build_supportdata_index_rst(output_file: str):
+    groups = defaultdict(list)
+
+    for key in POOCH.registry.keys():
+        p = PurePosixPath(key)
+
+        # Expect: supportData/<topic>/<file>
+        if len(p.parts) < 3 or p.parts[0] != "supportData":
+            continue
+
+        topic = p.parts[1]
+        filename = p.name
+        groups[topic].append(filename)
+
+    # Sort topics and files
+    for topic in groups:
+        groups[topic].sort()
+
+    lines = []
+    lines.append(".. _supportDataList:")
+    lines.append("")
+    lines.append("Support Data Files")
+    lines.append("==================")
+    lines.append(".. note::\n")
+    lines.append("   Below is a list of all the data files that are packaged into Basilisk.")
+    lines.append("   They are organized into a range of topical folders where the folder name is the data category.")
+    lines.append("")
+
+    for topic in sorted(groups.keys()):
+        title = topic.replace("_", " ").title()
+
+        lines.append(title)
+        lines.append("-" * len(title))
+        lines.append("")
+
+        for fname in groups[topic]:
+            lines.append(f"- ``{fname}``")
+
+        lines.append("")
+
+    Path(output_file).write_text("\n".join(lines))
+
 output_file = "supportData.rst"
-# Files to exclude
-excluded_files = {".DS_Store", "__init__.py"}
-# loop over supportData folder and list all files
-
-# Dictionary to store files grouped by folder
-folder_files = {}
-
-# Collect files grouped by folder
-for root, dirs, files in os.walk(folder_path):
-    # Get the relative folder path
-    folder_relative_path = os.path.relpath(root, folder_path)
-    if folder_relative_path == ".":
-        folder_relative_path = ""
-
-    # Collect files for this folder
-    folder_files[folder_relative_path] = sorted(
-        [file_name for file_name in files if file_name not in excluded_files]
-    )
-
-with open(output_file, "w") as f:
-    f.write("Support Data Files\n")
-    f.write("==================\n\n")
-    f.write(".. note::\n\n")
-    f.write("    This folder contains a listing of all the data files in the folder ``basilisk/supportData`` "
-            "that are packaged into Basilisk.\n\n")
-
-    # Sort folders alphabetically and write each section
-    for folder in sorted(folder_files.keys()):
-        f.write(f"**{folder}**\n\n")
-        for file_name in folder_files[folder]:
-            f.write(f"- {file_name}\n")
-        f.write("\n")
-
-    # for root, dirs, files in os.walk(folder_path):
-    #     # Get the relative folder path
-    #     folder_relative_path = os.path.relpath(root, folder_path)
-    #     if folder_relative_path == ".":
-    #         folder_relative_path = ""
-    #
-    #     # Write folder name as a section
-    #     f.write(f"**{folder_relative_path}**\n\n")
-    #
-    #     # Process files in the current directory
-    #     for file_name in sorted(files):
-    #         if file_name not in excluded_files:
-    #             f.write(f"- {file_name}\n")
-    #     f.write("\n")
-
-    # for root, dirs, files in os.walk(folder_path):
-    #     # Write the current folder name as a heading
-    #     folder_relative_path = os.path.relpath(root, folder_path)
-    #     if folder_relative_path == ".":
-    #         folder_relative_path = ""
-    #     f.write(f"**{folder_relative_path}**\n\n")
-    #
-    #     # Process files in the current directory
-    #     for file_name in files:
-    #         if file_name not in excluded_files:
-    #             f.write(f"- {file_name}\n")
-    #     f.write("\n")
+build_supportdata_index_rst(output_file)
 
 
 # -- Project information -----------------------------------------------------

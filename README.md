@@ -51,7 +51,9 @@ To get started with Basilisk (BSK), several tutorial python files are provided i
 web page documentation site, they are listed and discussed in the [integrated example script](docs/source/examples/index.rst) page.
 
 The documentation lists the scenarios in an order that facilitates learning basic BSK features. The python scripts
-are stored under `basilisk/examples`. A good start would be to run `scenarioBasicOrbit.py`.
+are stored in the repository under `basilisk/examples`. A good start would be to run `scenarioBasicOrbit.py`.
+
+If you downloaded Basilisk through `pip install bsk`, then you can download all examples to the local folder using the command line `bskExamples`.
 
 To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order
 to learn, test and experiment. Copy the folder `basilisk/examples` into a
