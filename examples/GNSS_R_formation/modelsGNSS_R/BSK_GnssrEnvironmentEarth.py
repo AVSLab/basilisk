@@ -46,6 +46,7 @@ class BSKEnvironmentModel:
         self.eclipseObject = eclipse.Eclipse()
         self.groundStationBar = groundLocation.GroundLocation()
         self.groundStationSval = groundLocation.GroundLocation()
+        self.groundEarthCenter = groundLocation.GroundLocation()
         self.magneticField = magneticFieldWMM.MagneticFieldWMM()
         self.atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
 
@@ -58,6 +59,7 @@ class BSKEnvironmentModel:
         SimBase.AddModelToTask(self.envTaskName, self.eclipseObject, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundStationBar, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundStationSval, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.groundEarthCenter, 200)
         SimBase.AddModelToTask(self.envTaskName, self.magneticField, 199)
         SimBase.AddModelToTask(self.envTaskName, self.atmosphere, 199)
 
@@ -123,6 +125,12 @@ class BSKEnvironmentModel:
         self.groundStationSval.specifyLocation(np.radians(78.929056), np.radians(11.870703), 32)  # Svalbard, Norway
         self.groundStationSval.minimumElevation = np.radians(10.)
         self.groundStationSval.maximumRange = 1e9
+
+        self.groundEarthCenter.ModelTag = "EarthCenter"
+        self.groundEarthCenter.planetRadius = self.planetRadius
+        self.groundEarthCenter.specifyLocationPCPF(np.array([0.0, 0.0, 1.0e-3])) # Earth center, small offset in z to avoid singularity
+        self.groundEarthCenter.minimumElevation = np.deg2rad(-90.0)  # Always visible from any direction
+        self.groundEarthCenter.maximumRange = 1e12  # Effectively infinite range
 
     def SetMagneticFieldObject(self, epochTimeStr):
         """
