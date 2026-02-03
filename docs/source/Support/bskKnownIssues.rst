@@ -17,7 +17,10 @@ Version |release|
   Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
 - The :ref:`simpleAntenna` module raises a warning for each of the following messages not being connected: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg``, even for ground based antennas.
   These messages are not relevant for ground based antennas and the warning should therefore not be risen for an antenna on ground.
-
+- If you install Basilisk via ``pip install bsk``, note that the ``basilisk/SupportData`` folder does not
+  exist in your folder.  Simulation script importing directly using a local file path to ``SupportData``
+  will not work.  Rather, ``pooch`` is being used to manage data which puts the data files into a
+  cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
 
 Version 2.9.0
 -------------
