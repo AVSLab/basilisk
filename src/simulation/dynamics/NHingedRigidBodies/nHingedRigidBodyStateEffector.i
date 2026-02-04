@@ -25,6 +25,7 @@
 
 %{
    #include "nHingedRigidBodyStateEffector.h"
+   #include <memory>
 %}
 
 %pythoncode %{
@@ -33,12 +34,20 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "std_string.i"
 %include "stdint.i"
+%include "std_vector.i"
+%include "swig_conly_data.i"
 
 
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "nHingedRigidBodyStateEffector.h"
+
+%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C; 
+
 
 %pythoncode %{
 import sys
