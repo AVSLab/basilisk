@@ -221,7 +221,7 @@ Release Notes
 
     - depth map shader color output values are being adjusted by Unity after being written by fragment shader,
       resulting in incorrect depth measurements using the three-channel decoding
-    - The use of ``vizInterface.opNavMode`` is now depreciated.  See :ref:`vizardLiveComm` for more
+    - The use of ``vizInterface.opNavMode`` is now deprecated.  See :ref:`vizardLiveComm` for more
       information.  The setting ``opNavMode=1`` is now ``liveStream`` and ``opNavMode=2`` is now ``noDisplay``.
 
 **Version 2.1.6.1 (March 20, 2024)**

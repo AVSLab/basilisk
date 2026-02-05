@@ -22,7 +22,7 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
    - tag major and patch releases on ``master``.  The ``develop`` branch is used for the beta
      cycle for the next major release.
    - dynamically load Basilisk simulation data on demand. This keeps the wheel size acceptable
-     for `PyPi`_.  See :ref:`bskInstall` for info on using ``bskLargeData`` to force all data to be
+     for `PyPI`_.  See :ref:`bskInstall` for info on using ``bskLargeData`` to force all data to be
      downloaded at once.
 
 Architecture

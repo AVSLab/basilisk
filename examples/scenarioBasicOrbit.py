@@ -300,7 +300,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
             # the get_path() method returns the data path to supportData folder
-            # if the repository was closed, and to the pooch cached file if a
+            # if the repository was cloned, and to the pooch cached file if a
             # wheel install was performed.
             ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
             planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)

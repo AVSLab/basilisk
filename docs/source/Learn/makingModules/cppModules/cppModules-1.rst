@@ -90,13 +90,13 @@ The setter function should check that the value is
 valid or return an error.  For example, you might want to set a gain variable, or the
 spacecraft area for solar radiation pressure evaluation, and the setter method
 should check that these values are strictly positive.  The benefit of using setter
-and getter methods is that if a variable use is depreciated, then this variable
-can be gracefully depreciated while introducing the new module functionality.
-See :ref:`deprecatingCode` for information on how to depreciate code.
+and getter methods is that if a variable use is deprecated, then this variable
+can be gracefully deprecated while introducing the new module functionality.
+See :ref:`deprecatingCode` for information on how to deprecate code.
 
 .. note::
 
-    Having C++ Basilisk module use setter and getter methods is a recent requirements.
+    Having C++ Basilisk module use setter and getter methods is a recent requirement.
     Older modules mostly have the module variables as public variables which can be
     set directly.  Read the module documentation on how to setup and configure
     a Basilisk module.

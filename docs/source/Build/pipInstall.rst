@@ -55,7 +55,7 @@ The resulting wheel file can then be installed using ``pip``::
 This allows the user to create a custom Basilisk wheel to distribute within their organization.
 
 To keep the wheel size smaller, the BSK data files are not installed by default.  If the user
-wants to use script that assumes they are included into the Basilisk python package, then go to the
+wants to use a script that assumes they are included into the Basilisk python package, then go to the
 command line, change the current directory to be inside the environment where Basilisk was ``pip`` installed,
 and run the command::
 
@@ -103,7 +103,7 @@ specified in ``pyproject.toml``). The builder then invokes ``python conanfile.py
 environment. The main reasons for this setting was to maintain the current default behaviour of
 ``conanfile.py``-based installation.
 
-Editable installations (i.e. ``pip install -e .``) are are partially supported. Python code changes are reflected
+Editable installations (i.e. ``pip install -e .``) are partially supported. Python code changes are reflected
 automatically with this flag, but C++ components are not automatically rebuilt.
 
 This limitation exists because editable mode still routes through ``python conanfile.py``, but skips C++ rebuilds
