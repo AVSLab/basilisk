@@ -44,7 +44,7 @@ Replace ``<version>`` with the desired release number, e.g. ``2.9.0``.
 **Prebuilt wheel availability:**
 
 - **Windows:** Windows 10/11 (x86_64)
-- **macOS:** macOS 11+ (x86_64 and Apple Silicon arm64)
+- **macOS:** macOS 11+ (Apple Silicon arm64)
 - **Linux:** Manylinux 2.24+ (x86_64, aarch64)
 
 All wheels are built as **ABI3** packages for Basilisk supported Python
