@@ -108,7 +108,7 @@ because we are not considering dissipations.
 In this case, we do not see a perfect conservation of Rotational
 Angular Momentum and Rotational Energy because
 of the **high** timeStep. We cannot use too high timeStep because
-we will lose the periodic behaviour of the fuel slosh;
+we will lose the periodic behavior of the fuel slosh;
 and the integration could diverge. On the other hand, small
 timeStep makes the simulation very long.
 
@@ -321,7 +321,7 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.AddModelToTask(simTaskName, dataLog)
 
     scLog = scObject.logger(
-        ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"], 
+        ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"],
         simulationTimeStep)
     scSim.AddModelToTask(simTaskName, scLog)
 
@@ -330,13 +330,13 @@ def run(show_plots, damping_parameter, timeStep):
         def get_rho(CurrentSimNanos, i):
             stateName = f'linearSpringMassDamperRho{i}'
             return scObject.dynManager.getStateObject(stateName).getState()[0][0]
-        
+
         damperRhoLog = pythonVariableLogger.PythonVariableLogger({
                 "damperRho1": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 1),
                 "damperRho2": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 2),
                 "damperRho3": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 3),
             }, simulationTimeStep)
-        
+
         scSim.AddModelToTask(simTaskName, damperRhoLog)
 
     #
@@ -436,7 +436,7 @@ def run(show_plots, damping_parameter, timeStep):
         plt.figure(6, figsize=(5, 4))
         for rhojOut in rhojOuts:
             plt.plot(time, rhojOut)
-        
+
         plt.legend(['Particle 1', 'Particle 2', 'Particle 3'], loc='lower right')
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')

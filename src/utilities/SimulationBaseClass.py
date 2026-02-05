@@ -512,7 +512,7 @@ class SimBaseClass:
         Args:
             TaskName (str): Name of Task
             TaskRate (int): Number of nanoseconds to elapse before update() is called
-            InputDelay (int): (depreciated, unimplemented) Number of nanoseconds simulating a lag of the particular task
+            InputDelay (int): (deprecated, unimplemented) Number of nanoseconds simulating a lag of the particular task
             FirstStart (int): Number of nanoseconds to elapse before task is officially enabled
 
         Returns:
@@ -523,7 +523,7 @@ class SimBaseClass:
             deprecated.deprecationWarn(
                 "InputDelay",
                 "2024/12/13",
-                "This input variable is non-functional and now depreciated.",
+                "This input variable is non-functional and now deprecated.",
             )
 
         Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, FirstStart)
