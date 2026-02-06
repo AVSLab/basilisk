@@ -73,6 +73,17 @@ class Controller:
             icfilename=""
         )
 
+    def _shutdown_data_writer(self):
+        if getattr(self, "dataOutQueue", None) is not None:
+            self.dataOutQueue.put((None, None, True))
+        if getattr(self, "dataWriter", None) is not None:
+            self.dataWriter.join(timeout=30)
+            if self.dataWriter.is_alive():
+                self.dataWriter.terminate()
+                self.dataWriter.join(timeout=5)
+        if getattr(self, "multiProcManager", None) is not None:
+            self.multiProcManager.shutdown()
+
     def setShowProgressBar(self, value):
         """
         To enable or disable progress bar to show simulation progress
@@ -469,8 +480,7 @@ class Controller:
         if self.archiveDir is not None and self.archiveDir != self.icDirectory:
             while not self.dataOutQueue.empty():
                time.sleep(1)
-            self.dataOutQueue.put((None, None, True))
-            time.sleep(5)
+            self._shutdown_data_writer()
 
         # if there are failures
         if len(failed) > 0:
@@ -679,8 +689,7 @@ class Controller:
         # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
         while not self.dataOutQueue.empty():
            time.sleep(1)
-        self.dataOutQueue.put((None, None, True))
-        time.sleep(5)
+        self._shutdown_data_writer()
 
         # if there are failures
         if len(failed) > 0:
