@@ -458,17 +458,6 @@ def process_data(scSim):
 
 
 def plotting(scSim_list, gain_list, maneuver_config, show_plots):
-    larger_size = 20
-    smaller_size = 18
-    fontdict = {'family': 'serif',
-                'weight': 'normal',
-                'size': larger_size}
-    plt.rc('font', **fontdict)
-    plt.rc('axes', labelsize=larger_size)
-    plt.rc('xtick', labelsize=smaller_size)
-    plt.rc('ytick', labelsize=smaller_size)
-    plt.rc('legend', fontsize=smaller_size)
-    plt.rcParams['figure.figsize'] = (7, 6)
     plt.close("all")
 
     # Collect plotting utilities
