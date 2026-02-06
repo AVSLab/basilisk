@@ -29,6 +29,10 @@ Version |release|
   the :ref:`simpleAntenna` module for ground based antennas are not raised anymore.
 - Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
 - Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data
+- Added :ref:`DragGeometryMsgPayload`, which contains geometry information of a body necessary to
+  compute the drag acting on such body.
+- Added :ref:`cannonballDrag`, a model intended to be used with MuJoCo dynamics to model
+  cannonball aerodynamic drag forces and torques acting on bodies.
 
 
 Version 2.9.0 (Jan. 28 2026)
@@ -149,7 +153,6 @@ Version 2.9.0 (Jan. 28 2026)
 - Added :ref:`scenarioAttitudeFeedbackRWMuJoCo`, similar to :ref:`scenarioAttitudeFeedbackRW` but using
   MuJoCo dynamics.
 - Added the modules :ref:`simpleAntenna` and :ref:`antennaPower`.
-
 
 Version 2.8.0 (August 30, 2025)
 -------------------------------

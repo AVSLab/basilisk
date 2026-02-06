@@ -19,6 +19,7 @@
 
 %{
    #include "MJBody.h"
+   #include "MJScene.h" // needed to support the class extension below
 %}
 
 %include "MJObject.swg"
@@ -32,6 +33,10 @@
 %ignore MJBody::updateMujocoModelFromMassProps;
 %ignore MJBody::updateMassPropsDerivative;
 %ignore MJBody::updateConstrainedEqualityJoints;
+
+%extend MJBody {
+MJScene& getScene() { return $self->getSpec().getScene(); }
+}
 
 %include "MJBody.h"
 

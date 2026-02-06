@@ -114,6 +114,13 @@ public:
     void setSolimp(double d0, double dwidth, double width,
                    double midpoint, double power);
 
+    /**
+     * @brief Retrieves the associated MJSpec object.
+     *
+     * @return A reference to the `MJSpec` associated with this equality.
+     */
+    MJSpec& getSpec() { return spec; }
+
 protected:
     MJSpec& spec; ///< Reference to the object where this equality is defined.
 };

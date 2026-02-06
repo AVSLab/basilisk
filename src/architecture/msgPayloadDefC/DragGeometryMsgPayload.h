@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,21 +17,15 @@
 
  */
 
-%{
-   #include "MJEquality.h"
-   #include "MJScene.h" // needed to support the class extension below
-%}
+#ifndef DRAG_GEOMETRY_MSG_PAYLPAD_H
+#define DRAG_GEOMETRY_MSG_PAYLPAD_H
 
-%include "MJObject.swg"
-%template_mujoco_object(mjsEquality)
 
-%ignore MJEquality::MJEquality;
-%ignore MJEquality::configure;
+//! @brief Container for basic drag parameters.
+typedef struct {
+    double projectedArea; //!< [m^2] Area of spacecraft projected in velocity direction
+    double dragCoeff;     //!< [-]   Nondimensional drag coefficient
+    double r_CP_S[3];     //!< [m]   Position of center of pressure relative to the center of frame S, given in frame S [m]
+}DragGeometryMsgPayload;
 
-%ignore MJSingleJointEquality::MJSingleJointEquality;
-
-%extend MJEquality {
-MJScene& getScene() { return $self->getSpec().getScene(); }
-}
-
-%include "MJEquality.h"
+#endif
