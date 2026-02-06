@@ -78,3 +78,15 @@ repair-wheel-command = [
 ]
 manylinux-x86_64-image  = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
+
+[tool.pytest.ini_options]
+markers = [
+  "slowtest: mark a test as a slow unit test.",
+  "scenarioTest: mark a test as a tutorial scenario test.",
+  "ciSkip: mark a test that should be skipped on the CI test runs",
+]
+filterwarnings = [
+  "ignore:builtin type SwigPyPacked has no __module__ attribute:DeprecationWarning",
+  "ignore:builtin type SwigPyObject has no __module__ attribute:DeprecationWarning",
+  "ignore:builtin type swigvarlink has no __module__ attribute:DeprecationWarning",
+]

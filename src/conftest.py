@@ -21,10 +21,17 @@ import os
 import shutil
 import subprocess
 import sys
+import warnings
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pytest
+
+warnings.filterwarnings(
+    "ignore",
+    message="builtin type swigvarlink has no __module__ attribute",
+    category=DeprecationWarning,
+)
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
