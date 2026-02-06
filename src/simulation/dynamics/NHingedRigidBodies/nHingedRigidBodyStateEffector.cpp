@@ -120,17 +120,14 @@ void NHingedRigidBodyStateEffector::computeHingedBodyInertialStates(Eigen::Vecto
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get access to the hub states
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity); // why is propName_vehicleGravity not in class?  is it in dynparamman?
-    
     std::cout << "IN linkInStates" << std::endl;
+
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity); // why is propName_vehicleGravity not in class?  i think its in dynparam 
     
-    for(auto& hingedPanel: this->PanelVec) {
-        this->inertialPositionProperty = statesIn.getPropertyReference(hingedPanel.nameOfInertialPositionProperty);
-        this->inertialVelocityProperty = statesIn.getPropertyReference(hingedPanel.nameOfInertialVelocityProperty);
-        this->inertialAttitudeProperty = statesIn.getPropertyReference(hingedPanel.nameOfInertialAttitudeProperty);
-        this->inertialAngVelocityProperty = statesIn.getPropertyReference(hingedPanel.nameOfInertialAngVelocityProperty);
-    }
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N"); // why spiining:  this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    // this->inertialAttitudeProperty = statesIn.getPropertyReference(this->nameOfInertialAttitudeProperty); // spinning bodies doesnt have these two and doesnt have them in the header either
+    // this->inertialAngVelocityProperty = statesIn.getPropertyReference(this->nameOfInertialAngVelocityProperty);
 
     return;
 }
@@ -145,8 +142,6 @@ void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel) {
     this->nHingedBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);  
     this->hingedBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
     this->hingedBodyRefInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
-
-    std::cout << "HERE NOW" << std::endl;
 
     this->aTheta.conservativeResize(this->aTheta.rows()+1, 3);
     this->bTheta.conservativeResize(this->bTheta.rows()+1, 3);
@@ -164,7 +159,7 @@ void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel) {
    void NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
     if (segment <= 0 || segment > this->numberOfDegreesOfFreedom) {
-        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent hinged body linkage.");
     } else {
         this->PanelVec[segment-1].assignStateParamNames(newDynamicEffector);
         this->PanelVec[segment-1].dynEffectors.push_back(newDynamicEffector);
@@ -186,16 +181,29 @@ void NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
         hingedBody.sigma_SN = states.createProperty(hingedBody.nameOfInertialAttitudeProperty, stateInit);
         hingedBody.omega_SN_S = states.createProperty(hingedBody.nameOfInertialAngVelocityProperty, stateInit);
 
+        this->nameOfInertialPositionProperty.push_back(
+            hingedBody.nameOfInertialPositionProperty
+        );
+        this->nameOfInertialVelocityProperty.push_back(
+            hingedBody.nameOfInertialVelocityProperty
+        );
+        this->nameOfInertialAttitudeProperty.push_back(
+            hingedBody.nameOfInertialAttitudeProperty
+        );
+        this->nameOfInertialAngVelocityProperty.push_back(
+            hingedBody.nameOfInertialAngVelocityProperty
+        );
+
         for(auto& dynEffector: hingedBody.dynEffectors) {
             dynEffector->linkInProperties(states);
         }
     }
-    std::cout << "  DONE WITH registerProperties" << std::endl;
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
+    std::cout << "IN registerStates" << std::endl;
 
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);
@@ -214,6 +222,8 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
 
     return;
 }
@@ -354,6 +364,8 @@ void NHingedRigidBodyStateEffector::computeDependentEffectors(
  method */
 void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    std::cout << "IN updateContributions" << std::endl;
+    
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
