@@ -101,9 +101,10 @@ public:
     std::vector<Message<SCStatesMsgPayload>*> nHingedBodyConfigLogOutMsgs;     //!< Hinged body state config log message    
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> hingedBodyRefInMsgs;  //!< (optional) reference state input message
 
-    // std::vector<Message<SCStatesMsgPayload>*>& getConfigLogMsgs() {
-    //     return nHingedBodyConfigLogOutMsgs;
-    // }
+    std::vector<std::string> nameOfInertialPositionProperty; //!< -- vector of inertial position property
+    std::vector<std::string> nameOfInertialVelocityProperty; //!< -- vector of inertial velocity propertys
+    std::vector<std::string> nameOfInertialAttitudeProperty; //!< -- vector of inertial velocity propertys
+    std::vector<std::string> nameOfInertialAngVelocityProperty; //!< -- vector of inertial angular velocity propertys
 
 private:
     double totalMass;                //!< [kg] Total mass of effector
