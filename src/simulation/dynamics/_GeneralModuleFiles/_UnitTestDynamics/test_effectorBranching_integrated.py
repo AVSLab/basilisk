@@ -324,9 +324,6 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         print("stateEffProps.inertialPropLogName: ", stateEffProps.inertialPropLogName)
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}").recorder()
     else:
-        # if stateEffProps.inertialPropLogName == "nHingedBodyConfigLogOutMsgs": 
-        #     inertialPropLog = stateEff.getConfigLogMsgs()[segment-1].recorder()
-        # else: 
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}")[segment-1].recorder()
     unitTestSim.AddModelToTask(unitTaskName, inertialPropLog)
 
@@ -487,27 +484,31 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     return
 
 def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
+    print("in getDynEffInertialPropName")
+    print("propType: ", propType)
     if dynamicEffector == "multiEffector":
         return getattr(dynamicEff[1], f"getPropName_inertial{propType}")()
     elif dynamicEffector == "constraintEffectorOneHub" or dynamicEffector == "constraintEffectorNoHubs":
         propList = getattr(dynamicEff, f"getPropName_inertial{propType}")()
         return propList[0]
-    else:
-        return getattr(dynamicEff, f"getPropName_inertial{propType}")()
+    elif dynamicEffector == "":
+        print("in last else")
+        return getattr(dynamicEff, f"getPropName_inertial{propType}")() # then next error is herer 
 
 def getStateEffInertialPropName(segment, stateEff, propType):
-    print("IN getStateEffInertialPropName !!!!!!!!!!!!!!!!!!!")
+    print("IN getStateEffInertialPropName")
+    print("segment, propType", segment, propType )
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
-    elif segment == 4:
+    elif segment == 3: 
         try:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
-            scObject.dynManager.getPropertyReference(propName)
-        except BasiliskError:
+            idx = segment - 1
+            propVec = getattr(stateEff, f"nameOfInertial{propType}Property")
+            return propVec[idx]
+        except IndexError:
             return "notHandedCorrectly"
-        return propName
 
 def getModernStateEffInertialPropName(scObject, segment, stateEff, propType):
     try:
