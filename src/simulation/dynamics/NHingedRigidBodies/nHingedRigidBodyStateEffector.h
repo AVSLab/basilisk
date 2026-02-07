@@ -74,6 +74,8 @@ struct HingedPanel {
     Eigen::Vector3d r_SN_N;                        //!< [m] position vector of the hinged body center of mass Sc relative to the inertial frame origin N
     Eigen::Vector3d v_SN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame
     
+    Eigen::MatrixXd* r_HN_N;                        //!< [m] position vector of the spinning body frame origin S relative to the inertial frame origin N
+    Eigen::MatrixXd* v_HN_N;                        //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::MatrixXd* sigma_SN;                      //!< MRP attitude of frame S relative to inertial frame
     Eigen::MatrixXd* omega_SN_S;                    //!< [rad/s] inertial hinged body frame angular velocity vector
 
