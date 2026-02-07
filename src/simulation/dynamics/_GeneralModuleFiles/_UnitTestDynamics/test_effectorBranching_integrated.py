@@ -356,6 +356,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         attitudeName = getStateEffInertialPropName(segment, stateEff, "Attitude")
         angvelocityName = getStateEffInertialPropName(segment, stateEff, "AngVelocity")
 
+    print('STATE EFF POS: ', positionName)
+    print("DYN EFF POS: ", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position"))
+
     assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == positionName, (
         "FAILED: inertialPositionProperty not handed correctly between state and dynamic effectors")
     assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == velocityName, (
@@ -365,18 +368,26 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == angvelocityName, (
         "FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors")
 
+    print("here1")
     # Run the sim for a few timesteps to confirm execution without error
     stopTime = 1
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+
+    print("here2.1")
+
     unitTestSim.ExecuteSimulation()
+    print("here2.2")
 
     # Continue to check state effector EOMs using pure force & torque
     if dynamicEffector != "extForceTorque":
         return
+    
+    print("here3")
 
     # Grab conservation quantities to compare against
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
+    print("here4")
 
     # Grab effector's inertial position.   
     if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
@@ -387,7 +398,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
             r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
     else:
         r_ScN_N_log = inertialPropLog.r_BN_N
-
+    print("here5")
     # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
 
@@ -395,6 +406,8 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     n = rotAngMom_N.shape[0]-1 # length of log minus 1 as the inertial property log lags by a timestep
     extTorque = np.empty((n,3))
     dV = np.empty((n,3))
+    print("here6")
+
     for idx in range(n):
         dcm_NS = np.transpose(rbk.MRP2C(sigma_SN_log[idx,:]))
         # Compute the total accumulated deltaV
@@ -416,12 +429,14 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
                                 @ np.array(stateEffProps.r_PcP_P).flatten()
                                 - datLog.r_CN_N[idx,:], dcm_NS
                                 @ np.array(dynamicEff.extForce_B).flatten()))
+    print("here7")
 
     # Integrate the torque to find accumulated change in angular momentum
     dx = np.ones(n-1)*timestep
     y_avg = 0.5 * (extTorque[1:] + extTorque[:-1])
     integral = np.cumsum(y_avg * dx[:, None], axis=0)
     dH = np.vstack((np.zeros((1, 3)), integral))
+    print("here8")
 
     # Plotting
     plt.close("all")
@@ -435,6 +450,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     plt.xlabel('Time [sec]')
     plt.ylabel(r'Relative Difference $\Delta$H')
     plt.title('Total Rotational Angular Momentum')
+    print("here9")
 
     plt.figure()
     for idx in range(3):
@@ -491,9 +507,11 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     elif dynamicEffector == "constraintEffectorOneHub" or dynamicEffector == "constraintEffectorNoHubs":
         propList = getattr(dynamicEff, f"getPropName_inertial{propType}")()
         return propList[0]
-    elif dynamicEffector == "":
+    elif dynamicEffector == "extForceTorque":
         print("in last else")
-        return getattr(dynamicEff, f"getPropName_inertial{propType}")() # then next error is herer 
+        name = getattr(dynamicEff, f"getPropName_inertial{propType}")()
+        print("name: ", name)
+        return name
 
 def getStateEffInertialPropName(segment, stateEff, propType):
     print("IN getStateEffInertialPropName")
@@ -504,11 +522,11 @@ def getStateEffInertialPropName(segment, stateEff, propType):
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
     elif segment == 3: 
         try:
-            idx = segment - 1
-            propVec = getattr(stateEff, f"nameOfInertial{propType}Property")
-            return propVec[idx]
-        except IndexError:
+            propName = stateEff.ModelTag + "Inertial" + propType + "1_3"
+            print("propName= ", propName)
+        except BasiliskError:
             return "notHandedCorrectly"
+        return propName
 
 def getModernStateEffInertialPropName(scObject, segment, stateEff, propType):
     try:
