@@ -60,6 +60,9 @@ class Controller:
         self.archiveDir = None
         self.varCast = None
         self.numProcess = mp.cpu_count()
+        self.multiProcManager = None
+        self.dataOutQueue = None
+        self.dataWriter = None
 
         self.simParams = SimulationParameters(
             creationFunction=None,
@@ -74,15 +77,25 @@ class Controller:
         )
 
     def _shutdown_data_writer(self):
-        if getattr(self, "dataOutQueue", None) is not None:
-            self.dataOutQueue.put((None, None, True))
-        if getattr(self, "dataWriter", None) is not None:
-            self.dataWriter.join(timeout=30)
-            if self.dataWriter.is_alive():
-                self.dataWriter.terminate()
-                self.dataWriter.join(timeout=5)
-        if getattr(self, "multiProcManager", None) is not None:
-            self.multiProcManager.shutdown()
+        if self.dataWriter is not None:
+            try:
+                if self.dataOutQueue is not None and getattr(self.dataWriter, "pid", None) is not None:
+                    self.dataOutQueue.put((None, None, True))
+            except Exception:
+                pass
+            try:
+                if getattr(self.dataWriter, "pid", None) is not None:
+                    self.dataWriter.join()
+            except Exception:
+                pass
+        if self.multiProcManager is not None:
+            try:
+                self.multiProcManager.shutdown()
+            except Exception:
+                pass
+        self.dataWriter = None
+        self.dataOutQueue = None
+        self.multiProcManager = None
 
     def setShowProgressBar(self, value):
         """
@@ -105,10 +118,10 @@ class Controller:
             data = pickle.load(pickledData)
             if data.simParams.verbose:
                 print("Loading montecarlo at", filename)
-            data.multiProcManager = mp.Manager()
-            data.dataOutQueue = data.multiProcManager.Queue()
-            data.dataWriter = DataWriter(data.dataOutQueue)
-            data.dataWriter.daemon = False
+            # Defer multiprocessing resources until they are required.
+            data.multiProcManager = None
+            data.dataOutQueue = None
+            data.dataWriter = None
             return data
 
     def setExecutionFunction(self, newModule):
@@ -632,64 +645,63 @@ class Controller:
         # is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting
         # garbage properly. # TODO: Find a more permenant solution to the leak.
 
-        if self.numProcess == 1:  # don't make child thread
-            if self.simParams.verbose:
-                print("Executing sequentially...")
-            i = 0
-            for i in range(numSims):
-                simGenerator = self.generateSims(list(range(i,i+1)))
-                for sim in simGenerator:
-                    try:
-                        run_ok = simulationExecutor([sim, self.dataOutQueue])[0]
-                    except:
-                        failed.append(i)
-                    else:
-                        if not run_ok:
+        try:
+            if self.numProcess == 1:  # don't make child thread
+                if self.simParams.verbose:
+                    print("Executing sequentially...")
+                i = 0
+                for i in range(numSims):
+                    simGenerator = self.generateSims(list(range(i,i+1)))
+                    for sim in simGenerator:
+                        try:
+                            run_ok = simulationExecutor([sim, self.dataOutQueue])[0]
+                        except:
                             failed.append(i)
-                    i += 1
-                    progressBar.update(i)
-        else:
-            if self.numProcess > numSims:
-                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
-                self.numProcess = numSims
-            for i in range(numSims//self.numProcess):
-                # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
-                    offset = numSims % self.numProcess
-                else:
-                    offset = 0
-                simGenerator = self.generateSims(list(range(self.numProcess*i, self.numProcess*(i+1)+offset)))
-                pool = mp.Pool(self.numProcess)
-                try:
-                    # yields results *as* the workers finish jobs
-                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                        if result[0] is not True:  # workers return True on success
-                            failed.append(result[1])  # add failed jobs to the list of failures
-                            print("Job", result[1], "failed...")
+                        else:
+                            if not run_ok:
+                                failed.append(i)
+                        i += 1
+                        progressBar.update(i)
+            else:
+                if self.numProcess > numSims:
+                    print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
+                    self.numProcess = numSims
+                for i in range(numSims//self.numProcess):
+                    # If number of sims doesn't factor evenly into the number of processes:
+                    if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
+                        offset = numSims % self.numProcess
+                    else:
+                        offset = 0
+                    simGenerator = self.generateSims(list(range(self.numProcess*i, self.numProcess*(i+1)+offset)))
+                    pool = mp.Pool(self.numProcess)
+                    try:
+                        # yields results *as* the workers finish jobs
+                        for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
+                            if result[0] is not True:  # workers return True on success
+                                failed.append(result[1])  # add failed jobs to the list of failures
+                                print("Job", result[1], "failed...")
 
-                        jobsFinished += 1
-                        progressBar.update(jobsFinished)
-                    pool.close()
-                except KeyboardInterrupt as e:
-                    print("Ctrl-C was hit, closing pool")
-                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                    pool.terminate()
-                    raise e
-                except Exception as e:
-                    print("Unknown exception while running simulations:", e)
-                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
-                    traceback.print_exc()
-                    pool.terminate()
-                finally:
-                    # Wait until all data is logged from the spawned runs before proceeding with the next set.
-                    pool.join()
+                            jobsFinished += 1
+                            progressBar.update(jobsFinished)
+                        pool.close()
+                    except KeyboardInterrupt as e:
+                        print("Ctrl-C was hit, closing pool")
+                        failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
+                        pool.terminate()
+                        raise e
+                    except Exception as e:
+                        print("Unknown exception while running simulations:", e)
+                        failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
+                        traceback.print_exc()
+                        pool.terminate()
+                    finally:
+                        # Wait until all data is logged from the spawned runs before proceeding with the next set.
+                        pool.join()
 
-        progressBar.markComplete()
-        progressBar.close()
-        # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
-        while not self.dataOutQueue.empty():
-           time.sleep(1)
-        self._shutdown_data_writer()
+            progressBar.markComplete()
+        finally:
+            progressBar.close()
+            self._shutdown_data_writer()
 
         # if there are failures
         if len(failed) > 0:
