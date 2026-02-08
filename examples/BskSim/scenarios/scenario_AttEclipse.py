@@ -52,7 +52,7 @@ The first argument is the FSW time step and the second is the dynamics time step
 The user is cautioned when setting a changing the standard time step
 as too large a time step can lead to propagated inaccuracy.
 
-When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
+When the simulation completes several plots are shown for the eclipse illumination factor, the sun direction vector,
 attitude error, RW motor torque, and RW speed.
 
 Custom Dynamics Configurations Instructions
@@ -95,10 +95,10 @@ Illustration of Simulation Results
 
     showPlots = True
 
-This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+This plot illustrates the illumination fraction calculated by the CSS as the spacecraft orbits Earth and passes through
 the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.
 
-.. image:: /_images/Scenarios/scenario_AttEclipse_shadowFraction.svg
+.. image:: /_images/Scenarios/scenario_AttEclipse_illuminationFraction.svg
    :align: center
 
 The :ref:`CSSWlsEst` module calculates the position of the sun based on input from the CSS.
@@ -156,7 +156,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         super(scenario_AttitudeEclipse, self).__init__(fswRate=1.0, dynRate=1.0)
         self.name = 'scenario_AttitudeEclipse'
 
-        self.shadowRec = None
+        self.illuminationRec = None
         self.rwSpeedRec = None
         self.rwMotorRec = None
         self.sunSafeRec = None
@@ -197,7 +197,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         samplingTime = self.get_FswModel().processTasksTimeStep
 
         # Dynamics process outputs: log messages below if desired.
-        self.shadowRec = self.get_DynModel().eclipseObject.eclipseOutMsgs[0].recorder(samplingTime)
+        self.illuminationRec = self.get_DynModel().eclipseObject.eclipseOutMsgs[0].recorder(samplingTime)
         self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
 
         # FSW process outputs
@@ -205,7 +205,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         self.sunSafeRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
         self.cssEstRec = self.get_FswModel().cssWlsEst.navStateOutMsg.recorder(samplingTime)
 
-        self.AddModelToTask(self.get_DynModel().taskName, self.shadowRec)
+        self.AddModelToTask(self.get_DynModel().taskName, self.illuminationRec)
         self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)
         self.AddModelToTask(self.get_DynModel().taskName, self.rwMotorRec)
         self.AddModelToTask(self.get_DynModel().taskName, self.sunSafeRec)
@@ -217,7 +217,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         num_RW = 4  # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        shadowFactor = np.delete(self.shadowRec.shadowFactor, 0, 0)
+        illuminationFactor = np.delete(self.illuminationRec.illuminationFactor, 0, 0)
 
         # FSW process outputs
         dataUsReq = np.delete(self.rwMotorRec.motorTorque[:, range(num_RW)], 0, 0)
@@ -235,7 +235,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
 
-        BSK_plt.plot_shadow_fraction(timeData, shadowFactor)
+        BSK_plt.plot_illumination_fraction(timeData, illuminationFactor)
         BSK_plt.plot_sun_point(timeData, sunPoint)
 
         figureList = {}
@@ -243,7 +243,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "shadowFraction", "sunDirectionVector"]
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "illuminationFraction", "sunDirectionVector"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList

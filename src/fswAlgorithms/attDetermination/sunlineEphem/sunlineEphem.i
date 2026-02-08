@@ -17,6 +17,10 @@
 
  */
 %module sunlineEphem
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "sunlineEphem.h"
 %}

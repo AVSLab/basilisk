@@ -19,6 +19,10 @@
 
 
 %module thrusterStateEffector
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "thrusterStateEffector.h"
 %}
@@ -31,12 +35,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%include "std_vector.i"
-
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+%import "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.i"
 %include "thrusterStateEffector.h"
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
@@ -44,6 +46,10 @@ struct THRArrayOnTimeCmdMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
+
+%pythoncode %{
+from Basilisk.simulation.THRSimConfig import THRSimConfig as THRSimConfig
+%}
 
 %pythoncode %{
 import sys

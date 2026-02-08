@@ -18,14 +18,19 @@
 
 import numpy as np
 from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
-                                 reactionWheelStateEffector, coarseSunSensor, eclipse)
-from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.simulation import (
+    coarseSunSensor,
+    eclipse,
+    ephemerisConverter,
+    extForceTorque,
+    reactionWheelStateEffector,
+    simpleNav,
+    spacecraft,
+    thrusterDynamicEffector,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import simIncludeGravBody, simIncludeRW, simIncludeThruster
 from Basilisk.utilities import unitTestSupport as sp
 
 bskPath = __path__[0]
@@ -79,15 +84,35 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
-        
-        SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
-            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
 
-        
-        SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
-            ["self.repeatRWFaultFlag==1"],
-            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+        def action_oneTimeRWFault(self):
+            self.DynModels.AddRWFault("friction", 0.05, 1, self.TotalSim.CurrentNanos)
+            self.oneTimeRWFaultFlag = 0
+
+        SimBase.createNewEvent(
+            "addOneTimeRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.TotalSim.CurrentNanos >= self.oneTimeFaultTime
+                and self.oneTimeRWFaultFlag == 1
+            ),
+            actionFunction=action_oneTimeRWFault,
+        )
+
+        def action_repeatedRWFault(self):
+            self.DynModels.PeriodicRWFault(
+                1.0 / 3000, "friction", 0.005, 1, self.TotalSim.CurrentNanos
+            )
+            self.setEventActivity("addRepeatedRWFault", True)
+
+        SimBase.createNewEvent(
+            "addRepeatedRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.repeatRWFaultFlag == 1,
+            actionFunction=action_repeatedRWFault,
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -117,8 +142,7 @@ class BSKDynamicModels():
         self.moon = 2
 
         self.gravFactory.addBodiesTo(self.scObject)
-        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                              timeInitString,
+        self.gravFactory.createSpiceInterface(time=timeInitString,
                                               epochInMsg=True)
         self.epochMsg = self.gravFactory.epochMsg
 
@@ -167,7 +191,7 @@ class BSKDynamicModels():
                                          gsHat,
                                          maxMomentum=maxRWMomentum,
                                          rWB_B=rwPosVector[0])
-        
+
         gsHat = (rbk.Mi(-rwAzimuthAngle[1], 3).dot(rbk.Mi(rwElAngle[1], 2))).dot(np.array([1, 0, 0]))
         self.RW2 = self.rwFactory.create('Honeywell_HR16',
                                          gsHat,
@@ -179,7 +203,7 @@ class BSKDynamicModels():
                                          gsHat,
                                          maxMomentum=maxRWMomentum,
                                          rWB_B=rwPosVector[2])
-            
+
         gsHat = (rbk.Mi(-rwAzimuthAngle[3], 3).dot(rbk.Mi(rwElAngle[3], 2))).dot(np.array([1, 0, 0]))
         self.RW4 = self.rwFactory.create('Honeywell_HR16',
                                          gsHat,
@@ -192,6 +216,7 @@ class BSKDynamicModels():
         """Set the 8 ACS thrusters."""
         # Make a fresh TH factory instance, this is critical to run multiple times
         thFactory = simIncludeThruster.thrusterFactory()
+        self.thFactory = thFactory
 
         # 8 thrusters are modeled that act in pairs to provide the desired torque
         thPos = [
@@ -221,7 +246,7 @@ class BSKDynamicModels():
                 , dir_B
             )
         # create thruster object container and tie to spacecraft object
-        thFactory.addToSpacecraft("ACS Thrusters",
+        self.thFactory.addToSpacecraft("ACS Thrusters",
                                   self.thrustersDynamicEffector,
                                   self.scObject)
 
@@ -229,13 +254,18 @@ class BSKDynamicModels():
         """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
 
+        # Create class-level registry if it doesn't exist
+        if not hasattr(self, '_css_registry'):
+            self._css_registry = []
+
         def setupCSS(cssDevice):
             cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
             cssDevice.scaleFactor = 2.0
             cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
             cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
             cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
-            cssDevice.this.disown()
+            # Store CSS in class-level registry
+            self._css_registry.append(cssDevice)
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [
@@ -269,9 +299,9 @@ class BSKDynamicModels():
         """
         if np.random.uniform() < probability:
             self.AddRWFault(faultType, fault, faultRW, currentTime)
-        
-        
-    
+
+
+
     def AddRWFault(self, faultType, fault, faultRW, currentTime):
         """
         Adds a static friction fault to the reaction wheel.
@@ -303,4 +333,3 @@ class BSKDynamicModels():
 
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
-

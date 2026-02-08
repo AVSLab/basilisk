@@ -26,16 +26,19 @@
 
 import inspect
 import os
+from contextlib import nullcontext
 
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.fswAlgorithms import thrForceMapping
+
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import fswSetupThrusters
-from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,  # general support file with common unit test functions
+)
+from Basilisk.utilities import SimulationBaseClass, fswSetupThrusters, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -63,9 +66,11 @@ path = os.path.dirname(os.path.abspath(filename))
 def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
-                                                   numControlAxis, saturateThrusters, misconfigThruster)
-    assert testResults < 1, testMessage
+    expect_error = misconfigThruster or numControlAxis == 0
+    with pytest.raises(BasiliskError) if expect_error else nullcontext():
+        [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
+                                                    numControlAxis, saturateThrusters, misconfigThruster)
+        assert testResults < 1, testMessage
 
 
 def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):

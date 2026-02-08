@@ -17,6 +17,10 @@
 
  */
 %module cssWlsEst
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "cssWlsEst.h"
 %}
@@ -39,4 +43,3 @@ struct CSSArraySensorMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

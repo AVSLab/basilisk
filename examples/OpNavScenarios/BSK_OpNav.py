@@ -58,7 +58,7 @@ If needed, adjust the following line illustrated below to reflect the path to th
     # TODO : Modify the path to the viz here
     appPath = '/Applications/Vizard.app/Contents/MacOS/Vizard' #If on Mac
 
-The Vizard app must therefore me downloaded, and this path must reflect it's position in the file structure, and its
+The Vizard app must therefore be downloaded, and this path must reflect it's position in the file structure, and its
 name. If the path is not properly set, the OpNav simulations will hang (printing that it is waiting for the
 Vizard connection). Another option is to manually open the Vizard application after having started the python scenario,
 check OpNav or Direct Comm, and provide the tcp/ip address printed by the scenario.
@@ -69,7 +69,7 @@ The scripts are tested if all modules are installed, but can be run at full leng
 
 See the Scene Rendering
 -----------------------
-By default the Vizard will run in head-less mode where the full scene is note rendered
+By default the Vizard will run in head-less mode where the full scene is not rendered
 for viewing as this slows down the simulation.  To see the scene, edit the following line
 within the scenario script::
 

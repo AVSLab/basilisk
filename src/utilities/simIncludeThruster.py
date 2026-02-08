@@ -87,7 +87,7 @@ class thrusterFactory(object):
 
         # populate the thruster object with the type specific parameters
         try:
-            eval('self.' + thrusterType + '(TH)')
+            getattr(self, thrusterType)(TH)
         except:
             print('ERROR: Thruster type ' + thrusterType + ' is not implemented')
             exit(1)
@@ -236,6 +236,37 @@ class thrusterFactory(object):
 
         return
 
+    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=0):
+        """
+            This function is for adding a thruster cluster to intermediate bodies
+
+            Parameters
+            ----------
+            modelTag:  string
+                module model tag string
+            thEffector: thrusterEffector
+                thruster effector handle
+            baseEffector: intermediate body to be attached to, see table for compatibility guide
+            segment: if subcomponent is multi-body, designate which integer segment
+            default segment to base segment
+        """
+
+        thEffector.ModelTag = modelTag
+
+        for key, th in list(self.thrusterList.items()):
+            thEffector.addThruster(th)
+
+        # Check the type of thruster effector
+        thrusterType = str(type(thEffector))
+        if 'ThrusterDynamicEffector' in thrusterType:
+            baseEffector.addDynamicEffector(thEffector, segment)
+        elif 'ThrusterStateEffector' in thrusterType:
+            baseEffector.addStateEffector(thEffector, segment)
+        else:
+            print("This isn't a thruster effector. You did something wrong.")
+
+        return
+
     def getNumOfDevices(self):
         """
             Returns the number of RW devices setup.
@@ -267,7 +298,6 @@ class thrusterFactory(object):
         thrMessage.numThrusters = len(self.thrusterList.values())
 
         thrConfigMsg = messaging.THRArrayConfigMsg().write(thrMessage)
-        thrConfigMsg.this.disown()
 
         return thrConfigMsg
 
@@ -440,6 +470,27 @@ class thrusterFactory(object):
         TH.steadyIsp = 227.5
         # nozzle area [m^2]
         TH.areaNozzle = 0.07
+
+        return
+
+    #
+    #    NanoAvionics EPSS C2:
+    #
+    #    Information Source:
+    #    https://satcatalog.s3.amazonaws.com/components/901/SatCatalog_-_NanoAvionics_-_EPSS_C2_-_Datasheet.pdf
+    #    https://www.youtube.com/watch?v=_YOA2swigBw
+    #
+    #    This is a NanoAvionics EPSS C2 monopropellant thruster
+    #
+    def EPSS_C2(self, TH):
+        # maximum thrust BOL [N]
+        TH.MaxThrust = 1.0
+        # minimum thruster on time [s]
+        TH.MinOnTime = 0.010    # Guesstimate based on similar thrusters & estimate based on minimum impulse
+        # Isp value [s]
+        TH.steadyIsp = 230.0    # Figure 5 of datasheet
+        # nozzle area [m^2]
+        TH.areaNozzle = 6.0e-7  # [m^2] Guesstimate
 
         return
 

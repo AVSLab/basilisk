@@ -33,7 +33,6 @@ void message_buffer_deallocate(void *data, void *hint);
  */
 VizInterface::VizInterface()
 {
-    this->opNavMode = 0;
     this->saveFile = false;
     this->liveStream = false;
     this->broadcastStream = false;
@@ -92,7 +91,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_INFORMATION, text.c_str());
     }
 
-    if (this->liveStream || this->noDisplay || this->opNavMode > 0) {
+    if (this->liveStream || this->noDisplay) {
         // Reset cameras
         for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
@@ -227,6 +226,15 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     this->FrameNumber=-1;
     if (this->saveFile) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+
+        /* check if file could be opened */
+        if (!this->outputStream->is_open()) {
+            this->saveFile = false; // turn off save file flag
+            bskLogger.bskLog(BSK_ERROR, "VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
+            return;
+        } else {
+            bskLogger.bskLog(BSK_INFORMATION, "VizInterface: Writing data to %s", this->protoFilename.c_str());
+        }
     }
 
     this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
@@ -561,9 +569,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define if camera cone should be shown
-        vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
-        if (abs(this->settings.viewCameraConeHUD)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        vizSettings->set_viewcamerafrustumhud(this->settings.viewCameraFrustumHUD);
+        if (abs(this->settings.viewCameraFrustumHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraFrustumHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraFrustumHUD);
+        }
+        // define if camera HUD should be shown
+        vizSettings->set_viewcameraviewhud(this->settings.viewCameraViewHUD);
+        if (abs(this->settings.viewCameraViewHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraViewHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraViewHUD);
         }
 
         // define if coordinate system labels should be shown
@@ -591,9 +604,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define the GUI scaling factor
-        vizSettings->set_customguiscale(this->settings.customGUIScale);
-        if (abs(this->settings.customGUIScale)>3.0) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
+        vizSettings->set_customguireferenceheight(this->settings.customGUIReferenceHeight);
+        if (this->settings.customGUIReferenceHeight<300.0 && abs(this->settings.customGUIReferenceHeight)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIReferenceHeight flag must be either -1 or > 300.  A value of %d was received.", this->settings.customGUIReferenceHeight);
         }
 
         // define default spacecraft sprite behavior
@@ -662,6 +675,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_truepathrelativebody(this->settings.truePathRelativeBody);
         vizSettings->set_truepathrotatingframe(this->settings.truePathRotatingFrame);
         vizSettings->set_truepathfixedframe(this->settings.truePathFixedFrame);
+        vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
+        vizSettings->set_spacecraftorbitlinewidth(this->settings.spacecraftOrbitLineWidth);
+        vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
+        vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
+        vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
+        for (size_t i=0; i<settings.osculatingOrbitLineRange.size(); i++){
+            vizSettings->add_osculatingorbitlinerange(this->settings.osculatingOrbitLineRange[i]*R2D);
+        }
+        for (size_t i=0; i<settings.osculatingGroundTrackRange.size(); i++){
+            vizSettings->add_osculatinggroundtrackrange(this->settings.osculatingGroundTrackRange[i]*R2D);
+        }
+        vizSettings->set_showosculatinggroundtracklines(this->settings.showOsculatingGroundTrackLines);
+        vizSettings->set_showtruepathgroundtracklines(this->settings.showTruePathGroundTrackLines);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -685,9 +711,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
             il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
             il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
-            il->set_showtransceiverfrustrum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustrum);
+            il->set_showtransceiverfrustum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustum);
             il->set_showgenericstoragepanel(this->settings.instrumentGuiSettingsList[idx].showGenericStoragePanel);
-            il->set_showmultispherelabels(this->settings.instrumentGuiSettingsList[idx].showMultiSphereLabels);
+            il->set_showmultishapelabels(this->settings.instrumentGuiSettingsList[idx].showMultiShapeLabels);
         }
 
 
@@ -719,6 +745,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
             sc->set_spacecraftname(scp->spacecraftName);
             sc->set_setmode(scp->setMode);
+            sc->set_showhudelementsinimage(scp->showHUDElementsInImage);
             if (scp->fieldOfView < 0)
                 sc->set_fieldofview(-1.0);
             else {
@@ -756,6 +783,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
     }
     liveVizSettings->set_relativeorbitchief(this->liveSettings.relativeOrbitChief);
+    liveVizSettings->set_terminatevizard(this->liveSettings.terminateVizard);
+    liveVizSettings->set_playbackpaused(this->liveSettings.playbackPaused);
+    liveVizSettings->set_playbackinrealtime(this->liveSettings.playbackInRealTime);
+    liveVizSettings->set_playbackmultiplier(this->liveSettings.playbackMultiplier);
     message->set_allocated_livesettings(liveVizSettings);
 
 
@@ -797,21 +828,42 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! write the Locations protobuffer messages */
-    std::vector<LocationPbMsg *>::iterator glIt;
-    for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
+    std::vector<LocationPbMsg>::iterator glIt;
+    for (glIt = this->locations.begin(); glIt != this->locations.end(); glIt++) {
         vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
-        glp->set_stationname((*glIt)->stationName);
-        glp->set_parentbodyname((*glIt)->parentBodyName);
-        glp->set_fieldofview((*glIt)->fieldOfView*R2D);
-        glp->set_range((*glIt)->range);
+        glp->set_stationname(glIt->stationName);
+        glp->set_parentbodyname(glIt->parentBodyName);
+        glp->set_fieldofview(glIt->fieldOfView*R2D);
+        glp->set_range(glIt->range);
         for (int i=0; i<3; i++) {
-            glp->add_r_gp_p((*glIt)->r_GP_P[i]);
-            glp->add_ghat_p((*glIt)->gHat_P[i]);
+            glp->add_r_gp_p(glIt->r_GP_P[i]);
+            glp->add_ghat_p(glIt->gHat_P[i]);
         }
         for (int i=0; i<4; i++) {
-            glp->add_color((*glIt)->color[i]);
+            glp->add_color(glIt->color[i]);
         }
+        glp->set_markerscale(glIt->markerScale);
+        glp->set_ishidden(glIt->isHidden);
+        glp->set_label(glIt->label);
     }
+    this->locations.clear(); // Locations should only send to Vizard once
+
+    // Write QuadMap messages
+    for (size_t k=0; k<this->quadMaps.size(); k++)
+    {
+        vizProtobufferMessage::VizMessage::QuadMap* qm = message->add_quadmaps();
+        qm->set_id(this->quadMaps.at(k)->ID);
+        qm->set_parentbodyname(this->quadMaps.at(k)->parentBodyName);
+        for (size_t idx=0; idx<this->quadMaps.at(k)->vertices.size(); idx++) {
+            qm->add_vertices(this->quadMaps.at(k)->vertices[idx]);
+        }
+        for (size_t idx=0; idx<this->quadMaps.at(k)->color.size(); idx++) {
+            qm->add_color(this->quadMaps.at(k)->color[idx]);
+        }
+        qm->set_ishidden(this->quadMaps.at(k)->isHidden);
+        qm->set_label(this->quadMaps.at(k)->label);
+    }
+    this->quadMaps.clear(); // QuadMaps should only send to Vizard once
 
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = scData.begin(); scIt != scData.end(); scIt++)
@@ -1005,9 +1057,17 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
-            // Write Multi-Sphere-Model messages
+            /* set spacecraft ground track line color */
+            for (size_t i=0; i<scIt->groundTrackLineColor.size(); i++){
+                scp->add_groundtracklinecolor(scIt->groundTrackLineColor[i]);
+            }
+
+            /* set spacecraft celestialbody on which to draw a ground track */
+            scp->set_groundtrackbodyname(scIt->groundTrackBodyName);
+
+            // Write Multi-Shape-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
-                vizProtobufferMessage::VizMessage::MultiSphere* msmp = scp->add_multispheres();
+                vizProtobufferMessage::VizMessage::MultiShape* msmp = scp->add_multishapes();
 
                 msmp->set_ison(scIt->msmInfo.msmList[idx]->isOn);
                 for (uint64_t j=0; j<3; j++) {
@@ -1023,6 +1083,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
                 }
                 msmp->set_neutralopacity(scIt->msmInfo.msmList[idx]->neutralOpacity);
+                msmp->set_shape(scIt->msmInfo.msmList[idx]->shape);
+                for (int j=0; j<3; j++) {
+                    msmp->add_dimensions(scIt->msmInfo.msmList[idx]->dimensions[j]);
+                }
+                for (int j=0; j<3; j++) {
+                    msmp->add_rotation(scIt->msmInfo.msmList[idx]->rotation[j]);
+                }
             }
 
         }
@@ -1061,6 +1128,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     camera->add_depthmapclippingplanes(this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[j]);
                 }
             }
+            camera->set_showhudelementsinimage(this->cameraConfigBuffers[camCounter].showHUDElementsInImage);
         }
     }
 
@@ -1120,7 +1188,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             byteCount = (uint32_t) message->ByteSizeLong();
             google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
             unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
-            if (this->saveFile) {
+            // Save message to file if saveFile flag is true, and if Vizard is not being terminated
+            if (this->saveFile && !this->liveSettings.terminateVizard) {
                 this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
             }
             serialized_message = malloc(byteCount);
@@ -1128,16 +1197,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // Check whether noDisplay mode should generate imagery from Vizard at this timestep
-        bool opNavModeStatus = false;
-        if (this->noDisplay || this->opNavMode == 2) {
+        bool returnCamImgStatus = false;
+        if (this->noDisplay) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                 if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
-                    opNavModeStatus = true;
+                    returnCamImgStatus = true;
                 }
             }
         }
 
-        if (this->liveStream || (this->noDisplay && opNavModeStatus) || (this->opNavMode == 1) || (this->opNavMode == 2 && opNavModeStatus)) {
+        if (this->liveStream || (this->noDisplay && returnCamImgStatus)) {
             // Receive pong
             // Viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into noDisplay mode
             if (this->firstPass < 11){
@@ -1174,47 +1243,54 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_close(&request_buffer);
 
             // Receive status message from Vizard after SIM_UPDATE
-            zmq_msg_t receiveOK;
-            zmq_msg_init(&receiveOK);
-            int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
-            if (receive_status) {
-                // Make sure "OK" was received from Vizard
-                void* msgData = zmq_msg_data(&receiveOK);
-                size_t msgSize = zmq_msg_size(&receiveOK);
-                std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
-                std::string errStatusStr = "OK";
-                if (receiveOKStr.compare(errStatusStr) != 0) {
-                    bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
-                    return;
-                }
+            if (this->liveSettings.terminateVizard) {
+                this->broadcastStream = false;
+                this->liveStream = false;
+                this->noDisplay = false;
             }
             else {
-                bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
-            }
-            zmq_msg_close(&receiveOK);
-
-            // Only handle user input if in liveStream mode (and not in noDisplay mode)
-            if (this->liveStream) {
-                this->receiveUserInput(CurrentSimNanos);
-            }
-
-            for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
-                /*! - If the camera is requesting periodic images, request them */
-                if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
-                    this->cameraConfigBuffers[camCounter].isOn == 1)
-                {
-                    this->requestImage(camCounter, CurrentSimNanos);
+                zmq_msg_t receiveOK;
+                zmq_msg_init(&receiveOK);
+                int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
+                if (receive_status) {
+                    // Make sure "OK" was received from Vizard
+                    void* msgData = zmq_msg_data(&receiveOK);
+                    size_t msgSize = zmq_msg_size(&receiveOK);
+                    std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
+                    std::string errStatusStr = "OK";
+                    if (receiveOKStr.compare(errStatusStr) != 0) {
+                        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
+                        return;
+                    }
                 }
-            }
-            if (opNavModeStatus) {
-                /*! -- Ping the Viz back to continue the lock-step */
-                void* keep_alive = malloc(4 * sizeof(char));
-                memcpy(keep_alive, "PING", 4);
-                zmq_msg_t request_life;
-                zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
-                zmq_msg_send(&request_life, this->requester_socket, 0);
-                zmq_msg_close(&request_life);
-                return;
+                else {
+                    bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
+                }
+                zmq_msg_close(&receiveOK);
+
+                // Only handle user input if in liveStream mode (and not in noDisplay mode)
+                if (this->liveStream) {
+                    this->receiveUserInput(CurrentSimNanos);
+                }
+
+                for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+                    /*! - If the camera is requesting periodic images, request them */
+                    if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                        this->cameraConfigBuffers[camCounter].isOn == 1)
+                    {
+                        this->requestImage(camCounter, CurrentSimNanos);
+                    }
+                }
+                if (returnCamImgStatus) {
+                    /*! -- Ping the Viz back to continue the lock-step */
+                    void* keep_alive = malloc(4 * sizeof(char));
+                    memcpy(keep_alive, "PING", 4);
+                    zmq_msg_t request_life;
+                    zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
+                    zmq_msg_send(&request_life, this->requester_socket, 0);
+                    zmq_msg_close(&request_life);
+                    return;
+                }
             }
 
         }

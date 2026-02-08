@@ -36,3 +36,10 @@ The next step is to attach one or more :ref:`PowerNodeUsageMsgPayload` instances
 
 
 For more information on how to set up and use this module, see the simple power system example :ref:`scenarioPowerDemo`.
+
+Users may configure the fault message to simulate a battery capacity fault that reduces the actual storage capacity while the ``storageCapacity`` value remains unchanged. The faulted battery capacity is determined using the ``faultCapacityRatio``, calculated as (actual capacity) / (set capacity). ::
+
+   faultMsg = messaging.PowerStorageFaultMsgPayload()
+   faultMsg.faultCapacityRatio = 0.3 # Actual capacity is 30% of the nominal capacity
+   faultStatusMsg = messaging.PowerStorageFaultMsg().write(faultMsg)
+   battery.batteryFaultInMsg.subscribeTo(faultStatusMsg)

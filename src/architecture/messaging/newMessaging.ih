@@ -17,6 +17,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %pythoncode %{
     import numpy as np
+    import inspect
+    import pprint
+    from Basilisk.utilities import deprecated
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -26,11 +29,86 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 %}
 
+%{
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+%}
+
+%init %{
+import_array();  // Required to initialize NumPy C API
+%}
+
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
 #include "folder/messageTypePayload.h"
 %}
 %include "folder/messageTypePayload.h"
+
+%feature("shadow") messageTypePayload()
+{
+def __init__(self, **fields):
+    """Constructs a new payload, zero'd by default.
+
+    Keyword arguments can be passed to initialize the fields of
+    this payload.
+    """
+    _ ## messageTypePayload.messageTypePayload ## _swiginit(self, _ ## messageTypePayload.new_ ## messageTypePayload())
+    for field, value in fields.items():
+        setattr(self, field, value)
+}
+
+%extend messageTypePayload {
+%pythoncode %{
+    @classmethod
+    def __fields__(cls):
+        """Returns a list with all the payload's fields."""
+        return tuple(
+            name
+            for name, _ in inspect.getmembers(
+                cls,
+                lambda v: isinstance(v, property) and v is not cls.thisown
+            )
+        )
+
+    def __repr__(self):
+        """Formats the content of the payload"""
+        selfType = type(self)
+        fields = [
+            f"{name}={getattr(self, name)!r}"
+            for name in selfType.__fields__()
+        ]
+        return selfType.__qualname__ + "(" + ', '.join(fields) + ")"
+%}
+}
+
+%pythoncode %{
+def _pprint_ ## messageTypePayload(pprinter, object, stream, indent, allowance, context, level):
+    """Formatter function to support pretty-printing (with ``pprint``)."""
+    selfType = type(object)
+    cls_name = selfType.__qualname__
+    indent += len(cls_name) + 1
+    fields = [
+        (name, getattr(object, name))
+        for name in selfType.__fields__()
+    ]
+    stream.write(cls_name + '(')
+    if fields:
+        delimnl = ',\n' + ' ' * indent
+        last_index = len(fields) - 1
+        for i, (key, ent) in enumerate(fields):
+            last = i == last_index
+            stream.write(key)
+            stream.write('=')
+            pprinter._format(ent, stream, indent + len(key) + 1,
+                        allowance if last else 1,
+                        context, level)
+            if not last:
+                stream.write(delimnl)
+
+    stream.write(')')
+
+pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messageTypePayload
+%}
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
@@ -39,7 +117,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if type(source) == messageType:
                     self.__subscribe_to(source)
                     return
-                
+
                 try:
                     from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                     if type(source) == messageType ## _C:
@@ -47,7 +125,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                         return
                 except ImportError:
                     pass
-    
+
                 raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
                                 + str(type(source)))
 
@@ -55,12 +133,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             def isSubscribedTo(self, source):
                 if type(source) == messageType:
                     return self.__is_subscribed_to(source)
-                
+
                 try:
                     from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                 except ImportError:
                     return 0
-                
+
                 if type(source) == messageType ## _C:
                     return self.__is_subscribed_to_C(source)
                 else:
@@ -98,46 +176,82 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         def timesWritten(self):
             return np.array(self.__timeWritten_vector())
 
-        def explore_and_find_subattr(self, attr, attr_name, content):
-            if "method" in str(type(attr)):
+        def explore_and_find_subattr(self, attr, attr_name, outer_content=None):
+            if isinstance(attr, (int, float, str, bool)):
+                # Short circuit the most common attribute types
+                content = attr
+            elif "method" in str(type(attr)):
                 # The attribute is a method, nothing to do here
-                pass
+                content = None
             elif isinstance(attr, list):
                 # The attribute is a list of yet to be determined types
                 if len(attr) > 0:
                     if "Basilisk" in str(type(attr[0])):
+                        content = outer_content if outer_content else dict()
                         # The attribute is a list of swigged BSK objects
                         for el, k in zip(attr, range(len(attr))):
                             self.explore_and_find_subattr(el, attr_name + "[" + str(k) + "]", content)
                     else:
-                        # The attribute is a list of common types 
-                        content[attr_name] = attr
+                        # The attribute is a list of common types
+                        content = attr
             elif "Basilisk" in str(type(attr)):
                 # The attribute is a swigged BSK object
                 # Check to see if the object is a vector and pull out the data
                 if "Vector" in str(type(attr)) or "vector" in str(type(attr)):
-                    content[attr_name] = []
+                    content = []
                     for data in attr:
-                        content[attr_name].append(data)
+                        content.append(data)
                 else:
-                    for subattr_name in  dir(attr):
+                    content = outer_content if outer_content else dict()
+                    for subattr_name in dir(attr):
                         if not subattr_name.startswith("__") and subattr_name != "this":
                             self.explore_and_find_subattr(getattr(attr, subattr_name),
                                                           attr_name + "." + subattr_name,
                                                           content)
             else:
                 # The attribute has a common type
-                content[attr_name] = attr
+                content = attr
+
+            if outer_content is None:
+                return content
+            else:
+                # Dont report methods
+                if content is not None:
+                    outer_content[attr_name] = content
+
+        # Cache if we can use the fast attr lookup, assuming that attr types are static
+        simple_attribute_map = {}
 
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data = self.__record_vector()
             data_record = []
-            for rec in data.iterator():
-                content = {}
-                self.explore_and_find_subattr(rec.__getattribute__(name), name, content)
-                if len(content) == 1 and "." not in str(list(content.keys())[0]):
+            for rec in data.get_all():
+                # Allow us to skip explore_and_find_subattr when we dont have a complex attr
+                if name not in self.simple_attribute_map:
+                    simple_content = rec.__getattribute__(name)
+                    content = self.explore_and_find_subattr(simple_content, name)
+                    if content == simple_content:
+                        self.simple_attribute_map[name] = True
+                    else:
+                        deprecated.deprecationWarn(
+                            self.__getattr__.__module__ + "." + self.__getattr__.__qualname__,
+                            "2026/07/27",
+                            "Compiled Basilisk with '--recorderPropertyRollback True' and using "
+                            "deprecated output format for non-numeric payload recorder attribute. Don't use "
+                            "'--recorderPropertyRollback' and update the code to handle the new output format.")
+                        self.simple_attribute_map[name] = False
+                else:
+                    if self.simple_attribute_map[name]:
+                        content = rec.__getattribute__(name)
+                    else:
+                        content = self.explore_and_find_subattr(
+                            rec.__getattribute__(name), name
+                        )
+
+                # One-element list of BSK objects or raw dicts
+                if isinstance(content, dict) and len(content) == 1 and "." not in str(list(content.keys())[0]):
                     data_record.append(next(iter(content.values())))
                 else:
                     data_record.append(content)
@@ -153,14 +267,178 @@ typedef struct messageType;
 
 %template(messageType ## PayloadVector) std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>;
 %extend std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>{
+    std::vector<messageType ## Payload> get_all() {
+        return *self;
+    }
+
     %pythoncode %{
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data_record = []
-            for rec in self.iterator():
+            for rec in self.get_all():
                 data_record.append(rec.__getattribute__(name))
             return np.array(data_record)
     %}
 };
+%enddef
+
+%define RECORDER_PROPERTY(payloadType, fieldName, fieldType)
+/*
+ * Exposes a general field (e.g. string, user-defined type) as a Python property.
+ * Creates a Python list and converts it to a NumPy array on the Python side.
+ * Slower than the numeric variants, but supports arbitrary types via SWIG typemaps.
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _list
+{
+    size_t N = $1->record().size();
+    $result = PyList_New(N);
+    for (size_t recordIndex = 0; recordIndex < N; ++recordIndex)
+    {
+        PyObject * resultItem;
+        auto& _swigResultHolder = $1->record().at(recordIndex). ## fieldName;
+        {
+        auto& result = _swigResultHolder;
+        $typemap(out, fieldType, result=resultItem);
+        }
+        PyList_SET_ITEM($result, recordIndex, resultItem);  // steals ref
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _list() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return np.array(self._ ## fieldName ## _list())
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_0(payloadType, fieldName, fieldType, npyTypeNum)
+/*
+ * Exposes a scalar numeric field (e.g. double, int) as a NumPy array with shape [N].
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        npy_intp dims[1] = {static_cast<npy_intp>(N)};
+        $result = PyArray_SimpleNew(1, dims, npyTypeNum);
+        if (!$result) SWIG_fail;
+
+        for (size_t i = 0; i < N; ++i ) {
+            void* ptr = PyArray_GETPTR1((PyArrayObject*)$result, i);
+            *reinterpret_cast<fieldType*>(ptr) = $1->record().at(i). ## fieldName;
+        }
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_1(payloadType, fieldName, fieldType, npyTypeNum)
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        /* Derive dimensions from compiled type */
+        auto &first = $1->record().at(0).fieldName;
+        const size_t d1 = sizeof(first) / sizeof(first[0]);
+        const size_t elemsPerRecord = d1;
+        const size_t bytesPerRecord = elemsPerRecord * sizeof(fieldType);
+
+        npy_intp dims[2] = {static_cast<npy_intp>(N), (npy_intp) d1};
+        $result = PyArray_SimpleNew(2, dims, npyTypeNum);
+        if (!$result) SWIG_fail;
+
+        fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
+
+        for (size_t i = 0; i < N; ++i) {
+            const fieldType* src = &($1->record().at(i).fieldName[0]);
+            std::memcpy(dest + i * elemsPerRecord, src, bytesPerRecord);
+        }
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_2(payloadType, fieldName, fieldType, npyTypeNum)
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        /* Derive dimensions from compiled type */
+        auto &first = $1->record().at(0).fieldName;
+        const size_t d1 = sizeof(first) / sizeof(first[0]);
+        const size_t d2 = sizeof(first[0]) / sizeof(first[0][0]);
+        const size_t elemsPerRecord = d1 * d2;
+        const size_t bytesPerRecord = elemsPerRecord * sizeof(fieldType);
+
+        npy_intp dims[3] = {static_cast<npy_intp>(N), (npy_intp) d1, (npy_intp) d2};
+        $result = PyArray_SimpleNew(3, dims, npyTypeNum);
+        if (!$result) SWIG_fail;
+
+        fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
+
+        for (size_t i = 0; i < N; ++i) {
+            const fieldType* src = &($1->record().at(i).fieldName[0][0]);
+            std::memcpy(dest + i * elemsPerRecord, src, bytesPerRecord);
+        }
+
+        if (PyErr_Occurred()) SWIG_fail;
+    }
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
 %enddef

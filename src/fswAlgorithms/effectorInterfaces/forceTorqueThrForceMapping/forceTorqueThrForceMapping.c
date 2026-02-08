@@ -53,6 +53,7 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
 
     VehicleConfigMsgPayload vehConfigInMsgBuffer;  //!< local copy of message buffer
     THRArrayConfigMsgPayload thrConfigInMsgBuffer;  //!< local copy of message buffer
+    THRArrayCmdForceMsgPayload thrForceCmdOutMsgBuffer;  //!< local copy of message buffer
 
     //!< read the rest of the input messages
     thrConfigInMsgBuffer = THRArrayConfigMsg_C_read(&configData->thrConfigInMsg);
@@ -74,6 +75,10 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
             _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible saturation limit of <= 0 N!");
         }
     }
+
+    /* zero the thruster force command output message */
+    thrForceCmdOutMsgBuffer = THRArrayCmdForceMsg_C_zeroMsgPayload();
+    THRArrayCmdForceMsg_C_write(&thrForceCmdOutMsgBuffer, &configData->thrForceCmdOutMsg, moduleID, callTime);
 }
 
 
@@ -263,7 +268,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     vSetZero(zeroVector, configData->numThrusters);
     numZeroes = 0;
     for(uint32_t j = 0; j < 6; j++) {
-        if (vIsEqual(zeroVector, 6, DG[j], 0.0000001)) {
+        if (vIsEqual(zeroVector, configData->numThrusters, DG[j], 0.0000001)) {
             zeroRows[j] = 1;
             numZeroes += 1;
         } else {
@@ -274,20 +279,18 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     /* Create the DG w/ zero rows removed */
     double DG_full[6*MAX_EFF_CNT];
     vSetZero(DG_full, (size_t) 6*MAX_EFF_CNT);
-    uint32_t zeroesPassed;
-    zeroesPassed = 0;
+    uint32_t row_idx = 0;
     for(uint32_t i = 0; i < 6; i++) {
         if (!zeroRows[i]) {
             for(uint32_t j = 0; j < MAX_EFF_CNT; j++) {
-                DG_full[MXINDEX(MAX_EFF_CNT, i-zeroesPassed, j)] = DG[i][j];
+                DG_full[MXINDEX(MAX_EFF_CNT, row_idx, j)] = DG[i][j];
             }
-        } else {
-            zeroesPassed += 1;
+            row_idx++;
         }
     }
 
     /* Compute the minimum norm inverse of DG*/
-    double DGT_DGDGT_inv[6*6];
+    double DGT_DGDGT_inv[6*MAX_EFF_CNT];
     mMinimumNormInverse(DG_full, (size_t) 6-numZeroes, (size_t) MAX_EFF_CNT, DGT_DGDGT_inv);
 
     /* Add the computed pseudoinverse values back into the correct positions*/

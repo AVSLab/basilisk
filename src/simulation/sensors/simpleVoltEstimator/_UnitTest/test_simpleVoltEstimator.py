@@ -22,7 +22,9 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy
+import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import simpleVoltEstimator
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -136,26 +138,27 @@ def unitSimpleVoltEstimator(show_plots):
         plt.show()
     plt.close('all')
 
-    # check if BSK_ERROR is returned if pMatrix is wrong size
-    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    sVoltObject.walkBounds = stateBoundsBad
-    sVoltObject.PMatrix = pMatrixBad
+    with pytest.raises(BasiliskError):
+        # check if BSK_ERROR is returned if pMatrix is wrong size
+        pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
+        stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+        sVoltObject.walkBounds = stateBoundsBad
+        sVoltObject.PMatrix = pMatrixBad
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(1E8))
-    unitTestSim.ExecuteSimulation()
+        unitTestSim.InitializeSimulation()
+        unitTestSim.ConfigureStopTime(int(1E8))
+        unitTestSim.ExecuteSimulation()
 
     # print out success message if no error were found
     if testFailCount == 0:

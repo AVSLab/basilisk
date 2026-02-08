@@ -8,7 +8,8 @@ Download
        :align: right
        :scale: 50 %
 
-The latest Vizard application binaries binaries can be directly downloaded using the following links:
+The latest Vizard application binaries binaries can be directly downloaded using the following links.
+Install the program in the typical Applications folder or Desktop.
 
 - :download:`Vizard macOS (Universal) <https://hanspeterschaub.info/bskFiles/Vizard_macOS.zip>`
 - :download:`Vizard Linux <https://hanspeterschaub.info/bskFiles/Vizard_Linux.zip>`

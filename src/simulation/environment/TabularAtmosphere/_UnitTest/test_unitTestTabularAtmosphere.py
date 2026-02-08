@@ -41,12 +41,18 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities.readAtmTable import readAtmTable
+from Basilisk.utilities.supportDataTools.dataFetcher import (
+    get_path,
+    DataFile,
+)
+
 
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("altitude", [42.0, 33.33333, 10000.0, -10.0]) # exact, interpolate, above, below
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-
+@pytest.mark.parametrize(
+    "altitude", [42.0, 33.33333, 10000.0, -10.0]
+)  # exact, interpolate, above, below
+@pytest.mark.parametrize("useMinReach", [True, False])
+@pytest.mark.parametrize("useMaxReach", [True, False])
 def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
     r"""
     **Validation Test Description**
@@ -82,31 +88,34 @@ def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach)
+    [testResults, testMessage] = tabularAtmosphereTestFunction(
+        altitude, accuracy, useMinReach, useMaxReach
+    )
     assert testResults < 1, testMessage
 
+
 def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
-    testFailCount = 0                       # zero unit test result counter
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    module = tabularAtmosphere.TabularAtmosphere()   # update with current values
-    module.ModelTag = "tabularAtmosphere"            # update python name of test module
+    module = tabularAtmosphere.TabularAtmosphere()  # update with current values
+    module.ModelTag = "tabularAtmosphere"  # update python name of test module
 
     # define constants & load data
     r_eq = 6378136.6
-    filename = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
-    altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
+    atm_path = get_path(DataFile.AtmosphereData.EarthGRAMNominal)
+    altList, rhoList, tempList = readAtmTable(str(atm_path), "EarthGRAM")
 
     # assign constants & ref. data to module
     module.planetRadius = r_eq
@@ -132,7 +141,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     #   setup orbit and simulation time
     r0 = r_eq + (altitude * 1000.0)  # meters
     oe = orbitalMotion.ClassicElements()
-    mu = 0.3986004415E+15  # meters^3/s^2
+    mu = 0.3986004415e15  # meters^3/s^2
     oe.a = r0
     oe.e = 0.0
     oe.i = 45.0 * macros.D2R
@@ -142,7 +151,9 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     r0N, v0N = orbitalMotion.elem2rv(mu, oe)
 
     # create the input messages
-    scStateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
+    scStateMsg = (
+        messaging.SCStatesMsgPayload()
+    )  # Create a structure for the input message
     scStateMsg.r_BN_N = np.array(r0N)
     scInMsg = messaging.SCStatesMsg().write(scStateMsg)
 
@@ -160,7 +171,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -180,37 +191,45 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
         else:
             for i, x in enumerate(xList):
                 if x >= val:
-                    x0 = xList[i-1]
-                    y0 = yList[i-1]
+                    x0 = xList[i - 1]
+                    y0 = yList[i - 1]
                     y1 = yList[i]
-                    m = (y1 - y0)/(x - x0)
+                    m = (y1 - y0) / (x - x0)
                     out = y0 + (val - x0) * m
                     return out
 
     # compute truth values
     trueDensity = tabAtmoComp(altitude * 1000, altList, rhoList)
-    print('\nmodule density: {0:.6e}'.format(densData[0]))
-    print('true density: {0:.6e}'.format(trueDensity))
+    print("\nmodule density: {0:.6e}".format(densData[0]))
+    print("true density: {0:.6e}".format(trueDensity))
 
     trueTemp = tabAtmoComp(altitude * 1000, altList, tempList)
-    print('\nmodule temperature: {0:.6e}'.format(tempData[0]))
-    print('true temperature: {0:.6e}\n'.format(trueTemp))
+    print("\nmodule temperature: {0:.6e}".format(tempData[0]))
+    print("true temperature: {0:.6e}\n".format(trueTemp))
 
     # compare truth values to module results
     if trueDensity != 0:
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(densData[0], trueDensity, accuracy)
+        testFailCount = not unitTestSupport.isDoubleEqualRelative(
+            densData[0], trueDensity, accuracy
+        )
     else:
-        testFailCount = not unitTestSupport.isDoubleEqual(densData[0], trueDensity, accuracy)
+        testFailCount = not unitTestSupport.isDoubleEqual(
+            densData[0], trueDensity, accuracy
+        )
     if testFailCount == 0:
         testMessage = "density computed correctly"
     else:
         testMessage = "density computed incorrectly"
 
     # compare truth values to module results for temperature
-    if trueTemp != 0 :    # needs checking
-        testFailCount = not unitTestSupport.isDoubleEqualRelative(tempData[0], trueTemp, accuracy)
+    if trueTemp != 0:  # needs checking
+        testFailCount = not unitTestSupport.isDoubleEqualRelative(
+            tempData[0], trueTemp, accuracy
+        )
     else:
-        testFailCount = not unitTestSupport.isDoubleEqual(tempData[0], trueTemp, accuracy)
+        testFailCount = not unitTestSupport.isDoubleEqual(
+            tempData[0], trueTemp, accuracy
+        )
     if testFailCount == 0:
         testMessage += " and temperature computed correctly"
     else:
@@ -229,8 +248,8 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 #
 if __name__ == "__main__":
     test_tabularAtmosphere(
-                 10000.0,          # altitude
-                 1e-12,       # accuracy
-                 True,
-                 True
-               )
+        10000.0,  # altitude
+        1e-12,  # accuracy
+        True,
+        True,
+    )

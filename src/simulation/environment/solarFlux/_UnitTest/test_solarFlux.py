@@ -25,8 +25,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion as om
 
 
-@pytest.mark.parametrize("positionFactor, shadowFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])
-def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, relTol):
+@pytest.mark.parametrize("positionFactor, illuminationFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])
+def test_solarFlux(show_plots, positionFactor, illuminationFactor, eclipseMsgName, relTol):
     """
     **Test Description**
 
@@ -34,12 +34,12 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     To test this, the module is asked to write the solar flux at 1 AU. Then it is asked to write
     the flux at ``positionFactor*AU`` and the flux is checked to be ``positionFactor**2`` of that at 1 AU to within
     a relative tolerance of relTol.
-    The application of the shadowFactor is also checked as a multiple of the un-shadowed flux.
+    The application of the illuminationFactor is also checked as a multiple of the un-shadowed flux.
 
     Args:
         positionFactor (float): positive,
             a factor by which to multiply the original s/c position to check flux at a new position
-        shadowFactor (float): between 0 and 1,
+        illuminationFactor (float): between 0 and 1,
             the eclipse factor by which to multiple the solar flux at a position
         relTol (float): positive, the relative tolerance to which the result is checked.
     """
@@ -58,7 +58,7 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     eclipseMessage = messaging.EclipseMsgPayload()
-    eclipseMessage.shadowFactor = shadowFactor
+    eclipseMessage.illuminationFactor = illuminationFactor
     eclMsg = messaging.EclipseMsg().write(eclipseMessage)
 
     sf = solarFlux.SolarFlux()
@@ -80,7 +80,7 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sim.TotalSim.SingleStepProcesses()
     fluxOutFurther = dataLog.flux
 
-    assert fluxOutFurther[1] == pytest.approx(fluxOutEarth[0] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
+    assert fluxOutFurther[1] == pytest.approx(fluxOutEarth[0] / illuminationFactor / (positionFactor**2) * illuminationFactor, rel=relTol)
 
 
 if __name__ == "__main__":

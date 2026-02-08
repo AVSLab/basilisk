@@ -125,18 +125,33 @@ The same plots are generated using the MSIS model:
 #
 
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk, used to get the location of supporting data
 from Basilisk import __path__
+
 # always import the Basilisk messaging support
 from Basilisk.architecture import messaging
-# import atmosphere and drag modules
-from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere, dragDynamicEffector
+
 # import simulation related support
-from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport, simSetPlanetEnvironment)
+# import atmosphere and drag modules
+from Basilisk.simulation import (
+    dragDynamicEffector,
+    exponentialAtmosphere,
+    msisAtmosphere,
+    spacecraft,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simSetPlanetEnvironment,
+    unitTestSupport,
+    vizSupport,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -186,8 +201,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
 
         swMsgList = []
         for c, val in enumerate(sw_msg.values()):
-            swMsgData = messaging.SwDataMsgPayload()
-            swMsgData.dataValue = val
+            swMsgData = messaging.SwDataMsgPayload(dataValue=val)
             swMsgList.append(messaging.SwDataMsg().write(swMsgData))
             atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
     else:
@@ -257,9 +271,16 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     scSim.AddModelToTask(simTaskName, forceLog)
 
     # Event to terminate the simulation
-    scSim.createNewEvent("Deorbited", simulationTimeStep, True,
-                         [f"np.linalg.norm(self.spacecraft.scStateOutMsg.read().r_BN_N) < {planet.radEquator + 1000 * deorbitAlt}"],
-                         [], terminal=True)
+    scSim.createNewEvent(
+        "Deorbited",
+        simulationTimeStep,
+        True,
+        conditionFunction=lambda self: np.linalg.norm(
+            self.spacecraft.scStateOutMsg.read().r_BN_N
+        )
+        < planet.radEquator + 1000 * deorbitAlt,
+        terminal=True,
+    )
 
     # Vizard Visualization Option
     # ---------------------------

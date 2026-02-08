@@ -1,0 +1,73 @@
+name: build
+description: >
+  Sets up a cross-platform build environment for Basilisk and performs
+  either a Conan-based build or a pip-based build.
+inputs:
+  python-version:
+    description: Python version
+    required: true
+  conan-args:
+    required: false
+    default: ""
+  is-canary:
+    description: If a canary build is being performed.
+    required: false
+    default: false
+  skip-build:
+    description: Used to do all build related setup, while skipping the actual build
+    required: false
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: "pip"
+        cache-dependency-path: |
+          requirements_dev.txt
+          requirements_doc.txt
+          requirements.txt
+
+    - name: Setup system dependencies
+      uses: ./.github/actions/setup
+
+    - name: Install requirements
+      shell: bash
+      run: |
+        if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
+          pip install -r .github/workflows/requirements.txt -r .github/workflows/requirements_dev.txt
+        else
+          pip install -r requirements.txt -r requirements_dev.txt
+        fi
+
+    - name: Cache Conan
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.HOME }}/.conan2
+        key: >-
+          conan-${{ runner.os }}-py${{ inputs.python-version }}-
+          ${{ hashFiles('conan.lock','conanfile.*','**/conanfile.*','CMakeLists.txt','**/*.cmake') }}
+        restore-keys: |
+          conan-${{ runner.os }}-py${{ inputs.python-version }}-
+
+    - name: Configure Conan profile
+      shell: bash
+      run: |
+        python -m conans.conan profile detect --exist-ok
+        prof_path="$(python -m conans.conan profile path default)"
+        grep -q '^\[conf\]' "$prof_path" || printf "\n[conf]\n" >> "$prof_path"
+        grep -q '^tools.system.package_manager:mode=install$' "$prof_path" || \
+           printf "tools.system.package_manager:mode=install\n" >> "$prof_path"
+        grep -q '^tools.system.package_manager:sudo=True$' "$prof_path" || \
+          printf "tools.system.package_manager:sudo=True\n" >> "$prof_path"
+
+    - name: Build Basilisk
+      shell: bash
+      if: ${{ inputs.skip-build == 'false' }}
+      env:
+        CONAN_ARGS: ${{ inputs.conan-args }}
+      run: |
+        pip install --no-build-isolation -e . -v
+        bskLargeData

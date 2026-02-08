@@ -37,6 +37,9 @@ void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *confi
 {
     configData->imaged = 0;
     configData->controllerStatus = 1;
+    configData->constraintStartTime = 0.0;
+    configData->constraintsActive = 0;
+
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
 }
 
@@ -59,6 +62,8 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 
     // reset the imaged variable to zero
     configData->imaged = 0;
+    configData->constraintsActive = 0;
+    configData->constraintStartTime = 0.0;
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -99,15 +104,62 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     if (configData->controllerStatus) {
         // If the target has not been imaged
         if (!configData->imaged) {
-            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
-            error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-            if ((sigma_BR_norm <= configData->attErrTolerance)
-                && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-                && (accessInMsgBuffer.hasAccess))
-            {
-                deviceCmdOutMsgBuffer.deviceCmd = 1;
-                configData->imaged = 1;
-                // Otherwise, turn off the instrument
+            unsigned int constraintsMet =
+                (sigma_BR_norm <= configData->attErrTolerance)
+                && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance))
+                && (accessInMsgBuffer.hasAccess);
+
+            if (constraintsMet) {
+                // Default: immediate imaging
+                if (!configData->useDurationImaging) {
+                    deviceCmdOutMsgBuffer.deviceCmd = 1;
+                    configData->imaged = 1;
+                }
+                // Duration-based imaging
+                else {
+                    if (!configData->constraintsActive) {
+                        configData->constraintsActive = 1;
+                        configData->constraintStartTime = callTime;  // current sim time
+                    }
+
+                    if (configData->acquisitionTime < 0.0) {
+                        // Negative acquisitionTime is invalid; cap to zero
+                        configData->acquisitionTime = 0.0;
+                        _bskLog(configData->bskLogger, BSK_WARNING,
+                            "simpleInstrumentController: acquisitionTime is negative and has been set to zero.");
+                    }
+
+                    if (configData->allowedTime < 0.0) {
+                        // Negative allowedTime is invalid; cap to zero
+                        configData->allowedTime = 0.0;
+                        _bskLog(configData->bskLogger, BSK_WARNING,
+                            "simpleInstrumentController: allowedTime is negative and has been set to zero.");
+                    }
+
+                    double elapsedTime = callTime - configData->constraintStartTime;
+
+                    // Determine the effective time to image: cannot exceed allowedTime
+                    double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)
+                                                ? configData->allowedTime
+                                                : configData->acquisitionTime;
+
+                    if (elapsedTime >= effectiveImageTime) {
+                        // If full effective duration passed, set imaged
+                        if (configData->acquisitionTime <= configData->allowedTime) {
+                            configData->imaged = 1;  // Success
+                            deviceCmdOutMsgBuffer.deviceCmd = 1;
+                        } else {
+                            // Failed because required time > allowed duration
+                            configData->imaged = 0;
+                            deviceCmdOutMsgBuffer.deviceCmd = 0;
+                            configData->controllerStatus = 0; // Disable further attempts
+                        }
+                        configData->constraintsActive = 0;  // Reset timer
+                    }
+                }
+            } else {
+                // Reset if constraints break
+                configData->constraintsActive = 0;
             }
         }
     }

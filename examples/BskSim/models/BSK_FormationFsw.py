@@ -20,12 +20,15 @@ import math
 
 import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (inertial3D, attTrackingError, mrpFeedback,
-                                    rwMotorTorque,
-                                    spacecraftPointing)
+from Basilisk.fswAlgorithms import (
+    attTrackingError,
+    inertial3D,
+    mrpFeedback,
+    rwMotorTorque,
+    spacecraftPointing,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import fswSetupRW
-from Basilisk.utilities import deprecated
+from Basilisk.utilities import deprecated, fswSetupRW
 from Basilisk.utilities import macros as mc
 
 
@@ -118,27 +121,44 @@ class BSKFswModels():
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
 
-        SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()"
-                                ])
+        SimBase.createNewEvent(
+            "initiateStandby",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "standby",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'inertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.enableTask('inertial3DPointTask2')",
-                                "self.enableTask('mrpFeedbackRWsTask2')"])
+        SimBase.createNewEvent(
+            "initiateAttitudeGuidance",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "inertial3D",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("inertial3DPointTask"),
+                self.enableTask("mrpFeedbackRWsTask"),
+                self.enableTask("inertial3DPointTask2"),
+                self.enableTask("mrpFeedbackRWsTask2"),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateSpacecraftPointing", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'spacecraftPointing'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('spacecraftPointingTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+        SimBase.createNewEvent(
+            "initiateSpacecraftPointing",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "spacecraftPointing",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("spacecraftPointingTask"),
+                self.enableTask("mrpFeedbackTask"),
+            ),
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -218,8 +238,11 @@ class BSKFswModels():
 
     def SetVehicleConfiguration(self):
         # use the same inertia in the FSW algorithm as in the simulation
-        vcData = messaging.VehicleConfigMsgPayload()
-        vcData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+        vcData = messaging.VehicleConfigMsgPayload(ISCPntB_B=[
+            900.0, 0.0,   0.0,
+            0.0,   800.0, 0.0,
+            0.0,   0.0,   600.0
+        ])
         self.vcMsg = messaging.VehicleConfigMsg().write(vcData)
 
     def SetMRPFeedbackControl(self):

@@ -125,7 +125,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     if eclipseOn:
         sunEclipseMsgData = messaging.EclipseMsgPayload()
-        sunEclipseMsgData.shadowFactor = 0.5
+        sunEclipseMsgData.illuminationFactor = 0.5
         sunEclMsg = messaging.EclipseMsg().write(sunEclipseMsgData)
         srpDynEffector.sunEclipseInMsg.subscribeTo(sunEclMsg)
         srpDynEffector2.sunEclipseInMsg.subscribeTo(sunEclMsg)
@@ -196,8 +196,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
         if eclipseOn:
-            truthForceExternal_B = sunEclipseMsgData.shadowFactor*np.array(truthForceExternal_B)
-            truthTorqueExternalPntB_B = sunEclipseMsgData.shadowFactor * np.array(truthTorqueExternalPntB_B)
+            truthForceExternal_B = sunEclipseMsgData.illuminationFactor * np.array(truthForceExternal_B)
+            truthTorqueExternalPntB_B = sunEclipseMsgData.illuminationFactor * np.array(truthTorqueExternalPntB_B)
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,

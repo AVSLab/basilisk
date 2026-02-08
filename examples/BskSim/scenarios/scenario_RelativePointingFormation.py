@@ -105,7 +105,7 @@ If this simulation is run for 200 minutes the following plots should be shown.
 
     showPlots = True
 
-This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+This plot illustrates the illumination factor calculated by the CSS as the spacecraft orbits Earth and passes through
 the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.
 
 .. image:: /_images/Scenarios/scenario_RelativePointingFormation_attitude_error.svg

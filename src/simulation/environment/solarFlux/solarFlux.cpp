@@ -75,7 +75,7 @@ void SolarFlux::readMessages()
     if (this->eclipseInMsg.isLinked()) {
         EclipseMsgPayload eclipseInMsgData;
         eclipseInMsgData = this->eclipseInMsg();
-        this->eclipseFactor = eclipseInMsgData.shadowFactor;
+        this->eclipseFactor = eclipseInMsgData.illuminationFactor;
     }
 
 }

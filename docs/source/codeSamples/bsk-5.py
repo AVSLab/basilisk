@@ -46,8 +46,7 @@ def run():
     scSim.AddModelToTask("dynamicsTask", mod1)
 
     # create stand-alone input message
-    msgData = messaging.CModuleTemplateMsgPayload()
-    msgData.dataVector = [1., 2., 3.]
+    msgData = messaging.CModuleTemplateMsgPayload(dataVector = [1., 2., 3.])
     msg = messaging.CModuleTemplateMsg().write(msgData)
 
     # connect to stand-alone msg

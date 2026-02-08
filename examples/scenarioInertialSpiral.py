@@ -198,7 +198,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, attGuidanceEuler2)
     # Make rotation 2 be 0.0001 rad/s about 2 axis
     attGuidanceEuler2.angleRates = [0.0, 0.0001, 0.0]
-    
+
     # set up the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "attError"
@@ -216,8 +216,8 @@ def run(show_plots):
     #
     # create simulation messages
     #
-    configData = messaging.VehicleConfigMsgPayload()
-    configData.ISCPntB_B = I
+    configData = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
+
     configDataMsg = messaging.VehicleConfigMsg().write(configData)
 
     #
@@ -273,7 +273,7 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     dataSigmaBN = snAttLog.sigma_BN
-    
+
     dataEulerAnglesPitch = list()
     dataEulerAnglesYaw = list()
     dataEulerAnglesRoll = list()
@@ -282,7 +282,7 @@ def run(show_plots):
         dataEulerAnglesPitch.append(eulerAngle[0])
         dataEulerAnglesYaw.append(eulerAngle[1])
         dataEulerAnglesRoll.append(eulerAngle[2])
-        
+
     timeLineSet = attErrorLog.times() * macros.NANO2MIN
     #
     #   plot the results

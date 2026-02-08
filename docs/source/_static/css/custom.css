@@ -1,4 +1,4 @@
-div.textblock a, div.textblock a:visited, p a, p a:visited, 
+div.textblock a, div.textblock a:visited, p a, p a:visited,
 a, a:hover, a:visited,
 a.reference, a.internal, a.current {
 	color: #cfb87c;
@@ -99,55 +99,63 @@ figure {
 	text-align: center;
 }
 
+.beta-label {
+    background-color: #cfb87c;
+    color: #000;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;
 		color:  #ccc;
 	}
-	
+
 	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
 	{
 		background-color: rgb(45, 65, 81);
 	}
-	
-	html.writer-html4 .rst-content dl:not(.docutils) .descclassname, html.writer-html4 .rst-content dl:not(.docutils) .descname, html.writer-html4 .rst-content dl:not(.docutils) .sig-name, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descclassname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .sig-name 
+
+	html.writer-html4 .rst-content dl:not(.docutils) .descclassname, html.writer-html4 .rst-content dl:not(.docutils) .descname, html.writer-html4 .rst-content dl:not(.docutils) .sig-name, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descclassname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .sig-name
 	{
 		color: rgb(237, 240, 242);
 	}
-	
+
 	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
 	{
 		background-color: #333;;
 	}
-	
+
 	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
 	{
 		color: rgb(41, 128, 185);
 	}
-	
+
 	.highlight .go {
 		color:  #ccc;
 	}
-	
+
 	img.logo {
 		filter: drop-shadow(0px 0px 8px #000);
 	}
-	
+
 	.rst-content code {
 		background: #0004;
 	}
 	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt, .rst-content .note {
 		background: #2D4151;
 	}
-	
+
 	.rst-content .warning, .rst-content .caution, .rst-content .attention {
 		background: #51402F;
 	}
-	
+
 	.rst-content .important, .rst-content .hint, .rst-content .tip {
 		background: #275145;
 	}
-	
+
 	.rst-content .danger, .rst-content .error {
 		background: #523A37;
 	}
@@ -162,50 +170,50 @@ figure {
 	.rst-content .sidebar .sidebar-title {
 		background: #666;
 	}
-	
-	
+
+
 	.btn-neutral, .btn-neutral:hover, .btn:visited {
 		background: #333 !important;
 		color: #ccc !important;
 	}
-	
+
 	.highlight {
 		background: #4448;
 	}
-	
+
 	.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
 		background-color: #222;
 	}
-	
+
 	.rst-content pre.literal-block, .rst-content div[class^='highlight'], .rst-content code, .rst-content table.docutils, .wy-table thead th, .rst-content table.docutils thead th, .rst-content table.field-list thead th, .wy-table-bordered-all td, .rst-content table.docutils td {
 		border-color: gray;
 	}
-		
+
 	img[src$="svg"] {
 		background-color: white;
 		filter: invert(100%) hue-rotate(180deg) saturate(200%);;
 	}
-	
+
 	img[src$="jpg"], img[src$="png"] {
 		border-radius: 5px;
 	}
-		
+
 	.rst-content dl:not(.docutils) dt {
 		background-color: #2D4151;
 	}
-	
+
 	.rst-content dl:not(.docutils) {
 		padding-top: 1em;
 	}
-	
+
 	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
 		color:  #ccc;
 	}
-	
+
 	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list)>dt, .rst-content dl:not(.docutils) dl dt {
 		background-color: black;
 	}
-	
+
 	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
 		color: inherit;
 	}
@@ -213,7 +221,7 @@ figure {
 	span.vm, span.nf, span.nn {
 	    color:#66f !important;
 	}
-	
+
 	span.normal {
 		color: #333 !important;
 	}
@@ -221,7 +229,7 @@ figure {
 	td.linenos pre {
 	    background: #ccc !important;
 	}
-	
+
 	.rst-content .highlighted {
 		background-color: #333;
 	}

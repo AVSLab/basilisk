@@ -149,7 +149,7 @@ void Update_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime,
     if (configData->priorTime == 0) {
         dt = 0.0;
     } else {
-        dt = (callTime - configData->priorTime) * NANO2SEC;
+        dt = diffNanoToSec(callTime, configData->priorTime);
     }
     configData->priorTime = callTime;
 

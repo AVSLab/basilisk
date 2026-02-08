@@ -148,9 +148,10 @@ def run(show_plots):
     gravFactory.addBodiesTo(scObject)
 
     # create sun position message
-    sunMessage = messaging.SpicePlanetStateMsgPayload()
-    sunMessage.PlanetName = "Sun"
-    sunMessage.PositionVector = [0, orbitalMotion.AU*1000, 0]
+    sunMessage = messaging.SpicePlanetStateMsgPayload(
+        PlanetName="Sun",
+        PositionVector=[0, orbitalMotion.AU*1000, 0],
+    )
     sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements

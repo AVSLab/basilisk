@@ -1,5 +1,9 @@
 %module swig_std_array
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 %include "std_array.i"
 
 %define STD_ARRAY(type)

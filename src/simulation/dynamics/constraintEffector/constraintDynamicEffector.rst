@@ -69,9 +69,34 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
 
    See :ref:`spacecraft` documentation on how to set up a spacecraft object.
 
-#. Add the module to the task list::
+#. Add the spacecraft and module to the task list::
 
-    Sim.AddModelToTask(TaskName, constraintEffector)
+        Sim.AddModelToTask(TaskName, scObject1)
+        Sim.AddModelToTask(TaskName, scObject2)
+        Sim.AddModelToTask(TaskName, constraintEffector)
+
+   .. important::
+
+      The order in which the spacecraft are solved in the task **MUST** compute
+      spacecraft 1 first and spacecraft 2 second. Regardless of what your spacecraft objects are
+      named, the spacecraft considered "1" and "2" are dictated when setting ``R_P1B1_B1``, ``R_P2B2_B2``,
+      and ``R_P2P1_B1Init`` where spacecraft 1 hosts connection point P1 and parent frame B1, and
+      spacecraft 2 hosts connection point P2 and parent frame B2.
+
+      When using the :ref:`SimulationBaseClass` ``AddModelToTask()`` model priority to set the order of execution, ensure that spacecraft 1 is
+      set to be solved before spacecraft 2. Note that model priority execution is from highest
+      value to lowest value, with the default being -1 when unspecified. When using the model
+      priority, the setup could look like::
+
+         Sim.AddModelToTask(TaskName, scObject2, ModelPriority=5) # spacecraft 2 solved second
+         Sim.AddModelToTask(TaskName, scObject1, ModelPriority=10) # spacecraft 1 solved first
+
+      When not setting any model priority, and therefore letting all models default to a -1
+      model priority, models of the same priority are computed in the order that they are added.
+      So if not setting a model priority, the setup MUST look like::
+
+         Sim.AddModelToTask(TaskName, scObject1) # spacecraft 1 solved first
+         Sim.AddModelToTask(TaskName, scObject2) # spacecraft 2 solved second
 
 #. Ensure that the dynamics integration is synced between the connected spacecraft. For best results use a variable timestep integrator::
 

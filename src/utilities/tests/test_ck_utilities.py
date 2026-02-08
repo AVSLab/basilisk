@@ -16,13 +16,25 @@
 
 import numpy as np
 import os
+import pytest
 
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros, pyswice_ck_utilities, simIncludeGravBody, RigidBodyKinematics as rbk
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    pyswice_ck_utilities,
+    simIncludeGravBody,
+    RigidBodyKinematics as rbk,
+)
 from Basilisk.topLevelModules import pyswice
+from Basilisk.utilities.supportDataTools.dataFetcher import (
+    get_path,
+    DataFile,
+)
 
 
-def test_ck_read_write(show_plots):
+@pytest.mark.timeout(30)  # seconds
+def test_ck_read_write(tmp_path, show_plots):
     simulation = SimulationBaseClass.SimBaseClass()
 
     process = simulation.CreateNewProcess("testProcess")
@@ -35,53 +47,72 @@ def test_ck_read_write(show_plots):
     simulation.AddModelToTask(taskName, scObject)
 
     scObject.hub.mHub = 750.0
-    scObject.hub.IHubPntBc_B = np.array([[900., 0., 0.],
-                                         [0., 800., 0.],
-                                         [0., 0., 600.]])
+    scObject.hub.IHubPntBc_B = np.array(
+        [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    )
 
     scObject.hub.sigma_BNInit = [[0.1], [-0.2], [0.3]]
     scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [0.03]]
 
     # Load up the leap second and spacecraft SPICE kernels
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    timeInit = 'FEB 01, 2021 12:00:00 (UTC)'
-    spiceObject = gravFactory.createSpiceInterface(time=timeInit)
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'MVN_SCLKSCET.00000.tsc')  # spacecraft clock file
+    timeInit = "FEB 01, 2021 12:00:00 (UTC)"
+    naif0011_path = get_path(DataFile.EphemerisData.naif0011)
+    mvn_sclk_path = get_path(DataFile.EphemerisData.MVN_SCLKSCET_00000)
+    pyswice.furnsh_c(str(naif0011_path))
+    pyswice.furnsh_c(str(mvn_sclk_path))
 
     scObjectLogger = scObject.scStateOutMsg.recorder(dynTaskRate)
     simulation.AddModelToTask(taskName, scObjectLogger)
 
     simulation.InitializeSimulation()
-    simulation.ConfigureStopTime(macros.sec2nano(59))  # run for 59 seconds for easy time logic
+    simulation.ConfigureStopTime(
+        macros.sec2nano(59)
+    )  # run for 59 seconds for easy time logic
     simulation.ExecuteSimulation()
 
     # Write a CK file using the attitude data from the simulation
     timeWrite = scObjectLogger.times()
     sigmaWrite = scObjectLogger.sigma_BN
     omegaWrite = scObjectLogger.omega_BN_B
-    pyswice_ck_utilities.ckWrite("test.bc", timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
+    file_name = tmp_path / "test.bc"
+    fileNameStr = str(file_name)
+    print(fileNameStr, flush=True)
+    print("DEBUG: Before ckWrite", flush=True)
+    pyswice_ck_utilities.ckWrite(
+        fileNameStr, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202
+    )
 
     # Read the same CK file to check if the values are identical
-    pyswice_ck_utilities.ckInitialize("test.bc")
+    print("DEBUG: Before ckInitialize", flush=True)
+    pyswice_ck_utilities.ckInitialize(fileNameStr)
     sigmaRead = np.empty_like(sigmaWrite)
     omegaRead = np.empty_like(omegaWrite)
     for idx in range(len(timeWrite)):
+        print(
+            f"DEBUG: Entering loop iteration {idx}", flush=True
+        )  # Add this to see if it hangs within the loop
         # Change the time string to account for increasing time
-        timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
-        _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(timeString, spacecraft_id=-202)
+        timeString = (
+            timeInit[:19]
+            + f"{int(timeWrite[idx] * macros.NANO2SEC):02}"
+            + timeInit[21:]
+        )
+        _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(
+            timeString, spacecraft_id=-202
+        )
 
-        sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
+        sigmaRead[idx, :] = -rbk.EP2MRP(
+            kernQuat
+        )  # Convert from JPL-style quaternion notation
         omegaRead[idx, :] = kernOmega
-    pyswice_ck_utilities.ckClose("test.bc")
+    print("DEBUG: Before ckClose", flush=True)
+    pyswice_ck_utilities.ckClose(fileNameStr)
 
     # Compare the read and write data
     np.testing.assert_allclose(sigmaRead, sigmaWrite)
     np.testing.assert_allclose(omegaRead, omegaWrite)
 
-    if os.path.exists("test.bc"):
+    if os.path.exists(fileNameStr):
         # Delete the file
-        os.remove("test.bc")
-
-if __name__ == "__main__":
-    test_ck_read_write(True)
+        print("DEBUG: Before os.remove", flush=True)
+        os.remove(fileNameStr)

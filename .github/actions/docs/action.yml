@@ -1,0 +1,33 @@
+name: docs
+description: Build Sphinx docs
+
+inputs:
+  html-dir: { required: false, default: "docs/build/html" }
+  is-canary:
+    description: If a canary build is being performed.
+    required: false
+    default: false
+
+runs:
+  using: composite
+  steps:
+    - name: Install doc requirements
+      shell: bash
+      run: |
+        brew install doxygen
+        if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
+          pip install -r .github/workflows/requirements_doc.txt
+        else
+          pip install -r requirements_doc.txt
+        fi
+    - name: Generate doc artifacts
+      shell: bash
+      env:
+        MPLBACKEND: agg
+      working-directory: src
+      run: pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
+    - name: Compile docs
+      shell: bash
+      run: |
+        make -C docs html SPHINXOPTS="-W"
+        echo "DOCS_HTML=${{ inputs.html-dir }}" >> "$GITHUB_ENV"

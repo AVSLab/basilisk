@@ -28,6 +28,7 @@ import inspect
 import os
 
 import pytest
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -239,6 +240,25 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
+    # First set a non-zero thruster force request
+    thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+    thrForceMsg = messaging.THRArrayCmdForceMsg().write(thrMessageData)
+    module.thrForceInMsg.subscribeTo(thrForceMsg)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ExecuteSimulation()
+
+    # Now call Reset() and verify output is zeroed
+    module.Reset(0)  # Pass 0 as currentSimNanos
+    expectedOnTime = [0.] * messaging.MAX_EFF_CNT
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedOnTime),
+                                                                np.array(module.onTimeOutMsg.read().OnTimeRequest),
+                                                                1e-3,
+                                                                "Reset() zeroed onTime",
+                                                                testFailCount, testMessages)
+
+    print("Accuracy used: " + str(accuracy))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

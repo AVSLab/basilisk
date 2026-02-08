@@ -10,292 +10,122 @@ concurrency:
 
 jobs:
   pre-commit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - id: file_changes
-        uses: tj-actions/changed-files@v44
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
+      - uses: ./.github/actions/pre-commit
 
   build-linux:
-    name: Linux 20.04
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install build-essential swig cmake -y
-          sudo apt-get install python${{ matrix.python-version }}-venv -y
-      - name: Create virtual environment and install packages
-        run: |
-          python3 -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements_dev.txt
-      - name: Build basilisk
-        run: |
-          source .venv/bin/activate
-          python3 conanfile.py
-      - name: Run Python Tests
-        if: ${{ always() }}
-        run: |
-          source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
-      - name: Run C/C++ Tests
-        if: ${{ always() }}
-        working-directory: ./dist3
-        run: ctest
-
-
-  build-linux-3-10:
-    name: Linux 22.04
     runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10"]
+        python: ["3.13"]
+    name: Linux (${{ matrix.python }})
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
-      - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.10-venv
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install requirements_dev.txt"
-        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py
-      - name: "Run Python Tests"
+          python-version: ${{ matrix.python }}
+          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
+      - name: Pytest
+        working-directory: src
         run: |
-          source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
-
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
-        run: ctest
+          pip install pytest-error-for-skips
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
+      - name: CTest
         if: ${{ always() }}
-
-
-  build-linux-3-11:
-    name: Linux 22.04 opNav
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig libgtk2.0 cmake -y
-      - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install requirements_dev.txt"
-        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
-
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
-
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
+        working-directory: dist3
         run: ctest
-        if: ${{ always() }}
-
-  build-linux-3-11-pip:
-    name: Linux 22.04 pip
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
-      - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Build basilisk"
-        run: |
-          source .venv/bin/activate
-          pip install . -v
-          bskLargeData
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          pip install pytest pytest-xdist
-          cd src && pytest -n auto -m "not ciSkip"
-
 
   build-windows:
-    name: Windows opNav
-    runs-on: windows-2019
+    runs-on: windows-2025
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.11"]
+        python: ["3.13"]
+    name: Windows (${{ matrix.python }})
     env:
       MPLBACKEND: agg
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python-version }}
-#      - name: Choco help
-#        uses: crazy-max/ghaction-chocolatey@v3
-#        with:
-#          args: -h
-#      - name: "Install swig and cmake"
-#        shell: pwsh
-#        run: choco install swig cmake -y
-      - name: "Create python virtual env"
+          python-version: ${{ matrix.python }}
+          conan-args: --opNav True --mujoco True --mujocoReplay True
+      - name: Pytest
         shell: pwsh
-        run: python -m venv venv
-      - name: "Install requirements_dev.txt"
-        shell: pwsh
+        working-directory: src
         run: |
-            venv\Scripts\activate
-            pip install -r requirements_dev.txt
-      - name: "Add basilisk and cmake path to env path"
-        shell: pwsh
-        run: |
-          $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
-          $newpath = “$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk;C:\Program Files\CMake\bin”
-          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
-      - name: "Build basilisk"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          python conanfile.py --opNav True --allOptPkg
-      - name: "Run Python Tests"
-        shell: pwsh
-        run: |
-          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
-          venv\Scripts\activate
-          cd src
-          pytest -n auto -m "not ciSkip"
+          pip install pytest-error-for-skips
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
-      - name: "C/C++ Tests"
+      - name: CTest
         if: ${{ always() }}
         shell: pwsh
+        working-directory: dist3
         run: |
-          cd dist3
           ctest
-          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
+          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) { exit 1 }
 
-  build-macOS:
-    name: macOS opNav Docs
-    runs-on: macos-14
+  build-macos:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [ "3.11", "3.12" ]
+        job_suffix: [""]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        pytest_flags:
+          ['-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v']
+        conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
+        include:
+          # An extra Basilisk build to test building without visualization enabled
+          - python: "3.13"
+            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v
+            conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
+            job_suffix: "--vizInterface False"
+          # Python 3.8 cannot run all tests.
+          # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
+          # test matrix.
+          - python: "3.8"
+            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v -p no:pytest_forbid_skips
+        exclude:
+          - python: "3.8"
+            pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v'
+
+    name: macOS (${{ matrix.python }}) ${{ matrix.job_suffix }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Homebrew
+          python-version: ${{ matrix.python }}
+          conan-args: ${{ matrix.conan_args }}
+      - name: Pytest
+        working-directory: src
         run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew install swig doxygen
-
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install requirements_dev.txt"
-        run: |
-          source .venv/bin/activate
-          pip3 install cmake -r requirements_dev.txt
-
-      - name: "Build basilisk with OpNav"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
-
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          cd src
-          pytest -n auto -m "not ciSkip"
+          pip install pytest-error-for-skips
+          pytest ${{ matrix.pytest_flags }}
+      - name: CTest
         if: ${{ always() }}
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
+        working-directory: dist3
         run: ctest -C Release
-        if: ${{ always() }}
 
-      - name: "Build Documentation"
-        run: |
-          source .venv/bin/activate
-          cd docs
-          make html SPHINXOPTS="-W"
-        if: ${{ always() }}
-
-  build-macOS-no-vizInterface:
-    name: macOS no vizInterface
-    runs-on: macos-14
-    strategy:
-      matrix:
-        python-version: [ "3.11" ]
+  docs:
+    runs-on: macos-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - name: Build Basilisk
+        uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Homebrew
-        run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew install swig
-
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install requirements_dev.txt"
-        run: |
-          source .venv/bin/activate
-          pip3 install cmake -r requirements_dev.txt
-
-      - name: "Build basilisk without vizInterface"
-        run: source .venv/bin/activate && python3 conanfile.py --vizInterface False
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          cd src
-          pytest -n auto -m "not ciSkip"
-
-        if: ${{ always() }}
+          python-version: 3.13
+          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
+      - name: Pre-fetch supportData
+        run: bskLargeData
+      - name: Build docs
+        uses: ./.github/actions/docs

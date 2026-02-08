@@ -211,7 +211,10 @@ def run(show_plots):
         viz.settings.showSpacecraftLabels = 1
         # load CAD for custom gravity model
         vizSupport.createCustomModel(viz,
-                                     modelPath=os.path.join(path, "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
+                                     # Specifying relative model path is useful for sharing scenarios and resources:
+                                     modelPath=os.path.join("..", "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
+                                     # Specifying absolute model path is preferable for live-streaming:
+                                     # modelPath=os.path.join(path, "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
                                      shader=1,
                                      simBodiesToModify=['Itokawa'],
                                      scale=[962, 962, 962])

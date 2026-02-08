@@ -166,7 +166,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     # Add energy and momentum variables to log
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
-    
+
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
@@ -248,7 +248,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
     finalOrbAngMom = numpy.delete(finalOrbAngMom, 0, axis=1)  # remove time column
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     finalRotEnergy = numpy.delete(finalRotEnergy, 0, axis=1)  # remove time column

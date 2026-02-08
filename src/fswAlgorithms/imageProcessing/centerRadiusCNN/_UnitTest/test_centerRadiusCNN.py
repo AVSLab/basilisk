@@ -46,6 +46,7 @@ except ImportError:
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
 
 try:
     from Basilisk.fswAlgorithms import centerRadiusCNN
@@ -102,6 +103,8 @@ def cnnTest(show_plots, image, saveImage):
     # Construct algorithm and associated C++ container
     module = centerRadiusCNN.CenterRadiusCNN()
     module.ModelTag = "cnn"
+    imageInMsg = messaging.CameraImageMsg()
+    module.imageInMsg.subscribeTo(imageInMsg)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)

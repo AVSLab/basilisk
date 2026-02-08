@@ -22,6 +22,7 @@
 
 
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
+#include "architecture/msgPayloadDefC/PowerStorageFaultMsgPayload.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
@@ -32,10 +33,13 @@ class SimpleBattery: public PowerStorageBase {
 public:
     SimpleBattery();
     ~SimpleBattery();
+    void readInputMessage();
+    ReadFunctor<PowerStorageFaultMsgPayload> batteryFaultInMsg; //!< input message to record battery status
 
 private:
     void customReset(uint64_t CurrentClock);
     void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
+    double faultCapacityRatio; //!< Fault capacity ratio (faulted capacity / nominal capacity)
 
 public:
     double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).

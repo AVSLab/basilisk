@@ -72,11 +72,11 @@ def findSigmaDot(sigma, omega):
 def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGyro = [1e6] * 3,errorBoundsAccel = [1e6] * 3):
     # sets the random walk for IRU module
     self.PMatrixAccel = np.eye(3) * senTransNoiseStd
-    self.walkBoundsAccel = np.array(errorBoundsAccel)
+    self.setErrorBoundsAccel(np.array(errorBoundsAccel))
 
     # Set up gyro noise parameters
     self.PMatrixGyro = np.eye(3) * senRotNoiseStd
-    self.walkBoundsGyro = np.array(errorBoundsGyro)
+    self.setErrorBoundsGyro(np.array(errorBoundsGyro))
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

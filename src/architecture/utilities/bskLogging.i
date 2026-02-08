@@ -17,8 +17,19 @@
 
  */
 %module bskLogging
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
   #include "bskLogging.h"
+  static PyObject *PyExc_BasiliskError;
+%}
+
+%init %{
+    PyExc_BasiliskError = PyErr_NewException("_bskLogging.BasiliskError", NULL, NULL);
+    Py_INCREF(PyExc_BasiliskError);
+    PyModule_AddObject(m, "BasiliskError", PyExc_BasiliskError);
 %}
 
 %include "bskLogging.h"
@@ -30,4 +41,6 @@ from Basilisk.architecture.swig_common_model import *
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
+
+BasiliskError = _bskLogging.BasiliskError
 %}

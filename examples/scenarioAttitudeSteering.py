@@ -416,8 +416,8 @@ def run(show_plots, simCase):
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # FSW RW configuration message

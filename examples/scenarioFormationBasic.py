@@ -347,8 +347,8 @@ def run(show_plots):
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # create FSW RW parameter msg
@@ -457,13 +457,14 @@ def run(show_plots):
                                                   # , saveFile=fileName,
                                                   )
         # setup one-way instrument camera by having frameRate be 0
-        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
+        msgPayload, msg = vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
                                          )
         viz.settings.trueTrajectoryLinesOn = 1
         viz.settings.orbitLinesOn = 2
+        viz.settings.viewCameraViewHUD = 1
         viz.settings.messageBufferSize = -1 # force the full file to be read in at once
 
     #

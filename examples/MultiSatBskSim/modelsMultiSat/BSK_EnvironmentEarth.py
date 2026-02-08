@@ -21,12 +21,14 @@ from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import macros as mc, simIncludeGravBody
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
 
 
 class BSKEnvironmentModel:
     """Defines the Earth Environment."""
+
     def __init__(self, SimBase, envRate):
         # Define empty class variables
         self.mu = None
@@ -40,7 +42,9 @@ class BSKEnvironmentModel:
         processTasksTimeStep = mc.sec2nano(envRate)
 
         # Create task
-        SimBase.envProc.addTask(SimBase.CreateNewTask(self.envTaskName, processTasksTimeStep))
+        SimBase.envProc.addTask(
+            SimBase.CreateNewTask(self.envTaskName, processTasksTimeStep)
+        )
 
         # Instantiate Env modules as objects
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -65,26 +69,28 @@ class BSKEnvironmentModel:
         Specify what gravitational bodies to include in the simulation.
         """
         # Create gravity bodies
-        gravBodies = self.gravFactory.createBodies(['sun', 'earth', 'moon'])
-        gravBodies['earth'].isCentralBody = True
-        self.mu = self.gravFactory.gravBodies['earth'].mu
-        self.planetRadius = self.gravFactory.gravBodies['earth'].radEquator
+        gravBodies = self.gravFactory.createBodies(["sun", "earth", "moon"])
+        gravBodies["earth"].isCentralBody = True
+        self.mu = self.gravFactory.gravBodies["earth"].mu
+        self.planetRadius = self.gravFactory.gravBodies["earth"].radEquator
         self.sun = 0
         self.earth = 1
         self.moon = 2
 
         # Override information with SPICE
         timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
-        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                              timeInitString,
-                                              epochInMsg=True)
-        self.gravFactory.spiceObject.zeroBase = 'Earth'
+        self.gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+        self.gravFactory.spiceObject.zeroBase = "Earth"
 
         # Add pyswice instances
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
+        de430_path = get_path(DataFile.EphemerisData.de430)
+        naif0012_path = get_path(DataFile.EphemerisData.naif0012)
+        de403masses_path = get_path(DataFile.EphemerisData.de_403_masses)
+        pck00010_path = get_path(DataFile.EphemerisData.pck00010)
+        pyswice.furnsh_c(str(de430_path))  # solar system bodies
+        pyswice.furnsh_c(str(naif0012_path))  # leap second file
+        pyswice.furnsh_c(str(de403masses_path))  # solar system masses
+        pyswice.furnsh_c(str(pck00010_path))  # generic Planetary Constants Kernel
 
     def SetEpochObject(self):
         """
@@ -92,20 +98,30 @@ class BSKEnvironmentModel:
         """
 
         # self.epochMsg = self.gravFactory.epochMsg
-        self.ephemObject.ModelTag = 'EphemData'
-        self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
-        self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.earth])
-        self.ephemObject.addSpiceInputMsg(self.gravFactory.spiceObject.planetStateOutMsgs[self.moon])
+        self.ephemObject.ModelTag = "EphemData"
+        self.ephemObject.addSpiceInputMsg(
+            self.gravFactory.spiceObject.planetStateOutMsgs[self.sun]
+        )
+        self.ephemObject.addSpiceInputMsg(
+            self.gravFactory.spiceObject.planetStateOutMsgs[self.earth]
+        )
+        self.ephemObject.addSpiceInputMsg(
+            self.gravFactory.spiceObject.planetStateOutMsgs[self.moon]
+        )
 
     def SetEclipseObject(self):
         """
         Specify what celestial object is causing an eclipse message.
         """
         self.eclipseObject.ModelTag = "eclipseObject"
-        self.eclipseObject.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
+        self.eclipseObject.sunInMsg.subscribeTo(
+            self.gravFactory.spiceObject.planetStateOutMsgs[self.sun]
+        )
         # add all celestial objects in spiceObjects except for the sun (0th object)
         for item in range(1, len(self.gravFactory.spiceObject.planetStateOutMsgs)):
-            self.eclipseObject.addPlanetToModel(self.gravFactory.spiceObject.planetStateOutMsgs[item])
+            self.eclipseObject.addPlanetToModel(
+                self.gravFactory.spiceObject.planetStateOutMsgs[item]
+            )
 
     def SetGroundLocations(self):
         """
@@ -113,8 +129,10 @@ class BSKEnvironmentModel:
         """
         self.groundStation.ModelTag = "BoulderGroundStation"
         self.groundStation.planetRadius = self.planetRadius
-        self.groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
-        self.groundStation.minimumElevation = np.radians(10.)
+        self.groundStation.specifyLocation(
+            np.radians(40.009971), np.radians(-105.243895), 1624
+        )
+        self.groundStation.minimumElevation = np.radians(10.0)
         self.groundStation.maximumRange = 1e9
 
     # Global call to initialize every module

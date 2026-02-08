@@ -49,8 +49,8 @@ def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the correctness of the tip and tilt reference angles computed by 
-    :ref:`thrusterPlatformReference`. The correctness of the output is determined based on whether the thruster 
+    This unit test script tests the correctness of the tip and tilt reference angles computed by
+    :ref:`thrusterPlatformReference`. The correctness of the output is determined based on whether the thruster
     is aligned with the system's center of mass, when the momentum dumping control gain :math:`\kappa = 0`.
     Moreover, the other module output messages, ``bodyHeadingOutMsg`` and ``thrusterTorqueOutMsg`` are checked
     versus equivalent python code.
@@ -58,7 +58,7 @@ def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
     **Test Parameters**
 
     This test randomizes the position of the center of mass and runs the test 10 times for any other combination
-    of test parameters. 
+    of test parameters.
 
     Args:
         delta_CM (m): magnitude of the center of mass shift, whose direction is generated randomly
@@ -70,7 +70,7 @@ def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
 
     For :math:`\kappa = 0`, the correctness of the result is assessed based on the norm of the
     cross product between the thrust direction vector :math:`{}^\mathcal{F}\boldsymbol{t}` and the relative position
-    of the center of mass with respect to the thruster application point :math:`T`. For :math:`\kappa \neq 0` this 
+    of the center of mass with respect to the thruster application point :math:`T`. For :math:`\kappa \neq 0` this
     test is not performed, as the thruster is not aligned with the center of mass. This script does not test the
     integral feedback term, which would require running a simulation for an extended period of time.
 
@@ -91,7 +91,8 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
 
     random.seed(seed)
 
-    sigma_MB = np.array([0., 0., 0.])
+    euler_angles_123 = np.array([5.0 * macros.D2R, 10.0 * macros.D2R, 0.0])
+    sigma_MB = np.array(rbk.euler1232MRP(euler_angles_123))
     r_BM_M = np.array([0.0, 0.1, 1.4])
     r_FM_F = np.array([0.0, 0.0, -0.1])
     r_TF_F = np.array([-0.01, 0.03, 0.02])

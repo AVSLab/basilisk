@@ -427,8 +427,8 @@ def run(show_plots):
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Set up the MRP Feedback control module
@@ -484,11 +484,13 @@ def run(show_plots):
         scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
         scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
 
-        thrusterMsgInfo = messaging.THROutputMsgPayload()
-        thrusterMsgInfo.maxThrust = 1  # Newtons
-        thrusterMsgInfo.thrustForce = 0  # Newtons
-        thrusterMsgInfo.thrusterLocation = [0, 0, -1.5]
-        thrusterMsgInfo.thrusterDirection = [0, 0, 1]
+        thrusterMsgInfo = messaging.THROutputMsgPayload(
+            maxThrust=1,
+            thrustForce=0,
+            thrusterLocation=[0, 0, -1.5],
+            thrusterDirection=[0, 0, 1],
+        )
+
         thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
         scData.thrInMsgs = messaging.THROutputMsgInMsgsVector([thrMsg.addSubscriber()])
 

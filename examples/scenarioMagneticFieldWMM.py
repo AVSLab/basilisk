@@ -51,7 +51,7 @@ vector components with respect to the inertial frame.
 
 As this :ref:`MagneticFieldWMM` model is specific to Earth, there are
 no parameters to set of tune.  Rather, the ``WMM.COF`` WMM coefficient
-file is loaded from the ``dataPath`` variable.
+file is set via the ``configureWMMFile()`` method and loaded on reset.
 
 The default planet's position vector is assumed to be the inertial
 frame origin and an identity orientation matrix.
@@ -142,6 +142,7 @@ from Basilisk.simulation import magneticFieldWMM
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -197,8 +198,9 @@ def run(show_plots, orbitCase):
 
     # create the magnetic field
     magModule = magneticFieldWMM.MagneticFieldWMM()
+    wmm_path = get_path(DataFile.MagneticFieldData.WMM)
+    magModule.configureWMMFile(str(wmm_path))
     magModule.ModelTag = "WMM"
-    magModule.dataPath = bskPath + '/supportData/MagneticField/'
 
     # set the minReach and maxReach values if on an elliptic orbit
     if orbitCase == 'elliptical':

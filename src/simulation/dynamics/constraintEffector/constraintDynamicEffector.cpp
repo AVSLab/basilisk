@@ -23,10 +23,11 @@
 #include<array>
 #include<iostream>
 
-/*! This is the constructor, nothing to report here */
+/*! The Constructor */
 ConstraintDynamicEffector::ConstraintDynamicEffector()
 {
-
+    /* this effector can be attached onto a state effector */
+    this->isAttachableToStateEffector = true;
 }
 
 /*! This is the destructor, nothing to report here */
@@ -35,9 +36,7 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector()
 
 }
 
-/*! This method is used to reset the module.
-
- */
+/*! This method is used to reset the module */
 void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
     // check if any individual gains are not specified
@@ -73,6 +72,10 @@ void ConstraintDynamicEffector::setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1) {
 
 void ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2) {
     this->r_P2B2_B2 = r_P2B2_B2;
+}
+
+void ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init) {
+    this->dcm_B2B1Init = sigma_B2B1Init.toRotationMatrix().transpose();
 }
 
 void ConstraintDynamicEffector::setAlpha(double alpha) {
@@ -123,8 +126,73 @@ void ConstraintDynamicEffector::setC_a(double c_a) {
     }
 }
 
-/*! This method allows the user to set the cut-off frequency of the low pass filter which is then used to calculate the coefficients for numerical low pass filtering based on a second-order low pass filter design.
+void ConstraintDynamicEffector::setStateNameOfPosition(std::string value) {
+    if (!value.empty()) {
+        this->stateNameOfPosition.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfPosition variable must be a non-empty string");
+    }
+}
 
+void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value) {
+    if (!value.empty()) {
+        this->stateNameOfVelocity.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfVelocity variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setStateNameOfSigma(std::string value) {
+    if (!value.empty()) {
+        this->stateNameOfSigma.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfSigma variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setStateNameOfOmega(std::string value) {
+    if (!value.empty()) {
+        this->stateNameOfOmega.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfOmega variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) {
+    if (!value.empty()) {
+        this->propName_inertialPosition.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialPosition variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value) {
+    if (!value.empty()) {
+        this->propName_inertialVelocity.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialVelocity variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value) {
+    if (!value.empty()) {
+        this->propName_inertialAttitude.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialAttitude variable must be a non-empty string");
+    }
+}
+
+void ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string value) {
+    if (!value.empty()) {
+        this->propName_inertialAngVelocity.push_back(value);
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
+    }
+}
+
+/*! This method allows the user to set the cut-off frequency of the low pass filter which is then
+    used to calculate the coefficients for numerical low pass filtering based on a second-order low
+    pass filter design.
  @param wc The cut-off frequency of the low pass filter.
  @param h The constant digital time step.
  @param k The damping coefficient
@@ -144,40 +212,89 @@ void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
     }
 }
 
-/*! This method allows the user to set the status of the constraint dynamic effector
-
-*/
+/*! This method allows the user to set the status of the constraint dynamic effector */
 void ConstraintDynamicEffector::readInputMessage(){
-     if(this->effectorStatusInMsg.isLinked()){
+    if(this->effectorStatusInMsg.isLinked()){
         DeviceStatusMsgPayload statusMsg;
         statusMsg = this->effectorStatusInMsg();
         this->effectorStatus = statusMsg.deviceStatus;
-     }
-     else{
+    }
+    else{
         this->effectorStatus = 1;
-     }
+    }
 }
 
 /*! This method allows the constraint effector to have access to the parent states
-
  @param states The states to link
  */
 void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 {
     if (this->scInitCounter > 1) {
-        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 spacecraft");
+        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
-    this->hubSigma.push_back(states.getStateObject("hubSigma"));
-	this->hubOmega.push_back(states.getStateObject("hubOmega"));
-    this->hubPosition.push_back(states.getStateObject("hubPosition"));
-    this->hubVelocity.push_back(states.getStateObject("hubVelocity"));
+    int stateIdx = -1;
+    if (this->scInitCounter == 0) {
+        this->parent1.parentType = "hub";
+        this->parent1.idx = 0;
+        this->hubCounter = 1;
+        stateIdx = this->parent1.idx;
+    }
+    else if (this->scInitCounter == 1) {
+        this->parent2.parentType = "hub";
+        if (this->hubCounter == 0) {
+            this->parent2.idx = 0;
+        } else if (this->hubCounter == 1) {
+            this->parent2.idx = 1;
+        }
+        stateIdx = this->parent2.idx;
+    }
+
+    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[stateIdx]));
+	this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[stateIdx]));
+    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[stateIdx]));
+    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[stateIdx]));
+
+    this->scInitCounter++;
+}
+
+/*! This method is used to link properties to the constraint effector.
+ @param properties The parameter manager to collect from
+ */
+void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
+    if (this->scInitCounter > 1) {
+        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
+    }
+
+    int propIdx = -1;
+    if (this->scInitCounter == 0) {
+        this->parent1.parentType = "effector";
+        this->parent1.idx = 0;
+        this->effectorCounter = 1;
+        propIdx = this->parent1.idx;
+    }
+    else if (this->scInitCounter == 1) {
+        this->parent2.parentType = "effector";
+        if (this->effectorCounter == 0) {
+            this->parent2.idx = 0;
+            // if a spacecraft is added first, it propulated the pos and vel properties
+            this->propName_inertialPosition.erase(this->propName_inertialPosition.begin());
+            this->propName_inertialVelocity.erase(this->propName_inertialVelocity.begin());
+        } else if (this->effectorCounter == 1) {
+            this->parent2.idx = 1;
+        }
+        propIdx = this->parent2.idx;
+    }
+
+    this->inertialAttitudeProperty.push_back(properties.getPropertyReference(this->propName_inertialAttitude[propIdx]));
+    this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity[propIdx]));
+    this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition[propIdx]));
+    this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity[propIdx]));
 
     this->scInitCounter++;
 }
 
 /*! This method computes the forces on torques on each spacecraft body.
-
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
@@ -186,17 +303,38 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
     if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
-            // - Collect states from both spacecraft
-            Eigen::Vector3d r_B1N_N = this->hubPosition[0]->getState();
-            Eigen::Vector3d rDot_B1N_N = this->hubVelocity[0]->getState();
-            Eigen::Vector3d omega_B1N_B1 = this->hubOmega[0]->getState();
+            Eigen::Vector3d r_B1N_N;
+            Eigen::Vector3d rDot_B1N_N;
+            Eigen::Vector3d omega_B1N_B1;
             Eigen::MRPd sigma_B1N;
-            sigma_B1N = (Eigen::Vector3d)this->hubSigma[0]->getState();
-            Eigen::Vector3d r_B2N_N = this->hubPosition[1]->getState();
-            Eigen::Vector3d rDot_B2N_N = this->hubVelocity[1]->getState();
-            Eigen::Vector3d omega_B2N_B2 = this->hubOmega[1]->getState();
+            Eigen::Vector3d r_B2N_N;
+            Eigen::Vector3d rDot_B2N_N;
+            Eigen::Vector3d omega_B2N_B2;
             Eigen::MRPd sigma_B2N;
-            sigma_B2N = (Eigen::Vector3d)this->hubSigma[1]->getState();
+            if (this->parent1.parentType == "hub") {
+                // - Collect states from parent spacecraft hub
+                r_B1N_N = this->hubPosition[parent1.idx]->getState();
+                rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
+                omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
+                sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
+            } else if (this->parent1.parentType == "effector") {
+                // - Collect properties from parent effector
+                r_B1N_N = *this->inertialPositionProperty[parent1.idx];
+                rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
+                omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1.idx];
+                sigma_B1N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent1.idx];
+            }
+            if (this->parent2.parentType == "hub") {
+                r_B2N_N = this->hubPosition[parent2.idx]->getState();
+                rDot_B2N_N = this->hubVelocity[parent2.idx]->getState();
+                omega_B2N_B2 = this->hubOmega[parent2.idx]->getState();
+                sigma_B2N = (Eigen::Vector3d)this->hubSigma[parent2.idx]->getState();
+            } else if (this->parent2.parentType == "effector") {
+                r_B2N_N = *this->inertialPositionProperty[parent2.idx];
+                rDot_B2N_N = *this->inertialVelocityProperty[parent2.idx];
+                omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2.idx];
+                sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent2.idx];
+            }
 
             // computing direction constraint psi in the N frame
             Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
@@ -218,7 +356,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
 
             // calculate the attitude constraint violations
-            this->sigma_B2B1 = eigenC2MRP(dcm_B2N * dcm_B1N.transpose()); // calculate the difference in attitude
+            this->phi = eigenC2MRP(dcm_B2N * dcm_B1N.transpose() * this->dcm_B2B1Init.transpose()); // calculate the difference in attitude
             Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
             this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
 
@@ -234,7 +372,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
 
             // calculate the constraint torque imparted on each spacecraft from the attitude constraint
             Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(sigma_B2B1) - this->c_a * 0.25 * sigma_B2B1.Bmat() * omega_B2B1_B2;
+            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(this->phi) - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
             Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
             this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 
@@ -252,9 +390,8 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
     }
 }
 
-/*! This method takes the computed constraint force and torque states and outputs them to the m
+/*! This method takes the computed constraint force and torque states and outputs them to the
  messaging system.
-
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
@@ -272,7 +409,6 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 }
 
 /*! Update state method
-
  @param CurrentSimNanos The current simulation time
  */
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
@@ -286,12 +422,10 @@ void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! Filtering method to calculate filtered Constraint Force
-
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 {
-
     double F_t[3];
     eigenVector3d2CArray(this->Fc_N,F_t);
     this->F_mag_t = std::sqrt(pow(F_t[0],2)+pow(F_t[1],2)+pow(F_t[2],2));
@@ -305,27 +439,26 @@ void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 }
 
 /*! Filtering method to calculate filtered Constraint Torque
-
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)
 {
-        double T_t1[3];
-        eigenVector3d2CArray(this->T_B1,T_t1);
-        this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));
-        this->T1_filtered_mag_t = this->a*this->T1_filtered_mag_tminus1 +
-        this->b*this->T1_filtered_mag_tminus2+this->c*this->T1_mag_t+
-        this->d*this->T1_mag_tminus1+this->e*this->T1_mag_tminus2;
-        this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
-        this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
-        this->T1_mag_tminus2 = this->T1_mag_tminus1;
-        this->T1_mag_tminus1 = this->T1_mag_t;
-        double T_t2[3];
-        eigenVector3d2CArray(this->T_B2,T_t2);
-        this->T2_mag_t = std::sqrt(pow(T_t2[0],2)+pow(T_t2[1],2)+pow(T_t2[2],2));
-        this->T2_filtered_mag_t = this->a*this->T2_filtered_mag_tminus1 + this->b*this->T2_filtered_mag_tminus2+this->c*this->T2_mag_t+this->d*this->T2_mag_tminus1+this->e*this->T2_mag_tminus2;
-        this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
-        this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
-        this->T2_mag_tminus2 = this->T2_mag_tminus1;
-        this->T2_mag_tminus1 = this->T2_mag_t;
+    double T_t1[3];
+    eigenVector3d2CArray(this->T_B1,T_t1);
+    this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));
+    this->T1_filtered_mag_t = this->a*this->T1_filtered_mag_tminus1 +
+    this->b*this->T1_filtered_mag_tminus2+this->c*this->T1_mag_t+
+    this->d*this->T1_mag_tminus1+this->e*this->T1_mag_tminus2;
+    this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
+    this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
+    this->T1_mag_tminus2 = this->T1_mag_tminus1;
+    this->T1_mag_tminus1 = this->T1_mag_t;
+    double T_t2[3];
+    eigenVector3d2CArray(this->T_B2,T_t2);
+    this->T2_mag_t = std::sqrt(pow(T_t2[0],2)+pow(T_t2[1],2)+pow(T_t2[2],2));
+    this->T2_filtered_mag_t = this->a*this->T2_filtered_mag_tminus1 + this->b*this->T2_filtered_mag_tminus2+this->c*this->T2_mag_t+this->d*this->T2_mag_tminus1+this->e*this->T2_mag_tminus2;
+    this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
+    this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
+    this->T2_mag_tminus2 = this->T2_mag_tminus1;
+    this->T2_mag_tminus1 = this->T2_mag_t;
 }

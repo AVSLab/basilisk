@@ -81,13 +81,16 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.simulation import dragDynamicEffector
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import tabularAtmosphere, simpleNav
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -96,6 +99,10 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 from Basilisk.utilities.readAtmTable import readAtmTable
+from Basilisk.utilities.supportDataTools.dataFetcher import (
+    get_path,
+    DataFile,
+)
 
 #
 # Basilisk Scenario Script and Integrated Test
@@ -115,28 +122,36 @@ def sph2rv(xxsph):
     NOTE: this function assumes inertial and planet-fixed frames are aligned
     at this time
     """
-    
+
     r = xxsph[0]
     lon = xxsph[1]
     lat = xxsph[2]
     u = xxsph[3]
     gam = xxsph[4]
     hda = xxsph[5]
-    
+
     NI = np.eye(3)
-    IE = np.array([[np.cos(lat) * np.cos(lon), -np.sin(lon), -np.sin(lat) * np.cos(lon)],
-                   [np.cos(lat) * np.sin(lon), np.cos(lon), -np.sin(lat) * np.sin(lon)],
-                   [np.sin(lat), 0, np.cos(lat)]])
-    ES = np.array([[np.cos(gam), 0, np.sin(gam)],
-                   [-np.sin(gam) * np.sin(hda), np.cos(hda), np.cos(gam) * np.sin(hda)],
-                   [-np.sin(gam) * np.cos(hda), -np.sin(hda), np.cos(gam) * np.cos(hda)]])
-    
-    e1_E = np.array([1,0,0])
+    IE = np.array(
+        [
+            [np.cos(lat) * np.cos(lon), -np.sin(lon), -np.sin(lat) * np.cos(lon)],
+            [np.cos(lat) * np.sin(lon), np.cos(lon), -np.sin(lat) * np.sin(lon)],
+            [np.sin(lat), 0, np.cos(lat)],
+        ]
+    )
+    ES = np.array(
+        [
+            [np.cos(gam), 0, np.sin(gam)],
+            [-np.sin(gam) * np.sin(hda), np.cos(hda), np.cos(gam) * np.sin(hda)],
+            [-np.sin(gam) * np.cos(hda), -np.sin(hda), np.cos(gam) * np.cos(hda)],
+        ]
+    )
+
+    e1_E = np.array([1, 0, 0])
     rvec_N = (r * NI @ IE) @ e1_E
-    
-    s3_S = np.array([0,0,1])
-    uvec_N = u * ( NI @ IE @ ES) @ s3_S
-    
+
+    s3_S = np.array([0, 0, 1])
+    uvec_N = u * (NI @ IE @ ES) @ s3_S
+
     return rvec_N, uvec_N
 
 
@@ -163,35 +178,35 @@ def run(show_plots, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Construct algorithm and associated C++ container
     # change module to tabAtmo
-    tabAtmo = tabularAtmosphere.TabularAtmosphere()   # update with current values
-    tabAtmo.ModelTag = "tabularAtmosphere"            # update python name of test module
+    tabAtmo = tabularAtmosphere.TabularAtmosphere()  # update with current values
+    tabAtmo.ModelTag = "tabularAtmosphere"  # update python name of test module
     atmoTaskName = "atmosphere"
-    
+
     # define constants & load data
-    if planetCase == 'Earth':
+    if planetCase == "Earth":
         r_eq = 6378136.6
-        dataFileName = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
-        altList, rhoList, tempList = readAtmTable(dataFileName, 'EarthGRAM')
+        atm_path = get_path(DataFile.AtmosphereData.EarthGRAMNominal)
+        altList, rhoList, tempList = readAtmTable(str(atm_path), "EarthGRAM")
     else:
         r_eq = 3397.2 * 1000
-        dataFileName = bskPath + '/supportData/AtmosphereData/MarsGRAMNominal.txt'
-        altList, rhoList, tempList = readAtmTable(dataFileName, 'MarsGRAM')
-        
+        atm_path = get_path(DataFile.AtmosphereData.MarsGRAMNominal)
+        altList, rhoList, tempList = readAtmTable(str(atm_path), "MarsGRAM")
+
     # assign constants & ref. data to module
     tabAtmo.planetRadius = r_eq
-    tabAtmo.altList = tabularAtmosphere.DoubleVector(altList)    
+    tabAtmo.altList = tabularAtmosphere.DoubleVector(altList)
     tabAtmo.rhoList = tabularAtmosphere.DoubleVector(rhoList)
     tabAtmo.tempList = tabularAtmosphere.DoubleVector(tempList)
 
     # Drag Effector
     projArea = 10.0  # Set drag area in m^2
     dragCoeff = 2.2  # Set drag ceofficient
-    m_sc = 2530.0    # kg
+    m_sc = 2530.0  # kg
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
@@ -199,7 +214,7 @@ def run(show_plots, planetCase):
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
-    dragEffector.coreParams.comOffset = [1., 0., 0.]
+    dragEffector.coreParams.comOffset = [1.0, 0.0, 0.0]
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
@@ -217,7 +232,7 @@ def run(show_plots, planetCase):
     scObject.ModelTag = "spacecraftBody"
     scObject.hub.mHub = m_sc
     tabAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
-    
+
     simpleNavObj = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, simpleNavObj)
     simpleNavObj.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -240,25 +255,25 @@ def run(show_plots, planetCase):
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
 
-    if planetCase == 'Earth':
+    if planetCase == "Earth":
         r = 6503 * 1000
         u = 11.2 * 1000
         gam = -5.15 * macros.D2R
     else:
-        r = (3397.2 + 125.) * 1000
+        r = (3397.2 + 125.0) * 1000
         u = 6 * 1000
         gam = -10 * macros.D2R
     lon = 0
     lat = 0
-    hda = np.pi/2
-    xxsph = [r,lon,lat,u,gam,hda]
+    hda = np.pi / 2
+    xxsph = [r, lon, lat, u, gam, hda]
     rN, vN = sph2rv(xxsph)
-    
+
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
     # set the simulation time
-    if planetCase == 'Earth':
+    if planetCase == "Earth":
         simulationTime = macros.sec2nano(300)
     else:
         simulationTime = macros.sec2nano(400)
@@ -279,9 +294,12 @@ def run(show_plots, planetCase):
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
     #
     #   initialize Simulation
     #
@@ -308,30 +326,31 @@ def run(show_plots, planetCase):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(0,3):
-        plt.plot(dataLog.times()*macros.NANO2MIN, posData[:, idx]/1000.,
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$r_{BN,'+str(idx)+'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Inertial Position [km]')
+    ax.ticklabel_format(useOffset=False, style="plain")
+    for idx in range(0, 3):
+        plt.plot(
+            dataLog.times() * macros.NANO2MIN,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Inertial Position [km]")
 
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     smaData = []
     engData = []
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx, 0:3], velData[idx, 0:3])
-        smaData.append(oeData.a/1000.)
-        engData.append(-mu/(2*oeData.a)/1e6)    # km^2/s^2
-    plt.plot(dataLog.times()*macros.NANO2MIN, engData
-             , color='#aa0000'
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel('Energy [km^2/s^2]')
+        smaData.append(oeData.a / 1000.0)
+        engData.append(-mu / (2 * oeData.a) / 1e6)  # km^2/s^2
+    plt.plot(dataLog.times() * macros.NANO2MIN, engData, color="#aa0000")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Energy [km^2/s^2]")
     plt.grid()
     pltName = fileName + "2" + planetCase
     figureList[pltName] = plt.figure(2)
@@ -342,19 +361,19 @@ def run(show_plots, planetCase):
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    plt.plot(dataNewAtmoLog.times()*macros.NANO2MIN, densData)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Density in kg/m^3')
+    ax.ticklabel_format(useOffset=False, style="sci")
+    plt.plot(dataNewAtmoLog.times() * macros.NANO2MIN, densData)
+    plt.xlabel("Time [min]")
+    plt.ylabel("Density in kg/m^3")
     pltName = fileName + "3" + planetCase
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     fig = plt.gcf()
     ax = fig.gca()
-    plt.plot(v/1e3, (r-r_eq)/1e3)
-    plt.xlabel('velocity [km/s]')
-    plt.ylabel('altitude [km]')
+    plt.plot(v / 1e3, (r - r_eq) / 1e3)
+    plt.xlabel("velocity [km/s]")
+    plt.ylabel("altitude [km]")
     plt.grid()
     pltName = fileName + "4" + planetCase
     figureList[pltName] = plt.figure(4)
@@ -362,9 +381,9 @@ def run(show_plots, planetCase):
     plt.figure(5)
     fig = plt.gcf()
     ax = fig.gca()
-    plt.plot(dataLog.times()*macros.NANO2MIN, (r-r_eq)/1e3)
-    plt.xlabel('time [min]')
-    plt.ylabel('altitude [km]')
+    plt.plot(dataLog.times() * macros.NANO2MIN, (r - r_eq) / 1e3)
+    plt.xlabel("time [min]")
+    plt.ylabel("altitude [km]")
     plt.grid()
     pltName = fileName + "5" + planetCase
     figureList[pltName] = plt.figure(5)
@@ -376,7 +395,7 @@ def run(show_plots, planetCase):
     return figureList
 
     # close the plots being saved off to avoid over-writing old and new figures
-if __name__ == '__main__':
-    run(True, 'Mars')      # planet arrival case, can be Earth or Mars
-    
-    
+
+
+if __name__ == "__main__":
+    run(True, "Mars")  # planet arrival case, can be Earth or Mars

@@ -55,7 +55,7 @@ Albedo::Albedo()
     this->nHat_B_default = { 1.0, 0.0, 0.0 };
     this->fov_default = 90. * D2R;
     this->eclipseCase = false;
-    this->shadowFactorAtdA = 1.0;
+    this->illuminationFactorAtdA = 1.0;
     this->altitudeRateLimit = -1.0;
     return;
 }
@@ -527,7 +527,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
     this->rHat_PI_N = -r_IP_N / r_IP_N.norm();        //! - [-] direction vector from instrument to planet (inertial)
     auto r_SI_N = r_SP_N - r_IP_N;                    //! - [m] sun's position wrt instrument (inertial)
     //! - Calculate the authalic radius, if the polar radius available
-    double t[3], t_aut[3], e, RA_planet, shadowFactorAtdA;
+    double t[3], t_aut[3], e, RA_planet, illuminationFactorAtdA;
     if (this->RP_planets.at(idx) > 0.0) {
         e = sqrt(1 - pow(this->RP_planets.at(idx), 2) / pow(this->REQ_planets.at(idx), 2));
         t[0] = pow(this->REQ_planets.at(idx), 2) * 0.5;
@@ -595,9 +595,9 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
                 //! - Detect the sunlit region of the planet seen by the instrument
                 if (f1 > 0 && f2 > 0) {
                     //! - Sunlit portion of the planet seen by the instrument's position (max)
-                    //! - Shadow factor at dA (optional)
-                    shadowFactorAtdA = this->shadowFactorAtdA;
-                    if (this->eclipseCase) { shadowFactorAtdA = computeEclipseAtdA(RA_planet, r_dAP_N, r_SP_N); }
+                    //! - illumination factor at dA (optional)
+                    illuminationFactorAtdA = this->illuminationFactorAtdA;
+                    if (this->eclipseCase) { illuminationFactorAtdA = computeEclipseAtdA(RA_planet, r_dAP_N, r_SP_N); }
                     //! - Area of the incremental area
                     dArea = (fabs(lon1 - lon2) * fabs(sin(lat1) - sin(lat2)) * pow(r_dAP_N.norm(), 2));
                     //! - Maximum albedo flux ratio at instrument's position [-]
@@ -609,7 +609,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
                     else {
                         tempmax = this->ALB[idx][ilat][ilon] * tempmax;
                     }
-                    alb_Imax = alb_Imax + tempmax * shadowFactorAtdA;
+                    alb_Imax = alb_Imax + tempmax * illuminationFactorAtdA;
 
                     if (f3 >= cos(fov)) {
                         //! - Sunlit portion of the planet seen by the instrument (fov)
@@ -621,7 +621,7 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
                         else {
                             tempfov = this->ALB[idx][ilat][ilon] * tempfov;
                         }
-                        alb_I = alb_I + tempfov * shadowFactorAtdA;
+                        alb_I = alb_I + tempfov * illuminationFactorAtdA;
                         albLon1.push_back(this->gdlon[idx][ilon] * 180 / M_PI);
                         albLat1.push_back(this->gdlat[idx][ilat] * 180 / M_PI);
                         IIdx++;
@@ -659,8 +659,8 @@ void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload plan
  */
 double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N)
 {
-    //! - Compute the shadow factor at incremental area
-    //! - Note that the eclipse module computes the shadow factor at the spacecraft position
+    //! - Compute the illumination factor at incremental area
+    //! - Note that the eclipse module computes the illumination factor at the spacecraft position
     auto r_SdA_N = r_SP_N - r_dAP_N; //! - [m] position vector from dA to Sun (inertial)
     auto s = r_dAP_N.norm();
     auto f_1 = safeAsin((REQ_SUN * 1000 + Rplanet) / r_SP_N.norm());
@@ -672,7 +672,7 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
     auto l_1 = c_1 * tan(f_1);
     auto l_2 = c_2 * tan(f_2);
     double area = 0.0;
-    double shadowFactorAtdA = 1.0; //! - Initialise the value for no eclipse
+    double illuminationFactorAtdA = 1.0; //! - Initialise the value for no eclipse
     double a = safeAsin(REQ_SUN * 1000 / r_SdA_N.norm());   //! - Apparent radius of sun
     double b = safeAsin(Rplanet / r_dAP_N.norm()); //! - Apparent radius of occulting body
     double c = safeAcos((-r_dAP_N.dot(r_SdA_N)) / (r_dAP_N.norm() * r_SdA_N.norm()));
@@ -682,26 +682,26 @@ double Albedo::computeEclipseAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen
         // In particular (c < a + b) must check last to avoid testing
         // with implausible a, b and c values
         if (c < b - a) { // total eclipse, implying a < b
-            shadowFactorAtdA = 0.0;
+            illuminationFactorAtdA = 0.0;
         }
         else if (c < a - b) { // partial maximum eclipse, implying a > b
             double areaSun = M_PI * a * a;
             double areaBody = M_PI * b * b;
             area = areaSun - areaBody;
-            shadowFactorAtdA = 1 - area / (M_PI * a * a);
+            illuminationFactorAtdA = 1 - area / (M_PI * a * a);
         }
         else if (c < a + b) { // partial eclipse
             double x = (c * c + a * a - b * b) / (2 * c);
             double y = sqrt(a * a - x * x);
             area = a * a * safeAcos(x / a) + b * b * safeAcos((c - x) / b) - c * y;
-            shadowFactorAtdA = 1 - area / (M_PI * a * a);
+            illuminationFactorAtdA = 1 - area / (M_PI * a * a);
         }
     }
-    if (shadowFactorAtdA < 0.0) {
-        shadowFactorAtdA = 0.0;
+    if (illuminationFactorAtdA < 0.0) {
+        illuminationFactorAtdA = 0.0;
     }
-    else if (shadowFactorAtdA > 1.0) {
-        shadowFactorAtdA = 1.0;
+    else if (illuminationFactorAtdA > 1.0) {
+        illuminationFactorAtdA = 1.0;
     }
-    return shadowFactorAtdA;
+    return illuminationFactorAtdA;
 }

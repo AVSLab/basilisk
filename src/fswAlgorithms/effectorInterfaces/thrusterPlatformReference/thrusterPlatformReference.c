@@ -69,6 +69,19 @@ void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData
     v3SetZero(configData->hsInt_M);
     v3SetZero(configData->priorHs_M);
     configData->priorTime = callTime;
+
+    /* zero the output messages */
+    HingedRigidBodyMsgPayload hingedRigidBodyRef1Out = HingedRigidBodyMsg_C_zeroMsgPayload();
+    HingedRigidBodyMsgPayload hingedRigidBodyRef2Out = HingedRigidBodyMsg_C_zeroMsgPayload();
+    BodyHeadingMsgPayload bodyHeadingOut = BodyHeadingMsg_C_zeroMsgPayload();
+    CmdTorqueBodyMsgPayload thrusterTorqueOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
+    THRConfigMsgPayload thrusterConfigOut = THRConfigMsg_C_zeroMsgPayload();
+
+    HingedRigidBodyMsg_C_write(&hingedRigidBodyRef1Out, &configData->hingedRigidBodyRef1OutMsg, moduleID, callTime);
+    HingedRigidBodyMsg_C_write(&hingedRigidBodyRef2Out, &configData->hingedRigidBodyRef2OutMsg, moduleID, callTime);
+    BodyHeadingMsg_C_write(&bodyHeadingOut, &configData->bodyHeadingOutMsg, moduleID, callTime);
+    CmdTorqueBodyMsg_C_write(&thrusterTorqueOut, &configData->thrusterTorqueOutMsg, moduleID, callTime);
+    THRConfigMsg_C_write(&thrusterConfigOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
 
@@ -120,12 +133,12 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
             v3Add(hs_B, vec3, hs_B);
         }
         double hs_M[3];
-        m33tMultV3(MB, hs_B, hs_M);
+        m33MultV3(MB, hs_B, hs_M);
 
         /*! update integral term */
         double DeltaHsInt_M[3];
         v3Add(configData->priorHs_M, hs_M, DeltaHsInt_M);
-        double dt = (callTime - configData->priorTime) * NANO2SEC;
+        double dt = diffNanoToSec(callTime, configData->priorTime);
         v3Scale(0.5*dt, DeltaHsInt_M, DeltaHsInt_M);
         v3Add(configData->hsInt_M, DeltaHsInt_M, configData->hsInt_M);
         v3Copy(hs_M, configData->priorHs_M);

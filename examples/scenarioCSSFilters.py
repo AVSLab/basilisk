@@ -453,7 +453,10 @@ def run(saveFigures, show_plots, FilterType, simTime):
         CSS.senNoiseStd = 0.017
         CSS.sunInMsg.subscribeTo(sunMsg)
         CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
-        CSS.this.disown()
+        # Store CSS in registry to prevent garbage collection
+        if not hasattr(setupCSS, '_css_registry'):
+            setupCSS._css_registry = []
+        setupCSS._css_registry.append(CSS)
     for CSSHat in CSSOrientationList:
         newCSS = coarseSunSensor.CoarseSunSensor()
         newCSS.ModelTag = "CSS" + str(counter)
@@ -466,17 +469,16 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     #   add the FSW CSS information
     #
-    cssConstVehicle = messaging.CSSConfigMsgPayload()
-
-    totalCSSList = []
-    for CSSHat in CSSOrientationList:
-        newCSS = messaging.CSSUnitConfigMsgPayload()
-        newCSS.nHat_B = CSSHat
-        newCSS.CBias = 1.0
-        totalCSSList.append(newCSS)
-    cssConstVehicle.nCSS = len(CSSOrientationList)
-    cssConstVehicle.cssVals = totalCSSList
-
+    cssConstVehicle = messaging.CSSConfigMsgPayload(
+        nCSS = len(CSSOrientationList),
+        cssVals = [
+            messaging.CSSUnitConfigMsgPayload(
+                nHat_B=CSSHat,
+                CBias=1.0,
+            )
+            for CSSHat in CSSOrientationList
+        ]
+    )
     cssConstMsg = messaging.CSSConfigMsg().write(cssConstVehicle)
 
     #

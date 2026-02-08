@@ -48,16 +48,23 @@ from matplotlib import pyplot as plt
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-tests = [(0, 0, 0, None, None, [1,0,0,1,0]), # rate disabled, device status not written, no controller status
-         (0, 0.01, 0.1, None, None, [1,0,0,1,0]), # rate disabled, rate noncompliant, device status not written, no controller status
-         (1, 0.01, 0.001, None, None, [1,0,0,1,0]), # rate enabled, rate compliant, device status not written, no controller status
-         (1, 0.01, 0.1, None, None, [0, 0, 0, 0, 0]), # rate enabled, rate noncompliant, device status not written, no controller status
-         (0, 0, 0, 1, 0, [1,0,0,1,0]), # rate disabled, device status of 1, controller status of 0
-         (0, 0, 0, 0, 1, [0, 0, 0, 0, 0]), # rate disabled, device status of 0, controller status of 1
-         (0, 0, 0, None, 1, [1,0,0,1,0]) # rate disabled, device status not written, controller status of 1
+tests = [(0, 0, 0, None, None, None, None, [1,0,0,1,0]), # rate disabled, device status not written, no controller status
+         (0, 0.01, 0.1, None, None, None, None, [1,0,0,1,0]), # rate disabled, rate noncompliant, device status not written, no controller status
+         (1, 0.01, 0.001, None, None, None, None, [1,0,0,1,0]), # rate enabled, rate compliant, device status not written, no controller status
+         (1, 0.01, 0.1, None, None, None, None, [0, 0, 0, 0, 0]), # rate enabled, rate noncompliant, device status not written, no controller status
+         (0, 0, 0, 1, 0, None, None, [1,0,0,1,0]), # rate disabled, device status of 1, controller status of 0
+         (0, 0, 0, 0, 1, None, None, [0, 0, 0, 0, 0]), # rate disabled, device status of 0, controller status of 1
+         (0, 0, 0, None, 1, None, None, [1,0,0,1,0]), # rate disabled, device status not written, controller status of 1
+         (1, 0.01, 0.001, None, None, 0, [1.0, 2.0], [1,0,0,1,0]), # rate enabled, immediate imaging (flag set to 0)
+         (1, 0.01, 0.001, None, None, 1, [0.0, 0.0], [1,0,0,1,0]), # rate enabled, immediate imaging (flag set to 1)
+         (1, 0.01, 0.001, 1, None, 1, [1.0, 1.0], [0,1,0,0,1]), # rate enabled, 1 second acquisition and allowed time
+         (1, 0.01, 0.001, 1, None, 1, [1.0, 0.0], [0,0,0,0,0]), # rate enabled, acquisition time greater than allowed time
+         (1, 0.01, 0.001, 1, None, 1, [1.0, 2.0], [0,1,0,0,1]), # rate enabled, acquisition time less than allowed time
+         (1, 0.01, 0.001, 1, None, 1, [-1.0, 2.0], [1,0,0,1,0]), # rate enabled, acquisition time negative, should image immediately
+         (1, 0.01, 0.001, 1, None, 1, [0.0, -1.0], [1,0,0,1,0]), # rate enabled, allowed time negative, but should image immediately (considered as 0.0)
         ]
-@pytest.mark.parametrize('use_rate_limit,rate_limit,omega_mag,deviceStatus,controlStatus,expected_result', tests)
-def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, expected_result):
+@pytest.mark.parametrize('use_rate_limit,rate_limit,omega_mag,deviceStatus,controlStatus,useDuration,imagingTimes,expected_result', tests)
+def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, useDuration, imagingTimes, expected_result):
     r"""
     **Validation Test Description**
 
@@ -76,15 +83,29 @@ def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, om
     6. If the controller does not send an image command when deviceStatusInMsg is set to 0 and the instrumentStatus is set to 1
 
     7. If the controller does send an image command when deviceStatusInMsg is not written and the instrumentStatus is set to 1
+
+    8. If the controller correctly handles the duration-based imaging flag when set to 0 (immediate imaging)
+
+    9. If the controller correctly handles duration-based imaging when acquisitionTime and allowedTime are set to 0
+
+    10. If the controller correctly handles duration-based imaging when acquisitionTime and allowedTime are set to the same values (1.0 second)
+
+    11. If the controller correctly handles duration-based imaging when acquisitionTime is set to 1.0 second and allowedTime is set to 0 second (should not image)
+
+    12. If the controller correctly handles duration-based imaging when acquisitionTime is set to 1.0 second and allowedTime is set to 2.0 seconds (should image)
+
+    13. If the controller correctly handles duration-based imaging when acquisitionTime is set to -1.0 second and allowedTime is set to 2.0 seconds (should image immediately)
+
+    14. If the controller correctly handles duration-based imaging when acquisitionTime is set to 0.0 second and allowedTime is set to -1.0 seconds (should image immediately)
     """
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, expected_result)
-    
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, useDuration, imagingTimes, expected_result)
+
     assert testResults < 1, testMessage
 
 
-def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001, deviceStatus=None, controlStatus=None, expected_result=None):
+def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001, deviceStatus=None, controlStatus=None, useDuration=None, imagingTimes=None, expected_result=None):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
@@ -128,10 +149,18 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
         inputDeviceStatusMsgData.deviceStatus = deviceStatus
         inputDeviceStatusMsg = messaging.DeviceStatusMsg().write(inputDeviceStatusMsgData)
         module.deviceStatusInMsg.subscribeTo(inputDeviceStatusMsg)
-    
+
     # Set the controllerStatus variable
     if controlStatus is not None:
         module.controllerStatus = controlStatus
+
+    # Set the duration-based imaging variable
+    if useDuration is not None:
+        module.useDurationImaging = useDuration
+        acquisitionTime = imagingTimes[0]
+        allowedTime = imagingTimes[1]
+        module.acquisitionTime = macros.sec2nano(acquisitionTime)  # convert to nanoseconds
+        module.allowedTime = macros.sec2nano(allowedTime)  # convert to nanoseconds
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.deviceCmdOutMsg.recorder()

@@ -40,7 +40,13 @@ from Basilisk.utilities import macros
                                       ])
 def test_simpleTransmitterAll(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = eval(function + '()')
+    func = globals().get(function)
+
+    if func is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    [testResults, testMessage] = func()
+
     assert testResults < 1, testMessage
 
 

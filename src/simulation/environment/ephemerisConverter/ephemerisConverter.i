@@ -17,6 +17,10 @@
 
  */
 %module ephemerisConverter
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "ephemerisConverter.h"
 %}

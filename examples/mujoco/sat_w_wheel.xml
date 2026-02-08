@@ -1,0 +1,27 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<asset>
+		<texture name="checker" builtin="checker" width="10" height="10"/>
+		<material name="checker" texture="checker" />
+	</asset>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" density="200" rgba="1 0 0 0.5"/>
+
+			<body name="wheel_1" pos="0 0 0" xyaxes="1 0 0 0 0 1">
+				<geom name="wheel_1" type="cylinder" size="0.4 0.2" density="2000" material="checker"/>
+				<joint name="wheel_1" type="hinge" axis="0 0 1"/>
+			</body>
+
+		</body>
+
+	</worldbody>
+
+	<actuator>
+		<motor name="wheel_1" joint="wheel_1" />
+	</actuator>
+
+</mujoco>

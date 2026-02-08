@@ -122,6 +122,7 @@ from Basilisk.simulation import magnetometer
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
@@ -193,7 +194,8 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     elif planetCase == 'Earth':
         magModule = magneticFieldWMM.MagneticFieldWMM()
         magModule.ModelTag = "WMM"
-        magModule.dataPath = bskPath + '/supportData/MagneticField/'
+        wmm_path = get_path(DataFile.MagneticFieldData.WMM)
+        magModule.configureWMMFile(str(wmm_path))
         # set epoch date/time message
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
         magModule.epochInMsg.subscribeTo(epochMsg)

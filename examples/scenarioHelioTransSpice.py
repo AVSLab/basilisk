@@ -158,8 +158,8 @@ def run():
 
     # Configure Vizard settings
     if vizSupport.vizFound:
-        colorMsgContent = messaging.ColorMsgPayload()
-        colorMsgContent.colorRGBA = vizSupport.toRGBA255("Yellow")
+        colorMsgContent = messaging.ColorMsgPayload(colorRGBA=vizSupport.toRGBA255("Yellow"))
+
         colorMsg = messaging.ColorMsg().write(colorMsgContent)
 
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

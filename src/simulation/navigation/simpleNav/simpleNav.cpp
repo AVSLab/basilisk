@@ -68,22 +68,20 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
     }
 
-    int64_t numStates = 18;
-
     //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(numStates, numStates);
+    this->AMatrix.setIdentity(this->numStates, this->numStates);
     this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != numStates*numStates) {
+    if (this->PMatrix.size() != this->numStates*this->numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
-    if (this->walkBounds.size() != numStates) {
+    if (this->walkBounds.size() != this->numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
@@ -184,6 +182,15 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
 
     //! - Set the GaussMarkov propagation matrix and compute errors
+    if (this->PMatrix.size() != this->numStates*this->numStates) {
+        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation", this->PMatrix.size());
+        return;
+    }
+    this->errorModel.setNoiseMatrix(this->PMatrix);
+    if (this->walkBounds.size() != this->numStates) {
+        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting during Simulation");
+    }
+    this->errorModel.setUpperBounds(this->walkBounds);
     this->errorModel.setPropMatrix(localProp);
     this->errorModel.computeNextState();
     this->navErrors = this->errorModel.getCurrentState();

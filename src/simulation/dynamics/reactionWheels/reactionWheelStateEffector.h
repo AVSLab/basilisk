@@ -31,7 +31,7 @@
 
 #include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+#include "simulation/dynamics/_GeneralModuleFiles/RWConfigPayload.h"
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
@@ -57,14 +57,14 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void Reset(uint64_t CurrentSimNanos);
-    void addReactionWheel(RWConfigMsgPayload *NewRW);
+    void addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW);
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
 
 public:
-	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
+	std::vector<std::shared_ptr<RWConfigPayload>> ReactionWheelData;          //!< -- RW information
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
 	Message<RWSpeedMsgPayload> rwSpeedOutMsg;                   //!< -- RW speed array output message
@@ -85,6 +85,30 @@ private:
 	StateData *OmegasState;                                     //!< class variable
 	StateData *thetasState;                                     //!< class variable
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
+
+    double maxWheelAcceleration = 1.0e6;    //!< [rad/s^2] Maximum allowed wheel acceleration to prevent numerical instability
+    double largeTorqueThreshold = 10.0;     //!< [Nm] Threshold for warning about large torque with unlimited torque setting
+
+public:
+    /*! @brief Get the maximum wheel acceleration threshold
+     * @return Maximum wheel acceleration in rad/s^2
+     */
+    double getMaxWheelAcceleration() const { return maxWheelAcceleration; }
+
+    /*! @brief Set the maximum wheel acceleration threshold
+     * @param val New maximum wheel acceleration value in rad/s^2
+     */
+    void setMaxWheelAcceleration(double val) { maxWheelAcceleration = val; }
+
+    /*! @brief Get the large torque threshold for unlimited torque warning
+     * @return Large torque threshold in Nm
+     */
+    double getLargeTorqueThreshold() const { return largeTorqueThreshold; }
+
+    /*! @brief Set the large torque threshold for unlimited torque warning
+     * @param val New large torque threshold value in Nm
+     */
+    void setLargeTorqueThreshold(double val) { largeTorqueThreshold = val; }
 
 };
 

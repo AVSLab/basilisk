@@ -18,9 +18,6 @@ BSK can link with Vizard **live** in three ways:
   messages to Vizard when an image is requested. This is a more efficient OpNav mode, but shows no
   graphical display in Vizard.
 
-.. caution::
-    Legacy ``opNavMode`` has been deprecated. For ``opNavMode = 1``, use ``liveStream`` flag. For ``opNavMode = 2``, use ``noDisplay`` flag.
-
 
 ``liveStream`` Mode
 ===================

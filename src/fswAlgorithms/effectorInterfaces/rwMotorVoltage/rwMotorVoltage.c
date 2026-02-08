@@ -63,6 +63,10 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, i
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
     configData->priorTime = 0;
+
+    /* zero the RW motor voltage output message */
+    ArrayMotorVoltageMsgPayload voltageOut = ArrayMotorVoltageMsg_C_zeroMsgPayload();
+    ArrayMotorVoltageMsg_C_write(&voltageOut, &configData->voltageOutMsg, moduleID, callTime);
 }
 
 /*! Update performs the torque to voltage conversion. If a wheel speed message was provided, it also does closed loop control of the voltage sent. It then writes the voltage message.
@@ -106,7 +110,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     if (RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
         /* make sure the clock didn't just initialize, or the module was recently reset */
         if (configData->priorTime != 0) {
-            double dt = (callTime - configData->priorTime) * NANO2SEC; /*!< [s]   control update period */
+            double dt = diffNanoToSec(callTime, configData->priorTime); /*!< [s]   control update period */
             double              OmegaDot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
             for (int i=0; i<configData->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && configData->resetFlag == BOOL_FALSE) {

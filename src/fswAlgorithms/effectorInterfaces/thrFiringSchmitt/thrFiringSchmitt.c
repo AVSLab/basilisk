@@ -78,6 +78,10 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
 		configData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		configData->lastThrustState[i] = BOOL_FALSE;
 	}
+
+    // Add zero output message
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
@@ -112,7 +116,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+	controlPeriod = diffNanoToSec(callTime, configData->prevCallTime);
 	configData->prevCallTime = callTime;
 
     /*! - read the input thruster force message */

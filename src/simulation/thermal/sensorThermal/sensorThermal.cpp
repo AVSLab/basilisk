@@ -7,7 +7,7 @@
 
 SensorThermal::SensorThermal(){
 
-    this->shadowFactor = 1;
+    this->illuminationFactor = 1;
 
     // Set the required parameters from the constructor
     this->nHat_B.setZero();
@@ -37,7 +37,7 @@ SensorThermal::~SensorThermal(){
  */
 void SensorThermal::Reset(uint64_t CurrentClock) {
 
-    this->shadowFactor = 1.0;
+    this->illuminationFactor = 1.0;
 
     if (this->sensorArea <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "The sensorArea must be a positive value");
@@ -88,7 +88,7 @@ void SensorThermal::readMessages()
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
         sunVisibilityFactor = this->sunEclipseInMsg();
-        this->shadowFactor = sunVisibilityFactor.shadowFactor;
+        this->illuminationFactor = sunVisibilityFactor.illuminationFactor;
     }
 
     //! if  the device status msg is connected, read in and update sensor power status
@@ -176,7 +176,7 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
+    this->Q_in = this->illuminationFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
 
     //! - Compute Q_out
     this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);

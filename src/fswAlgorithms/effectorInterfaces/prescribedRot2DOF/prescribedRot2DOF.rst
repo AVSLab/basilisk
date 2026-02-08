@@ -2,9 +2,9 @@ Executive Summary
 -----------------
 This module profiles a :ref:`PrescribedRotationMsgPayload` message for a specified 2 DOF rotation
 for a secondary rigid body connected to a rigid spacecraft hub at a hub-fixed location, :math:`\mathcal{M}`. The body
-frame for the prescribed body is designated by the frame :math:`\mathcal{F}`. Accordingly, the prescribed states for the
+frame for the prescribed body is designated by the frame :math:`\mathcal{P}`. Accordingly, the prescribed states for the
 secondary body are written with respect to the mount frame, :math:`\mathcal{M}`. The prescribed states profiled
-in this module are: ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``.
+in this module are: ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``.
 
 It should be noted that although the inputs to this module are two consecutive rotation angles and axes, the resulting
 rotation that is profiled is a 1 DOF rotation. The module converts two given reference angles and their corresponding
@@ -16,8 +16,8 @@ dynamics module in order to profile the rotational states of the secondary body.
 must also be connected to the prescribed motion dynamics module to profile the translational states of the prescribed
 body. The required rotation is determined from the user-specified scalar maximum angular acceleration for the rotation,
 :math:`\alpha_{\text{max}}`, the spinning body's initial attitude with respect to the mount frame as the Principal
-Rotation Vector ``prv_F0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors
-for the rotation, ``prv_F1F0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_F2F1``
+Rotation Vector ``prv_P0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors
+for the rotation, ``prv_P1P0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_P2P1``
 :math:`(\Phi_{1b}, \hat{\boldsymbol{e}}_{1b})`.
 
 The maximum scalar angular acceleration is applied constant and positively for the first half of the rotation and
@@ -27,9 +27,9 @@ The corresponding angle the prescribed body moves through during the rotation is
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -56,11 +56,11 @@ This 2 DOF rotational motion kinematic profiler module converts a given 2 DOF ro
 and profiles the required spinning body rotational motion with respect to a body-fixed mount frame for the
 rotation. The inputs to the profiler are the maximum angular acceleration for the rotation,
 :math:`\alpha_{\text{max}}`, the spinning body's initial attitude with respect to the mount frame as the Principal
-Rotation Vector ``prv_F0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors
-for the rotation, ``prv_F1F0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_F2F1``
+Rotation Vector ``prv_P0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors
+for the rotation, ``prv_P1P0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_P2P1``
 :math:`(\Phi_{1b}, \hat{\boldsymbol{e}}_{1b})`.
 
-The module first converts the two given reference PRVs to a single PRV, ``prv_F2M`` that represents the final spinning
+The module first converts the two given reference PRVs to a single PRV, ``prv_P2M`` that represents the final spinning
 body attitude with respect to the body-fixed mount frame:
 
 .. math::
@@ -69,8 +69,8 @@ body attitude with respect to the body-fixed mount frame:
 .. math::
     \hat{\boldsymbol{e}}_2 = \frac{\cos \frac{\Phi_{1b}}{2} \sin \frac{\Phi_{1a}}{2} \ \hat{\boldsymbol{e}}_{1a} + \cos \frac{\Phi_{1a}}{2} \sin \frac{\Phi_{1b}}{2} \ \boldsymbol{e}_{1b} + \sin \frac{\Phi_{1a}}{2} \sin \frac{\Phi_{1b}}{2} \ \hat{\boldsymbol{e}}_{1a} \times \hat{\boldsymbol{e}}_{1b} }{\sin \frac{\Phi_2}{2}}
 
-Subtracting the initial Principal Rotation Vector ``prv_F0M`` from the found reference PRV ``prv_F2M`` gives the
-required PRV for the rotation, ``prv_F2F0``:
+Subtracting the initial Principal Rotation Vector ``prv_P0M`` from the found reference PRV ``prv_P2M`` gives the
+required PRV for the rotation, ``prv_P2P0``:
 
 .. math::
     \Phi_{\text{ref}} = \Delta \Phi = 2 \cos^{-1} \left ( \cos \frac{\Phi_2}{2} \cos \frac{\Phi_0}{2} + \sin \frac{\Phi_2}{2} \sin \frac {\Phi_0}{2} \ \hat{\boldsymbol{e}}_2 \cdot \hat{\boldsymbol{e}}_0 \right )
@@ -141,8 +141,8 @@ The unit test for this module simulates TWO consecutive 2 DOF rotational attitud
 connected to a rigid spacecraft hub. Two maneuvers are simulated to ensure that the module correctly updates the
 required relative PRV attitude when a new attitude reference message is written. The unit test checks that the prescribed
 body's MRP attitude converges to both reference attitudes for a series of initial and reference attitudes and
-maximum angular accelerations. (``sigma_FM_Final1`` is checked to converge to ``sigma_FM_Ref1``, and
-``sigma_FM_Final2`` is checked to converge to ``sigma_FM_Ref2``). Additionally, the prescribed body's final angular
+maximum angular accelerations. (``sigma_PM_Pinal1`` is checked to converge to ``sigma_PM_Ref1``, and
+``sigma_PM_Pinal2`` is checked to converge to ``sigma_PM_Ref2``). Additionally, the prescribed body's final angular
 velocity magnitude ``thetaDot_Final`` is checked for convergence to the reference angular velocity magnitude,
 ``thetaDot_Ref``.
 
@@ -151,8 +151,8 @@ User Guide
 ----------
 The user-configurable inputs to the profiler are the maximum angular acceleration for the rotation,
 :math:`\alpha_{\text{max}}`, the spinning body's initial attitude with respect to the mount frame as the Principal
-Rotation Vector ``prv_F0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors for
-the rotation, ``prv_F1F0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_F2F1``
+Rotation Vector ``prv_P0M`` :math:`(\Phi_0, \hat{\boldsymbol{e}}_0)`, and two reference Principal Rotation Vectors for
+the rotation, ``prv_P1P0`` :math:`(\Phi_{1a}, \hat{\boldsymbol{e}}_{1a})` and ``prv_P2P1``
 :math:`(\Phi_{1b}, \hat{\boldsymbol{e}}_{1b})`.
 
 This module provides a single output message in the form of :ref:`prescribedRotationMsgPayload`. This prescribed
@@ -174,13 +174,13 @@ This section is to outline the steps needed to setup a prescribed 2 DOF rotation
 #. Define all of the configuration data associated with the module. For example::
 
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
-    rotAxis2_F1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
+    rotAxis2_P1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
     PrescribedRot2DOF.rotAxis1_M = rotAxis1_M
-    PrescribedRot2DOF.rotAxis2_F1 = rotAxis2_F1
+    PrescribedRot2DOF.rotAxis2_P1 = rotAxis2_P1
     PrescribedRot2DOF.phiDDotMax = phiDDotMax
-    PrescribedRot2DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
-    PrescribedRot2DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    PrescribedRot2DOF.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
+    PrescribedRot2DOF.omega_PM_P = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame P relative to frame M in P frame components
+    PrescribedRot2DOF.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_PB_P in P frame components
+    PrescribedRot2DOF.sigma_PM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame P relative to frame M
 
 The user is required to set the above configuration data parameters, as they are not initialized in the module.
 
@@ -189,4 +189,3 @@ The user is required to set the above configuration data parameters, as they are
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, PrescribedRot2DOF)
-

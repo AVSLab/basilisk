@@ -37,6 +37,7 @@ MsgCurrStatus
     bool dataFresh = false;                     //!< Flag indicating that new data has been read
 }MsgCurrStatus;
 
+
 /*! Structure to store a thruster group information. */
 typedef struct
 //@cond DOXYGEN_IGNORE
@@ -47,20 +48,30 @@ ThrClusterMap
     int color[4] = {-1};  //!< RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
+
 /*! Vizard setting structure to define a pointing line feature.  This is used to draw a colored
     line from one space object to another space object.
  */
-typedef struct {
+typedef struct
+//@cond DOXYGEN_IGNORE
+PointLine
+//@endcond
+{
     std::string fromBodyName;   //!< name of the body to start the line
     std::string toBodyName;     //!< name of the body to point the line towards
     int lineColor[4];           //!< desired RGBA as values between 0 and 255
 }PointLine;
 
+
 /*! Vizard setting structure to define a keep out/in cone visual feature.  Here cone is drawn
     attached to one body with a body-fixed position and heading.  If a second celestial object
     is within or outside this code, then the opacity of the cone changes.
 */
-typedef struct {
+typedef struct
+//@cond DOXYGEN_IGNORE
+KeepOutInCone
+//@endcond
+{
     bool isKeepIn;              //!< True -> keep in cone created, False -> keep out cone created
     double position_B[3];       //!< [m] cone start relative to from body coordinate frame
     double normalVector_B[3];   //!< cone normal direction vector
@@ -72,6 +83,7 @@ typedef struct {
     std::string coneName;       //!< cone name, if unspecified, viz will autogenerate name
 }KeepOutInCone;
 
+
 /*! Vizard setting structure to define a standard Vizard camera.  These can be assigned to
     any spacecraft and set to point at either another object, or to point in a body-fixed direction.
 */
@@ -82,6 +94,7 @@ StdCameraSettings
 {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
+    int showHUDElementsInImage=0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     double fieldOfView=-1;      //!< [rad], edge-to-edge field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
@@ -89,6 +102,7 @@ StdCameraSettings
     double position_B[3];       //!< (default to 0, 0, 0). If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside of the spacecraft along the pointing vector direction.
     std::string displayName=""; //!< (optional) name of the standard camera panel
 }StdCameraSettings;
+
 
 /*! Vizard User Interface structure specifying what actuator visualizations to show.
 */
@@ -107,6 +121,7 @@ ActuatorGuiSettings
     int showRWLabels=0;            //!< [bool] should the reaction wheel labels be shown, -1 (off), 0 (default), 1 (on)
 }ActuatorGuiSettings;
 
+
 /*! Vizard User Interface structure InstrumentGuiSettings InstrumentGuiSettings specify what instrument visualizations to show
  */
 typedef struct
@@ -122,10 +137,11 @@ InstrumentGuiSettings
     int showCSSLabels=0;            //!< [int] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
     int showGenericSensorLabels=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTransceiverFrustum=0;   //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showGenericStoragePanel=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int showMultiSphereLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showMultiShapeLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
+
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
 */
@@ -145,6 +161,7 @@ CustomModel
     std::vector<int> color;                     //!< Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
 }CustomModel;
 
+
 /*! Structure defining ground location information
  */
 typedef struct
@@ -157,9 +174,13 @@ LocationPbMsg
     double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
     double gHat_P[3];                   //!< ground location Normal relative to parent body frame.
     double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
-    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
+    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default. (Note: alpha is not supported on the lightweight LocationMarkers, which are used by default when number of Locations are >100)
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
+    double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
+    bool isHidden = false;              //!< (Optional) True to hide Location, false to show (vizDefault)
+    std::string label = "";             //!< (Optional) string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
 }LocationPbMsg;
+
 
 /*! Structure defining generic sensor information
  */
@@ -169,7 +190,7 @@ GenericSensor
 //@endcond
 {
     double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
-    std::vector<double> fieldOfView;    //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
+    std::vector<double> fieldOfView;    //!< [rad] edge-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
     double normalVector[3];             //!< normal vector of the sensor bore sight axis
     int isHidden = 0;                   //!< (optional) true to hide sensor HUD, false to show sensor HUD (default)
     double size = 0;                    //!< [m] (optional) size of the sensor visualization, use 0 (protobuffer default) to use viz default size
@@ -197,6 +218,21 @@ Ellipsoid
 }Ellipsoid;
 
 
+/*! Structure defining spcecraft QuadMap information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+QuadMap
+//@endcond
+{
+    int ID;                        //!< ID of QuadMap to be used for updates
+    std::string parentBodyName;    //!< Name of the parent body P (spacecraft or planet) on which the QuadMap is positioned
+    std::vector<double> vertices;  //!< [m] Four vertices (x,y,z) required per quad, order them clockwise about perimeter of quad in parent body frame P
+    std::vector<int> color;        //!< (optional) Send desired RGBA as values between 0 and 255
+    bool isHidden;                 //!< (optional) Send string to display in center of QuadMap region, send "NOLABEL" to delete label
+    std::string label;             //!< (optional)
+}QuadMap;
+
 
 /*! Structure defining spacecraft light information
  */
@@ -223,13 +259,11 @@ Light
 }Light;
 
 
-
-
-/*! Structure defining Multi-Sphere-Method (MSM) sphere configurations
+/*! Structure defining Multi-Shape-Method (MSM) configurations
  */
 typedef struct
 //@cond DOXYGEN_IGNORE
-MultiSphere
+MultiShape
 //@endcond
 {
     int isOn=0;                         //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -240,19 +274,22 @@ MultiSphere
     std::vector<int> positiveColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is green
     std::vector<int> negativeColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is red
     int neutralOpacity=-1;              //!< (optional) Send desired opacity value between 0 and 255 for when charge is neutral
-}MultiSphere;
+    std::string shape = "";             //!< (optional) Set shape to use "CUBE", "CYLINDER", or "SPHERE" (default)
+    double dimensions[3];               //!< [m] Desired dimensions of selected shape in x, y, and z (For cylinder, z is height)
+    double rotation[3];                 //!< [MRP] Desired orientation of the Multi Shape in the spacecraft body frame
+}MultiShape;
 
-/*! Structure defining Multi-Sphere-Method (MSM) information
+
+/*! Structure defining Multi-Shape-Method (MSM) information
  */
 typedef struct
 //@cond DOXYGEN_IGNORE
-MultiSphereInfo
+MultiShapeInfo
 //@endcond
 {
-    std::vector<MultiSphere *> msmList;                     //!< list of MSM configuration information
+    std::vector<MultiShape *> msmList;                      //!< list of MSM configuration information
     ReadFunctor<ChargeMsmMsgPayload> msmChargeInMsg;        //!< input message to read current MSM charges.  If not connected, currentValue can be set directly from python
-}MultiSphereInfo;
-
+}MultiShapeInfo;
 
 
 /*! Structure defining generic storage information
@@ -335,9 +372,12 @@ VizSpacecraftData
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     ReadFunctor<ColorMsgPayload> trueTrajectoryLineColorInMsg;  //!< (Optional) Messages specifying true trajectory orbit line RGBA colors.  If connected, this replaces the values set in trueTrajectoryLineColor
-    MultiSphereInfo msmInfo;                                    //!< (Optional) MSM configuration information
+    std::vector<int> groundTrackLineColor;                      //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+    std::string groundTrackBodyName = "";                       //!< (Optional) Name of the celestial body to draw ground track on, otherwise ground track will default to spacecraft's dominant grav body
+    MultiShapeInfo msmInfo;                                     //!< (Optional) MSM configuration information
     std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
+
 
 /*! Structure defining various Vizard options
 */
@@ -363,12 +403,13 @@ VizSettings
                                                       or provide a filepath to custom background */
     bool        dataFresh;                         //!< flag indicating if the settings have been transmitted,
     int32_t viewCameraBoresightHUD = 0;            //!< Value of 0 to use viz default, -1 for false, 1 for true
-    int32_t viewCameraConeHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t viewCameraFrustumHUD = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t viewCameraViewHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCSLabels = 0;                      //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodyLabels = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showSpacecraftLabels = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCameraLabels = 0;                  //!< Value of 0 to use viz default, -1 for false, 1 for true
-    double customGUIScale = -1.0;                  //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
+    double customGUIReferenceHeight = -1.0;        //!< [px] GUI scaling parameter, Value of 0 or -1 to use viz default, minimum value 300
     std::string defaultSpacecraftSprite = "";      //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
     int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
@@ -406,6 +447,15 @@ VizSettings
     std::string truePathRelativeBody = "";                //!< String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body
     std::string truePathRotatingFrame = "";               //!< String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
     std::string truePathFixedFrame = "";                  //!< String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
+    int32_t showQuadMapLabels = 0;                        //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double spacecraftOrbitLineWidth = 0;                  //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
+    double celestialBodyOrbitLineWidth = 0;               //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
+    double linesAndFramesLineWidth = 0;                   //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
+    int useLineRenderersForTargetLinesAndFrames = 0;      //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    std::vector<double> osculatingOrbitLineRange = {};    //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating orbit lines
+    std::vector<double> osculatingGroundTrackRange = {};  //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating ground track lines
+    int showOsculatingGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTruePathGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
@@ -418,7 +468,13 @@ LiveVizSettings
 {
     std::vector<PointLine> targetLineList;       //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
     std::string relativeOrbitChief = "";         //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+    bool terminateVizard=false;                  //!< If true, Vizard application will immediately shut down and exit
+    bool playbackPaused=false;                   //!< If true, Vizard will pause playback
+    int playbackInRealTime=0;                    //!< Value of +1 to playback in real time, -1 to playback at frame rate, 0 is Vizard default
+    int playbackMultiplier=0;                    //!< Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
+
 }LiveVizSettings;
+
 
 /*! Structure defining Vizard dialog boxes
 */
@@ -438,9 +494,12 @@ VizEventDialog
 }VizEventDialog;
 
 
-
 /*! Structure defining vizard gravity body values */
-typedef struct{
+typedef struct
+//@cond DOXYGEN_IGNORE
+GravBodyInfo
+//@endcond
+{
     std::string bodyName;            //!< celestial body name
     double mu;                       //!< [m^3/s^2] celestial body gravity constant
     double radEquator;               //!< [m] celestial body radius at equator

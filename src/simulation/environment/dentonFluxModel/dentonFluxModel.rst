@@ -9,9 +9,9 @@ flux data.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. _ModuleIO_Denton_Flux_Model:
@@ -63,11 +63,18 @@ The Denton model averaged GEO space plasma properties module is created using:
 .. code-block:: python
     :linenos:
 
+    from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
+
     fluxModule = dentonFluxModel.DentonFluxModel()
     fluxModule.ModelTag = "dentonFluxModule"
-    fluxModule.dataPath = bskPath + '/supportData/DentonGEO/'
     fluxModule.kpIndex = "2+"
     fluxModule.numOutputEnergies = 30
+
+    # Configuration of Denton mean flux data files
+    e_file = get_path(DataFile.DentonGEOData.model_e_array_all)
+    i_file = get_path(DataFile.DentonGEOData.model_i_array_all)
+    fluxModule.configureDentonFiles(str(e_file), str(i_file))
+
     scSim.AddModelToTask(dynTaskName, fluxModule)
 
 The :math:`K_p` index (``kpIndex``) and number of output energies (``numOutputEnergies``) must be

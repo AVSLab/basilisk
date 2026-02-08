@@ -17,6 +17,10 @@
 
  */
 %module alg_contain
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "alg_contain.h"
 %}

@@ -20,14 +20,25 @@ import math
 
 import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, mrpFeedback,
-                                    rwMotorTorque,
-                                    velocityPoint, mrpSteering, rateServoFullNonlinear,
-                                    sunSafePoint, cssWlsEst, lambertPlanner, lambertSolver, lambertValidator,
-                                    lambertSurfaceRelativeVelocity, lambertSecondDV,)
+from Basilisk.fswAlgorithms import (
+    attTrackingError,
+    cssWlsEst,
+    hillPoint,
+    inertial3D,
+    lambertPlanner,
+    lambertSecondDV,
+    lambertSolver,
+    lambertSurfaceRelativeVelocity,
+    lambertValidator,
+    mrpFeedback,
+    mrpSteering,
+    rateServoFullNonlinear,
+    rwMotorTorque,
+    sunSafePoint,
+    velocityPoint,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import fswSetupRW
-from Basilisk.utilities import deprecated
+from Basilisk.utilities import deprecated, fswSetupRW
 from Basilisk.utilities import macros as mc
 
 
@@ -146,82 +157,137 @@ class BSKFswModels:
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
 
-        SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'standby'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.setAllButCurrentEventActivity('initiateStandby', True)"
-                                ])
+        SimBase.createNewEvent(
+            "initiateStandby",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "standby",
+            actionFunction=lambda self: (
+                "self.fswProc.disableAllTasks()",
+                "self.FSWModels.zeroGateWayMsgs()",
+                "self.setAllButCurrentEventActivity('initiateStandby', True)",
+            ),
+        )
 
-        SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'inertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.setAllButCurrentEventActivity('initiateAttitudeGuidance', True)"
-                                ])
+        SimBase.createNewEvent(
+            "initiateAttitudeGuidance",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "inertial3D",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("inertial3DPointTask"),
+                self.enableTask("mrpFeedbackRWsTask"),
+                self.setAllButCurrentEventActivity("initiateAttitudeGuidance", True),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateAttitudeGuidanceDirect", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'directInertial3D'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackTask')",
-                                "self.setAllButCurrentEventActivity('initiateAttitudeGuidanceDirect', True)"
-                                ])
+        SimBase.createNewEvent(
+            "initiateAttitudeGuidanceDirect",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "directInertial3D",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("inertial3DPointTask"),
+                self.enableTask("mrpFeedbackTask"),
+                self.setAllButCurrentEventActivity(
+                    "initiateAttitudeGuidanceDirect", True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'hillPoint'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.setAllButCurrentEventActivity('initiateHillPoint', True)"
-                                ])
+        SimBase.createNewEvent(
+            "initiateHillPoint",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "hillPoint",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("hillPointTask"),
+                self.enableTask("mrpFeedbackRWsTask"),
+                self.setAllButCurrentEventActivity("initiateHillPoint", True),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateSunSafePoint", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'sunSafePoint'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('sunSafePointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')",
-                                "self.setAllButCurrentEventActivity('initiateSunSafePoint', True)"
-                                ])
+        SimBase.createNewEvent(
+            "initiateSunSafePoint",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "sunSafePoint",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("sunSafePointTask"),
+                self.enableTask("mrpSteeringRWsTask"),
+                self.setAllButCurrentEventActivity("initiateSunSafePoint", True),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'velocityPoint'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('velocityPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')",
-                                "self.setAllButCurrentEventActivity('initiateVelocityPoint', True)"])
+        SimBase.createNewEvent(
+            "initiateVelocityPoint",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "velocityPoint",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("velocityPointTask"),
+                self.enableTask("mrpFeedbackRWsTask"),
+                self.setAllButCurrentEventActivity("initiateVelocityPoint", True),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'steeringRW'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')",
-                                "self.setAllButCurrentEventActivity('initiateSteeringRW', True)"])
+        SimBase.createNewEvent(
+            "initiateSteeringRW",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "steeringRW",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("hillPointTask"),
+                self.enableTask("mrpSteeringRWsTask"),
+                self.setAllButCurrentEventActivity("initiateSteeringRW", True),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateLambertGuidanceFirstDV", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'lambertFirstDV'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')",
-                                "self.enableTask('lambertGuidanceFirstDV')",
-                                "self.setAllButCurrentEventActivity('initiateLambertGuidanceFirstDV', True)"])
+        SimBase.createNewEvent(
+            "initiateLambertGuidanceFirstDV",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "lambertFirstDV",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("hillPointTask"),
+                self.enableTask("mrpSteeringRWsTask"),
+                self.enableTask("lambertGuidanceFirstDV"),
+                self.setAllButCurrentEventActivity(
+                    "initiateLambertGuidanceFirstDV", True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateLambertGuidanceSecondDV", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'lambertSecondDV'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.FSWModels.zeroGateWayMsgs()",
-                                "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpSteeringRWsTask')",
-                                "self.enableTask('lambertGuidanceSecondDV')",
-                                "self.setAllButCurrentEventActivity('initiateLambertGuidanceSecondDV', True)"])
+        SimBase.createNewEvent(
+            "initiateLambertGuidanceSecondDV",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.modeRequest == "lambertSecondDV",
+            actionFunction=lambda self: (
+                self.fswProc.disableAllTasks(),
+                self.FSWModels.zeroGateWayMsgs(),
+                self.enableTask("hillPointTask"),
+                self.enableTask("mrpSteeringRWsTask"),
+                self.enableTask("lambertGuidanceSecondDV"),
+                self.setAllButCurrentEventActivity(
+                    "initiateLambertGuidanceSecondDV", True
+                ),
+            ),
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -258,8 +324,6 @@ class BSKFswModels:
 
     def SetCSSWlsEst(self, SimBase):
         """Set the FSW CSS configuration information """
-        cssConfig = messaging.CSSConfigMsgPayload()
-        totalCSSList = []
         nHat_B_vec = [
             [0.0, 0.707107, 0.707107],
             [0.707107, 0., 0.707107],
@@ -270,14 +334,16 @@ class BSKFswModels:
             [0., 0.258819, -0.965926],
             [0.707107, -0.353553, -0.612372]
         ]
-        for CSSHat in nHat_B_vec:
-            CSSConfigElement = messaging.CSSUnitConfigMsgPayload()
-            CSSConfigElement.CBias = 1.0
-            CSSConfigElement.nHat_B = CSSHat
-            totalCSSList.append(CSSConfigElement)
-        cssConfig.cssVals = totalCSSList
-
-        cssConfig.nCSS = len(nHat_B_vec)
+        cssConfig = messaging.CSSConfigMsgPayload(
+            nCSS = len(nHat_B_vec),
+            cssVals = [
+                messaging.CSSUnitConfigMsgPayload(
+                    CBias=1.0,
+                    nHat_B=CSSHat,
+                )
+                for CSSHat in nHat_B_vec
+            ]
+        )
         self.cssConfigMsg = messaging.CSSConfigMsg().write(cssConfig)
 
         self.cssWlsEst.cssDataInMsg.subscribeTo(SimBase.DynModels.CSSConstellationObject.constellationOutMsg)

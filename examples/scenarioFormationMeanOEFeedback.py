@@ -65,7 +65,6 @@ This resulting feedback control error is shown below.
 
 """
 
-
 import math
 import os
 
@@ -83,6 +82,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import astroConstants
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -113,9 +113,7 @@ def run(show_plots, useClassicElem, numOrbits):
     scObject.ModelTag = "scObject"
     scObject2.ModelTag = "scObject2"
 
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 500.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
@@ -131,7 +129,8 @@ def run(show_plots, useClassicElem, numOrbits):
     earth = gravFactory.createEarth()
     earth.isCentralBody = True
     mu = earth.mu
-    earth.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
+    ggm03s_path = get_path(DataFile.LocalGravData.GGM03S)
+    earth.useSphericalHarmonicsGravityModel(str(ggm03s_path), 2)
     gravFactory.addBodiesTo(scObject)
     gravFactory.addBodiesTo(scObject2)
 
@@ -162,20 +161,52 @@ def run(show_plots, useClassicElem, numOrbits):
     meanOEFeedbackObj.chiefTransInMsg.subscribeTo(simpleNavObject.transOutMsg)
     meanOEFeedbackObj.deputyTransInMsg.subscribeTo(simpleNavObject2.transOutMsg)
     extFTObject2.cmdForceInertialInMsg.subscribeTo(meanOEFeedbackObj.forceOutMsg)
-    meanOEFeedbackObj.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
-                            0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
-                            0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
-                            0.0, 0.0, 0.0, 1e7, 0.0, 0.0,
-                            0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
-                            0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
+    meanOEFeedbackObj.K = [
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+    ]
     meanOEFeedbackObj.targetDiffOeMean = [0.000, 0.000, 0.000, 0.0003, 0.0002, 0.0001]
     if useClassicElem:
         meanOEFeedbackObj.oeType = 0  # 0: classic
     else:
         meanOEFeedbackObj.oeType = 1  # 1: equinoctial
-    meanOEFeedbackObj.mu = astroConstants.MU_EARTH*1e9  # [m^3/s^2]
-    meanOEFeedbackObj.req = astroConstants.REQ_EARTH*1e3  # [m]
-    meanOEFeedbackObj.J2 = astroConstants.J2_EARTH      # []
+    meanOEFeedbackObj.mu = astroConstants.MU_EARTH * 1e9  # [m^3/s^2]
+    meanOEFeedbackObj.req = astroConstants.REQ_EARTH * 1e3  # [m]
+    meanOEFeedbackObj.J2 = astroConstants.J2_EARTH  # []
     scSim.AddModelToTask(fswTaskName, meanOEFeedbackObj, 1)
 
     # ----- Setup spacecraft initial states ----- #
@@ -194,7 +225,7 @@ def run(show_plots, useClassicElem, numOrbits):
     scObject.hub.v_CN_NInit = vN  # m/s
 
     oe2 = orbitalMotion.ClassicElements()
-    oe2.a = oe.a*(1 + 0.0001)
+    oe2.a = oe.a * (1 + 0.0001)
     oe2.e = oe.e + 0.0002
     oe2.i = oe.i - 0.0003
     oe2.Omega = oe.Omega + 0.0004
@@ -207,11 +238,13 @@ def run(show_plots, useClassicElem, numOrbits):
     scObject2.hub.v_CN_NInit = vN2  # m/s
 
     # ----- log ----- #
-    orbit_period = 2*math.pi/math.sqrt(mu/oe.a**3)
-    simulationTime = orbit_period*numOrbits
+    orbit_period = 2 * math.pi / math.sqrt(mu / oe.a**3)
+    simulationTime = orbit_period * numOrbits
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, dynTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTaskName, dataLog)
@@ -219,9 +252,12 @@ def run(show_plots, useClassicElem, numOrbits):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObject, scObject2]
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        dynTaskName,
+        [scObject, scObject2],
+        # , saveFile=fileName
+    )
 
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
@@ -233,7 +269,7 @@ def run(show_plots, useClassicElem, numOrbits):
     vel = dataLog.v_BN_N
     pos2 = dataLog2.r_BN_N
     vel2 = dataLog2.v_BN_N
-    timeData = dataLog.times()*macros.NANO2SEC/orbit_period
+    timeData = dataLog.times() * macros.NANO2SEC / orbit_period
 
     # ----- plot ----- #
     # classical oe (figure1)
@@ -243,26 +279,41 @@ def run(show_plots, useClassicElem, numOrbits):
         # spacecraft 1 (chief)
         oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i], vel[i])
         oe_cl_mean = orbitalMotion.ClassicElements()
-        orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
+        orbitalMotion.clMeanOscMap(
+            orbitalMotion.REQ_EARTH * 1e3,
+            orbitalMotion.J2_EARTH,
+            oe_cl_osc,
+            oe_cl_mean,
+            -1,
+        )
         # spacecraft 2 (deputy)
         oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
         oe2_cl_mean = orbitalMotion.ClassicElements()
-        orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
+        orbitalMotion.clMeanOscMap(
+            orbitalMotion.REQ_EARTH * 1e3,
+            orbitalMotion.J2_EARTH,
+            oe2_cl_osc,
+            oe2_cl_mean,
+            -1,
+        )
         # calculate oed
-        oed_cl[i, 0] = (oe2_cl_mean.a - oe_cl_mean.a)/oe_cl_mean.a  # delta a (normalized)
+        oed_cl[i, 0] = (
+            oe2_cl_mean.a - oe_cl_mean.a
+        ) / oe_cl_mean.a  # delta a (normalized)
         oed_cl[i, 1] = oe2_cl_mean.e - oe_cl_mean.e  # delta e
         oed_cl[i, 2] = oe2_cl_mean.i - oe_cl_mean.i  # delta i
         oed_cl[i, 3] = oe2_cl_mean.Omega - oe_cl_mean.Omega  # delta Omega
         oed_cl[i, 4] = oe2_cl_mean.omega - oe_cl_mean.omega  # delta omega
         E_tmp = orbitalMotion.f2E(oe_cl_mean.f, oe_cl_mean.e)
         E2_tmp = orbitalMotion.f2E(oe2_cl_mean.f, oe2_cl_mean.e)
-        oed_cl[i, 5] = orbitalMotion.E2M(
-            E2_tmp, oe2_cl_mean.e) - orbitalMotion.E2M(E_tmp, oe_cl_mean.e)  # delta M
+        oed_cl[i, 5] = orbitalMotion.E2M(E2_tmp, oe2_cl_mean.e) - orbitalMotion.E2M(
+            E_tmp, oe_cl_mean.e
+        )  # delta M
         for j in range(3, 6):
-            while(oed_cl[i, j] > math.pi):
-                oed_cl[i, j] = oed_cl[i, j] - 2*math.pi
-            while(oed_cl[i, j] < -math.pi):
-                oed_cl[i, j] = oed_cl[i, j] + 2*math.pi
+            while oed_cl[i, j] > math.pi:
+                oed_cl[i, j] = oed_cl[i, j] - 2 * math.pi
+            while oed_cl[i, j] < -math.pi:
+                oed_cl[i, j] = oed_cl[i, j] + 2 * math.pi
     plt.plot(timeData, oed_cl[:, 0], label="da")
     plt.plot(timeData, oed_cl[:, 1], label="de")
     plt.plot(timeData, oed_cl[:, 2], label="di")
@@ -282,26 +333,40 @@ def run(show_plots, useClassicElem, numOrbits):
         # spacecraft 1 (chief)
         oe_cl_osc = orbitalMotion.rv2elem(mu, pos[i], vel[i])
         oe_cl_mean = orbitalMotion.ClassicElements()
-        orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe_cl_osc, oe_cl_mean, -1)
+        orbitalMotion.clMeanOscMap(
+            orbitalMotion.REQ_EARTH * 1e3,
+            orbitalMotion.J2_EARTH,
+            oe_cl_osc,
+            oe_cl_mean,
+            -1,
+        )
         oe_eq_mean = orbitalMotion.EquinoctialElements()
         orbitalMotion.clElem2eqElem(oe_cl_mean, oe_eq_mean)
         # spacecraft 2 (deputy)
         oe2_cl_osc = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
         oe2_cl_mean = orbitalMotion.ClassicElements()
-        orbitalMotion.clMeanOscMap(orbitalMotion.REQ_EARTH*1e3, orbitalMotion.J2_EARTH, oe2_cl_osc, oe2_cl_mean, -1)
+        orbitalMotion.clMeanOscMap(
+            orbitalMotion.REQ_EARTH * 1e3,
+            orbitalMotion.J2_EARTH,
+            oe2_cl_osc,
+            oe2_cl_mean,
+            -1,
+        )
         oe2_eq_mean = orbitalMotion.EquinoctialElements()
         orbitalMotion.clElem2eqElem(oe2_cl_mean, oe2_eq_mean)
         # calculate oed
-        oed_eq[i, 0] = (oe2_eq_mean.a - oe_eq_mean.a)/oe_eq_mean.a  # delta a (normalized)
+        oed_eq[i, 0] = (
+            oe2_eq_mean.a - oe_eq_mean.a
+        ) / oe_eq_mean.a  # delta a (normalized)
         oed_eq[i, 1] = oe2_eq_mean.P1 - oe_eq_mean.P1  # delta P1
         oed_eq[i, 2] = oe2_eq_mean.P2 - oe_eq_mean.P2  # delta P2
         oed_eq[i, 3] = oe2_eq_mean.Q1 - oe_eq_mean.Q1  # delta Q1
         oed_eq[i, 4] = oe2_eq_mean.Q2 - oe_eq_mean.Q2  # delta Q2
         oed_eq[i, 5] = oe2_eq_mean.l - oe_eq_mean.l  # delta l
-        while(oed_eq[i, 5] > math.pi):
-            oed_eq[i, 5] = oed_eq[i, 5] - 2*math.pi
-        while(oed_eq[i, 5] < -math.pi):
-            oed_eq[i, 5] = oed_eq[i, 5] + 2*math.pi
+        while oed_eq[i, 5] > math.pi:
+            oed_eq[i, 5] = oed_eq[i, 5] - 2 * math.pi
+        while oed_eq[i, 5] < -math.pi:
+            oed_eq[i, 5] = oed_eq[i, 5] + 2 * math.pi
     plt.plot(timeData, oed_eq[:, 0], label="da")
     plt.plot(timeData, oed_eq[:, 1], label="dP1")
     plt.plot(timeData, oed_eq[:, 2], label="dP2")
@@ -314,7 +379,7 @@ def run(show_plots, useClassicElem, numOrbits):
     pltName = fileName + "2" + str(int(useClassicElem))
     figureList[pltName] = plt.figure(2)
 
-    if(show_plots):
+    if show_plots:
         plt.show()
     plt.close("all")
 
@@ -325,5 +390,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         True,  # useClassicElem
-        40     # number of orbits
+        40,  # number of orbits
     )

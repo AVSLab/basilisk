@@ -75,6 +75,9 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t cal
 		configData->pulseRemainder[i] = 0.0;
 	}
 
+    // Add zero output message
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
@@ -110,7 +113,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+    controlPeriod = diffNanoToSec(callTime, configData->prevCallTime); /*!< [s] control period */
 	configData->prevCallTime = callTime;
 
 	/*! - Read the input thruster force message */

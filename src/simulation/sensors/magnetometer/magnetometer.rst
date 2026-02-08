@@ -87,6 +87,38 @@ Sensors might have specific saturation bounds for their measurements. It also pr
 
 This is the final output of the sensor module.
 
+Fault Modeling
+^^^^^^^^^^^^^^
+The magnetometer module also supports user-enabled faulty behavior. The module currently supports the following faults:
+
+- ``MAG_FAULT_STUCK_CURRENT`` fixes the measurement to the value
+- ``MAG_FAULT_STUCK_VALUE`` is faulty behavior where the measurement sticks to a specific value
+- ``MAG_FAULT_SPIKING`` is faulty behavior where the measurement spikes
+  to a specified multiplier times the actual value, with a given probability
+- ``NOMINAL`` has no faulty behavior but may still have noise and bias
+
+This module has several fault parameters that are set to their default values:
+
+.. list-table:: Default Module Parameters
+    :widths: 25 50 25
+    :header-rows: 1
+
+    * - Parameter
+      - Description
+      - Default Value
+    * - faultState
+      - Sets the fault status.
+      - [``NOMINAL``, ``NOMINAL``, ``NOMINAL``]
+    * - stuckValue
+      - Magnetometer reading at which the reading is stuck for fault mode ``MAG_FAULT_STUCK_VALUE``.
+      - [0.0, 0.0, 0.0]
+    * - spikeProbability
+      - Probability of a spike when in fault mode ``MAG_FAULT_SPIKING``. Between 0 and 1.
+      - [0.1, 0.1, 0.1]
+    * - spikeAmount
+      - Sensed magnetometer multiplier when spiking for fault mode ``MAG_FAULT_SPIKING``.
+      - [2.0, 2.0, 2.0]
+
 User Guide
 ----------
 
@@ -139,3 +171,13 @@ Three types of TAM sensor corruptions can be simulated.  If not specified, all t
 Next, to simulate a constant bias, the variable ``senBias`` is set to a non-zero value. To simulate a linear scaling of the outputs, the variable ``scaleFactor`` is used.
 
 Finally, to set saturation values, the variables ``maxOutput`` and ``minOutput`` are used. Minimum and maximum bounds for saturation are set to large values as :math:`(-10^{200} \mbox{nT})` and :math:`(10^{200} \mbox{nT})` respectively in order not to saturate the outputs by default.
+
+Setting TAM Sensor Faults
+^^^^^^^^^^^^^^^^^^^^^^^^^
+The fault state and parameters for each axis can be set by the user through the setter function. For example:
+
+.. code-block:: python
+    :linenos:
+
+    testModule.setFaultState(0, magnetometer.MAG_FAULT_STUCK_VALUE)
+    testModule.stuckValue = [10000e-9, 0.0, 0.0]  # [T] Sensor stuck at 10,000 nT on x-axis

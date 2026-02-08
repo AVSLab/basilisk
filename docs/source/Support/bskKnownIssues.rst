@@ -10,6 +10,119 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+- The :ref:`simpleAntenna` module raises a warning for each of the following messages not being connected: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg``, even for ground based antennas.
+  These messages are not relevant for ground based antennas and the warning should therefore not be risen for an antenna on ground.
+- If you install Basilisk via ``pip install bsk``, note that the ``basilisk/SupportData`` folder does not
+  exist in your folder.  Simulation script importing directly using a local file path to ``SupportData``
+  will not work.  Rather, ``pooch`` is being used to manage data which puts the data files into a
+  cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
+
+Version 2.9.0
+-------------
+- The denton flux model API has changed. The module now uses the new data fetching
+  API and thus relies on users passing in the correct support data location via
+  ``configureDentonFiles``. Previously, the module automatically searched for the
+  data files in the ``supportData`` folder.
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+- :ref:`gravityEffector` had a typo where the total gravity potential contribution of the celestial bodies
+  was not being computed properly. Fixed now.
+- :ref:`MJSite` has an issue where the angular velocity that was being written into the stateOutMsg
+  was in the inertial frame components not the body frame components.  This is now fixed.
+- :ref:`locationPointing` was calculating the value of ``omega_RN_B`` but not saving it to the
+  ``attGuidOutMsg``. This value is now being saved properly.
+- The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
+  list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
+  method.  If the script was directly manipulating the :ref:`vizSupport` list that functionality no longer works.
+  If only ``addLocation()`` was being used and the location information was not live updated, no changes in the
+  simulation script are required.  To do live updates to location it is recommended to use
+  ``vizSupport.changeLocation()``.
+- The support file :ref:`vizSupport` is updated to only have ``enableUnityVisualization()`` check
+  if :ref:`vizInterface` has been built or not.  It is recommended that user scripts safe-guard
+  their simulation usage of :ref:`vizSupport` function by checking that ``vizSupport.vizFound`` is true.
+- In :ref:`vizSupport`, in the method ``setInstrumentGuiSetting()``, corrected the spelling of
+  ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
+  been deprecated and will be removed after October 11, 2026.
+- For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``.
+  Using the old settings name results in the setting not being applied.
+- When building the Basilisk documentation with doxygen 1.15 or newer, warnings associated with
+  unclosed quotes are treated as errors and cause the build to fail. Quotes are fixed now.
+- :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector` both registered
+  their state variables under the same names, resulting in one overwriting the other when both are
+  added to the same simulation and producing a ``BSK_ERROR``. State names are now made unique.
+
+
+Version 2.8.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
+- The ``Reset()`` function in :ref:`forceTorqueThrForceMapping` was not working properly. This has been addressed in the current release.
+- The reaction wheel configuration message was moved from C++ messages to the dynamics folder and renamed to :ref:`RWConfigPayload`.
+  The reaction wheel factory was changed accordingly. Users that created the message on their own should now call ``reactionWheelStateEffector.RWConfigPayload`` instead of ``messaging``.
+- Simulations that previously logged to ``BSK_ERROR`` and expected to keep running successfully
+  will now raise a ``BasiliskError`` exception and stop the simulation immediately.
+- The output format when querying non-numeric types in message recorders has changed. The output used to
+  be a numpy array of dictionaries with flattened data. Now, it's a numpy array of the objects as if they
+  were queried from the payload directly. Users relying on the legacy output format might experience
+  code failures at runtime. The recommended approach is to adapt to the new format. If this is impossible
+  at the time, Basilisk can be compiled with ``python conanfile.py --recorderPropertyRollback True`` to
+  recover the legacy format (although a deprecation message will be raised). This build flag and the legacy
+  output format are slated for complete removal in 2026/07.
+
+Version 2.7.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
+- When using C++ wrapped sensor objects (CSS, thrusters, reaction wheels), Python references
+  must be explicitly retained to prevent premature garbage collection. The recommended approach
+  is to store these objects directly on your simulation object. For example:
+
+  .. code-block:: python
+     :linenos:
+
+     # Create and configure a CSS device
+     cssDevice = coarseSunSensor.CoarseSunSensor()
+     cssDevice.ModelTag = "css1"
+
+     # Store it on the simulation object to keep it alive
+     scSim.cssDevice = cssDevice  # Prevents garbage collection
+
+  Alternatively, for multiple devices, you can use a list or registry:
+
+  .. code-block:: python
+     :linenos:
+
+     # Store multiple devices
+     scSim.css_devices = []
+     for i in range(4):
+         cssDevice = coarseSunSensor.CoarseSunSensor()
+         cssDevice.ModelTag = f"css{i}"
+         scSim.css_devices.append(cssDevice)
+
+  See specific documentation for:
+
+  - :ref:`coarsesunsensor`
+  - :ref:`reactionWheelStateEffector`
+  - :ref:`thrusterDynamicEffector`
+
+  For working examples, refer to these scenarios:
+
+  - :ref:`scenarioAttitudeFeedback`
+  - :ref:`scenarioCSS`
+
+  Failure to retain references will cause segmentation faults when accessing collected objects.
+
+
+Version 2.6.0
+-------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
 - When using `senNoiseStd()` to set the sensor noise standard deviations
@@ -971,7 +1084,7 @@ solution to this issue.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of
@@ -1022,7 +1135,7 @@ free to install the latest version of pytest.
 
    <li>
 
-As we are now using the conan package management system, you can’t
+As we are now using the conan package management system, you can't
 double the the Cmake GUI application. Instead, you must either launch
 the Cmake GUI application from the command line, or run CMake from the
 command line directly. See the platform specific Basilisk installation
@@ -1036,7 +1149,7 @@ instructions.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of

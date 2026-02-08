@@ -19,6 +19,10 @@
 
 
 %module thrusterDynamicEffector
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "thrusterDynamicEffector.h"
 %}
@@ -43,13 +47,17 @@ namespace std {
 %include "thrusterDynamicEffector.h"
 
 %include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
-%include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+%import "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.i"
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
 struct THRArrayOnTimeCmdMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
+
+%pythoncode %{
+from Basilisk.simulation.THRSimConfig import THRSimConfig as THRSimConfig
+%}
 
 %pythoncode %{
 import sys

@@ -120,6 +120,21 @@ void @MSG_AUTOSOURCE_TYPE@_addr_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, u
     @MSG_AUTOSOURCE_TYPE@_cpp_subscribe(subscriber, source);
 };
 
+//! Disconnects the subscriber from any connected source, noop if not connected to any message
+void @MSG_AUTOSOURCE_TYPE@_unsubscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber){
+    // if `subscriber->payloadPointer` is true for InMsg that have
+    // been connected and for OutMsg that have not been initialized
+    // `isSubscribedTo(subscriber, subscriber)` is true for OutMsg that
+    // have been initialized.
+    // Overall, this checks that it's an InMsg and it's connected.
+    if (subscriber->payloadPointer && !@MSG_AUTOSOURCE_TYPE@_C_isSubscribedTo(subscriber, subscriber))
+    {
+        subscriber->payloadPointer = 0;
+        subscriber->headerPointer = 0;
+        subscriber->header.isLinked = 0;
+    }
+};
+
 //! Cpp interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
 int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source) {
 

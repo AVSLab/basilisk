@@ -69,7 +69,13 @@ def test_constraintEffector(show_plots, function):
 
     """
 
-    eval(function + '(show_plots)')
+    testFunction = globals().get(function)
+
+    if testFunction is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    result = testFunction(show_plots)
+
 
 def constraintEffectorOrbitalConservation(show_plots):
 

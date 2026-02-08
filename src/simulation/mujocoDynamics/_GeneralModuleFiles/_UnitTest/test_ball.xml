@@ -1,0 +1,19 @@
+<mujoco>
+	<option gravity="0 0 0" integrator="RK4" timestep="0.1"/>
+
+	<worldbody>
+		<body name="ball">
+			<!-- We can use three slider joints for translational-only scenarios -->
+			<joint name="ball_x" type="slide" axis="1 0 0"/>
+			<joint name="ball_y" type="slide" axis="0 1 0"/>
+			<joint name="ball_z" type="slide" axis="0 0 1"/>
+
+			<site name="center" />
+			<geom size="1" rgba="1 0 0 1"/>
+		</body>
+	</worldbody>
+
+	<actuator>
+		<general name="ball" site="center"/>
+	</actuator>
+</mujoco>

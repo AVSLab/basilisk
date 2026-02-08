@@ -66,9 +66,6 @@
  *     imuSensor.PMatrixGyro = PMatrixGyro
  *     imuSensor.setErrorBoundsGyro([0.01, 0.01, 0.01])
  * @endcode
- *
- * @note walkBoundsAccel and walkBoundsGyro are deprecated and will be removed in December 2025.
- * Use setErrorBoundsAccel() and setErrorBoundsGyro() instead.
  */
 class ImuSensor: public SysModel {
 public:
@@ -125,11 +122,9 @@ public:
     bool NominalReady;                  //!< -- Flag indicating that system is in run
     Eigen::Matrix3d PMatrixAccel;   //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d walkBoundsAccel;  //!< @warning Use setErrorBoundsAccel() instead, will be removed in December 2025
 	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
 	Eigen::Matrix3d PMatrixGyro;    //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d walkBoundsGyro;   //!< @warning Use setErrorBoundsGyro() instead, will be removed in December 2025
 	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
     IMUSensorMsgPayload trueValues;         //!< [-] total measurement without perturbations
@@ -152,6 +147,8 @@ private:
     SCStatesMsgPayload StateCurrent;    //!< -- Current SSBI-relative state
     GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
     GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
+    Eigen::Vector3d walkBoundsAccel;    //!< bounds on the accelerometer random walk
+    Eigen::Vector3d walkBoundsGyro;     //!< bounds on the gyro random walk
 
     Eigen::MRPd previous_sigma_BN;              //!< -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;               //!< -- sigma_BN from the most recent spacecraft message

@@ -1,0 +1,13 @@
+name: setup
+description: >
+  Sets up the required system dependencies to perform a Basilisk build
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Linux System Deps.
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential python3-setuptools python3-tk libgtk2.0

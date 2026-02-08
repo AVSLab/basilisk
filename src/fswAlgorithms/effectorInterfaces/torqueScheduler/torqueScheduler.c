@@ -50,6 +50,12 @@ void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime,
     }
 
     configData->t0 = callTime;
+
+    /* zero the output messages */
+    ArrayMotorTorqueMsgPayload motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    ArrayEffectorLockMsgPayload effectorLockOut = ArrayEffectorLockMsg_C_zeroMsgPayload();
+    ArrayMotorTorqueMsg_C_write(&motorTorqueOut, &configData->motorTorqueOutMsg, moduleID, callTime);
+    ArrayEffectorLockMsg_C_write(&effectorLockOut, &configData->effectorLockOutMsg, moduleID, callTime);
 }
 
 /*! This method computes the control torque to the solar array drive based on a PD control law
@@ -67,7 +73,7 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
     ArrayEffectorLockMsgPayload effectorLockOut = ArrayEffectorLockMsg_C_zeroMsgPayload();
 
     /*! compute current time from Reset call */
-    double t = ((callTime - configData->t0) * NANO2SEC);
+    double t = diffNanoToSec(callTime, configData->t0);
 
     /*! populate output torque msg */
     motorTorqueOut.motorTorque[0] = motorTorque1In.motorTorque[0];

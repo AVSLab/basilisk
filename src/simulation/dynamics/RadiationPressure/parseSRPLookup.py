@@ -35,9 +35,9 @@ class SRPLookupTableHandler:
         forceBTree = document.find('forceBValues')
         torqueBTree = document.find('torqueBValues')
 
-        self.sHatBLookup.resize([len(list(sHatBTree)), 3])
-        self.forceBLookup.resize([len(list(forceBTree)), 3])
-        self.torqueBLookup.resize([len(list(torqueBTree)), 3])
+        self.sHatBLookup.resize([len(list(sHatBTree)), 3], refcheck=False)
+        self.forceBLookup.resize([len(list(forceBTree)), 3], refcheck=False)
+        self.torqueBLookup.resize([len(list(torqueBTree)), 3], refcheck=False)
 
         for node in list(sHatBTree):
             idx = int(node.attrib['index'])

@@ -17,6 +17,10 @@
 
  */
 %module sunSafePoint
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "sunSafePoint.h"
 %}

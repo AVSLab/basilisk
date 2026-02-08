@@ -1,0 +1,15 @@
+name: pre-commit
+description: Run pre-commit on changed files with Python 3.11
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
+
+    - id: file_changes
+      uses: tj-actions/changed-files@v44
+    - uses: pre-commit/action@v3.0.1
+      with:
+        extra_args: --files ${{ steps.file_changes.outputs.all_changed_files }}

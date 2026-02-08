@@ -42,7 +42,7 @@ externalTools/fswAuto/autowrapper/wraps/*
 **/outputFiles/*
 src/moduleTemplates/autoCModule/*
 src/moduleTemplates/autoCppModule/*
-src/CMakeUserPresets.json
+CMakeUserPresets.json
 
 supportData/EphemerisData/*.bsp
 
@@ -54,8 +54,11 @@ supportData/EphemerisData/*.bsp
 venv/
 .venv/
 
-# VSCode
+# VSCode / VS
 .devcontainer
+*.vs/
+*.vscode_debug_path/
+lib/*
 
 # Python packaging
 *.egg-info
@@ -66,8 +69,10 @@ dev/MultiSatBskSim/ResultData*
 dev/MultiSatBskSim/ResultPlots*
 # dev/MultiSatBskSim/ResultPlotsMATLAB*
 
-# dev/MultiSatBskSim/ResultData_OLD
-# dev/MultiSatBskSim/ResultPlots_OLD
-# dev/MultiSatBskSim/ResultPlotsMATLAB_OLD
-# dev/MultiSatBskSim/ResultPlotsMATLAB_Feb2025
-# dev/MultiSatBskSim/ResultPlotsMATLAB_Apr2025
+!.github/actions/build/
+!.github/actions/build/**
+
+# Documentation
+!docs/source/Build/
+
+*.git-template

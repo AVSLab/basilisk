@@ -30,6 +30,7 @@
 void PrescribedRotation1DOF::SelfInit() {
     HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
     PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
+    PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
 }
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
@@ -642,56 +643,68 @@ void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
     spinningBodyOut = HingedRigidBodyMsgPayload();
     prescribedRotationOut = PrescribedRotationMsgPayload();
 
-    // Compute the angular velocity of frame F wrt frame M in F frame components
-    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;  // [rad/s]
+    // Compute the angular velocity of frame P wrt frame M in P frame components
+    Eigen::Vector3d omega_PM_P = this->thetaDot * this->rotHat_M;  // [rad/s]
 
-    // Compute the B frame time derivative of omega_FM_F in F frame components
-    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;  // [rad/s^2]
+    // Compute the B frame time derivative of omega_PM_P in P frame components
+    Eigen::Vector3d omegaPrime_PM_P = this->thetaDDot * this->rotHat_M;  // [rad/s^2]
 
-    // Compute the MRP attitude of spinning body frame F with respect to frame M
-    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
+    // Compute the MRP attitude of spinning body frame P with respect to frame M
+    Eigen::Vector3d sigma_PM = this->computeSigma_PM();
 
     // Copy the module variables to the output buffer messages
     spinningBodyOut.theta = this->theta;
     spinningBodyOut.thetaDot = this->thetaDot;
-    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
-    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
+    eigenVector3d2CArray(omega_PM_P, prescribedRotationOut.omega_PM_P);
+    eigenVector3d2CArray(omegaPrime_PM_P, prescribedRotationOut.omegaPrime_PM_P);
+    eigenVector3d2CArray(sigma_PM, prescribedRotationOut.sigma_PM);
 
     // Write the output messages
     this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
     this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
     HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
     PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
+
+    if (this->c_screw != 0.0) {
+        // Write the prescribed translation output message if screw motion is configured
+        PrescribedTranslationMsgPayload prescribedTranslationOut{};
+        Eigen::Vector3d r_PM_M = (this->rhoInit + this->c_screw * this->theta) * this->rotHat_M;
+        Eigen::Vector3d rPrime_PM_M = this->c_screw * this->thetaDot * this->rotHat_M;
+        Eigen::Vector3d rPrimePrime_PM_M = this->c_screw * this->thetaDDot * this->rotHat_M;
+        eigenVector3d2CArray(r_PM_M, prescribedTranslationOut.r_PM_M);
+        eigenVector3d2CArray(rPrime_PM_M, prescribedTranslationOut.rPrime_PM_M);
+        eigenVector3d2CArray(rPrimePrime_PM_M, prescribedTranslationOut.rPrimePrime_PM_M);
+        this->prescribedTranslationOutMsg.write(&prescribedTranslationOut, moduleID, callTime);
+    }
 }
 
-/*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_FM
+/*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
 */
-Eigen::Vector3d PrescribedRotation1DOF::computeSigma_FM() {
-    // Determine dcm_FF0 for the current spinning body attitude relative to the initial attitude
-    double dcm_FF0[3][3];
-    double prv_FF0_array[3];
-    double theta_FF0 = this->theta - this->thetaInit;
-    Eigen::Vector3d prv_FF0 = theta_FF0 * this->rotHat_M;
-    eigenVector3d2CArray(prv_FF0, prv_FF0_array);
-    PRV2C(prv_FF0_array, dcm_FF0);
+Eigen::Vector3d PrescribedRotation1DOF::computeSigma_PM() {
+    // Determine dcm_PP0 for the current spinning body attitude relative to the initial attitude
+    double dcm_PP0[3][3];
+    double prv_PP0_array[3];
+    double theta_PP0 = this->theta - this->thetaInit;
+    Eigen::Vector3d prv_PP0 = theta_PP0 * this->rotHat_M;
+    eigenVector3d2CArray(prv_PP0, prv_PP0_array);
+    PRV2C(prv_PP0_array, dcm_PP0);
 
-    // Determine dcm_F0M for the initial spinning body attitude relative to the mount frame
-    double dcm_F0M[3][3];
-    double prv_F0M_array[3];
-    Eigen::Vector3d prv_F0M = this->thetaInit * this->rotHat_M;
-    eigenVector3d2CArray(prv_F0M, prv_F0M_array);
-    PRV2C(prv_F0M_array, dcm_F0M);
+    // Determine dcm_P0M for the initial spinning body attitude relative to the mount frame
+    double dcm_P0M[3][3];
+    double prv_P0M_array[3];
+    Eigen::Vector3d prv_P0M = this->thetaInit * this->rotHat_M;
+    eigenVector3d2CArray(prv_P0M, prv_P0M_array);
+    PRV2C(prv_P0M_array, dcm_P0M);
 
-    // Determine dcm_FM for the current spinning body attitude relative to the mount frame
-    double dcm_FM[3][3];
-    m33MultM33(dcm_FF0, dcm_F0M, dcm_FM);
+    // Determine dcm_PM for the current spinning body attitude relative to the mount frame
+    double dcm_PM[3][3];
+    m33MultM33(dcm_PP0, dcm_P0M, dcm_PM);
 
-    // Compute the MRP sigma_FM representing the current spinning body attitude relative to the mount frame
-    double sigma_FM_array[3];
-    C2MRP(dcm_FM, sigma_FM_array);
-    return cArray2EigenVector3d(sigma_FM_array);
+    // Compute the MRP sigma_PM representing the current spinning body attitude relative to the mount frame
+    double sigma_PM_array[3];
+    C2MRP(dcm_PM, sigma_PM_array);
+    return cArray2EigenVector3d(sigma_PM_array);
 }
 
 /*! Setter method for the coast option bang duration.
@@ -767,4 +780,34 @@ double PrescribedRotation1DOF::getThetaDDotMax() const {
 */
 double PrescribedRotation1DOF::getThetaInit() const {
     return this->thetaInit;
+}
+
+/*! Setter method for the initial linear displacement if screw motion is selected.
+
+ @param initDisplacement Initial linear displacement
+*/
+void PrescribedRotation1DOF::setInitDisplacement(const double initDisplacement) {
+    this->rhoInit = initDisplacement;
+}
+
+/*! Setter method for the screw constant for modeling prescribed screw motion.
+
+ @param screwConstant Screw slope constant
+*/
+void PrescribedRotation1DOF::setScrewConstant(const double screwConstant) {
+    this->c_screw = screwConstant;
+}
+
+/*! Getter method for the initial linear displacement if screw motion is selected.
+ @return double
+*/
+double PrescribedRotation1DOF::getInitDisplacement() const {
+    return this->rhoInit;
+}
+
+/*! Getter method for the screw constant.
+ @return double
+*/
+double PrescribedRotation1DOF::getScrewConstant() const {
+    return this->c_screw;
 }

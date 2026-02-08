@@ -7,10 +7,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-try:
-    from collections.abc import namedtuple
-except ImportError:
-    from collections import namedtuple
+from collections import namedtuple
 
 from platform import python_version_tuple
 import re

@@ -38,13 +38,13 @@ class Eclipse: public SysModel {
 public:
     Eclipse();
     ~Eclipse();
-    
+
     void Reset(uint64_t CurrenSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
-    
+
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
@@ -58,11 +58,11 @@ private:
     std::vector<SCStatesMsgPayload> scStateBuffer;      //!< buffer of the spacecraft state input messages
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
-    std::vector<double> eclipseShadowFactors;               //!< vector of shadow factor output values
+    std::vector<double> eclipseIlluminationFactors;               //!< vector of illumination factor output values
 
 private:
     void readInputMessages();
-    double computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
+    double computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);
 
 };

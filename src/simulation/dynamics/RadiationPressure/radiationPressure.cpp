@@ -31,7 +31,7 @@ RadiationPressure::RadiationPressure()
     ,srpModel(SRP_CANNONBALL_MODEL)
     ,stateRead(false)
 {
-    this->sunVisibilityFactor.shadowFactor = 1.0;
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
@@ -106,7 +106,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 
     if (this->srpModel == SRP_CANNONBALL_MODEL) {
         this->computeCannonballModel(s_N);
-        this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
+        this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.illuminationFactor;
     }
     else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_NB;
@@ -114,8 +114,8 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
         Eigen::Vector3d s_B = dcmLocal_BN*(sun_r_N - r_N);
         this->computeLookupModel(s_B);
-        this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
-        this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
+        this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.illuminationFactor;
+        this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.illuminationFactor;
     } else {
         bskLogger.bskLog(BSK_ERROR,"Requested SRF Model not implemented.\n");
     }

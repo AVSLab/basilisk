@@ -25,10 +25,10 @@ This script is a basic demonstration of a script that can be used to rerun a set
 
 
 """
-
 import inspect
 import os
 import sys
+import importlib
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
@@ -53,27 +53,29 @@ def run(time=None):
     3) Provide the run numbers you wish to rerun
 
     4) Add any new retention policies to the bottom
-
     """
 
     # Step 1-3: Change to the relevant scenario
-    scenarioName = "scenario_AttFeedback"
+    scenarioName = "scenario_AttFeedback"  # This is the actual scenario module name
+    mcName = "scenarioBskSimAttFeedbackMC" # This is the MC script name
 
     monteCarlo = Controller()
-    monteCarlo.numProcess = 3 # Specify number of processes to spawn
-    runsList = [1]  # Specify the run numbers to be rerun
+    monteCarlo.numProcess = 3
+    runsList = [1]
 
-    #
-    # # Generic initialization
-    icName = path + "/" + scenarioName + "MC/"
-    newDataDir = path + "/" + scenarioName + "MC/rerun"
+    # Generic initialization
+    icName = path + "/" + mcName  # Use MC script name for directory
+    newDataDir = path + "/" + mcName + "/rerun"
 
+    # Use importlib to import the scenario module
+    scenarioModule = importlib.import_module(scenarioName)
 
-    exec('import '+ scenarioName)
-    simulationModule = eval(scenarioName + "." + scenarioName) # ex. scenarioMonteCarlo.scenarioMonteCarlo
+    # Access the class and methods dynamically using getattr()
+    simulationModule = getattr(scenarioModule, scenarioName)
+
     if time is not None:
-        exec (scenarioName + '.' + scenarioName + '.simBaseTime = time')  # ex. scenarioMonteCarlo.scenarioMonteCarlo.simBaseTime = time
-    executionModule = eval(scenarioName + ".runScenario") # ex. scenarioMonteCarlo.run
+        simulationModule.simBaseTime = time
+    executionModule = getattr(scenarioModule, "runScenario")
 
     monteCarlo.setSimulationFunction(simulationModule)
     monteCarlo.setExecutionFunction(executionModule)
@@ -84,17 +86,14 @@ def run(time=None):
     monteCarlo.setShouldDisperseSeeds(False)
     monteCarlo.shouldArchiveParameters = False
 
-
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
     retentionPolicy.logRate = int(2E9)
     retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"])
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
-
     failed = monteCarlo.runInitialConditions(runsList)
     assert len(failed) == 0, "Should run ICs successfully"
-
 
 
 if __name__ == "__main__":

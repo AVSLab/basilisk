@@ -23,6 +23,7 @@ SimpleBattery::SimpleBattery(){
 
     this->storageCapacity = -1.0;
     this->storedCharge = 0.0;
+    this->faultCapacityRatio = 1.0;
     return;
 }
 
@@ -41,6 +42,18 @@ void SimpleBattery::customReset(uint64_t CurrentClock) {
     return;
 }
 
+/*! This method allows the user to set the fault status of the battery capacity
+*/
+void SimpleBattery::readInputMessage(){
+     if(this->batteryFaultInMsg.isLinked()){
+        PowerStorageFaultMsgPayload faultMsg;
+        faultMsg = this->batteryFaultInMsg();
+        this->faultCapacityRatio = faultMsg.faultCapacityRatio;
+     }
+     else{
+        this->faultCapacityRatio = 1.0;
+     }
+}
 
 /*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
  @param *msg:  pointer to a PowerStorageStatusMsgPayload instance
@@ -57,6 +70,13 @@ void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
     if(this->storedCharge < 0)
     {
         this->storedCharge = 0;
+    }
+
+    this->readInputMessage();
+    if (this->faultCapacityRatio < 0 || this->faultCapacityRatio > 1) {
+        bskLogger.bskLog(BSK_ERROR, "faultCapacityRatio should be between 0 and 1!");
+    } else if(this->storedCharge > this->storageCapacity * this->faultCapacityRatio) {
+            this->storedCharge = this->storageCapacity * this->faultCapacityRatio;
     }
 
     msg->storageCapacity = this->storageCapacity;

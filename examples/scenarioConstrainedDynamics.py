@@ -185,6 +185,7 @@ def run(show_plots, env):
     constraintEffector.ModelTag = "constraintEffector"
 
     # Add the constraint to both spacecraft
+    # NOTE: the order here is important, see constraint effector documentation for full explaination
     scObject1.addDynamicEffector(constraintEffector)
     scObject2.addDynamicEffector(constraintEffector)
 

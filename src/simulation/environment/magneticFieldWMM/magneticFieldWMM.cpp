@@ -21,6 +21,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
+#include <filesystem>
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
 
@@ -43,6 +44,20 @@ MagneticFieldWMM::~MagneticFieldWMM()
     }
 }
 
+void MagneticFieldWMM::configureWMMFile(const std::string& file)
+{
+    namespace fs = std::filesystem;
+
+    fs::path p(file);
+
+    if (!p.has_extension() || p.extension() != ".COF") {
+        bskLogger.bskLog(BSK_ERROR, "WMM file must have .COF extension");
+        return;
+    }
+
+    this->wmmDataFullPath = p.string();
+}
+
 /*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
 
  */
@@ -52,12 +67,6 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
         /* clean up the prior initialization */
         cleanupEarthMagFieldModel();
         this->magneticModel = nullptr;
-    }
-
-    //! - Check that required module variables are set
-    if(this->dataPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "WMM data path was not set.  No WMM.");
-        return;
     }
 
     //! - Initialize the WMM evaluation routines
@@ -229,11 +238,10 @@ void MagneticFieldWMM::initializeWmm()
 {
     int nMax = 0;
     int nTerms;
-    auto fileName = this->dataPath + "WMM.COF";
 
     MAGtype_MagneticModel *models[1];
-    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()), &models, 1)) {
-        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
+    if (!MAG_robustReadMagModels(const_cast<char*>(this->wmmDataFullPath.c_str()), &models, 1)) {
+        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", this->wmmDataFullPath.c_str());
         return;
     }
     this->magneticModel = models[0];

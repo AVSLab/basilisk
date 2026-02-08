@@ -71,8 +71,12 @@ def test_translatingBody(show_plots, function):
 
     against their initial values.
     """
-    eval(function + '(show_plots)')
+    testFunction = globals().get(function)
 
+    if testFunction is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    testFunction(show_plots)
 
 def translatingBodyNoInput(show_plots):
     r"""
@@ -93,11 +97,11 @@ def translatingBodyNoInput(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -115,7 +119,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -133,7 +137,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -151,7 +155,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -304,7 +308,7 @@ def translatingBodyNoInput(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy,
@@ -335,11 +339,11 @@ def translatingBodyLockAxis(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -357,7 +361,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -375,7 +379,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -393,7 +397,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -552,7 +556,7 @@ def translatingBodyLockAxis(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
                                err_msg="Orbital energy is not constant.")
@@ -584,11 +588,11 @@ def translatingBodyCommandedForce(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -606,7 +610,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -624,7 +628,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -642,7 +646,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -793,7 +797,7 @@ def translatingBodyCommandedForce(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
                                err_msg="Orbital energy is not constant.")

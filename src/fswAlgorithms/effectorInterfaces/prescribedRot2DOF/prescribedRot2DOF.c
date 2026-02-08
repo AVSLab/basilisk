@@ -64,8 +64,8 @@ void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callT
         _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis1_M wasn't set.");
     }
 
-    if (v3Norm(configData->rotAxis2_F1) < 1e-6) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis2_F1 wasn't set.");
+    if (v3Norm(configData->rotAxis2_P1) < 1e-6) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis2_P1 wasn't set.");
     }
 
     // Store the initial time */
@@ -120,48 +120,48 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
         // Define the initial time
         configData->maneuverStartTime = callTime * NANO2SEC;
 
-        // Calculate dcm_F0M. This DCM represents the current spinning body attitude with respect to the M frame
-        double dcm_FM[3][3];
-        MRP2C(configData->sigma_FM, dcm_FM);
-        m33Copy(dcm_FM, configData->dcm_F0M);
+        // Calculate dcm_P0M. This DCM represents the current spinning body attitude with respect to the M frame
+        double dcm_PM[3][3];
+        MRP2C(configData->sigma_PM, dcm_PM);
+        m33Copy(dcm_PM, configData->dcm_P0M);
 
         // Store the reference variables from the spinningBody input messages
         double theta1Ref = spinningBodyRef1In.theta;
         double theta2Ref = spinningBodyRef2In.theta;
 
         // Convert the reference angles and their associated rotation axes to PRVs
-        double prv_F1M_array[3];                    // 1st PRV representing the intermediate frame relative to the M frame
-        double prv_F2F1_array[3];                   // 2nd PRV representing the final reference frame relative to the intermediate frame
+        double prv_P1M_array[3];                    // 1st PRV representing the intermediate frame relative to the M frame
+        double prv_P2P1_array[3];                   // 2nd PRV representing the final reference frame relative to the intermediate frame
         v3Normalize(configData->rotAxis1_M, configData->rotAxis1_M);
-        v3Normalize(configData->rotAxis2_F1, configData->rotAxis2_F1);
-        v3Scale(theta1Ref, configData->rotAxis1_M, prv_F1M_array);
-        v3Scale(theta2Ref, configData->rotAxis2_F1, prv_F2F1_array);
+        v3Normalize(configData->rotAxis2_P1, configData->rotAxis2_P1);
+        v3Scale(theta1Ref, configData->rotAxis1_M, prv_P1M_array);
+        v3Scale(theta2Ref, configData->rotAxis2_P1, prv_P2P1_array);
 
         // Convert the reference PRVs to DCMs
-        double dcm_F1M[3][3];                       // 1st DCM representing the intermediate frame relative to the M frame
-        double dcm_F2F1[3][3];                      // 2nd DCM representing the final reference frame relative to the intermediate frame
-        PRV2C(prv_F1M_array, dcm_F1M);
-        PRV2C(prv_F2F1_array, dcm_F2F1);
+        double dcm_P1M[3][3];                       // 1st DCM representing the intermediate frame relative to the M frame
+        double dcm_P2P1[3][3];                      // 2nd DCM representing the final reference frame relative to the intermediate frame
+        PRV2C(prv_P1M_array, dcm_P1M);
+        PRV2C(prv_P2P1_array, dcm_P2P1);
 
         // Combine the two reference DCMs to a single reference DCM
-        double dcm_F2M[3][3];                       // DCM representing the final reference frame relative to the M frame
-        m33MultM33(dcm_F2F1, dcm_F1M, dcm_F2M);
+        double dcm_P2M[3][3];                       // DCM representing the final reference frame relative to the M frame
+        m33MultM33(dcm_P2P1, dcm_P1M, dcm_P2M);
 
-        // Convert dcm_F2M to a PRV
-        double prv_F2M_array[3];                    // PRV representing the final reference frame relative to the M frame
-        C2PRV(dcm_F2M, prv_F2M_array);
+        // Convert dcm_P2M to a PRV
+        double prv_P2M_array[3];                    // PRV representing the final reference frame relative to the M frame
+        C2PRV(dcm_P2M, prv_P2M_array);
 
-        // Determine dcm_F2F. This DCM represents the final reference attitude with respect to the current spinning body body frame
-        double dcm_F2F[3][3];
-        m33MultM33t(dcm_F2M, dcm_FM, dcm_F2F);
+        // Determine dcm_P2P. This DCM represents the final reference attitude with respect to the current spinning body body frame
+        double dcm_P2P[3][3];
+        m33MultM33t(dcm_P2M, dcm_PM, dcm_P2P);
 
-        // Convert dcm_F2F to a PRV
-        double prv_F2F_array[3];                    // PRV representing the final reference frame relative to the current spinning body body frame
-        C2PRV(dcm_F2F, prv_F2F_array);
+        // Convert dcm_P2P to a PRV
+        double prv_P2P_array[3];                    // PRV representing the final reference frame relative to the current spinning body body frame
+        C2PRV(dcm_P2P, prv_P2P_array);
 
         // Compute the single PRV reference angle for the attitude maneuver.
-        v3Normalize(prv_F2F_array, configData->rotAxis_M);
-        configData->phiRef = v3Dot(prv_F2F_array, configData->rotAxis_M);
+        v3Normalize(prv_P2P_array, configData->rotAxis_M);
+        configData->phiRef = v3Dot(prv_P2P_array, configData->rotAxis_M);
 
         // Store the accumulated reference PRVs
         configData->phiRefAccum = configData->phiAccum;
@@ -210,30 +210,30 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     // Store the accumulated PRV angle
     configData->phiAccum = configData->phiRefAccum + configData->phi;
 
-    // Determine the prescribed spinning body states: omega_FM_F and omegaPrime_FM_F
+    // Determine the prescribed spinning body states: omega_PM_P and omegaPrime_PM_P
     v3Normalize(configData->rotAxis_M, configData->rotAxis_M);
-    v3Scale(phiDot, configData->rotAxis_M, configData->omega_FM_F);
-    v3Scale(phiDDot, configData->rotAxis_M, configData->omegaPrime_FM_F);
+    v3Scale(phiDot, configData->rotAxis_M, configData->omega_PM_P);
+    v3Scale(phiDDot, configData->rotAxis_M, configData->omegaPrime_PM_P);
 
     // Calculate PRV representing the current spinning body attitude with respect to its initial attitude
-    double prv_FF0_array[3];
-    v3Scale(configData->phi, configData->rotAxis_M, prv_FF0_array);
+    double prv_PP0_array[3];
+    v3Scale(configData->phi, configData->rotAxis_M, prv_PP0_array);
 
-    // Determine dcm_FF0. This DCM represents the current spinning body attitude with respect to its initial attitude
-    double dcm_FF0[3][3];
-    PRV2C(prv_FF0_array, dcm_FF0);
+    // Determine dcm_PP0. This DCM represents the current spinning body attitude with respect to its initial attitude
+    double dcm_PP0[3][3];
+    PRV2C(prv_PP0_array, dcm_PP0);
 
-    // Determine dcm_FM. This DCM represents the current spinning body attitude with respect to the M frame
-    double dcm_FM[3][3];
-    m33MultM33(dcm_FF0, configData->dcm_F0M, dcm_FM);
+    // Determine dcm_PM. This DCM represents the current spinning body attitude with respect to the M frame
+    double dcm_PM[3][3];
+    m33MultM33(dcm_PP0, configData->dcm_P0M, dcm_PM);
 
-    // Determine the prescribed spinning body state: sigma_FM
-    C2MRP(dcm_FM, configData->sigma_FM);
+    // Determine the prescribed spinning body state: sigma_PM
+    C2MRP(dcm_PM, configData->sigma_PM);
 
     // Copy the module prescribed variables to the prescribed rotational motion output message
-    v3Copy(configData->omega_FM_F, prescribedRotationOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    v3Copy(configData->sigma_FM, prescribedRotationOut.sigma_FM);
+    v3Copy(configData->omega_PM_P, prescribedRotationOut.omega_PM_P);
+    v3Copy(configData->omegaPrime_PM_P, prescribedRotationOut.omegaPrime_PM_P);
+    v3Copy(configData->sigma_PM, prescribedRotationOut.sigma_PM);
 
     // Write the prescribed rotational motion output message
     PrescribedRotationMsg_C_write(&prescribedRotationOut, &configData->prescribedRotationOutMsg, moduleID, callTime);

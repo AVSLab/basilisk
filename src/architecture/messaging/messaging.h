@@ -136,6 +136,12 @@ public:
         this->initialized = true;
     };
 
+    //! Unsubscribe to the connected message, noop if no message was connected
+    void unsubscribe(){
+        this->payloadPointer = nullptr;
+        this->headerPointer = nullptr;
+        this->initialized = false;
+    }
 
     //! Check if self has been subscribed to a C message
     uint8_t isSubscribedToC(void *source){
@@ -304,6 +310,13 @@ public:
     //! -- Read and record the message
     void UpdateState(uint64_t CurrentSimNanos){
         if (CurrentSimNanos >= this->nextUpdateTime) {
+            // Log warning if message is invalid but don't change behavior
+            if (!this->readMessage.isLinked() || !this->readMessage.isWritten()) {
+                messageType var;
+                bskLogger.bskLog(BSK_WARNING, "Recording message of type %s that is not properly initialized or written", typeid(var).name());
+            }
+
+            // Record the message
             this->msgRecordTimes.push_back(CurrentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());
@@ -323,6 +336,8 @@ public:
     std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
+    //! size of the record so far
+    size_t size(){return this->record().size();}
 
     //! determine message name
     std::string findMsgName(std::string msgName) {

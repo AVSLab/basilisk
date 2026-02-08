@@ -1,0 +1,53 @@
+<mujoco>
+	<option gravity="0 0 0">
+		<flag contact="disable"/>
+	</option>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" density="700" rgba="1 0 0 0.5"/>
+
+			<body name="panel_10" pos="1 0 -1" xyaxes="0 -1 0 0 0 -1">
+				<joint name="panel_10_deploy" axis="1 0 0" range="0 90"/>
+				<geom name="panel_10_box" type="box"  pos="0 0 1" size="1 0.05 0.8" density="500" rgba="0 1 0 1"/>
+				<geom name="panel_10_bar" type="cylinder" fromto="0 0 0 0 0 2" size=".075" density="1000" rgba="0 1 1 1"/>
+				<geom name="panel_10_cbar" type="cylinder" fromto="1 0 1 -1 0 1" size=".075" density="1000" rgba="0 1 1 1" />
+
+				<body name="panel_1p" pos="1 0 1" axisangle="0 1 0 90">
+                    <joint name="panel_1p_deploy" axis="1 0 0" range="0 180"/>
+                    <geom name="panel_1p_box" type="box"  pos="0 0 1" size="0.8 0.05 0.8" density="500" rgba="0 1 0 1"/>
+					<geom name="panel_1p_bar" type="cylinder" fromto="0 0 0 0 0 1.8" size=".075" density="1000" rgba="0 1 1 1" />
+                </body>
+
+				<body name="panel_1n" pos="-1 0 1" axisangle="0 -1 0 90">
+                    <joint name="panel_1n_deploy" axis="1 0 0" range="0 180"/>
+                    <geom name="panel_1n_box" type="box"  pos="0 0 1" size="0.8 0.05 0.8" density="500" rgba="0 1 0 1"/>
+					<geom name="panel_1n_bar" type="cylinder"  fromto="0 0 0 0 0 1.8" size=".075" density="1000" rgba="0 1 1 1" />
+                </body>
+
+                <body name="panel_20" pos="0 0 2">
+                    <joint name="panel_20_deploy" axis="-1 0 0" range="0 180"/>
+                    <geom name="panel_20_box" type="box"  pos="0 0 1" size="1 0.05 0.8" density="500" rgba="0 1 0 1"/>
+					<geom name="panel_20_bar" type="cylinder"  fromto="0 0 0 0 0 1.8" size=".075" density="1000" rgba="0 1 1 1" />
+					<geom name="panel_20_cbar" type="cylinder" fromto="1 0 1 -1 0 1" size=".075" density="1000" rgba="0 1 1 1" />
+
+					<body name="panel_2p" pos="1 0 1" axisangle="0 1 0 90">
+						<joint name="panel_2p_deploy" axis="1 0 0" range="0 180"/>
+						<geom name="panel_2p_box" type="box"  pos="0 0 1" size="0.8 0.05 0.8" density="500" rgba="0 1 0 1"/>
+						<geom name="panel_2p_bar" type="cylinder"  fromto="0 0 0 0 0 1.8" size=".075" density="1000" rgba="0 1 1 1" />
+					</body>
+
+					<body name="panel_2n" pos="-1 0 1" axisangle="0 -1 0 90">
+						<joint name="panel_2n_deploy" axis="1 0 0" range="0 180"/>
+						<geom name="panel_2n_box" type="box"  pos="0 0 1" size="0.8 0.05 0.8" density="500" rgba="0 1 0 1"/>
+						<geom name="panel_2n_bar" type="cylinder"  fromto="0 0 0 0 0 1.8" size=".075" density="1000" rgba="0 1 1 1" />
+					</body>
+                </body>
+			</body>
+
+		</body>
+
+	</worldbody>
+
+</mujoco>

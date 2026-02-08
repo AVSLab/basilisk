@@ -26,8 +26,25 @@ include(bskTargetExcludeBuildOptions)
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
 
-if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
-  message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
+# check for deprecated python 3.8
+if(Python3_VERSION VERSION_LESS "3.9")
+    message(WARNING "You are using Python ${Python3_VERSION}, but support for Python < 3.9 is deprecated and will be removed in April 2026.")
+endif()
+
+# Find SWIG early (no version requirement yet)
+find_package(SWIG REQUIRED COMPONENTS python)
+
+# Check both versions
+if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
+  if(SWIG_VERSION VERSION_LESS "4.2.0")
+    message(FATAL_ERROR
+      "Python ${Python3_VERSION} requires SWIG 4.2.0 or newer, but found SWIG ${SWIG_VERSION}."
+    )
+  endif()
+endif()
+
+# Now safely require SWIG in the appropriate version range
+if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
   find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
 else()
   find_package(SWIG 4.0...<5 REQUIRED COMPONENTS python)
@@ -156,6 +173,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1") # "simulation/"
     string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
 
+    if(${PARENT_DIR_NAME} IN_LIST EXCLUDED_BSK_LIBRARIES)
+      message("Skipped Package Library: ${PARENT_DIR_NAME}")
+        continue()
+    endif()
+
     # Set the library name (ex. dynamicsLib, environmentLib, etc)
     set(LIB_NAME "${PARENT_DIR_NAME}Lib")
     # Added to build ExternalModulesLib
@@ -176,12 +198,23 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
+    # If the library directory has a Custom.cmake, include that
+    if(EXISTS "${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for package lib: ${LIB_DIR}")
+      include("${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+    endif()
+
     # Link all necessary libraries
-    target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
-    target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
-    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
+    if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
+      target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
+      # dynamicsLib already has ArchitectureUtilities and cMsgCInterface
+      # publicly linked, so no need to add them (again) for mujocoDynamics
+    else()
+      target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
+      target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
+    endif()
 
     # define build location, IDE generation specifications
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -230,6 +263,20 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i")
+
+    # mujocoDynamics is special in that it also gets to see the
+    # dynamics/_GeneralModuleFiles headers
+    if(${MODULE_DIR} STREQUAL "simulation/mujocoDynamics")
+      file(
+        GLOB
+        GEN_FILES_DYNAMICS
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.i"
+      )
+      list (APPEND GEN_FILES ${GEN_FILES_DYNAMICS})
+    endif()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       file(
@@ -293,6 +340,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
       include("${PARENT_DIR}/Custom.cmake")
     endif()
+    # Also look for a Custom.cmake on the _GeneralModuleFiles
+    if(EXISTS "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+      include("${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
+    endif()
 
     target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
     target_include_directories(
@@ -308,6 +360,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     foreach(LIB ${LIB_DEP_LIST})
       target_link_libraries(${TARGET_NAME} PRIVATE ${LIB})
     endforeach()
+
+    target_link_libraries(${TARGET_NAME} PRIVATE ${PYTHON3_MODULE})
+    if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
+      target_compile_definitions(${TARGET_NAME} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
+    endif()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${MODULE_DIR})
@@ -346,7 +403,7 @@ endfunction(generate_package_targets)
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -498,21 +555,16 @@ endif()
 
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt Manually create list of libraries
 # depending on system
+find_package(cspice REQUIRED CONFIG)
+set(library_dependencies cspice::cspice)
 if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-  set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib)
   # fix for opencv not finding conan gflags for opencv sfm lib on windows when the finding is fixed, the following line
   # should be removed https://github.com/conan-community/community/issues/210
   list(REMOVE_ITEM CONAN_LIBS opencv_sfm411d multiview)
 
 elseif(APPLE)
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a)
-  endif()
-
   set(CMAKE_SKIP_BUILD_RPATH FALSE) # use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) # when building, don't use the install RPATH already (but later on when
                                            # installing)
@@ -529,11 +581,6 @@ elseif(APPLE)
   # install RPATH
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 else()
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^(arm64|aarch64)$")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a)
-  endif()
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
   set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
@@ -565,7 +612,9 @@ set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cM
 
 # Finds relative path of all .i files within the directory
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/mujocoDynamics" MULTI_BODY_DYN_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/forceTorque" FORCE_TORQUE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INTERFACE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/power" POWER_TARGETS)
@@ -574,6 +623,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/simulation/sensors" SENSORS_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/simSynch" SIM_SYNCH_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/vizard" VIZ_INTERFACE_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/thermal" THERMAL_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/communication" COMMUNICATION_TARGETS)
 
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
@@ -587,7 +637,12 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+# Only build mujocoDynamics targets if the mujocoDynamics library is available
+if(NOT ("mujocoDynamics" IN_LIST EXCLUDED_BSK_LIBRARIES))
+  generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "mujocoDynamicsLib;dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+endif()
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
+generate_package_targets("${FORCE_TORQUE_TARGETS}" "${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
@@ -596,6 +651,7 @@ generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulatio
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${THERMAL_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${COMMUNICATION_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 # FSW ALGORITHMS
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
@@ -663,10 +719,20 @@ if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"
-       "from Basilisk.architecture import messaging\n")
+       "from Basilisk.architecture import messaging\n"
+       "try:\n"
+       "    from importlib.metadata import version as _pkg_version\n"
+       "    __version__ = _pkg_version('bsk')\n"
+       "except Exception:\n"
+       "    __version__ = '0.0.0'\n")
 else()
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
-      "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n")
+      "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n"
+      "try:\n"
+      "    from importlib.metadata import version as _pkg_version\n"
+      "    __version__ = _pkg_version('bsk')\n"
+      "except Exception:\n"
+      "    __version__ = '0.0.0'\n")
 endif()
 
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist

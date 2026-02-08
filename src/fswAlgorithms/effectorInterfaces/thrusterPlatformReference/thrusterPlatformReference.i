@@ -17,6 +17,10 @@
 
  */
 %module thrusterPlatformReference
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "thrusterPlatformReference.h"
 %}

@@ -273,14 +273,14 @@ def run(show_plots):
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
-    # A message is created that stores an array of the true temperature and temperature measurement. 
+    # A message is created that stores an array of the true temperature and temperature measurement.
     # This is logged here to be plotted later on.
     rwTempLogs = []
     tempMeasLogs = []
     for item in range(numRW):
         rwTempLogs.append(rwTempList[item].temperatureOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(simTaskName, rwTempLogs[item])
-        
+
         tempMeasLogs.append(tempMeasList[item].tempOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(simTaskName, tempMeasLogs[item])
 
@@ -289,8 +289,8 @@ def run(show_plots):
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # set up the FSW RW configuration message.
@@ -352,7 +352,7 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    
+
     dataRWTemperature = []
     dataTempMeasurement = []
     for i in range(numRW):
@@ -372,13 +372,13 @@ def run(show_plots):
 
     figureList = {}
     plot_rw_temperature(timeData, dataRWTemperature, numRW)
-    pltName = fileName + "1" 
+    pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plot_rw_temp_measurement(timeData, dataTempMeasurement, numRW)
-    pltName = fileName + "2" 
+    pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
-    
+
     if show_plots:
         plt.show()
 

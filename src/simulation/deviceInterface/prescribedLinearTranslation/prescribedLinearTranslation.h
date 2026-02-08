@@ -89,8 +89,8 @@ private:
     Eigen::Vector3d transHat_M;                                                 //!< Axis along the direction of translation expressed in M frame components
 
     /* Scalar translational states */
-    double transPosInit;                                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
-    double transPosRef;                                                         //!< [m] Reference translational body position from M to F frame origin along transHat_M
+    double transPosInit;                                                        //!< [m] Initial translational body position from M to P frame origin along transHat_M
+    double transPosRef;                                                         //!< [m] Reference translational body position from M to P frame origin along transHat_M
     double transPos;                                                            //!< [m] Current translational body position along transHat_M
     double transVel;                                                            //!< [m] Current translational body velocity along transHat_M
     double transAccel;                                                          //!< [m] Current translational body acceleration along transHat_M

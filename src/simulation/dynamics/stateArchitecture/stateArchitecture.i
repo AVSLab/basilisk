@@ -19,6 +19,10 @@
 
 
 %module stateArchitecture
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "../_GeneralModuleFiles/dynParamManager.h"
    #include "../../../architecture/utilities/avsEigenSupport.h"
@@ -39,7 +43,7 @@ from Basilisk.architecture.swig_common_model import *
    StateVector getStateVector() {return self->stateContainer;}
 }
 
-%include "../_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "../../../architecture/utilities/avsEigenSupport.h"
 
 %pythoncode %{

@@ -1,10 +1,10 @@
 Executive Summary
 -----------------
 This module profiles a 1 DOF rotation for a spinning rigid body connected to a rigid spacecraft hub. The body frame
-of the spinning body is designated by the frame :math:`\mathcal{F}`. The spinning body's states are profiled
+of the spinning body is designated by the frame :math:`\mathcal{P}`. The spinning body's states are profiled
 relative to a hub-fixed frame :math:`\mathcal{M}`. The :ref:`PrescribedRotationMsgPayload` message
 is used to output the prescribed rotational states from the module. The prescribed states profiled in this module
-are: ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``. This module has four options to profile the spinning body
+are: ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``. This module has four options to profile the spinning body
 rotation. The first option is a bang-bang acceleration profile that minimizes the time required for the rotation.
 The second option is a bang-coast-bang acceleration profile that adds a coast period of zero acceleration between the
 acceleration ramp segments. The third option is a smoothed bang-bang acceleration profile that uses cubic splines to
@@ -14,6 +14,12 @@ bang-coast-bang acceleration profile.
 The module defaults to the non-smoothed bang-bang option with no coast period. If the coast option is desired, the
 user must set the module variable ``coastOptionBangDuration`` to a nonzero value. If smoothing is desired,
 the module variable ``smoothingDuration`` must be set to a nonzero value.
+
+An optional feature of this module enables simulation of 1 DOF helical screw motion, where translation and rotation are
+both profiled about a single axis. The translational states are coupled with the rotational states through a slope
+constant. The rotational profile is scaled by the slope constant to generate the translational states. If this option
+is enabled, the module outputs both the :ref:`PrescribedRotationMsgPayload` message and an additional
+:ref:`PrescribedTranslationMsgPayload` message.
 
 .. important::
     Note that this module assumes the initial and final spinning body hub-relative angular rates are zero.
@@ -29,6 +35,12 @@ are not set by the user, the module defaults to the non-smoothed bang-bang profi
 set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 .. important::
+    To configure 1 DOF helical screw motion, two additional module variables ``c_screw`` and ``rhoInit`` must be
+    configured. ``rhoInit`` is the initial translational displacement of the :math:`\mathcal{P}` frame relative to the
+    :math:`\mathcal{M}` frame along the spin axis ``rotHat_M``. ``c_screw`` is the slope constant which scales the
+    rotational states to obtain the translational states.
+
+.. important::
     To use this module for prescribed motion, it must be connected to the :ref:`PrescribedMotionStateEffector`
     dynamics module. This ensures the spinning body's states are correctly incorporated into the spacecraft dynamics.
     See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
@@ -36,9 +48,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what the message is used for.
 
 .. list-table:: Module I/O Messages
@@ -63,6 +75,12 @@ provides information on what the message is used for.
     * - prescribedRotationOutMsgC
       - :ref:`PrescribedRotationMsgPayload`
       - C-wrapped output message with the prescribed spinning body rotational states
+    * - prescribedTranslationalOutMsg
+      - :ref:`PrescribedRotationMsgPayload`
+      - (optional) output message with the prescribed translational states if helical screw motion is configured
+    * - prescribedRotationOutMsgC
+      - :ref:`PrescribedRotationMsgPayload`
+      - (optional) C-wrapped output message with the prescribed translational states if helical screw motion is configured
 
 Detailed Module Description
 ---------------------------
@@ -211,7 +229,7 @@ and :math:`\Delta \theta_{\text{coast}}` is the angle traveled during the coast 
     t_c = t_{b1} + \frac{\Delta \theta_{\text{coast}}}{\dot{\theta}(t_{b1})}
 
 Using the given rotation axis ``rotHat_M``, the scalar states are then transformed to the spinning body
-rotational states ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``. The states are then written to the
+rotational states ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``. The states are then written to the
 :ref:`PrescribedRotationMsgPayload` module output message.
 
 Smoothed Bang-Bang Profiler
@@ -447,6 +465,12 @@ are not set by the user, the module defaults to the non-smoothed bang-bang profi
 ``coastOptionBangDuration`` is set to a nonzero value, the bang-coast-bang profiler is selected. If only the variable
 ``smoothingDuration`` is set to a nonzero value, the smoothed bang-bang profiler is selected. If both variables are
 set to nonzero values, the smoothed bang-coast-bang profiler is selected.
+
+.. important::
+    To configure 1 DOF helical screw motion, two additional module variables ``c_screw`` and ``rhoInit`` must be
+    configured. ``rhoInit`` is the initial translational displacement of the :math:`\mathcal{P}` frame relative to the
+    :math:`\mathcal{M}` frame along the spin axis ``rotHat_M``. ``c_screw`` is the slope constant which scales the
+    rotational states to obtain the translational states.
 
 This section is to outline the steps needed to set up the prescribed rotational 1 DOF module in python using Basilisk.
 

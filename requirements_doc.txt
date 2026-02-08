@@ -1,5 +1,6 @@
-breathe
-docutils
-recommonmark
-sphinx>7.0.0
-sphinx_rtd_theme>=3.0.0
+breathe==4.36.0
+docutils>=0.21.2,<0.22.0
+recommonmark==0.7.1
+sphinx>7.0.0,<=8.2.3
+sphinx_rtd_theme>=3.0.0,<=3.0.2
+sphinx-copybutton==0.5.2

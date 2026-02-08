@@ -4,6 +4,10 @@ file(GLOB basilisk_src "*.h" "*.cpp" "*.c" "*.i")
 file(GLOB moduleId "moduleIdGenerator/*.h" "moduleIdGenerator/*.cpp" "moduleIdGenerator/*.i")
 
 add_library(ArchitectureUtilities STATIC ${basilisk_src})
+# Find and link cfitsio
+find_package(cfitsio REQUIRED)
+target_link_libraries(ArchitectureUtilities PUBLIC cfitsio::cfitsio)
+
 add_library(ModuleIdGenerator SHARED ${moduleId})
 string(LENGTH ${CMAKE_SOURCE_DIR} DIR_NAME_START)
 math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")

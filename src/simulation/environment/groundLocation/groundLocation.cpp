@@ -173,6 +173,7 @@ void GroundLocation::updateInertialPositions()
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);
+    eigenVector3d2CArray(this->rhat_LP_N, this->currentGroundStateBuffer.rHat_LP_N);
 }
 
 void GroundLocation::computeAccess()

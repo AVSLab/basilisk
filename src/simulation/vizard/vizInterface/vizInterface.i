@@ -16,13 +16,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 %module vizInterface
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "vizInterface.h"
    #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
 %include "swig_deprecated.i"
-%deprecated_variable(VizInterface, opNavMode, "2025/04/17", "opNavMode is deprecated. Use liveStream and noDisplay flags instead.")
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
@@ -37,7 +40,7 @@ from Basilisk.architecture.swig_common_model import *
 // Instantiate templates used by example
 namespace std {
     %template(PointLineConfig) vector<PointLine>;
-    %template(LocationConfig) vector<LocationPbMsg *>;
+    %template(LocationConfig) vector<LocationPbMsg>;
     %template(CustomModelConfig) vector<CustomModel>;
     %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
     %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings>;
@@ -50,8 +53,9 @@ namespace std {
     %template(LightVector) vector<Light *>;
     %template(TransceiverVector) vector<Transceiver *>;
     %template(GenericStorageVector) vector<GenericStorage *>;
-    %template(MultiSphereVector) vector<MultiSphere *>;
+    %template(MultiShapeVector) vector<MultiShape *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
+    %template(QuadMapVector) vector<QuadMap *>;
     %template(VizEventDialogVector) vector<VizEventDialog *>;
     %template(VizEventReplyVector) vector<VizEventReply>;
 }
@@ -91,5 +95,46 @@ struct EpochMsg_C;
 
 %pythoncode %{
 import sys
+
+mod = sys.modules[__name__]
+
+# ------ Deprecated variable/structure list ------ #
+# Remove from here when support is expired.
+mod.MultiShape = _DeprecatedWrapper(
+    mod.MultiShape,
+    targetName="MultiShape",
+    deprecatedFields={"radius": "dimensions"},
+    typeConversion="scalarTo3D",
+    removalDate="2026/03/07"
+)
+
+mod.MultiSphere = _DeprecatedWrapper(
+    mod.MultiShape,
+    aliasName="MultiSphere",
+    targetName="MultiShape",
+    removalDate="2026/03/07"
+)
+mod.MultiSphereInfo = _DeprecatedWrapper(
+    mod.MultiShapeInfo,
+    aliasName="MultiSphereInfo",
+    targetName="MultiShapeInfo",
+    removalDate="2026/03/07"
+)
+mod.MultiSphereVector = _DeprecatedWrapper(
+    mod.MultiShapeVector,
+    aliasName="MultiSphereVector",
+    targetName="MultiShapeVector",
+    removalDate="2026/03/07"
+)
+
+# when removing, also remove line 1649 that sets settings explicitly in src/utilities/vizSupport.py
+mod.VizSettings = _DeprecatedWrapper(
+    mod.VizSettings,
+    targetName="VizSettings",
+    deprecatedFields={"customGUIScale": "customGUIReferenceHeight"},
+    typeConversion="useDefaultDouble",
+    removalDate="2026/05/27"
+)
+
 protectAllClasses(sys.modules[__name__])
 %}

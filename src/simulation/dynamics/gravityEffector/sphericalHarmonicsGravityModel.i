@@ -18,24 +18,19 @@
  */
 
 %module(package="Basilisk.simulation") sphericalHarmonicsGravityModel
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.h"
    #include <memory>
 %}
 
-%include "exception.i"
-
-%exception {
-  try {
-    $action
-  } catch (const std::exception& e) {
-    SWIG_exception(SWIG_RuntimeError, e.what());
-  }
-}
 
 %include "swig_eigen.i"
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include "std_vector.i"
 %template() std::vector<double>;

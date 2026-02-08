@@ -309,7 +309,7 @@ class moduleGenerator:
         headerFile += f'class {self._className}: public SysModel {{\n'
         headerFile += 'public:\n'
         headerFile += f'    {self._className}();\n'
-        headerFile += f'    ~{self._className}();\n'
+        headerFile += f'    ~{self._className}() = default;\n'
         headerFile += '\n'
         headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
         headerFile += '    void UpdateState(uint64_t CurrentSimNanos);\n'
@@ -364,11 +364,6 @@ class moduleGenerator:
             for msg in variableList:
                 defFile += f'    this->{msg["var"]} = {{}};\n'
 
-        defFile += '}\n'
-        defFile += '\n'
-        defFile += '/*! Module Destructor */\n'
-        defFile += f'{self._className}::~{self._className}()\n'
-        defFile += '{\n'
         defFile += '}\n'
         defFile += '\n'
         defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
@@ -428,6 +423,10 @@ class moduleGenerator:
         self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
+        swigFile += '\n'
+        swigFile += '%include "architecture/utilities/bskException.swg"\n'
+        swigFile += '%default_bsk_exception();\n'
+        swigFile += '\n'
         swigFile += '%{\n'
         swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'
@@ -635,6 +634,10 @@ class moduleGenerator:
         self.log(f"{statusColor}Creating Swig Interface File {swigFileName}:{endColor}", end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
+        swigFile += '\n'
+        swigFile += '%include "architecture/utilities/bskException.swg"\n'
+        swigFile += '%default_bsk_exception();\n'
+        swigFile += '\n'
         swigFile += '%{\n'
         swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'
@@ -702,7 +705,7 @@ def fillCppInfo(module):
     outMsgList = list()
     outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
+    outMsgList.append({'type': 'DataStorageStatusMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 
     # provide list of module variables

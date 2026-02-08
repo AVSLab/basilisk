@@ -19,6 +19,10 @@
 
 
 %module spacecraftLocation
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "spacecraftLocation.h"
 %}
@@ -40,6 +44,8 @@ struct SpicePlanetStateMsg_C;
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 struct AccessMsg_C;
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
 
 %pythoncode %{
 import sys

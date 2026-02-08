@@ -19,8 +19,13 @@
 
 
 %module spinningBodyNDOFStateEffector
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
-   #include "spinningBodyNDOFStateEffector.h"
+    #include "spinningBodyNDOFStateEffector.h"
+    #include <memory>
 %}
 
 %pythoncode %{
@@ -31,6 +36,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
+
+%include <std_shared_ptr.i>
+%shared_ptr(SpinningBody)
 
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"

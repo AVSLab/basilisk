@@ -175,9 +175,10 @@ def run(show_plots, useRefAttitude):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # VehicleConfigFswMsg
-    vehicleConfigOut2 = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut2.ISCPntB_B = I
-    vehicleConfigOut2.massSC = scObject2.hub.mHub
+    vehicleConfigOut2 = messaging.VehicleConfigMsgPayload(
+        ISCPntB_B=I,
+        massSC=scObject2.hub.mHub,
+    )
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut2)
 
     # inertial 3D target attitude

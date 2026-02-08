@@ -33,7 +33,8 @@ from Basilisk.utilities import macros
 
 params_storage_limits = [(1200, 1200, 2400, 2400),
                      (600, 1200, 3600, 3600),
-                     (600, 600, 10000, 6000)]
+                     (600, 600, 10000, 6000),
+                     (-1000, 0, 5000, 0)]
 
 @pytest.mark.parametrize("baudRate_1, baudRate_2, storageCapacity, expectedStorage",
                           params_storage_limits)
@@ -42,9 +43,9 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     """
     Tests:
 
-    1. Whether the simpleStorageUnit can add multiple nodes (core base class 
+    1. Whether the simpleStorageUnit can add multiple nodes (core base class
         functionality);
-    2. That the simpleStorageUnit correctly evaluates how much stored data it should 
+    2. That the simpleStorageUnit correctly evaluates how much stored data it should
         have given a pair of input messages.
 
     """
@@ -104,7 +105,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
             "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -114,7 +115,7 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     #   Check 4 - is there only one partition?
     assert len(partitionName[0]) == 1, (
         "FAILED: PartitionedStorageUnit did use the correct partition.")
-    
+
     #   Check 6 - is the name of the partition correct?
     assert partitionName[0][0] == "STORED DATA", (
         "FAILED: PartitionedStorageUnit did not correctly log the partition name.")
@@ -134,13 +135,13 @@ params_set_data = [(1200, 1200, 1200, 2400, 2400),
 @pytest.mark.parametrize(
         "baudRate_1, baudRate_2, add_data, storageCapacity, expectedStorage",
         params_set_data)
-def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity, 
+def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
                          expectedStorage):
     """
     Tests:
 
     1. Whether the partitionedStorageUnit can add data using the setDataBuffer method;
-    2. That the partitionedStorageUnit correctly evaluates how much stored data it 
+    2. That the partitionedStorageUnit correctly evaluates how much stored data it
         should have given a pair of input messages and using setDataBuffer.
 
     :return:
@@ -207,7 +208,7 @@ def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
     for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind], 
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
             capacityLog[ind]), (
             "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
 
@@ -217,14 +218,77 @@ def test_set_data_buffer(baudRate_1, baudRate_2, add_data, storageCapacity,
     #   Check 4 - is the data in the partitioned storage unit correct?
     assert partitionData[-1][0] == storedDataLog[-1], (
         "FAILED: PartitionedStorageUnit did not correctly log the stored data.")
-    
+
     #   Check 5 - is there only one partition?
     assert len(partitionName[0]) == 1, (
         "FAILED: PartitionedStorageUnit should have just one partition.")
-   
+
     #   Check 6 - is the name of the partition correct?
     assert partitionName[0][0] == "STORED DATA", (
         "FAILED: PartitionedStorageUnit did not correctly log the partition name.")
+
+
+params_storage_limits = [(-400, 2000, 2000, 0),
+                         (-800, 2000, 2000, 0),
+                         (-2000, 0, 2000, 0)]
+
+@pytest.mark.parametrize("baudRate, initialData, storageCapacity, expectedStorage",
+                          params_storage_limits)
+def test_data_removal(baudRate, initialData, storageCapacity, expectedStorage):
+    """
+    Tests:
+
+    1. Whether removing data from the simpleStorageUnit works correctly;
+    """
+
+    unitTaskName = "unitTask"               # arbitrary name (don't change)
+    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    test_storage_unit = simpleStorageUnit.SimpleStorageUnit()
+    test_storage_unit.storageCapacity = storageCapacity # bit capacity.
+
+    dataMsg1 = messaging.DataNodeUsageMsgPayload()
+    dataMsg1.baudRate = baudRate # baud
+    dataMsg1.dataName = "node_1_msg"
+    dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
+
+    # Test the addNodeToStorage method:
+    test_storage_unit.addDataNodeToModel(dat1Msg)
+
+    unitTestSim.AddModelToTask(unitTaskName, test_storage_unit)
+
+    dataLog = test_storage_unit.storageUnitDataOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    test_storage_unit.setDataBuffer(initialData)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
+
+    unitTestSim.ExecuteSimulation()
+
+    storedDataLog = dataLog.storageLevel
+    capacityLog = dataLog.storageCapacity
+
+    #   Check 1 - is used storage space correct?
+    np.testing.assert_allclose(storedDataLog[-1], expectedStorage, atol=1e-4,
+        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."))
+
+    #   Check 2 - is the amount of data more than zero and less than the capacity?
+    for ind in range(0,len(storedDataLog)):
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
+            capacityLog[ind]), (
+            "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
+
+        assert storedDataLog[ind] >= 0., (
+            "FAILED: PartitionedStorageUnit's stored data was negative.")
 
 
 if __name__ == "__main__":
@@ -232,8 +296,10 @@ if __name__ == "__main__":
     baudRate_2 = 1200
     storageCapacity = 2400
     expectedStorage = 2400
-    test_storage_limits(baudRate_1, baudRate_2, 
+    test_storage_limits(baudRate_1, baudRate_2,
                         storageCapacity, expectedStorage)
     add_data = 1200
-    test_set_data_buffer(baudRate_1, baudRate_2, add_data, 
+    test_set_data_buffer(baudRate_1, baudRate_2, add_data,
                          storageCapacity, expectedStorage)
+    test_data_removal(baudRate_1, -add_data,
+                        storageCapacity, 0)

@@ -18,6 +18,10 @@
  */
 
 %module(package="Basilisk.simulation") pointMassGravityModel
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/pointMassGravityModel.h"
    #include <memory>
@@ -25,7 +29,7 @@
 
 %include "swig_eigen.i"
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include <std_shared_ptr.i>
 %shared_ptr(PointMassGravityModel)

@@ -16,12 +16,15 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 #
+
 import copy
 import itertools
+from contextlib import nullcontext
 
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.fswAlgorithms import lambertPlanner
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -64,7 +67,9 @@ def test_lambertPlanner(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy):
     true value for r1_N is obtained by solving Kepler's equation using from current time to maneuver time and the given
     orbit elements.
     """
-    lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy)
+    expect_error = p2_tm > p3_tf
+    with pytest.raises(BasiliskError) if expect_error else nullcontext():
+        lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy)
 
 
 def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy):

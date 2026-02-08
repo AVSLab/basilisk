@@ -182,7 +182,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
     if (configData->init < 1) {
         // module update time
-        time_diff = (callTime - configData->time_old)*NANO2SEC;
+        time_diff = diffNanoToSec(callTime, configData->time_old);
 
         // calculate d(sigma_BR)/dt
         v3Subtract(sigma_BR, configData->sigma_BR_old, difference);
@@ -205,10 +205,10 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     }
 
     // compute omega_RN_B
-    v3Subtract(scAttInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, omega_RN_B);
+    v3Subtract(scAttInMsgBuffer.omega_BN_B, attGuidOutMsgBuffer.omega_BR_B, attGuidOutMsgBuffer.omega_RN_B);
 
     // convert to omega_RN_N
-    m33tMultV3(dcmBN, omega_RN_B, attRefOutMsgBuffer.omega_RN_N);
+    m33tMultV3(dcmBN, attGuidOutMsgBuffer.omega_RN_B, attRefOutMsgBuffer.omega_RN_N);
 
     // copy current attitude states into prior state buffers
     v3Copy(sigma_BR, configData->sigma_BR_old);

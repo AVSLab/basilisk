@@ -5,11 +5,11 @@ Deprecating code in Basilisk
 
 Motivation
 ----------
-The nature of a fast evolving software such as Basilisk is that systems are consistently improving, many times making older functionality obsolete. 
-Thus, we face the challenge of handling older code while we move towards the new systems. 
-We cannot simply remove old functionality, as we don't want user code to break overnight. 
-Instead, we enter a phase of deprecation, when we warn users about the use of deprecated code, 
-but otherwise continue to allow it and support it. After enough time has passed for our users to update 
+The nature of a fast evolving software such as Basilisk is that systems are consistently improving, many times making older functionality obsolete.
+Thus, we face the challenge of handling older code while we move towards the new systems.
+We cannot simply remove old functionality, as we don't want user code to break overnight.
+Instead, we enter a phase of deprecation, when we warn users about the use of deprecated code,
+but otherwise continue to allow it and support it. After enough time has passed for our users to update
 their code, the deprecated functionality can be removed.
 
 This support page explains the different mechanisms we have available in Basilisk to mark code as deprecated.
@@ -41,7 +41,7 @@ To illustrate this functionality, let's imagine the following code:
         @property
         def myProperty(self):
             return self._myPropertyInner * 2
-        
+
         @myProperty.setter
         def myProperty(self, value: int):
             self._myPropertyInner = value / 2
@@ -74,7 +74,7 @@ as follows:
 The first argument to ``@deprecated.deprecated`` must be a string with the date when the function is expected
 to be removed (as a rule of thumb, between 6 to 12 months after the release of
 the deprecated code). The second argument is a message that is shown directly
-to users. Here, you may explain why the function is deprecated, alternative functions, 
+to users. Here, you may explain why the function is deprecated, alternative functions,
 links to documentation or scenarios that show how to translate deprecated code...
 
 If you want to deprecate a **class**, then use:
@@ -96,7 +96,7 @@ If you want to deprecate an **attribute**, that is, a class variable, then do:
     from Basilisk.utilities import deprecated
 
     class MyClass:
-        
+
         myAttribute = deprecated.DeprecatedAttribute(
             "2099/05/05", "myAttribute is no longer used in the simulation"
         )
@@ -119,7 +119,7 @@ Finally, if you need to deprecate a **property**, then use:
     from Basilisk.utilities import deprecated
 
     class MyClass:
-        
+
         @property
         def myProperty(self):
             return self.myPropertyInner * 2
@@ -138,7 +138,7 @@ The third argument, however, shold be the name of the property to deprecate.
 
 Deprecating C++ Code Wrapped by SWIG
 ------------------------------------
-This section explains how to deprecate code that is written in C++ and exposed to 
+This section explains how to deprecate code that is written in C++ and exposed to
 Python through a SWIG interface. Note that deprecation warnings will be raised only
 when the Python wrappers to C++ functionality are invoked. Currently, it is not
 possible to emit deprecation warnings when the deprecated functionality is called from
@@ -164,7 +164,7 @@ the deprecated functionality. For example, let's consider we have this C++ code:
 with the following SWIG interface file:
 
 .. code-block::
-    
+
     // example.i
 
     %module example
@@ -178,7 +178,7 @@ If we want to deprecate the **standalone function** and **class function**, then
 would change the SWIG file to:
 
 .. code-block::
-    
+
     // example.i
 
     %module example
@@ -193,7 +193,7 @@ would change the SWIG file to:
     %include "example.h"
 
 In the code above, we have included ``"swig_deprecated.i"``, which makes the
-``%deprecated_function`` macro available. Then, we have called this macro **before we included the header file** 
+``%deprecated_function`` macro available. Then, we have called this macro **before we included the header file**
 ``"example.h"``. The first input to the macro is the SWIG identifier for the function.
 For standalone functions this is simple the function name, but for class functions this is
 ``[CLASS_NAME]::[FUNCTION_NAME]``. The next two arguments are the expected removal date
@@ -202,7 +202,7 @@ and message, as covered in the previous section.
 If we want to deprecate an entire **class**, then the SWIG file ought to change to:
 
 .. code-block::
-    
+
     // example.i
 
     %module example
@@ -221,7 +221,7 @@ we need to target ``[CLASS_NAME]::[CLASS_NAME]``.
 Finally, to deprecate a class variable, the SWIG file would change to:
 
 .. code-block::
-    
+
     // example.i
 
     %module example
@@ -234,7 +234,48 @@ Finally, to deprecate a class variable, the SWIG file would change to:
 
     %include "example.h"
 
-This time, we call the macro ``%deprecated_variable``, although always 
+This time, we call the macro ``%deprecated_variable``, although always
 before ``%include "example.h"``. In this case, the two first arguments to ``%deprecated_variable``
 are the name of the class that contains the variable, and then the name of the varible.
 The final two arguments are the expected removal date and the message.
+
+If a C++ structure or one of its fields are renamed, an alias can be used to deprecate the entity while retaining support for the old name. This is done using the ``_DeprecatedWrapper`` class defined in ``"swig_deprecated.i"``. Its implementation is detailed below.
+
+.. code-block::
+
+    // example.i
+
+    %module example
+    %{
+        #include "example.h"
+    %}
+
+    %include "swig_deprecated.i"
+    %include example.h
+
+    %pythoncode %{
+    import sys
+
+    mod = sys.modules[__name__]
+
+    mod.ExampleStruct = _DeprecatedWrapper(
+        mod.ExampleStruct,
+        targetName="ExampleStruct",
+        deprecatedFields={"oldField": "newField"},
+        typeConversion="scalarTo3D",
+        removalDate="YYYY/MM/DD"
+    )
+
+    mod.OldStructure = _DeprecatedWrapper(
+        mod.NewStructure,
+        aliasName="OldStructure",
+        targetName="NewStructure",
+        removalDate="YYYY/MM/DD"
+    )
+
+    protectAllClasses(sys.modules[__name__])
+    %}
+
+If a field is renamed, the top chunk creates a wrapper that contains the old field name and handles deprecation warnings and getter/setter behavior. The ``typeConversion`` parameter can be set to ``"scalarTo3D"`` to deprecate a scalar variable and alias to a new 3D variable with repeated values.
+
+If a structure is renamed, the second chunk creates a wrapper that generates an alias using the old structure name for continued support.

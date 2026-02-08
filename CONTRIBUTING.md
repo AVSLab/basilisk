@@ -41,6 +41,8 @@ disabled). Always use the "Merge" strategy.
     -   In combination with the restrictions above, this ensures that features are neatly bracketed by merge commits
     on either side, making a clear hierarchical separation between features added to `develop` and the work that went
     into each feature.
+- If the PR is linked to an issue, then the issue will be closed when
+  the PR is closed and pushed to `develop`.s
 
 ## Coding Conventions
 

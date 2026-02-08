@@ -61,7 +61,13 @@ def setupFilterData(filterObject):
                                       ])
 def test_all_sunline_kf(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = eval(function + '(show_plots)')
+    testFunction = globals().get(function)
+
+    if testFunction is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    [testResults, testMessage] = testFunction(show_plots)
+
     assert testResults < 1, testMessage
 
 

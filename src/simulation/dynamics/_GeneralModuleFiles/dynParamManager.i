@@ -1,9 +1,16 @@
 
 %module dynParamManager
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
    #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %}
+
+// Suppress assignment operator warning before parsing the class
+%warnfilter(362) StateVector::operator=;
 
 // There are other accesor methods to query these objects that are
 // better than using the class variables directly

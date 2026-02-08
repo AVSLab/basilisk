@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -39,6 +39,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.simulation import dentonFluxModel
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
+
 
 Kps = ['0o', '4-', '5+']
 LTs = [0.00, 14.73]
@@ -97,7 +99,11 @@ def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, para
     module.ModelTag = "dentonFluxModule"
     module.kpIndex = param1_Kp
     module.numOutputEnergies = 6
-    module.dataPath = bskPath + '/supportData/DentonGEO/'
+    e_path = get_path(DataFile.DentonGEOData.model_e_array_all)
+    i_path = get_path(DataFile.DentonGEOData.model_i_array_all)
+
+    # configure DentonFluxModel with explicit file paths
+    module.configureDentonFiles(str(e_path), str(i_path))
 
     unitTestSim.AddModelToTask(unitTaskName, module)
 

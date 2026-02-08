@@ -32,12 +32,12 @@ typedef struct
     /* User configurable variables */
     double phiDDotMax;                                         //!< [rad/s^2] Maximum angular acceleration of the spinning body
     double rotAxis1_M[3];                                      //!< M frame rotation axis for the first rotation
-    double rotAxis2_F1[3];                                     //!< F1 frame intermediate rotation axis for the second rotation
+    double rotAxis2_P1[3];                                     //!< F1 frame intermediate rotation axis for the second rotation
 
     /* Private variables */
-    double omega_FM_F[3];                                      //!< [rad/s] angular velocity of frame F relative to frame M in F frame components
-    double omegaPrime_FM_F[3];                                 //!< [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    double sigma_FM[3];                                        //!< MRP attitude of frame F relative to frame M
+    double omega_PM_P[3];                                      //!< [rad/s] angular velocity of frame P relative to frame M in P frame components
+    double omegaPrime_PM_P[3];                                 //!< [rad/s^2] B frame time derivative of omega_PB_P in P frame components
+    double sigma_PM[3];                                        //!< MRP attitude of frame P relative to frame M
     bool isManeuverComplete;                                   //!< Boolean variable is true when the attitude maneuver is complete
     double maneuverStartTime;                                  //!< [s] Simulation time at the start of the attitude maneuver
     double rotAxis_M[3];                                       //!< Reference PRV axis expressed in M frame components
@@ -50,7 +50,7 @@ typedef struct
     double maneuverEndTime;                                    //!< [s] Simulation time when the maneuver is complete
     double a;                                                  //!< Parabolic constant for the first half of the attitude maneuver
     double b;                                                  //!< Parabolic constant for the second half of the attitude maneuver
-    double dcm_F0M[3][3];                                      //!< DCM from the M frame to the spinning body body frame at the beginning of the maneuver
+    double dcm_P0M[3][3];                                      //!< DCM from the M frame to the spinning body body frame at the beginning of the maneuver
 
     /* Declare the module input-output messages */
     HingedRigidBodyMsg_C spinningBodyRef1InMsg;                //!< Input msg for the first reference angle and angle rate

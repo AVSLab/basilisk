@@ -242,13 +242,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #
     # create simulation messages
     #
-    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload()
-    sunPositionMsgData.PositionVector = [0.0, om.AU*1000.0, 0.0]
+    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload(PositionVector=[0.0, om.AU*1000.0, 0.0])
     sunPositionMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsgData)
 
     if useEclipse:
-        eclipseMsgData = messaging.EclipseMsgPayload()
-        eclipseMsgData.shadowFactor = 0.5
+        eclipseMsgData = messaging.EclipseMsgPayload(illuminationFactor=0.5)
         eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
 
     def setupCSS(CSS):
@@ -337,13 +335,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         scSim.AddModelToTask(simTaskName, css3Log)
 
     # optional saving off to Vizard compatible file
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__,
-                                              # liveStream=True,
-                                              cssList=[cssList]
-                                              )
-    vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
-                                       viewCSSBoresight=True, showCSSLabels=True)
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                                  # saveFile=__file__,
+                                                  # liveStream=True,
+                                                  cssList=[cssList]
+                                                  )
+        vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
+                                           viewCSSBoresight=True, showCSSLabels=True)
 
     #
     #   initialize Simulation
@@ -419,6 +418,6 @@ if __name__ == "__main__":
          True,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform
-         False,       # useEclipse
+         True,       # useEclipse
          False        # useKelly
        )

@@ -52,7 +52,7 @@ This module computes a direction cosine matrix :math:`[\mathcal{FM}]` that descr
 
 When the optional input messages ``rwConfigDataInMsg`` and ``rwSpeedsInMsg`` the user can specify an input parameter ``K``, which is the proportional gain of a control gain that computes an offset with respect to the center of mass: this allows for the thruster to apply a torque on the system that dumps the momentum accumulated on the wheels. Such control law has the expression:
 
-.. math:: 
+.. math::
     \boldsymbol{d} = -\frac{1}{t^2} \boldsymbol{t} \times(\kappa \boldsymbol{h}_w + \kappa_I \boldsymbol{H}_w)
 
 where :math:`\boldsymbol{h}_w` is the momentum on the wheels and :math:`\boldsymbol{H}_w` the integral over time of the momentum:
@@ -68,12 +68,13 @@ As pointed out in the paper referenced above, it is not always guaranteed that a
 
 .. math::
     \begin{align}
-        \nu_{1R} &= \arctan \left( \frac{f_{23}}{f_{22}} \right) & 
+        \nu_{1R} &= \arctan \left( \frac{f_{23}}{f_{22}} \right) &
         \nu_{2R} &= \arctan \left( \frac{f_{31}}{f_{11}} \right)
     \end{align}
 
 without checking whether the D.C.M. :math:`[\mathcal{FM}]` is constraint compliant. As a result, the angles :math:`\nu_{1R}` and :math:`\nu_{2R}` produce a constraint compliant reference, which however might not align the thruster with the desired point in the hub.
 
+The module Reset() function zeros the output message to ensure safe management of effector states when the algorithm is disabled.
 
 User Guide
 ----------
@@ -89,7 +90,7 @@ The required module configuration is::
     platformReference.theta1Max = theta1Max
     platformReference.theta2Max = theta2Max
     scSim.AddModelToTaskAddModelToTask(simTaskName, platformReference)
- 	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

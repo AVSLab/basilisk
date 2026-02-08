@@ -18,6 +18,10 @@
  */
 
 %module simpleTransmitter
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "simpleTransmitter.h"
 %}

@@ -19,6 +19,10 @@
 
 %module swigDeprecatedCheck
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 // The following lines show how to deprecate a stand-alone C++ function,
 // an entire C++ class, two C++ class functions, and finally a C++ class variable
 %include "swig_deprecated.i"

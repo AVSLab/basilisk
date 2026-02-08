@@ -78,10 +78,13 @@ class BuildConanExtCommand(Command, SubCommand):
         # See https://docs.python.org/3/c-api/stable.html
         # NOTE: Swig 4.2.1 or higher is required, see https://github.com/swig/swig/pull/2727
         min_version = next(self.distribution.python_requires.filter([f"3.{i}" for i in range(2, 100)])).replace(".", "")
-        bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=f"cp{min_version}")
+        wheel_py_limited = f"cp{min_version}"
+        bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=wheel_py_limited)
         bdist_wheel.ensure_finalized()
+        conan_py_limited = f"0x03{int(min_version[1:]):>02x}0000"
+
         for ext in self.conan_extensions:
-            ext.args += ["--pyLimitedAPI", f"0x{min_version[0]:>02}{min_version[1]:>02}00f0"]
+            ext.args += ["--pyLimitedAPI", conan_py_limited]
 
     def get_source_files(self) -> list[str]:
         # NOTE: This is necessary for building sdists, and is populated
@@ -91,9 +94,10 @@ class BuildConanExtCommand(Command, SubCommand):
     def run(self) -> None:
         for ext in self.conan_extensions:
             if self.editable_mode:
-                # TODO: Add support for installing in editable mode. For now, we
-                # assume that it has already been built (e.g. by `conanfile.py`)
-                pass
+                # TODO: Add support for installing in editable mode.
+                built = any(Path(ext.build_dir).glob("Basilisk*"))
+                if not built:
+                    run([sys.executable, ext.conanfile] + ext.args, check=True)
             else:
                 # Call the underlying Conanfile with the desired arguments.
                 run([sys.executable, ext.conanfile] + ext.args, check=True)
@@ -103,6 +107,9 @@ class BuildConanExtCommand(Command, SubCommand):
                 pkg_dir = Path(ext.build_dir, *pkg.split("."))
                 self.distribution.packages.append(pkg)
                 self.distribution.package_dir[pkg] = os.path.relpath(pkg_dir, start=HERE)
+
+                pd = self.distribution.package_data.setdefault(pkg, [])
+                pd += ["*.dll", "**/*.dll", "*.pyd", "**/*.pyd"]
 
         if self.editable_mode and len(self.distribution.packages) == 0:
             raise Exception("Tried to install in editable mode, but packages have not been prepared yet! " \
@@ -145,4 +152,6 @@ setup(
 
     # XXX: Override build_ext with ConanExtension builder.
     cmdclass={'build_ext': BuildConanExtCommand},
+    zip_safe=False,
+    include_package_data=True,
 )

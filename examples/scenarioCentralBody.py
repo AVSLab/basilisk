@@ -191,7 +191,7 @@ def run(show_plots, useCentral):
         #by default planetstates.planetPositionVelocity returns SSB central ICRS coordinates for the planet at the time
         # requested. also pck0010.tpc ephemeris file
         #look in the function for how to use other ephemeris files, reference frames, and observers
-        planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit)
+        planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit, gravFactory.spiceObject.SPICEDataPath)
         scObject.hub.r_CN_NInit = rN + array(planetPosition)
         scObject.hub.v_CN_NInit = vN + array(planetVelocity)
         # In the above call, the first input is the planet to get the states of and the second is the UTC time

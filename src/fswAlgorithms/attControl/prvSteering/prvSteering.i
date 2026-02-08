@@ -17,6 +17,10 @@
 
  */
 %module prvSteering
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "prvSteering.h"
 %}
@@ -33,4 +37,3 @@ struct RateCmdMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

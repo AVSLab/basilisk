@@ -39,6 +39,10 @@ where the :math:`\dagger` symbol denotes the pseudo inverse. The dipole commands
 saturated at this point. The saturated commands are referred to as :math:`{\pmb\mu}_{\text{saturated}}`
 from here on out in this document.
 
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.
+
 User Guide
 ----------
 See the example script :ref:`scenarioMtbMomentumManagementSimple` for an illustration on how to use this module.

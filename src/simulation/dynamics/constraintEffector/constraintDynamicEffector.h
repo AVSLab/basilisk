@@ -33,15 +33,22 @@
 #include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
+/*! Struct containing parent classification variables. */
+struct parentID{
+    int idx;  //!< index of effector's parent within parent type (ex. hub #1 or state eff #2)
+    std::string parentType;  //!< type of parent attached to (hub or state effector)
+};
+
 /*! @brief constraint dynamic effector class */
 class ConstraintDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();
-    void Reset(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime, double timeStep);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos) override;
+    void linkInStates(DynParamManager& states) override;
+    void linkInProperties(DynParamManager& properties) override;
+    void computeForceTorque(double integTime, double timeStep) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessage(uint64_t CurrentClock);
     void computeFilteredForce(uint64_t CurrentClock);
     void computeFilteredTorque(uint64_t CurrentClock);
@@ -53,6 +60,8 @@ public:
     void setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1);
     /** setter for `r_P2B2_B2` connection point position on spacecraft 2 */
     void setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2);
+    /** setter for `sigma_B2B1_Init` initial spacecraft relative attitude */
+    void setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init);
     /** setter for `alpha` gain tuning parameter */
     void setAlpha(double alpha);
     /** setter for `beta` gain tuning parameter */
@@ -67,6 +76,30 @@ public:
     void setC_a(double c_a);
     /** setter for `a,b,s,c,d,e` coefficients of low pass filter */
     void setFilter_Data(double wc,double h, double k);
+    /** setter for `stateNameOfPosition` property */
+    void setStateNameOfPosition(std::string value) override;
+    /** setter for `stateNameOfVelocity` property */
+    void setStateNameOfVelocity(std::string value) override;
+    /** setter for `stateNameOfSigma` property */
+    void setStateNameOfSigma(std::string value) override;
+    /** setter for `stateNameOfOmega` property */
+    void setStateNameOfOmega(std::string value) override;
+    /** setter for `propName_inertialPosition` property */
+    void setPropName_inertialPosition(std::string value) override;
+    /** getter for `propName_inertialPosition` property */
+    const std::vector<std::string> getPropName_inertialPosition() const { return this->propName_inertialPosition; }
+    /** setter for `propName_inertialVelocity` property */
+    void setPropName_inertialVelocity(std::string value) override;
+    /** getter for `propName_inertialVelocity` property */
+    const std::vector<std::string> getPropName_inertialVelocity() const { return this->propName_inertialVelocity; }
+    /** setter for `propName_inertialAttitude` property */
+    void setPropName_inertialAttitude(std::string value) override;
+    /** getter for `propName_inertialAttitude` property */
+    const std::vector<std::string> getPropName_inertialAttitude() const { return this->propName_inertialAttitude; }
+    /** setter for `propName_inertialAngVelocity` property */
+    void setPropName_inertialAngVelocity(std::string value) override;
+    /** getter for `propName_inertialAngVelocity` property */
+    const std::vector<std::string> getPropName_inertialAngVelocity() const { return this->propName_inertialAngVelocity; }
 
     /** getter for `r_P2P1_B1Init` initial spacecraft separation */
     Eigen::Vector3d getR_P2P1_B1Init() const {return this->r_P2P1_B1Init;};
@@ -95,12 +128,18 @@ private:
 
     // Counters and flags
     int scInitCounter = 0; //!< counter to kill simulation if more than two spacecraft initialized
-    int scID = 1; //!< 0,1 alternating spacecraft tracker to output appropriate force/torque
+    int scID = 1; //!< 0,1 alternating spacecraft toggle to output appropriate force/torque
+    parentID parent1, parent2;
+    int hubCounter = 0;
+    int effectorCounter = 0;
 
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
     Eigen::Vector3d r_P2B2_B2 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
-    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] precribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] prescribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+
+    // Constraint attitude
+    Eigen::Matrix3d dcm_B2B1Init = Eigen::Matrix3d::Identity(); //!< attitude constraint violation
 
     // Gains for PD controller
     double alpha = 0.0; //!< Baumgarte stabilization gain tuning variable
@@ -137,15 +176,29 @@ private:
     double T2_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-2 time step
 
     // Simulation variable pointers
+    std::vector<std::string> stateNameOfPosition;            //!< state engine name of the parent rigid body inertial position vector
+    std::vector<std::string> stateNameOfVelocity;            //!< state engine name of the parent rigid body inertial velocity vector
+    std::vector<std::string> stateNameOfSigma;               //!< state engine name of the parent rigid body inertial attitude
+    std::vector<std::string> stateNameOfOmega;               //!< state engine name of the parent rigid body inertial angular velocity vector
     std::vector<StateData*> hubPosition;    //!< [m] parent inertial position vector
     std::vector<StateData*> hubVelocity;    //!< [m/s] parent inertial velocity vector
     std::vector<StateData*> hubSigma;       //!< parent attitude Modified Rodrigues Parameters (MRPs)
     std::vector<StateData*> hubOmega;       //!< [rad/s] parent inertial angular velocity vector
 
+    // Parent body inertial properties
+    std::vector<std::string> propName_inertialPosition;      //!< property name of inertialPosition
+    std::vector<std::string> propName_inertialVelocity;      //!< property name of inertialVelocity
+    std::vector<std::string> propName_inertialAttitude;      //!< property name of inertialAttitude
+    std::vector<std::string> propName_inertialAngVelocity;   //!< property name of inertialAngVelocity
+    std::vector<Eigen::MatrixXd*> inertialPositionProperty;  //!< [m] position relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialVelocityProperty;  //!< [m/s] velocity relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAttitudeProperty;  //!< attitude relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
+
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
     Eigen::Vector3d psiPrime_N = Eigen::Vector3d::Zero(); //!< [m/s] direction rate constraint violation in inertial frame
-    Eigen::MRPd sigma_B2B1 = Eigen::MRPd::Identity(); //!< attitude constraint violation
+    Eigen::MRPd phi = Eigen::MRPd::Identity(); //!< attitude constraint violation
     Eigen::Vector3d omega_B2B1_B2 = Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity constraint violation in spacecraft 2 body frame
 
     // Force and torque quantities stored to be assigned on the alternating call of computeForceTorque

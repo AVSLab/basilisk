@@ -159,7 +159,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t ca
         }
 
     /* Find the timestep of the simulation. */
-    dt = (callTime - configData->priorTime) * NANO2SEC;
+    dt = diffNanoToSec(callTime, configData->priorTime);
     configData->priorTime = callTime;
 
     /* sigma_dot_RN is calculated by dividing the difference in sigma by the timestep. */

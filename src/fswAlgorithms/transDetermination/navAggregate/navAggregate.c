@@ -49,7 +49,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         snprintf(info, MAX_LOGGING_LENGTH, "The attitude message count %d is larger than allowed (%d). Setting count to max value.",
                   configData->attMsgCount, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->attMsgCount = MAX_AGG_NAV_MSG;
     }
@@ -57,7 +57,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The translation message count %d is larger than allowed (%d). Setting count to max value.",
                   configData->transMsgCount, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->transMsgCount = MAX_AGG_NAV_MSG;
     }
@@ -82,7 +82,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The attTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
               configData->attTimeIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->attTimeIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -90,7 +90,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The attIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->attIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->attIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -98,7 +98,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The rateIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->rateIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->rateIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -106,7 +106,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The sunIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                 configData->sunIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->sunIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -116,7 +116,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The transTimeIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                 configData->transTimeIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->transTimeIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -124,7 +124,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The posIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->posIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->posIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -132,7 +132,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The velIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                   configData->velIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->velIdx = MAX_AGG_NAV_MSG - 1;
     }
@@ -140,7 +140,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
         char info[MAX_LOGGING_LENGTH];
         sprintf(info, "The dvIdx variable %d is too large. Must be less than %d. Setting index to max value.",
                 configData->dvIdx, MAX_AGG_NAV_MSG);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskLog(configData->bskLogger, BSK_WARNING, info);
 
         configData->dvIdx = MAX_AGG_NAV_MSG - 1;
     }

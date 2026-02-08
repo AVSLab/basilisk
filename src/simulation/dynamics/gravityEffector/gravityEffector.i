@@ -18,6 +18,10 @@
  */
 
 %module(package="Basilisk.simulation") gravityEffector
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %}
@@ -66,7 +70,7 @@ from typing import Optional, Union
     object.__setattr__(self, "_pyGravityModel", None) # Enable setting _pyGravityModel
     self.gravityModel = PointMassGravityModel() # Re-set gravityModel to populate the _pyGravityModel%}
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
