@@ -33,6 +33,15 @@ Version |release|
   compute the drag acting on such body.
 - Added :ref:`cannonballDrag`, a model intended to be used with MuJoCo dynamics to model
   cannonball aerodynamic drag forces and torques acting on bodies.
+- Added :ref:`linearTimeInvariantSystem`. This module implements a linear time-invariant
+  system using state-space representation. It can be used to model linear systems in the dynamics task of
+  ``MJScene``. This model is abstract: subclasses must specify how the input vector is
+  read from input messages, and the output vector is written to output messages. Subclasses
+  can be implemented in Python.
+- Added :ref:`singleActuatorLTI`: a single-input single-output subclass of :ref:`linearTimeInvariantSystem`
+  whose input and output is a :ref:`SingleActuatorMsgPayload`.
+- Added :ref:`forceAtSiteLTI`: a subclass of :ref:`linearTimeInvariantSystem` whose input vector
+  is read from a :ref:`ForceAtSiteMsgPayload` and output vector is written to a :ref:`ForceAtSiteMsgPayload`.
 
 
 Version 2.9.0 (Jan. 28 2026)
