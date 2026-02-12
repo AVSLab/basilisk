@@ -4,6 +4,7 @@
     #include "architecture/messaging/messaging.h"
     #include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
     #include "architecture/msgPayloadDefC/RWConfigElementMsgPayload.h"
+    #include "architecture/msgPayloadDefC/FacetElementMsgPayload.h"
     #include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
     #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
     #include <stdint.h>
@@ -29,6 +30,7 @@ STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
+STRUCTASLIST(FacetElementMsgPayload)
 
 %include "messaging/messaging.h"
 %include "_GeneralModuleFiles/sys_model.h"
@@ -36,6 +38,7 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %array_functions(THRConfigMsgPayload, ThrustConfigArray);
 %array_functions(RWConfigElementMsgPayload, RWConfigArray);
 %array_functions(ReconfigBurnInfoMsgPayload, ReconfigBurnArray);
+%array_functions(FacetElementMsgPayload, FacetElementArray);
 
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface
