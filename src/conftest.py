@@ -22,6 +22,7 @@ import shutil
 import subprocess
 import sys
 import warnings
+from datetime import date
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -31,6 +32,14 @@ warnings.filterwarnings(
     "ignore",
     message="builtin type swigvarlink has no __module__ attribute",
     category=DeprecationWarning,
+)
+
+SHOW_PLOTS_REMOVAL_DATE = date(2027, 2, 12)
+SHOW_PLOTS_DEPRECATION_MESSAGE = (
+    "The pytest option '--show_plots' is deprecated and will be removed after February 12, 2027."
+)
+SHOW_PLOTS_ELEVATED_MESSAGE = (
+    "The pytest option '--show_plots' has been deprecated for a year and will be removed shortly."
 )
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -48,6 +57,25 @@ def pytest_addoption(parser):
                      help="test(s) shall display plots")
     parser.addoption("--report", action="store_true",  # --report is easier, more controlled than --html=<pathToReport>
                          help="whether or not to gen a pytest-html report. The report is saved in ./tests/report")
+
+
+def _show_plots_warning_details(today=None):
+    if today is None:
+        today = date.today()
+
+    if today > SHOW_PLOTS_REMOVAL_DATE:
+        return SHOW_PLOTS_ELEVATED_MESSAGE, "red"
+    return SHOW_PLOTS_DEPRECATION_MESSAGE, "yellow"
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    if not config.getoption("--show_plots"):
+        return
+
+    warning_message, terminal_color = _show_plots_warning_details()
+    message = f"DEPRECATION WARNING: {warning_message}"
+    terminalreporter.write_sep("=", "SHOW_PLOTS DEPRECATION", **{terminal_color: True}, bold=True)
+    terminalreporter.write_line(message, **{terminal_color: True}, bold=True)
 
 
 @pytest.fixture(scope="module")
