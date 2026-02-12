@@ -51,6 +51,7 @@ Version |release|
 - Fixed range of grammatical typos in the Basilisk documentation
 - Ensure the HTML documentation figures from the example scenario look more consistent
 - Avoid a memory leak when saving off figures in the CI Unit tests to build the online documentation
+- Deprecated the ``pytest`` optional flag ``show_plots``.
 
 
 Version 2.9.0 (Jan. 28 2026)
