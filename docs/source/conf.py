@@ -153,6 +153,7 @@ exclude_patterns = [
     'examples/BskSim/index.rst',
     'examples/MultiSatBskSim/scenariosMultiSat/index.rst',
     'examples/MultiSatBskSim/index.rst',
+    'examples/MultiSatBskSim/tleData/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/CNN_ImageGen/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',

@@ -355,6 +355,7 @@ Scenarios
    Three-Spacecraft Formation using MultiSat architecture  <MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat>
    Attitude Guidance Modes Scheduling  <MultiSatBskSim/scenariosMultiSat/scenario_AttGuidMultiSat>
    Formation Flying Control  <MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat>
+   Constellation from TLE  <MultiSatBskSim/scenariosMultiSat/scenario_constellationFromTle>
 
 Support Files
 """""""""""""
