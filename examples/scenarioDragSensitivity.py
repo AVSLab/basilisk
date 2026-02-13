@@ -22,7 +22,7 @@ Overview
 
 This script executes a parametric analysis of the control law examined in :ref:`scenarioDragRendezvous`,
 considering the performance of that control
-law across both increasing initial displacements and variations in atmospheric density. 
+law across both increasing initial displacements and variations in atmospheric density.
 
 This script is found in the folder ``src/examples`` and executed by using::
 
@@ -85,28 +85,25 @@ def drag_sensitivity_analysis(ctrlType, nuOffsetNum, densityNum, rerunSims=False
     alt_offsets= [0]  # np.arange(-100,100,10)
     nu_offsets = np.arange(0.001, 1, (1-0.001)/nuOffsetNum)
     density_multipliers = np.logspace(-1, 0.4, num=densityNum)
-    pool = mp.Pool(mp.cpu_count())
-
     X,Y,Z = np.meshgrid(alt_offsets, nu_offsets, density_multipliers)
 
     positions = np.vstack([X.ravel(), Y.ravel(), Z.ravel()]).T
     kwargs = {'ctrlType': ctrlType}
     arg = [(position, kwargs) for position in positions]
     if rerunSims:
-        sim_results = pool.map(sim_wrapper, arg)
+        with mp.Pool(mp.cpu_count()) as pool:
+            sim_results = pool.map(sim_wrapper, arg)
 
         with open(ctrlType+"_sweep_results.pickle", "wb") as output_file:
                 pickle.dump(sim_results, output_file,-1)
     else:
         with open(ctrlType+"_sweep_results.pickle", "rb") as fp:
             sim_results = pickle.load(fp)
-    
-    pool.close()
 
 
 def results_to_ranges_and_plot(results_list):
     """
-    Converts a results dict from scenarioDragRendezvous to a set of initial and final distance and speed errors, 
+    Converts a results dict from scenarioDragRendezvous to a set of initial and final distance and speed errors,
     and returns a plot of all of the Hill-frame trajectories.
     """
     fig = plt.figure()

@@ -7,7 +7,7 @@ Migrating BSK Scripts to Python 3
 With release Basilisk v0.8.x onward the software framework now supports using Python 3. The purpose of this document is to illustrate how to
 migrate Python 2 BSK scripts such that they will function in both Python
 3 and Python 2. For the time being Python 2 is still supported as a
-depreciated functionality. But, python scripts committed to Basilisk
+deprecated functionality. But, python scripts committed to Basilisk
 should be written such that they support Python 3 and 2 for now. This
 document serves as compilation of BSK common syntactical adjustments
 needed to use Python 3. It is not a comprehensive list of the
@@ -16,7 +16,7 @@ differences between Python 2 and Python 3.
 Dividing Scalars
 ----------------
 
-Python 2 and 3 treat the devide operator ``/`` differently if two
+Python 2 and 3 treat the divide operator ``/`` differently if two
 integers operated on. Thus::
 
        a = 3/2
@@ -27,7 +27,7 @@ use either of the following options which work in both version of
 Python::
 
        a = 3//2
-       a = 3./2 
+       a = 3./2
 
 Without modification the user will see an error in Python 3 complaining about an unsupported type conversion::
 

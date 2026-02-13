@@ -42,7 +42,7 @@ typedef struct {
     double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.*/
     double rwSpeedOld[MAX_EFF_CNT];                 /*!< [r/s]  the RW spin rates from the prior control step */
     uint64_t priorTime;                             /*!< [ns]   Last time the module control was called */
-    int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
+    int    resetFlag;                               /*!< []     Flag indicating that a module reset occurred */
 
     /* declare module IO interfaces */
     ArrayMotorVoltageMsg_C voltageOutMsg;      /*!< voltage output message*/
@@ -60,11 +60,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

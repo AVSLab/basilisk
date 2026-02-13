@@ -44,7 +44,7 @@ Replace ``<version>`` with the desired release number, e.g. ``2.9.0``.
 **Prebuilt wheel availability:**
 
 - **Windows:** Windows 10/11 (x86_64)
-- **macOS:** macOS 11+ (x86_64 and Apple Silicon arm64)
+- **macOS:** macOS 11+ (Apple Silicon arm64)
 - **Linux:** Manylinux 2.24+ (x86_64, aarch64)
 
 All wheels are built as **ABI3** packages for Basilisk supported Python
@@ -60,7 +60,7 @@ Basilisk Support Data
 ---------------------
 
 To keep the wheel size smaller, the large BSK data files are not installed by
-default.  If the user wants to use a script that that needs BSK data it will
+default.  If the user wants to use a script that needs BSK data it will
 be downloaded automatically using ``pooch``.  If you want to force all data to
 be downloaded at once, then go to the command line, change the current
 directory to be inside the environment where Basilisk was ``pip`` installed,
@@ -77,7 +77,7 @@ them into the local Basilisk python package installation.
 Basilisk Examples
 -----------------
 
-If you want to run the example files provided by the Basilisk repository can be downloaded to the local
+If you want to run the example files provided by the Basilisk repository, they can be downloaded to the local
 directory using the command line::
 
     bskExamples

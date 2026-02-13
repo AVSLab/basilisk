@@ -21,8 +21,17 @@ import os
 import shutil
 import subprocess
 import sys
+import warnings
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import pytest
+
+warnings.filterwarnings(
+    "ignore",
+    message="builtin type swigvarlink has no __module__ attribute",
+    category=DeprecationWarning,
+)
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -44,6 +53,30 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="module")
 def show_plots(request):
     return request.config.getoption("--show_plots")
+
+
+def _apply_basilisk_plot_defaults():
+    mpl.rcParams.update({
+        "figure.facecolor": "white",
+        "xtick.labelsize": 9,
+        "ytick.labelsize": 9,
+        "figure.figsize": (5.75, 2.5),
+        "axes.labelsize": 10,
+        "legend.fontsize": 9,
+        "figure.autolayout": True,
+        "figure.max_open_warning": 30,
+        "legend.loc": "lower right",
+    })
+
+
+@pytest.fixture(autouse=True)
+def reset_matplotlib_state():
+    _apply_basilisk_plot_defaults()
+    try:
+        yield
+    finally:
+        plt.close("all")
+        _apply_basilisk_plot_defaults()
 
 # we don't want to reconfigure pytest per pytest-html unless we have it
 # for more on this, see the reportconf.py file.
