@@ -191,6 +191,8 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         self.set_EnvModel(BSK_GnssrEnvironmentEarth)
         self.set_DynModel([BSK_GnssrSatDynamics] * numberSpacecraft)
         self.set_FswModel([BSK_GnssrSatFsw] * numberSpacecraft)
+        if self.useBarycenter:
+            self.setup_virtual_chief(self.EnvModel.gravFactory.gravBodies.values())
 
         # Configure the GNSS constellations
 #        for constIdx in range(len(txConstTleData)):
@@ -219,6 +221,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         self.gsAccessLog = []
         self.batteryMsgLog = []  # Add this line
         self.chiefTransLog = None
+        self.virtualChiefTransLog = None
 
         # declare empty containers for orbital elements
         self.oe = []
@@ -486,10 +489,10 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                     self.DynModels[spacecraft].simpleNavObject.transOutMsg,
                     self.DynModels[spacecraft].simpleMassPropsObject.vehicleConfigOutMsg)
                 self.FSWModels[spacecraft].spacecraftReconfig.chiefTransInMsg.subscribeTo(
-                    self.relativeNavigationModule.transOutMsg)
+                    self.virtualChiefNav.transOutMsg)
                 # For meanOEFeedback:
                 self.FSWModels[spacecraft].meanOEFeedback.chiefTransInMsg.subscribeTo(
-                    self.relativeNavigationModule.transOutMsg)
+                    self.virtualChiefNav.transOutMsg)
 
             # Configure the relative navigation module
             self.relativeNavigationModule.useOrbitalElements = True
@@ -574,6 +577,14 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         DynModels[2].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
         DynModels[2].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
+        if self.useBarycenter:
+            r_bary = (np.array(rN0) + np.array(rN1) + np.array(rN2)) / 3.0
+            v_bary = (np.array(vN0) + np.array(vN1) + np.array(vN2)) / 3.0
+            self.virtualChiefSc.hub.r_CN_NInit = r_bary.tolist()
+            self.virtualChiefSc.hub.v_CN_NInit = v_bary.tolist()
+            self.virtualChiefSc.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+            self.virtualChiefSc.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+
     def log_outputs(self):
         # Process outputs
         EnvModel = self.get_EnvModel()
@@ -654,6 +665,9 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             self.batteryMsgLog.append(DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[spacecraft].taskName, self.batteryMsgLog[spacecraft])
 
+            self.virtualChiefTransLog = self.virtualChiefNav.transOutMsg.recorder(self.samplingTime)
+            self.AddModelToTask(self.virtualChiefTaskName, self.virtualChiefTransLog)
+
     def pull_outputs(self, showPlots, spacecraftIndex):
         # Process outputs
         DynModels = self.get_DynModel()
@@ -731,8 +745,8 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
         # Extract position and velocity information of the chief
         if self.useBarycenter:
-            dataChiefPosition = self.chiefTransLog.r_BN_N
-            dataChiefVelocity = self.chiefTransLog.v_BN_N
+            dataChiefPosition = self.virtualChiefTransLog.r_BN_N
+            dataChiefVelocity = self.virtualChiefTransLog.v_BN_N
         else:
             dataChiefPosition = r_BN_N[self.chiefIndex]
             dataChiefVelocity = v_BN_N[self.chiefIndex]
