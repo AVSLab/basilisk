@@ -167,7 +167,34 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.relativeNavigationModule.ModelTag = "RelativeNavigation"
 
         # Create barycenter visualization point
+        # Create barycenter visualization point (continuously updated for Vizard)
         self.barycenterPoint = BarycenterPoint(self.relativeNavigationModule.transOutMsg)
+
+        # Virtual chief: a free-flying spacecraft initialized at the barycenter
+        # at t=0 and propagated under gravity only (no actuators).
+        # FSW station-keeping should reference this instead of the live barycenter.
+        self.virtualChiefSc = None
+        self.virtualChiefNav = None
+        self.virtualChiefTaskName = None
+
+    def setup_virtual_chief(self, gravBodies):
+        from Basilisk.simulation import spacecraft, simpleNav
+
+        self.virtualChiefSc = spacecraft.Spacecraft()
+        self.virtualChiefSc.ModelTag = "virtualChief"
+        self.virtualChiefSc.gravField.gravBodies = spacecraft.GravBodyVector(list(gravBodies))
+
+        self.virtualChiefNav = simpleNav.SimpleNav()
+        self.virtualChiefNav.ModelTag = "virtualChiefNav"
+        self.virtualChiefNav.scStateInMsg.subscribeTo(self.virtualChiefSc.scStateOutMsg)
+
+        vcProcessName = "VirtualChiefProcess"
+        vcProc = self.CreateNewProcess(vcProcessName, 200)
+        self.virtualChiefTaskName = "virtualChiefTask"
+        vcProc.addTask(
+            self.CreateNewTask(self.virtualChiefTaskName, mc.sec2nano(self.dynRate)), 20)
+        self.AddModelToTask(self.virtualChiefTaskName, self.virtualChiefSc, 10)
+        self.AddModelToTask(self.virtualChiefTaskName, self.virtualChiefNav, 9)
 
 class BSKScenario(object):
     def __init__(self):
