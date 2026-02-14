@@ -25,6 +25,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Updated ``conanfile.py`` to pass ``compiler.cstd=gnu17`` during Conan build step to avoid ``cspice/0067``
+  build failures on newer GCC 15 based Linux toolchains.
 - Updated the World Magnetic Model (WMM) Coefficients file to the 2025 version.
 - Local data fetches fall back to using the pooch fetch if local files are not found.
 - No longer prefetch ephemeris data kernels on initial local builds. The data fetcher will handle it.
