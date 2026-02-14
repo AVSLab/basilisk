@@ -23,126 +23,20 @@ r"""
 Overview
 --------
 
-This script sets up three 6-DOF spacecraft orbiting the Earth in formation. The goal of this scenario is to
-
+This script sets up three 6-DOF spacecraft orbiting the Earth in LEAD-FOLLOWER formation.
+The goal of this scenario is to
 #. introduce formation flying control with desired orbital element differences,
 #. evidence how the module can conciliate attitude requests with thruster requirements, and
 #. show how one can choose whether the chief of the formation is a spacecraft or the formation's barycenter.
 
 The script is found in the folder ``basilisk/examples/MultiSatBskSim/scenariosMultiSat`` and is executed by using::
 
-      python3 scenario_StationKeepingMultiSat.py
-
-This simulation is based on the :ref:`scenario_AttGuidMultiSat` with the addition of station keeping control. Attitude
-mode requests are processed in the same way as before, but now there is the added complexity of introducing formation
-control, which can influence attitude requests.
-
-The user can choose whether to use the zeroth index spacecraft or the formation's barycenter as the formation's chief.
-On that note, some geometries are not possible when using the barycenter as a reference point for the formation. This is
-because the barycenter is influenced by the spacecraft reorienting themselves, and so only some geometries are feasible.
-Failure to take this into account results in the spacecraft continuously correcting their orbits without ever
-converging.
-
-For simplicity, the script plots only the information related to one of the spacecraft, despite logging the necessary
-information for all spacecraft in the simulation.
-
-Custom Dynamics Configurations Instructions
--------------------------------------------
-
-The dynamics modules required for this scenario are the same used in :ref:`scenario_BasicOrbitMultiSat` and
-:ref:`scenario_AttGuidMultiSat`. However, this example takes full advantage of all the features of the dynamics class,
-which includes thrusters for orbit corrections.
-
-Custom FSW Configurations Instructions
---------------------------------------
-
-As stated in the previous section, the :ref:`BSK_GnssrSatFsw` class used in this example is the same as the one used in
-:ref:`scenario_AttGuidMultiSat`. The main difference is that the station keeping module is now used, which allows for
-relative orbit geometry control.
-
-If no station keeping is desired, then the FSW stack works exactly as in :ref:`scenario_AttGuidMultiSat`. However, if
-station keeping is set properly, the FSW events work as follows. First, the attitude reference is set given the pointing
-requirements. Then, the station keeping module computes the information regarding the necessary corrective burns, such
-as point in orbit, duration, thrust, attitude requirements, etc. With this information, the module then chooses whether
-the spacecraft is in a point in orbit where a burn is required. If it is, the attitude reference from the pointing
-requirement is overruled in favor of the necessary attitude to complete the current burn. If it is not, the reference
-attitude passes through unchanged.
-
-The control law used to drive the formation to its intended orbital element differences is guaranteed to converge if the
-chief has Keplerian motion. This might not be the case when the chief is the formation's barycenter, as its orbital
-elements change in accordance to how each spacecraft is maneuvering. One way to help with convergence is to make sure
-that the barycenter has invariant orbital elements. This can be achieved by guaranteeing that the following equation
-holds:
-
-.. math::
-    \sum_i m_i\Delta oe_i = 0
-
-Activation of the station keeping mode is done through the ``stationKeeping`` flag. If set to ``True``, formation
-control will be activated.
-
-Due to the fact that the ``spacecraftReconfig`` module only accepts messages of the type :ref:`attRefMsgPayload`, the
-``locationPointing`` module always outputs a reference message and the ``attTrackingError`` module is always called,
-unlike how it happens in :ref:`scenario_AttGuidMultiSat`.
-
-Illustration of Simulation Results
-----------------------------------
-
-Since three spacecraft are simulated, and to prevent excessively busy plots, only the information pertaining to one
-spacecraft is plotted per simulation.
-
-::
-
-    show_plots = True, numberSpacecraft=3
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitude.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rate.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitudeTrackingError.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_trackingErrorRate.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_attitudeReference.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rateReference.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rwMotorTorque.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_rwSpeeds.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_orbits.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_relativeOrbits.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_oeDifferences.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_power.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_fuel.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenario_StationKeepingMultiSat_thrustPercentage.svg
-   :align: center
-
+      python3 scenario_GnssR_LeoFormation.py
 """
 
 import inspect, math, os, sys
-from tabnanny import verbose
 
 from Basilisk.simulation.albedo import BSK_ERROR
-from mypy.util import T
 import numpy as np
 from Basilisk.architecture import messaging
 # Import utilities
@@ -170,7 +64,6 @@ FORMATION_CONFIG = {
     'COCENTRIC_FORMATION': {'uses_barycenter': False, 'chief_index': 0},
     'LEAD_FOLLOWER': {'uses_barycenter': False, 'chief_index': 1},
     'CIRCULAR_PROJECTED_ORBITS': {'uses_barycenter': True, 'chief_index': None},
-    'TRANSITION_TO_CPO': {'uses_barycenter': True, 'chief_index': None},
 }
 
 # Create your own scenario child class
@@ -280,12 +173,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 self.vizPanels.append(dataPanel)
                 gsList.append([batteryPanel, tankPanel, dataPanel])
 
-            lastTaskName = self.DynModels[-1].taskName  # Load Vizard with the last spacecraft's dynamics task
-
-            # Add barycenter modules to dynamics task for proper Vizard sync (only if using barycenter)
-            if self.useBarycenter:
-                self.AddModelToTask(lastTaskName, self.relativeNavigationModule, 5)
-                self.AddModelToTask(lastTaskName, self.barycenterPoint.getConverter(), 4)
+            lastTaskName = self.vizTaskName  # Dedicated process (priority 10) — always runs last
 
             viz = vizSupport.enableUnityVisualization(self, lastTaskName, DynModelsList
                                                       , saveFile=__file__
@@ -297,10 +185,13 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
             if self.formation == 'COCENTRIC_FORMATION' or self.formation == 'LEAD_FOLLOWER':
                 #  Use spacecraft 0 as reference for cocentric and lead-follower formations
-                viz.settings.relativeOrbitChief = self.DynModels[0].scObject.ModelTag
+                if hasattr(self, 'virtualChiefSc') and self.virtualChiefSc is not None:
+                    viz.settings.relativeOrbitChief = self.virtualChiefSc.ModelTag
+                else:
+                    # fallback to the converter/barycenter name used for viz
+                    viz.settings.relativeOrbitChief = "barycenter"
             elif self.formation == 'CIRCULAR_PROJECTED_ORBITS':
-                # Use barycenter as reference for projected circular orbits
-                # Create VizSpacecraftData for the barycenter
+                # ----- Live barycenter (mass-weighted mean, updated every step) -----
                 self.barycenterVizData = vizSupport.vizInterface.VizSpacecraftData()
                 self.barycenterVizData.spacecraftName = self.barycenterPoint.ModelTag
                 self.barycenterVizData.scStateInMsg.subscribeTo(self.barycenterPoint.scStateOutMsg)
@@ -314,11 +205,24 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 # Hide the barycenter model using zero scale
                 vizSupport.createCustomModel(viz,
                     modelPath="SPHERE",
-                    simBodiesToModify=["barycenter"],
-                    scale=[0.1, 0.1, 0.1])
+                    simBodiesToModify=[self.barycenterPoint.ModelTag],
+                    scale=[0.1, 0.1, 0.1],
+                    color=vizSupport.toRGBA255("cyan"))
 
-#                viz.liveSettings.relativeOrbitChief = "barycenter" # set the chief for relative orbit trajectory
-                viz.settings.relativeOrbitChief = self.DynModels[0].scObject.ModelTag
+                # ----- Virtual chief (non-perturbed, propagated independently) -----
+                self.virtualChiefVizData = vizSupport.vizInterface.VizSpacecraftData()
+                self.virtualChiefVizData.spacecraftName = self.virtualChiefSc.ModelTag
+                self.virtualChiefVizData.scStateInMsg.subscribeTo(self.virtualChiefSc.scStateOutMsg)
+                self.virtualChiefVizData.thrInMsgs = messaging.THROutputMsgInMsgsVector([])
+                self.virtualChiefVizData.thrInfo = vizSupport.vizInterface.ThrClusterVector([])
+                viz.scData.push_back(self.virtualChiefVizData)
+                vizSupport.createCustomModel(viz,
+                    modelPath="SPHERE",
+                    simBodiesToModify=[self.virtualChiefSc.ModelTag],
+                    scale=[0.15, 0.15, 0.15],
+                    color=vizSupport.toRGBA255("orange"))
+
+                viz.settings.relativeOrbitChief = self.virtualChiefSc.ModelTag
             else:
                 BSK_ERROR("Formation does not match any type implemented.")
 
@@ -356,7 +260,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             # =====================================================
             # CHIEF (SC0)
             # =====================================================
-
             self.FSWModels[0].spacecraftReconfig.targetClassicOED = [
                 0.0,   # Δa/a
                 0.0,   # Δe
@@ -369,7 +272,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             # =====================================================
             # DEPUTY 1 (SC1)  ---- radius rho
             # =====================================================
-
             delta_ex1 = delta_e1 * np.cos(phi)
             delta_ey1 = delta_e1 * np.sin(phi)
 
@@ -377,18 +279,17 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             delta_iy1 = delta_i1 * np.sin(phi + np.pi/2)
 
             self.FSWModels[1].spacecraftReconfig.targetClassicOED = [
-                0.0,            # Δa  (CRITICAL -> prevents drift)
-                delta_e1,       # keep this! Basilisk needs it
-                delta_iy1,      # Δi
-                delta_ix1,      # ΔΩ
-                delta_ey1,      # Δω
-                -delta_ex1      # ΔM  (MOST IMPORTANT LINE)
+                0.0,            # Δa/a = a_d/a_c - a_c/a_c  (Should be 0.0 -> prevents drift)
+                delta_e1,       # Δe   = e_d    ​ - e_c​
+                delta_iy1,      # Δi   = i_d     - i_c
+                delta_ix1,      # ΔΩ   = Ω_d     - Ω_c
+                delta_ey1,      # Δω   = ω_d     - ω_c
+                -delta_ex1      # ΔM   = M_d     - M_c
             ]
 
             # =====================================================
             # DEPUTY 2 (SC2) ---- radius 2*rho
             # =====================================================
-
             delta_ex2 = delta_e2 * np.cos(phi)
             delta_ey2 = delta_e2 * np.sin(phi)
 
@@ -396,80 +297,82 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             delta_iy2 = delta_i2 * np.sin(phi + np.pi/2)
 
             self.FSWModels[2].spacecraftReconfig.targetClassicOED = [
-                0.0,
-                delta_e2,
-                delta_iy2,
-                delta_ix2,
-                delta_ey2,
-                -delta_ex2
+                0.0,         # Δa   = a_d     - a_c  (Must be 0.0 -> req. for bounded motion)
+                delta_e2,    # Δe   = e_d​     - e_c​
+                delta_iy2,   # Δi   = i_d     - i_c
+                delta_ix2,   # ΔΩ   = Ω_d     - Ω_c
+                delta_ey2,   # Δω   = ω_d     - ω_c
+                -delta_ex2   # ΔM   = M_d     - M_c
             ]
         elif formation == 'CIRCULAR_PROJECTED_ORBITS':
-            a = self.oe[0].a
-            rho = 50.0  # formation radius [m]
-            # Schaub Eq.14.155: δe = ρ/(2a), δi = ρ/a
-            delta_e = rho/(2.0 * a)
-            delta_i = rho / a
+            a = self.oe[0].a          # chief semi-major axis
+            rho = 50.0                # projected formation radius [m]
 
-            phis = [0.0, 2*np.pi/3, 4*np.pi/3]  # 0°,120°,240° phases
+            delta_e = rho / a
+            delta_i = np.sqrt(3.0) * delta_e  # J2-invariant
+
+            # 120 degree spacing
+            phis = [0.0, 2.0*np.pi/3.0, 4.0*np.pi/3.0] # 120 degree spacing
 
             for k in range(3):
                 phi = phis[k]
-                # Eccentricity vector components
+
+                # Eccentricity vector at phase phi
                 delta_ex = delta_e * np.cos(phi)
                 delta_ey = delta_e * np.sin(phi)
-                # Inclination vector components (orthogonal to eccentricity)
-                delta_ix = delta_i * np.cos(phi + np.pi/2)
-                delta_iy = delta_i * np.sin(phi + np.pi/2)
 
-                # Assign target OED differences (Δa/a, Δe, Δi, ΔΩ, Δω, ΔM)
+                # Inclination vector at phase phi+90Â° (perpendicularity â†’ circular shape)
+                delta_ix = -delta_i * np.sin(phi)
+                delta_iy =  delta_i * np.cos(phi)
+
+                # [Δa/a, Δex, Δiy, Δix, Δey, Δλ]
                 self.FSWModels[k].spacecraftReconfig.targetClassicOED = [
-                    0.0,          # Δa/a (zero for no semi-major axis change):contentReference[oaicite:8]{index=8}
-                    delta_e,      # Δe  (magnitude)
-                    delta_iy,     # Δi
-                    delta_ix,     # ΔΩ
-                    delta_ey,     # Δω
-                    -delta_ex     # ΔM
+                    0.0,            # Δa     Δa = 0.0 -> required bounded motion (p. 797)
+                    delta_ex,       # Δe
+                    delta_iy,       # Δi
+                    delta_ix,       # ΔΩ
+                    delta_ey,       # Δω
+                    -delta_ex       # ΔM = -Δe ― bounded condition
                 ]
-        elif formation == 'TBD': # TRANS
-            a = self.oe[0].a
-            rho_final = 75.0
-            delta_e_final = rho_final / a
-            delta_i_final = np.sqrt(3.0) * delta_e_final
 
-            # Fraction of final formation applied in this intermediate step
-            # e.g., 0.3 means 30% of the final delta-OE offsets
-            fraction = 0.3
-
-            phis = [0.0, 2*np.pi/3, 4*np.pi/3]
-
-            for k in range(3):
-                if k == 0:
-                    # barycenter reference stays at zero
-                    self.FSWModels[k].spacecraftReconfig.targetClassicOED = [0.0]*6
-                    continue
-
-                phi = phis[k]
-
-                # scaled eccentricity offsets
-                delta_ex = fraction * delta_e_final * np.cos(phi)
-                delta_ey = fraction * delta_e_final * np.sin(phi)
-
-                # scaled inclination offsets
-                delta_ix = fraction * delta_i_final * np.cos(phi + np.pi/2)
-                delta_iy = fraction * delta_i_final * np.sin(phi + np.pi/2)
-
-                # RAAN/ω offsets to partially cancel J2 drift
-                delta_Omega = -delta_ix
-                delta_omega = delta_ey
-
-                self.FSWModels[k].spacecraftReconfig.targetClassicOED = [
-                    0.0,          # Δa/a
-                    delta_ex,     # ex
-                    delta_iy,     # iy
-                    delta_ix,     # ix ≈ ΔΩ
-                    delta_ey,     # ey ≈ Δω
-                    -delta_ex     # bounded motion (keeps formation closed)
-                ]
+                print(f"\nSat{k} CPO target (phi={np.degrees(phi):.0f}°):")
+                print(f"  [Δa/a, Δex, Δiy, Δix, Δey, Δλ] = {self.FSWModels[k].spacecraftReconfig.targetClassicOED}")
+                                                                     #Δa     Δe         Δi          ΔΩ         Δω         ΔM
+#            self.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0,    7.22e-6,   1.25e-5,    0.0,       0.0,      7.22e-6] # Set SC0
+#            self.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0,   -3.6e-6,   -6.25e-6,   -1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC1
+#            self.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0,   -3.6e-6,   -6.25e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC2
+            self.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC0
+            self.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC1
+            self.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC2
+            # meanOEFeedback
+#            a = self.oe[0].a
+#            rho = 50.0                # projected formation radius [m]
+#
+#            delta_e = rho / a
+#            delta_i = np.sqrt(3.0) * delta_e  # J2-invariant
+#
+#            phis = [0.0, 2.0*np.pi/3.0, 4.0*np.pi/3.0]
+#
+#            for k in range(3):
+#                phi = phis[k]
+#
+#                # Equinoctial eccentricity vector at phase phi
+#                delta_h = delta_e * np.sin(phi)   # Δ(e·sin(ω+Ω))
+#                delta_k = delta_e * np.cos(phi)   # Δ(e·cos(ω+Ω))
+#
+#                # Equinoctial inclination vector perpendicular to e-vector
+#                delta_p =  delta_i * np.cos(phi)  # Δ(tan(i/2)·sin(Ω))
+#                delta_q = -delta_i * np.sin(phi)  # Δ(tan(i/2)·cos(Ω))
+#
+#                # Set equinoctial targets on meanOEFeedback
+#                # [Δa/a, Δh, Δk, Δp, Δq, Δλ]
+#                self.FSWModels[k].meanOEFeedback.targetDiffOeMean = [
+#                    0.0, delta_h, delta_k, delta_p, delta_q, 0.0   # ← Δλ = 0, not -delta_k
+#                ]
+#
+#                print(f"\nSat{k} CPO equinoctial target (phi={np.degrees(phi):.0f}°):")
+#                print(f"  [Δa/a, Δh, Δk, Δp, Δq, Δλ] = "
+#                      f"{self.FSWModels[k].meanOEFeedback.targetDiffOeMean}")
         elif formation == 'LEAD_FOLLOWER': # LF TODO This might be wrong
             separation = 30.0  # [m] along-track separation
             delta_M = separation / self.oe[0].a  # [rad]
@@ -519,6 +422,16 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
         self.setFormationTargets(self.formation)
 
+        # DIAGNOSTIC: Print the ROE targets and their magnitudes to verify they are set as expected
+        print("\n--- ROE targets debug ---")
+        for k in range(3):
+            t = self.FSWModels[k].spacecraftReconfig.targetClassicOED
+            de_vec = np.array([t[1], t[4]])   # [delta_ex, delta_ey]
+            di_vec = np.array([t[2], t[3]])   # [delta_ix, delta_iy]
+            print(f"Sat{k} targetClassicOED: {t}")
+            print(f"  |de|={np.linalg.norm(de_vec):.6e}, |di|={np.linalg.norm(di_vec):.6e}, de·di={np.dot(de_vec,di_vec):.6e}")
+        # END DIAGNOSTIC
+
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
         DynModels = self.get_DynModel()
@@ -529,7 +442,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         i_sso = 97.6 * macros.D2R  # SSO inclination for 550 km
 
         # Separation in along-track
-        separation = 50  # meters
+        separation = 50.0  #50  # meters
         delta_f = separation / a_sso  # ≈ 7.2e-6 rad
 
         # Base true anomaly (this will be the barycenter position)
@@ -538,7 +451,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # SC0: AHEAD of barycenter (+50m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[0].a = a_sso
-        self.oe[0].e = 0.0001
+        self.oe[0].e = 0.001
         self.oe[0].i = i_sso
         self.oe[0].Omega = 48.2 * macros.D2R
         self.oe[0].omega = 0.0
@@ -552,7 +465,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # SC1: AT barycenter (0m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[1].a = a_sso
-        self.oe[1].e = 0.0001
+        self.oe[1].e = 0.001
         self.oe[1].i = i_sso
         self.oe[1].Omega = 48.2 * macros.D2R
         self.oe[1].omega = 0.0
@@ -566,7 +479,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # SC2: BEHIND barycenter (-50m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[2].a = a_sso
-        self.oe[2].e = 0.0001
+        self.oe[2].e = 0.001
         self.oe[2].i = i_sso
         self.oe[2].Omega = 48.2 * macros.D2R
         self.oe[2].omega = 0.0
@@ -596,6 +509,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
         # Log the barycentre's position and velocity
         if self.useBarycenter:
+            # NOTE: this records the live barycenter (for viz/debugging). The controllers below use the virtualChiefNav as chief.
             self.chiefTransLog = self.relativeNavigationModule.transOutMsg.recorder(self.samplingTime)
             self.AddModelToTask(self.relativeNavigationTaskName, self.chiefTransLog)
 
@@ -665,6 +579,8 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             self.batteryMsgLog.append(DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[spacecraft].taskName, self.batteryMsgLog[spacecraft])
 
+        # log virtual chief (single recorder, not per-spacecraft)
+        if self.useBarycenter and self.virtualChiefNav is not None:
             self.virtualChiefTransLog = self.virtualChiefNav.transOutMsg.recorder(self.samplingTime)
             self.AddModelToTask(self.virtualChiefTaskName, self.virtualChiefTransLog)
 
@@ -824,11 +740,44 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
 def runScenario(scenario):
     scenario.configure()
+    # Add right after scenario.configure() in runScenario():
+    # DIAGNOSTIC: Print the meanOEFeedback parameters to verify they are set as expected
+    print("\n=== meanOEFeedback diagnostic ===")
+    for k in range(scenario.numberSpacecraft):
+        moe = scenario.FSWModels[k].meanOEFeedback
+        print(f"Sat{k}:")
+        print(f"  mu  = {moe.mu:.6e}")
+        print(f"  req = {moe.req:.6e}")
+        print(f"  J2  = {moe.J2:.6e}")
+        print(f"  oeType = {moe.oeType}")
+        print(f"  targetDiffOeMean = {list(moe.targetDiffOeMean)}")
+        print(f"  K diag = {[moe.K[i*6+i] for i in range(6)]}")
+    print(f"EnvModel.mu = {scenario.get_EnvModel().mu:.6e}")
+    print(f"EnvModel.planetRadius = {scenario.get_EnvModel().planetRadius:.6e}")
+    print("================================\n")
+    # END DIAGNOSTIC
 
     # =========================================
     # Initialize simulation
     # =========================================
     scenario.InitializeSimulation()
+
+    # --- DIAGNOSTIC (t = 0 check) ---
+#    print("\n--- Initial Chief Consistency Check ---")
+
+#    # live barycenter (from formationBarycenter module)
+#    if scenario.useBarycenter:
+#        live_bary_msg = scenario.relativeNavigationModule.transOutMsg.read()
+#        print("Initial live barycenter r_BN_N:", live_bary_msg.r_BN_N)
+
+#       # virtual chief
+#       virt_msg = scenario.virtualChiefNav.transOutMsg.read()
+
+#       print("Initial virtualChief r_BN_N:", virt_msg.r_BN_N)
+#       simulationTime = macros.min2nano(1.) # 1 minute
+#       scenario.ConfigureStopTime(simulationTime)
+#       scenario.ExecuteSimulation()
+    # END DIAGNOSTIC --------------------------------
 
     # =========================================
     # Phase 0: Configure initial FSW attitude mode
@@ -867,14 +816,24 @@ def runScenario(scenario):
         if scenario.chiefIndex is not None and i == scenario.chiefIndex:
             continue  # Skip station keeping for the chief in lead-follower or cocentric formations
         scenario.FSWModels[i].setModeRequest(modeRequest="initiateStationKeeping", verbose=True)
+#        scenario.FSWModels[i].setModeRequest(modeRequest="startMeanOEFeedback", verbose=True)
     simulationTime2 = macros.hour2nano(24.0) # 1 day (24 hours)
     scenario.ConfigureStopTime(simulationTime0 + simulationTime1 + simulationTime2)
     scenario.ExecuteSimulation()
 
-    #DEBUG
-    for k in range(3):
-        print(scenario.FSWModels[k].spacecraftReconfig.targetClassicOED)
-    #END DEBUG
+    # DIAGNOSTIC: Check the targetClassicOED values after reconfiguration
+#    if scenario.formation == 'CIRCULAR_PROJECTED_ORBITS':
+#        from Basilisk.utilities import orbitalMotion as om
+#        mu = scenario.get_EnvModel().mu
+#        for k in range(3):
+#            chief = scenario.virtualChiefNav.transOutMsg.read()
+#            dep = scenario.DynModels[k].simpleNavObject.transOutMsg.read()
+
+#            oe_chief = om.rv2elem(mu, np.array(chief.r_BN_N), np.array(chief.v_BN_N))
+#            oe_dep = om.rv2elem(mu, np.array(dep.r_BN_N), np.array(dep.v_BN_N))
+
+#            print(f"Sat{k} Δa:", oe_dep.a - oe_chief.a)
+    #END DIAGNOSTIC
 
     # =========================================
     # Phase 3: Location pointing (EXPAND TO GNSS-R operations)
@@ -917,7 +876,7 @@ if __name__ == "__main__":
 
     run(showPlots=True,
         numberSpacecraft=3,
-        formation='CIRCULAR_PROJECTED_ORBITS', # can be any of ['COCENTRIC_FORMATION', 'CIRCULAR_PROJECTED_ORBITS', 'LEAD_FOLLOWER', 'CARTWHEEL']
+        formation='CIRCULAR_PROJECTED_ORBITS', # can be any of ['COCENTRIC_FORMATION', 'CIRCULAR_PROJECTED_ORBITS', 'LEAD_FOLLOWER']
         txConstTleData=[gpsTleData] # can be any of ['GPS', 'Galileo', 'Beidou', 'Glonass']
         )
     A = 1

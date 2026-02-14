@@ -21,6 +21,7 @@ from Basilisk import __path__
 from Basilisk.simulation import ephemerisConverter, groundLocation, eclipse, magneticFieldWMM, exponentialAtmosphere, simpleAntenna #msisAtmosphere
 from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import macros as mc, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
 
@@ -88,6 +89,10 @@ class BSKEnvironmentModel:
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants
+
+        # Enable J2 gravity for Earth
+#        ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
+#        gravBodies['earth'].useSphericalHarmonicsGravityModel(str(ggm2b_path), 10)
 
     def SetEpochObject(self):
         """
