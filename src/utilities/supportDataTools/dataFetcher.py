@@ -110,6 +110,13 @@ def _local_rel(rel: str) -> str:
     return rel[len(prefix) :] if rel.startswith(prefix) else rel
 
 
+def local_support_path(rel: str) -> Optional[Path]:
+    """Return the local filesystem path for a registry-style key, if available."""
+    if not LOCAL_SUPPORT:
+        return None
+    return LOCAL_SUPPORT / _local_rel(rel)
+
+
 def get_path(file_enum: Enum) -> Path:
     """
     Return a filesystem path for the requested supportData file.
@@ -121,8 +128,7 @@ def get_path(file_enum: Enum) -> Path:
     rel = relpath(file_enum)
 
     if LOCAL_SUPPORT:
-        local = LOCAL_SUPPORT / _local_rel(rel)
-        # If local file is missing, fall through to Pooch.
+        local = local_support_path(rel)
         if local.exists():
             return local
 
