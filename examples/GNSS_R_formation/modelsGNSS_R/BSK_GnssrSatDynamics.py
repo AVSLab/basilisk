@@ -22,7 +22,7 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
                                  thrusterDynamicEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower, magnetometer, MtbEffector, dragDynamicEffector, simpleInstrument,
-                                 partitionedStorageUnit, spaceToGroundTransmitter, simpleAntenna, antennaPower)
+                                 partitionedStorageUnit, spaceToGroundTransmitter, simpleAntenna, antennaPower, extForceTorque)
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
 
@@ -93,6 +93,7 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.instrument, 90)
         SimBase.AddModelToTask(self.taskName, self.dataMonitor, 89)
         SimBase.AddModelToTask(self.taskName, self.transmitter, 99)
+        SimBase.AddModelToTask(self.taskName, self.extForceOEFeedback, 100)
 
         for item in range(self.numRW):
             SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)
@@ -370,6 +371,12 @@ class BSKDynamicModels:
         self.simpleAntennaPower.antennaSetStateInMsg.subscribeTo(self.simpleAntenna.antennaOutMsg)
         self.simpleAntennaPower.basePowerNeed = 0.0  # Watt
 
+    def SetExtForceOEFeedback(self):
+        """External force effector for meanOEFeedback controller"""
+        self.extForceOEFeedback = extForceTorque.ExtForceTorque()
+        self.extForceOEFeedback.ModelTag = "extForceOEFeedback" + str(self.spacecraftIndex)
+        self.scObject.addDynamicEffector(self.extForceOEFeedback)
+
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):
         """
@@ -400,5 +407,6 @@ class BSKDynamicModels:
         self.SetDragEffector(SimBase)
         self.SetInstrument()
         self.SetTransmitter(SimBase)
+        self.SetExtForceOEFeedback()
         self.SetDataMonitor()
 #        self.SetLinkBudget()
