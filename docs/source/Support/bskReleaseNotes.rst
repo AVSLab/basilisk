@@ -25,6 +25,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Local data fetches fall back to using the pooch fetch if local files are not found.
 - No longer prefetch ephemeris data kernels on initial local builds. The data fetcher will handle it.
 - Warnings for not connected messages of types: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg`` in
   the :ref:`simpleAntenna` module for ground based antennas are not raised anymore.
