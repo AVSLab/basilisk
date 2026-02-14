@@ -47,5 +47,5 @@ REGISTRY = {
     "supportData/LocalGravData/GGM2BData.txt": "md5:79a4c3aa3199a68a136d25b7167a0cc1",
     "supportData/LocalGravData/VESTA20H.txt": "md5:f9ec4308ea7049656f64e64d6019d570",
     "supportData/LocalGravData/eros007790.tab": "md5:5bdf62cee6c7069ea547cca6ed7c724f",
-    "supportData/MagneticField/WMM.COF": "md5:8caac788545d3a32d55faba8aa87c93b",
+    "supportData/MagneticField/WMM2025.COF": "md5:8caac788545d3a32d55faba8aa87c93b",
 }

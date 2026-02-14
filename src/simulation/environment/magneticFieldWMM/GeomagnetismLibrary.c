@@ -376,7 +376,7 @@ CALLS : none
             printf("\nError initializing Geoid.\n");
             break;
         case 6:
-            printf("\nError opening WMM.COF\n.");
+            printf("\nError opening WMM2025.COF\n.");
             break;
         case 7:
             printf("\nError opening WMMSV.COF\n.");
@@ -1637,7 +1637,7 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
 int MAG_readMagneticModel(char *filename, MAGtype_MagneticModel * MagneticModel)
 {
 
-    /* READ WORLD Magnetic MODEL SPHERICAL HARMONIC COEFFICIENTS (WMM.cof)
+    /* READ WORLD Magnetic MODEL SPHERICAL HARMONIC COEFFICIENTS (WMM2025.cof)
        INPUT :  filename
             MagneticModel : Pointer to the data structure with the following fields required as inputs
                                     nMax : 	Number of static coefficients

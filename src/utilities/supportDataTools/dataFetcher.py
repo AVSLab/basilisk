@@ -195,7 +195,7 @@ class DataFile:
         VESTA20H = "VESTA20H.txt"
 
     class MagneticFieldData(Enum):
-        WMM = "WMM.COF"
+        WMM = "WMM2025.COF"
 
     class SkyBrightnessData(Enum):
         skyTemperature408MHz = "haslam408_dsds_Remazeilles2014.fits"
