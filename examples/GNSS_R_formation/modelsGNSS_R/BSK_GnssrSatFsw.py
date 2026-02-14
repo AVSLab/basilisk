@@ -427,27 +427,27 @@ class BSKFswModels:
         )
 
         self.simBase.createNewEvent(
-            "meanOEFeedback_" + str(spacecraftIndex),
+            "startMeanOEFeedback_" + str(spacecraftIndex),
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
                 self.FSWModels[spacecraftIndex].modeRequest == "startMeanOEFeedback"
             ),
             actionFunction=lambda self: (
-                self.enableTask("spacecraftReconfigTask" + str(spacecraftIndex)),
+                self.enableTask("meanOEFeedbackTask" + str(spacecraftIndex)),
                 self.setEventActivity(f"stopStationKeeping_{spacecraftIndex}", True),
                 setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'ON'),
             ),
         )
         self.simBase.createNewEvent(
-            "stopStationKeeping_" + str(spacecraftIndex),
+            "stopMeanOEFeedback_" + str(spacecraftIndex),
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].modeRequest == "stopStationKeeping"
+                self.FSWModels[spacecraftIndex].modeRequest == "stopMeanOEFeedback"
             ),
             actionFunction=lambda self: (
-                self.disableTask(f"spacecraftReconfigTask{spacecraftIndex}"),
+                self.disableTask(f"meanOEFeedbackTask{spacecraftIndex}"),
                 self.setEventActivity(f"initiateStationKeeping_{spacecraftIndex}", True),
                 setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'OFF'),
             ),
@@ -535,9 +535,9 @@ class BSKFswModels:
         messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfig.attRefOutMsg, self.attRefMsg)
 
         # connect a blank chief message
-        chiefData = messaging.NavTransMsgPayload()                   #TODO Why is this needed?
-        chiefMsg = messaging.NavTransMsg().write(chiefData)          #TODO what is written to this message?
-        self.spacecraftReconfig.chiefTransInMsg.subscribeTo(chiefMsg)
+#        chiefData = messaging.NavTransMsgPayload()                   #TODO Why is this needed?
+#        chiefMsg = messaging.NavTransMsg().write(chiefData)          #TODO what is written to this message?
+#        self.spacecraftReconfig.chiefTransInMsg.subscribeTo(chiefMsg)
 
     def SetAttitudeTrackingError(self):
         """
@@ -690,24 +690,29 @@ class BSKFswModels:
         Defines the mean orbital elements feedback module.
         """
         # Set gains
-        self.meanOEFeedback.K = [1e-6, 0, 0, 0, 0, 0,
-                                 0, 1e-4, 0, 0, 0, 0,
-                                 0, 0, 1e-4, 0, 0, 0,
-                                 0, 0, 0, 1e-4, 0, 0,
-                                 0, 0, 0, 0, 1e-4, 0,
-                                 0, 0, 0, 0, 0, 1e-4]
-        self.meanOEFeedback.targetDiffOeMean = [0, 0, 0, 0, 0, 0] # TODO ???
-        self.meanOEFeedback.oeType = 1 # 0 for classic elements, 1 for equinoctial elements TODO understand this
-        self.meanOEFeedback.mu = astroConstants.MU_EARTH
-        self.meanOEFeedback.req = astroConstants.REQ_EARTH * 1e3
+        self.meanOEFeedback.K = [1e7, 0, 0, 0, 0, 0,
+                                 0, 1e7, 0, 0, 0, 0,
+                                 0, 0, 1e7, 0, 0, 0,
+                                 0, 0, 0, 1e7, 0, 0,
+                                 0, 0, 0, 0, 1e7, 0,
+                                 0, 0, 0, 0, 0, 1e7]
+        self.meanOEFeedback.targetDiffOeMean = [0, 0, 0, 0, 0, 0]
+        self.meanOEFeedback.oeType = 1 # 0 for classic elements, 1 for equinoctial elements
+        self.meanOEFeedback.mu = self.simBase.get_EnvModel().mu
+        self.meanOEFeedback.req = self.simBase.get_EnvModel().planetRadius
         self.meanOEFeedback.J2 = astroConstants.J2_EARTH
 
         self.meanOEFeedback.deputyTransInMsg.subscribeTo(
             self.simBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg)
-        # connect a blank chief message
-        chiefData = messaging.NavTransMsgPayload()                   #TODO Why is this needed?
-        chiefMsg = messaging.NavTransMsg().write(chiefData)          #TODO what is written to this message (blank) and is this correct?
-        self.meanOEFeedback.chiefTransInMsg.subscribeTo(chiefMsg)
+
+        # Connect force output to extForceTorque dynamics effector
+        self.simBase.DynModels[self.spacecraftIndex].extForceOEFeedback.cmdForceInertialInMsg.subscribeTo(
+            self.meanOEFeedback.forceOutMsg)
+
+        # Blank chief message (overwritten in scenario configure() for CPO)
+#        chiefData = messaging.NavTransMsgPayload()                   #TODO Why is this needed?
+#        chiefMsg = messaging.NavTransMsg().write(chiefData)          #TODO what is written to this message (blank) and is this correct?
+#        self.meanOEFeedback.chiefTransInMsg.subscribeTo(chiefMsg)
 
     # Global call to initialize every module
     def InitAllFSWObjects(self):

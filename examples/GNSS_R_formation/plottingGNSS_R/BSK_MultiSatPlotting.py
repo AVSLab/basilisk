@@ -271,11 +271,24 @@ def plot_relative_orbits(r_BN, numberSpacecraft, id=None):
     """Plot the spacecraft inertial orbits."""
     plt.figure(id, figsize=(6, 5))
     ax = plt.axes(projection='3d')
+    all_positions_km = []
     for i in range(numberSpacecraft):
-        ax.plot(r_BN[i][:, 0] * m2km, r_BN[i][:, 1] * m2km, r_BN[i][:, 2] * m2km,
+        positions_km = r_BN[i] * m2km
+        all_positions_km.append(positions_km)
+        ax.plot(positions_km[:, 0], positions_km[:, 1], positions_km[:, 2],
                 label="Spacecraft " + str(i),
                 c=unitTestSupport.getLineColor(i, numberSpacecraft))
-    ax.set_box_aspect((np.ptp(r_BN[i][:, 0]), np.ptp(r_BN[i][:, 1]), np.ptp(r_BN[i][:, 2])))
+
+    relative_positions_km = np.vstack(all_positions_km)
+    max_range = np.max(np.ptp(relative_positions_km, axis=0)) / 2.0
+    if max_range <= 0:
+        max_range = 1.0
+    mid = np.mean(relative_positions_km, axis=0)
+    ax.set_xlim(mid[0] - max_range, mid[0] + max_range)
+    ax.set_ylim(mid[1] - max_range, mid[1] + max_range)
+    ax.set_zlim(mid[2] - max_range, mid[2] + max_range)
+    ax.set_box_aspect([1, 1, 1])
+
     ax.scatter(0, 0, 0, c=color_x)
     ax.set_title('Spacecraft Relative Orbits in Hill Frame')
     ax.set_xlabel('$i_r$ [km]')

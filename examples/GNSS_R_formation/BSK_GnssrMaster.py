@@ -108,6 +108,11 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fsw_added = False
         self.barycenterPoint = None
 
+        # Vizard process — lowest priority so it always runs last
+        self.vizTaskName = "vizTask"
+        vizProc = self.CreateNewProcess("VizProcess", 10)
+        vizProc.addTask(self.CreateNewTask(self.vizTaskName, mc.sec2nano(dynRate)), 20)
+
         # Set the formationBarycenter module if the flag is set to True
         if relativeNavigation:
             self.relNavProc = None
@@ -169,6 +174,11 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Create barycenter visualization point
         # Create barycenter visualization point (continuously updated for Vizard)
         self.barycenterPoint = BarycenterPoint(self.relativeNavigationModule.transOutMsg)
+
+        # Add barycenter modules to dynamics task for proper Vizard sync (only if using barycenter)
+        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, 10)
+        self.AddModelToTask(self.relativeNavigationTaskName, self.barycenterPoint.getConverter(), 9)
+
 
         # Virtual chief: a free-flying spacecraft initialized at the barycenter
         # at t=0 and propagated under gravity only (no actuators).
