@@ -26,3 +26,4 @@ most users the precompiled version available on PyPI is sufficient. See the
    Build/customPython
    Build/installBuildConan
    Build/pipInstall
+   Build/containers
