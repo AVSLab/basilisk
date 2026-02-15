@@ -40,6 +40,10 @@ To install a specific version, run:
 
 Replace ``<version>`` with the desired release number, e.g. ``2.9.0``.
 
+Container images are also available for users who prefer Docker-based
+workflows. See :ref:`bskContainers` for registry locations, tags, and
+architecture support.
+
 
 **Prebuilt wheel availability:**
 

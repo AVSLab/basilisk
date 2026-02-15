@@ -40,6 +40,27 @@ the platform-specific setup instructions:
 
 See the [Build from Source docs](docs/source/Build.rst) for full details.
 
+#### Containers
+
+Basilisk container images are published to:
+
+* [GHCR](https://ghcr.io/avslab/basilisk)
+
+Published tags follow this policy:
+
+* `v*` (for example `v2.9.0`) and `latest` for release tags
+
+Images are multi-architecture (`linux/amd64`, `linux/arm64`).
+
+Quick start:
+
+```bash
+docker pull ghcr.io/avslab/basilisk:latest
+docker run --rm ghcr.io/avslab/basilisk:latest
+```
+
+For more details, see [container docs](docs/source/Build/containers.rst).
+
 ### Basilisk Development guidelines
 
 * [Contributing](CONTRIBUTING.md)
