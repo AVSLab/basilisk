@@ -1,0 +1,30 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.DS_Store
+
+# Build and distribution directories
+dist
+dist3
+build/
+**/build/
+wheelhouse
+
+# CMake artifacts (match at any depth)
+**/CMakeCache.txt
+**/CMakeFiles/
+**/cmake_install.cmake
+**/Makefile
+*.cmake
+
+# Common cache directories for Python tools
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+docs/build
