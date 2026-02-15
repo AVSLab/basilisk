@@ -216,6 +216,7 @@ It's recommended to study the first 6 scenarios in order:
   Docking between Two CubeSats <mujoco/scenarioSimpleDocking>
   Branching Panel Deployment with Locking Mechanisms <mujoco/scenarioBranchingPanels>
   Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
+  Translation-only formation flying under differential drag <mujoco/scenarioFormationFlyingWithDrag>
 
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------
@@ -283,6 +284,7 @@ Spacecraft Formation Flying
    Attitude-Driven differential drag control <scenarioDragRendezvous>
    Servicer approaching a debris object with 3 flight modes <scenarioRendezVous>
    Walker-Delta Satellite Constellation <scenarioSatelliteConstellation>
+   Translation-only formation flying under differential drag using MuJoCo <mujoco/scenarioFormationFlyingWithDrag>
 
 Small Body Navigation Simulations
 ---------------------------------
