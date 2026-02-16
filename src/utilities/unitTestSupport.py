@@ -21,6 +21,7 @@ import os
 from datetime import datetime, timedelta
 
 import matplotlib as mpl
+import matplotlib.pyplot as pyplot
 import numpy as np
 import pytest
 from Basilisk.architecture import bskUtilities
@@ -412,6 +413,14 @@ def saveScenarioFigure(figureName, plt, path, extension=".svg"):
             if exc.errno != errno.EEXIST:
                 raise
     plt.savefig(imgFileName, transparent=True)
+    # Close the saved figure to avoid accumulating open figures during CI.
+    try:
+        pyplot.close(plt)
+    except Exception:
+        try:
+            plt.close()
+        except Exception:
+            pass
 
 
 def saveFigurePDF(figureName, plt, path):

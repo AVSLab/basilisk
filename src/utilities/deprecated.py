@@ -284,7 +284,7 @@ if TYPE_CHECKING:
         ...
 
 
-# Monkey patching showwarning to modify the behaviour for our warnings
+# Monkey patching showwarning to modify the behavior for our warnings
 def formatwarning(
     message,
     category,

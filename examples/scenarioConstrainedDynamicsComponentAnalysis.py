@@ -659,19 +659,6 @@ def process_data(scSim):
 
 
 def plotting(scSim, component_list, show_plots):
-    larger_size = 20
-    smaller_size = 18
-    fontdict = {'family': 'serif',
-                'weight': 'normal',
-                'size': larger_size}
-    plt.rc('font', **fontdict)
-    plt.rc('axes', labelsize=larger_size)
-    plt.rc('xtick', labelsize=smaller_size)
-    plt.rc('ytick', labelsize=smaller_size)
-    plt.rc('legend', fontsize=smaller_size)
-    plt.rcParams["figure.figsize"] = (7, 4)
-    plt.rcParams['axes.autolimit_mode'] = 'data'  # no “round number” padding
-    plt.rcParams['axes.xmargin'] = 0
     plt.close("all")
 
     plot_direction_violations(scSim.time_data, scSim.psi_B1)

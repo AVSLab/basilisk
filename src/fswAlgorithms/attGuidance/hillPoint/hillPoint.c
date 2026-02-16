@@ -140,7 +140,7 @@ void computeHillPointingReference(hillPointConfig *configData,
         dfdt = hm / (rm * rm);  /* true anomaly rate */
         ddfdt2 = - 2.0 * v3Dot(relVelVector, dcm_RN[0]) / rm * dfdt; /* derivative of true anomaly rate */
     } else {
-        /* an error has occured, radius shouldn't be less than 1km  */
+        /* an error has occurred, radius shouldn't be less than 1km  */
         dfdt   = 0.;
         ddfdt2 = 0.;
     }

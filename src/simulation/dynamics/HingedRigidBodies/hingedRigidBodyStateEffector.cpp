@@ -172,7 +172,7 @@ void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
  spacecraft */
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
-    // - Convert intial variables to mother craft frame relative information
+    // - Convert initial variables to mother craft frame relative information
     this->r_HP_P = this->r_BP_P + this->dcm_BP.transpose()*r_HB_B;
     this->dcm_HP = this->dcm_HB*this->dcm_BP;
 

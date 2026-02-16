@@ -155,7 +155,7 @@ def test_visibility():
 
     # Define expected values
     # The corners shall correspond to the maximum pixel resolution
-    # The default behaviour for a point lying in the origin is +1
+    # The default behavior for a point lying in the origin is +1
     accuracy = 1e-8
     ref_pixel = np.array([[1, 1],
                          [1, 1536/2],

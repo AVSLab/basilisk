@@ -27,6 +27,9 @@ Version |release|
 -----------------
 - Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
 - Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data
+- Fixed range of grammatical typos in the Basilisk documentation
+- Ensure the HTML documentation figures from the example scenario look more consistent
+- Avoid a memory leak when saving off figures in the CI Unit tests to build the online documentation
 
 
 Version |release| (Jan. 28 2026)

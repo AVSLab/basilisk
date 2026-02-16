@@ -33,8 +33,8 @@ jobs:
       - name: Pytest
         working-directory: src
         run: |
-          pip install pytest-error-for-skips
-          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
+          pip install pytest-error-for-skips pytest-timeout
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v
       - name: CTest
         if: ${{ always() }}
         working-directory: dist3
@@ -61,8 +61,8 @@ jobs:
         shell: pwsh
         working-directory: src
         run: |
-          pip install pytest-error-for-skips
-          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
+          pip install pytest-error-for-skips pytest-timeout
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
       - name: CTest
         if: ${{ always() }}
@@ -82,22 +82,22 @@ jobs:
         job_suffix: [""]
         python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         pytest_flags:
-          ['-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v']
+          ['-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v']
         conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
         include:
           # An extra Basilisk build to test building without visualization enabled
           - python: "3.13"
-            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v
+            pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
             conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
             job_suffix: "--vizInterface False"
           # Python 3.8 cannot run all tests.
           # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
           # test matrix.
           - python: "3.8"
-            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v -p no:pytest_forbid_skips
+            pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v -p no:pytest_forbid_skips
         exclude:
           - python: "3.8"
-            pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v'
+            pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v'
 
     name: macOS (${{ matrix.python }}) ${{ matrix.job_suffix }}
     steps:
@@ -109,7 +109,7 @@ jobs:
       - name: Pytest
         working-directory: src
         run: |
-          pip install pytest-error-for-skips
+          pip install pytest-error-for-skips pytest-timeout
           pytest ${{ matrix.pytest_flags }}
       - name: CTest
         if: ${{ always() }}

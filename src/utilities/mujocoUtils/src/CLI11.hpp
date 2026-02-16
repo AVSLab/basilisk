@@ -1101,7 +1101,7 @@ CLI11_INLINE std::string binary_escape_string(const std::string &string_to_escap
     // loop through all characters
     for(char c : string_to_escape) {
         // check if a given character is printable
-        // the cast is necessary to avoid undefined behaviour
+        // the cast is necessary to avoid undefined behavior
         if(isprint(static_cast<unsigned char>(c)) == 0) {
             std::stringstream stream;
             // if the character is not printable

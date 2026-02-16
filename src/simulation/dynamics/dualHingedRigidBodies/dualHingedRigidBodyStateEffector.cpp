@@ -148,7 +148,7 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
-    // - Convert intial variables to mother craft frame relative information
+    // - Convert initial variables to mother craft frame relative information
     this->r_H1P_P = this->r_BP_P + this->dcm_BP.transpose()*this->r_H1B_B;
     this->dcm_H1P = this->dcm_H1B*this->dcm_BP;
 
