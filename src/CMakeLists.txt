@@ -412,53 +412,6 @@ include(GoogleTest)
 enable_testing()
 
 
-# Function to download and move files
-function(download_and_move_file url destination)
-    get_filename_component(filename "${destination}" NAME)
-    set(temp_file "${CMAKE_BINARY_DIR}/data/${filename}")
-
-    if(NOT EXISTS "${destination}")
-        message(STATUS "File ${filename} not found, downloading from ${url}...")
-
-        # Download the file and show a progress bar
-        file(DOWNLOAD
-            "${url}"
-            "${temp_file}"
-            SHOW_PROGRESS
-            STATUS DOWNLOAD_RESULT_CODE
-        )
-
-        # Check for download errors
-        if(NOT DOWNLOAD_RESULT_CODE EQUAL 0)
-            message(FATAL_ERROR "Failed downloading ${filename}! Error code: ${DOWNLOAD_RESULT_CODE}.")
-        endif()
-
-        # Move the file into the appropriate directory
-        file(RENAME "${temp_file}" "${destination}")
-        message(STATUS "Downloaded and moved ${filename} to ${destination}.")
-    else()
-        message(STATUS "File ${filename} already exists.")
-    endif()
-endfunction()
-
-# Define download URLs and target paths
-set(SPICE_FILES
-    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
-    "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/hst_edited.bsp"
-    "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/nh_pred_od077.bsp"
-)
-
-# Process each large data file
-message(STATUS "Checking large Basilisk data files")
-foreach(spice_file IN LISTS SPICE_FILES)
-    string(REPLACE "::" ";" spice_parts "${spice_file}")
-    list(GET spice_parts 0 url)
-    list(GET spice_parts 1 destination)
-    download_and_move_file("${url}" "${destination}")
-endforeach()
-
-
-
 # TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
 # The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search

@@ -76,9 +76,31 @@ jobs:
           name: cibw-sdist
           path: dist/*.tar.gz
 
+  test_sdist:
+    name: Test SDist
+    needs: make_sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/setup
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist
+
+      - name: Verify SDist Installation
+        run: pip install dist/*.tar.gz
+
   publish:
     name: Publish to PyPI
-    needs: [build-wheels, make_sdist]
+    needs: [build-wheels, test_sdist]
     runs-on: ubuntu-latest
     permissions:
       id-token: write

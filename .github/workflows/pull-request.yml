@@ -29,7 +29,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
+          conan-args: --opNav True --mujoco True --mujocoReplay True
       - name: Pytest
         working-directory: src
         run: |
@@ -82,7 +82,9 @@ jobs:
         job_suffix: [""]
         python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         pytest_flags:
-          ['-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v']
+          [
+            '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v',
+          ]
         conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
         include:
           # An extra Basilisk build to test building without visualization enabled

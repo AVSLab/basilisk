@@ -25,6 +25,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- No longer prefetch ephemeris data kernels on initial local builds. The data fetcher will handle it.
 - Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
 - Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data
 - Fixed range of grammatical typos in the Basilisk documentation
