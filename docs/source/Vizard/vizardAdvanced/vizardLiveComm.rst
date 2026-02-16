@@ -80,14 +80,16 @@ BSK assembles the full ``liveStream`` address as::
         `here <http://api.zeromq.org/3-2:zmq-connect>`__.
     * - ``reqComAddress``
       - string
-      - ``localhost``
-      - Network address to use for the connection.  This can be either a host name or an IP address.
+      - ``0.0.0.0``
+      - Network address to bind to for the connection. Use ``0.0.0.0`` to bind to all interfaces
+        (recommended for containers), or a specific IP address or host name.
     * - ``reqPortNumber``
       - string
       - ``5556``
       - Port number to use for the connection.
 
-The default 2-way address is therefore ``tcp://localhost:5556``.
+The default 2-way address is therefore ``tcp://0.0.0.0:5556``, which binds to all network
+interfaces allowing connections from localhost or remote machines/containers.
 
 
 Creating ``VizEventDialog`` Panels
@@ -376,14 +378,16 @@ BSK assembles the full ``broadcastStream`` address as::
         `here <http://api.zeromq.org/3-2:zmq-connect>`__.
     * - ``pubComAddress``
       - string
-      - ``localhost``
-      - Network address to use for the connection.  This can be either a host name or an IP address.
+      - ``0.0.0.0``
+      - Network address to bind to for broadcasting. Use ``0.0.0.0`` to bind to all interfaces
+        (recommended for containers), or a specific IP address or host name.
     * - ``pubPortNumber``
       - string
       - ``5570``
       - Port number to use for the connection.
 
-The default broadcast address is therefore ``tcp://localhost:5570``.
+The default broadcast address is therefore ``tcp://0.0.0.0:5570``, which binds to all network
+interfaces allowing connections from localhost or remote machines/containers.
 
 .. note::
     Although the default TCP ports seemed to be available across our development machines, specific

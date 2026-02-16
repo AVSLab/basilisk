@@ -45,11 +45,11 @@ VizInterface::VizInterface()
     this->firstPass = 0;
 
     this->reqComProtocol = "tcp";
-    this->reqComAddress = "localhost";
+    this->reqComAddress = "0.0.0.0";
     this->reqPortNumber = "5556";
 
     this->pubComProtocol = "tcp";
-    this->pubComAddress = "localhost";
+    this->pubComAddress = "0.0.0.0";
     this->pubPortNumber = "5570";
 
     return;
