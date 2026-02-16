@@ -25,6 +25,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Local data fetches fall back to using the pooch fetch if local files are not found.
 - No longer prefetch ephemeris data kernels on initial local builds. The data fetcher will handle it.
 - Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
 - Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data

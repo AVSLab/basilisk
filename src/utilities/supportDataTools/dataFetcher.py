@@ -122,17 +122,11 @@ def get_path(file_enum: Enum) -> Path:
 
     if LOCAL_SUPPORT:
         local = LOCAL_SUPPORT / _local_rel(rel)
+        # If local file is missing, fall through to Pooch.
         if local.exists():
             return local
 
-        # When running locally, allow remote fetch for external URLs like the
-        # large NAIF kernels not included in the repo.
-        if rel in EXTERNAL_KERNEL_URLS:
-            return Path(POOCH.fetch(rel))
-
-        raise FileNotFoundError(f"Support data file not found in local repo: {local}")
-
-    # No local repo - fetch from remote (installed from wheel)
+    # No local repo or missing local file so fetch from remote
     try:
         return Path(POOCH.fetch(rel))
     except Exception as e:
