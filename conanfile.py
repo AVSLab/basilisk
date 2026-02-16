@@ -523,9 +523,10 @@ if __name__ == "__main__":
     conanInstallList = list()
     conanInstallList.append(f'{sys.executable} -m conans.conan install . --build=missing')
     conanInstallList.append(' -s build_type=' + str(args.buildType))
-    conanInstallList.append(' -s compiler.cppstd=17')
     conanBuildOptionsList = list()  # setup list of conan build arguments
     conanBuildOptionsList.append(' -s compiler.cppstd=17')
+    if os.name != "nt":
+        conanBuildOptionsList.append(" -s compiler.cstd=gnu17")
     if args.generator:
         conanBuildOptionsList.append(' -o "&:generator=' + str(args.generator) + '"')
     for opt, value in bskModuleOptionsBool.items():
