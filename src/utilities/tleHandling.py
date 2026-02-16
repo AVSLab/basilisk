@@ -213,7 +213,8 @@ def satTle2elem(tle_path: str):
             satTLE = ['', '', '']
             satTleReady = [False, False, False] # flags to check if all three lines are present
 
-    tle_lines = open(tle_path).readlines()
+    with open(tle_path, 'r') as f:
+        tle_lines = f.read().splitlines()
     noLines = len(tle_lines)
     if noLines < 2:
         raise ValueError(f"constTLE2Elem() received a TLE with {noLines} lines. A valid TLE must have at least two lines.")
