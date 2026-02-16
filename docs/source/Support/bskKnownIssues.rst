@@ -15,6 +15,12 @@ Version |release|
   SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
   definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
   Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+- If you install Basilisk via ``pip install bsk``, note that the ``basilisk/SupportData`` folder does not
+  exist in your folder.  Simulation script importing directly using a local file path to ``SupportData``
+  will not work.  Rather, ``pooch`` is being used to manage data which puts the data files into a
+  cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
+- If you install Basilisk via ``pip install bsk``, note that the ``basilisk/supportData`` folder does not
+  exist in your folder.  Simulation script importing directly using a local file path to ``supportData``
 
 
 Version 2.9.0 (Jan. 28, 2026)
