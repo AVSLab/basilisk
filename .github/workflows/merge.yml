@@ -36,7 +36,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/build/html
           destination_dir: .
-          keep_files: true
+          force_orphan: true
       - name: Deploy develop branch merges to /develop
         if: success() && github.ref_name == 'develop'
         uses: peaceiris/actions-gh-pages@v3
