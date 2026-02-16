@@ -1,3 +1,4 @@
 * text=auto
 supportData/** text eol=lf
 supportData/**/*.bsp -text
+src/**/data/** text eol=lf
