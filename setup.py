@@ -139,7 +139,6 @@ setup(
                 # (defaults)
                 "--buildType", "Release",
                 "--buildProject", "True",
-                "--clean",
                 # (user arguments)
                 *USER_CONAN_ARGS,
                 # (overrides)
