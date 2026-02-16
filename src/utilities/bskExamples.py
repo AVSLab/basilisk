@@ -21,6 +21,7 @@ import requests
 
 # define the print color codes
 statusColor = '\033[92m'
+warningColor = '\033[93m'
 endColor = '\033[0m'
 
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
@@ -67,13 +68,16 @@ def main():
     """
 
     # Display the task message
-    print(f"{statusColor}Task: Downloading BSK examples folder{endColor}")
+    print(f"{statusColor}Task:{endColor} Downloading BSK examples folder")
 
     # GitHub API URL for the target folder
     github_api_url = "https://api.github.com/repos/AVSLab/basilisk/contents/examples"
     destination_folder = "./examples"
 
     process_github_folder(github_api_url, destination_folder)
+
+    print(f"{statusColor}Status:{endColor} Download completed")
+    print(f"{warningColor}Note:{endColor} Ensure you have the python package {warningColor}pytest{endColor} installed to be able to run the example scripts.")
 
 # Main execution
 if __name__ == "__main__":

@@ -27,15 +27,7 @@ Files must live inside:
 
     basilisk/supportData/<CategoryName>/<file>
 
-Where ``<CategoryName>`` must match one of the following:
-
-- ``AlbedoData``
-- ``AtmosphereData``
-- ``DentonGEO``
-- ``EphemerisData``
-- ``LocalGravData``
-- ``MagneticField``
-
+Where ``<CategoryName>`` must match one of the folder names listed in :ref:`supportDataList`.
 If you add a new sub-category, **you must also add it to**
 ``dataFetcher.py`` (explained in Step 4).
 

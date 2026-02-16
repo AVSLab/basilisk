@@ -23,6 +23,11 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
+Version |release|
+-----------------
+- Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
+- Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data
+
 
 Version |release| (Jan. 28 2026)
 --------------------------------
