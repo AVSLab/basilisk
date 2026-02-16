@@ -25,6 +25,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- TLE parsing fixed to be robust to file ending issues between LF and CRLF.
 - Updated ``conanfile.py`` to pass ``compiler.cstd=gnu17`` during Conan build step to avoid ``cspice/0067``
   build failures on newer GCC 15 based Linux toolchains.
 - Updated the World Magnetic Model (WMM) Coefficients file to the 2025 version.
