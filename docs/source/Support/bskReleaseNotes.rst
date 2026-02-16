@@ -37,8 +37,8 @@ Version |release|
 - Avoid a memory leak when saving off figures in the CI Unit tests to build the online documentation
 
 
-Version |release| (Jan. 28 2026)
---------------------------------
+Version 2.9.0 (Jan. 28 2026)
+----------------------------
 - Deploy both release docs at https://avslab.github.io/basilisk and developer beta
   docs at https://avslab.github.io/basilisk/developer.
 - Added :ref:`releaseGuide` on releasing a new version of Basilisk.

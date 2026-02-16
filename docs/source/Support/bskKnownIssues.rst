@@ -8,9 +8,17 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is depreciated.  Use ``messaging`` instead.
 
+Version |release|
+-----------------
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
 
-Version |release| (Jan. 28, 2026)
----------------------------------
+
+Version 2.9.0 (Jan. 28, 2026)
+-----------------------------
 - The denton flux model API has changed. The module now uses the new data fetching
   API and thus relies on users passing in the correct support data location via
   ``configureDentonFiles``. Previously, the module automatically searched for the
