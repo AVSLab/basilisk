@@ -62,6 +62,14 @@ Run with Bokeh visualization support (for Monte Carlo scenarios, adds port 5006)
 
     docker run --rm -it -p 5556:5556 -p 5570:5570 -p 5006:5006 ghcr.io/avslab/basilisk:latest bash
 
+Basilisk binds to all network interfaces (``0.0.0.0``) by default, allowing Vizard running
+on your host machine to connect via ``tcp://localhost:5556``. The Docker port forwarding
+maps the container's ports 5556 and 5570 to your host machine.
+
+Run with Bokeh visualization support (for Monte Carlo scenarios, adds port 5006)::
+
+    docker run --rm -it -p 5556:5556 -p 5570:5570 -p 5006:5006 docker.io/avslab/basilisk:develop bash
+
 
 Building Locally
 ----------------

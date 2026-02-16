@@ -36,13 +36,14 @@ with ``liveStream`` and ``broadcastStream`` argument using::
                                         , liveStream=True
                                         , broadcastStream=True)
 
-When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard::
+When starting Basilisk simulation it prints now to the terminal that it is waiting for Vizard connections::
 
-    Waiting for Vizard at tcp://localhost:5556
+    Waiting for Vizard at tcp://0.0.0.0:5556
 
-Copy ``tcp://localhost:5556`` and open the Vizard application.  Enter this address in the connection field and select
-"Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes and
-will live stream the data to Vizard.
+Basilisk will bind to all network interfaces. Open the Vizard application and enter ``tcp://localhost:5556``
+in the connection field (or the appropriate IP if connecting from a different machine/container).
+Select "Direct Communication" mode as well as "Live Streaming".  After this the Basilisk simulation resumes
+and will live stream the data to Vizard.
 
 .. figure:: /_images/static/vizard-ImgStream.jpg
    :align: center
@@ -290,12 +291,12 @@ def run(
 
         # To set 2-way port:
         viz.reqComProtocol = "tcp"
-        viz.reqComAddress = "localhost"
+        viz.reqComAddress = "0.0.0.0"
         viz.reqPortNumber = "5556"
 
         # To set broadcast port:
         viz.pubComProtocol = "tcp"
-        viz.pubComAddress = "localhost"
+        viz.pubComAddress = "0.0.0.0"
         viz.pubPortNumber = "5570"
 
         # Pre-instantiate panels
