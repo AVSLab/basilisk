@@ -1,4 +1,15 @@
-* text=auto
-supportData/** text eol=lf
-supportData/**/*.bsp -text
-src/**/data/** text eol=lf
+* text=auto eol=lf
+
+# Windows batch scripts
+*.bat text eol=crlf
+
+# Binary data / assets
+*.bsp -text
+*.obj -text
+*.mtl -text
+*.pdf -text
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.tiff -text
+*.zip -text
