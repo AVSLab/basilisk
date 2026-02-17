@@ -317,6 +317,7 @@ Single Satellite
    Reaction Wheel Fault Scenario Simulation <BskSim/scenarios/scenario_AddRWFault>
    Lambert Guidance Scenario <BskSim/scenarios/scenario_LambertGuidance>
    Attitude Control <BskSim/scenarios/scenario_AttFeedback>
+   Fault Simulation <BskSim/scenarios/scenario_FaultList>
 
 Satellite Formation
 ^^^^^^^^^^^^^^^^^^^
