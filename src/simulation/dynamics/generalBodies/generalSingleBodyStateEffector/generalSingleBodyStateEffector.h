@@ -28,6 +28,19 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
+struct DOF {
+    enum class Type { ROTATION, TRANSLATION };
+
+    Type type;
+    int index;
+
+    Eigen::Vector3d axis_G;
+    Eigen::Matrix3d dcm_G0P;
+    double betaInit{};
+    double betaDotInit{};
+    double screwConstant{1.0};
+};
+
 
 /*! @brief General rigid body state effector class */
 class GeneralSingleBodyStateEffector: public StateEffector, public SysModel {
@@ -38,16 +51,13 @@ public:
     void setMass(const double mass);  //!< Setter method for the effector mass
     void setIPntGc_G(const Eigen::Matrix3d IPntGc_G);  //!< Setter method for IPntGc_G
     void setR_GcG_G(const Eigen::Vector3d r_GcG_G);  //!< Setter method for r_GcG_G
-
+    void setBetaInit(const Eigen::VectorXd betaInit);
+    void setBetaDotInit(const Eigen::VectorXd betaDotInit);
     double getMass() const;  //!< Getter method for the effector mass
     const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
     const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
-
-    void setBetaInit(const Eigen::VectorXd betaInit);
-    void setBetaDotInit(const Eigen::VectorXd betaDotInit);
     Eigen::VectorXd getBetaInit();
     Eigen::VectorXd getBetaDotInit();
-
     void addRotationalDOF(Eigen::Vector3d rotHat_G,
                           Eigen::Matrix3d dcm_G0P,
                           double thetaInit,
@@ -66,7 +76,6 @@ public:
                           double rhoInit,
                           double rhoDotInit,
                           double screwConstant);
-
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
@@ -92,6 +101,17 @@ public:
     Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;                  //!< Output config log message for the effector's states
 
 private:
+    double mass;
+    Eigen::Matrix3d IPntGc_G;
+    Eigen::Vector3d r_GcG_G;
+    std::vector<DOF> jointDOFList;
+    int numDOF = 0;
+
+    std::vector<double> betaInitList;
+    std::vector<double> betaDotInitList;
+
+    Eigen::MatrixXd T;
+
     static uint64_t effectorID;                                         //!< ID number of this panel
 
     std::string nameOfBetaState;
@@ -100,22 +120,6 @@ private:
     std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
     std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
     std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
-
-    double mass;
-    Eigen::Matrix3d IPntGc_G;
-    Eigen::Vector3d r_GcG_G;
-    Eigen::MatrixXd T;
-
-    std::vector<double> betaInitList;
-    std::vector<double> betaDotInitList;
-    std::vector<Eigen::Vector3d> freeAxisList;
-    std::vector<Eigen::MatrixXd> dcm_G0PList;
-    std::vector<bool> isRotDOFList;
-    std::vector<double> screwConstantList;
-    int numDOF = 0;
-
-    std::vector<Eigen::MatrixXd> dcm_GBList;
-
 
     template <typename Type>
     /** Assign the state engine parameter names */

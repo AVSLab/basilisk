@@ -134,70 +134,70 @@ void GeneralSingleBodyStateEffector::registerProperties(DynParamManager& states)
 */
 void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
 {
-    // Set effProps.mEff
-    this->effProps.mEff = this->mass;
-
-    // Get current state
-    this->beta = this->betaState->getState();
-    this->betaDot = this->betaDotState->getState();
-
-    // Compute general body attitudes
-    for (int idx = 0; idx < this->numDOF; idx++) {
-        if (this->isRotDOFList[idx]) {
-
-            Eigen::Vector3d prv_GG0 = this->beta[idx] * this->freeAxisList[idx];
-            double prv_GG0_array[3];
-            eigenVector3d2CArray(prv_GG0, prv_GG0_array);
-
-            double dcm_GG0_array[3][3];
-            PRV2C(prv_GG0_array, dcm_GG0_array);
-            Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
-
-            if (idx == 0) {
-                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx];
-            } else {
-                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx] * this->dcm_GBList[idx-1];
-            }
-        }
-    }
-
-    // Compute general body transformation matrix
-    Eigen::MatrixXd TMat(6, this->numDOF);
-    TMat.setZero();
-    for (int idx = 0; idx < this->numDOF; idx++) {
-        Eigen::Vector3d idxDOFAxis_B = this->dcm_GBList[idx].transpose() * this->freeAxisList[idx];
-
-        if (this->isRotDOFList[idx]) {
-            TMat.col(idx).tail<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
-        } else {
-            TMat.col(idx).head<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
-        }
-    }
-    this->T = TMat;
-
-    // Compute and set effProps.rEff_CB_B
-    Eigen::Matrix3d dcm_GB = this->dcm_GBList[numDOF -1];
-    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-    Eigen::Vector3d r_GB_B = transMap * this->T * this->beta;
-    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
-    this->effProps.rEff_CB_B = r_GcB_B;
-
-    // Compute and set effProps.IEffPntB_B
-    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * IPntGc_G * dcm_GB;
-    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
-    this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
-
-    // Compute and set effProps.rEffPrime_CB_B
-    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->T * this->betaDot;
-    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
-
-    // Compute and set effProps.IEffPrimePntB_B
-    Eigen::Vector3d omega_GB_B = rotMap * T * this->betaDot;
-    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
-    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
-    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
-            - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
+//    // Set effProps.mEff
+//    this->effProps.mEff = this->mass;
+//
+//    // Get current state
+//    this->beta = this->betaState->getState();
+//    this->betaDot = this->betaDotState->getState();
+//
+//    // Compute general body attitudes
+//    for (int idx = 0; idx < this->numDOF; idx++) {
+//        if (this->isRotDOFList[idx]) {
+//
+//            Eigen::Vector3d prv_GG0 = this->beta[idx] * this->freeAxisList[idx];
+//            double prv_GG0_array[3];
+//            eigenVector3d2CArray(prv_GG0, prv_GG0_array);
+//
+//            double dcm_GG0_array[3][3];
+//            PRV2C(prv_GG0_array, dcm_GG0_array);
+//            Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
+//
+//            if (idx == 0) {
+//                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx];
+//            } else {
+//                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx] * this->dcm_GBList[idx-1];
+//            }
+//        }
+//    }
+//
+//    // Compute general body transformation matrix
+//    Eigen::MatrixXd TMat(6, this->numDOF);
+//    TMat.setZero();
+//    for (int idx = 0; idx < this->numDOF; idx++) {
+//        Eigen::Vector3d idxDOFAxis_B = this->dcm_GBList[idx].transpose() * this->freeAxisList[idx];
+//
+//        if (this->isRotDOFList[idx]) {
+//            TMat.col(idx).tail<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
+//        } else {
+//            TMat.col(idx).head<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
+//        }
+//    }
+//    this->T = TMat;
+//
+//    // Compute and set effProps.rEff_CB_B
+//    Eigen::Matrix3d dcm_GB = this->dcm_GBList[numDOF -1];
+//    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+//    Eigen::Vector3d r_GB_B = transMap * this->T * this->beta;
+//    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+//    this->effProps.rEff_CB_B = r_GcB_B;
+//
+//    // Compute and set effProps.IEffPntB_B
+//    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * IPntGc_G * dcm_GB;
+//    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+//    this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
+//
+//    // Compute and set effProps.rEffPrime_CB_B
+//    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+//    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->T * this->betaDot;
+//    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
+//
+//    // Compute and set effProps.IEffPrimePntB_B
+//    Eigen::Vector3d omega_GB_B = rotMap * T * this->betaDot;
+//    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
+//    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
+//    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
+//            - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
@@ -488,28 +488,40 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
                                                       Eigen::Matrix3d dcm_G0P,
                                                       double thetaInit,
                                                       double thetaDotInit) {
-    this->freeAxisList.push_back(rotHat_G);
-    this->dcm_G0PList.push_back(dcm_G0P);
-    this->betaInitList.push_back(thetaInit);
-    this->betaDotInitList.push_back(thetaDotInit);
-
-    this->isRotDOFList.push_back(true);
-    this->screwConstantList.push_back(1.0);
     this->numDOF++;
+
+    // Create the new DOF
+    DOF dof;
+    dof.type = DOF::Type::ROTATION;
+    dof.index = this->numDOF;
+    dof.axis_G = rotHat_G.normalized();
+    dof.dcm_G0P = dcm_G0P;
+    dof.betaInit = thetaInit;
+    dof.betaDotInit = thetaDotInit;
+
+    this->jointDOFList.push_back(dof);
+    this->betaInitList.push_back(dof.betaInit);
+    this->betaDotInitList.push_back(dof.betaDotInit);
 }
 
 void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHat_G,
                                                          Eigen::Matrix3d dcm_G0P,
                                                          double rhoInit,
                                                          double rhoDotInit) {
-    this->freeAxisList.push_back(transHat_G);
-    this->dcm_G0PList.push_back(dcm_G0P);
-    this->betaInitList.push_back(rhoInit);
-    this->betaDotInitList.push_back(rhoDotInit);
-
-    this->isRotDOFList.push_back(false);
-    this->screwConstantList.push_back(1.0);
     this->numDOF++;
+
+    // Create the new DOF
+    DOF dof;
+    dof.type = DOF::Type::TRANSLATION;
+    dof.index = this->numDOF;
+    dof.axis_G = transHat_G.normalized();
+    dof.dcm_G0P = dcm_G0P;
+    dof.betaInit = rhoInit;
+    dof.betaDotInit = rhoDotInit;
+
+    this->jointDOFList.push_back(dof);
+    this->betaInitList.push_back(dof.betaInit);
+    this->betaDotInitList.push_back(dof.betaDotInit);
 }
 
 void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
@@ -517,14 +529,21 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
                                                     double thetaInit,
                                                     double thetaDotInit,
                                                     double screwConstant) {
-    this->freeAxisList.push_back(rotHat_G);
-    this->dcm_G0PList.push_back(dcm_G0P);
-    this->betaInitList.push_back(thetaInit);
-    this->betaDotInitList.push_back(thetaDotInit);
-
-    this->isRotDOFList.push_back(true);
-    this->screwConstantList.push_back(screwConstant);
     this->numDOF++;
+
+    // Create the new DOF
+    DOF dof;
+    dof.type = DOF::Type::ROTATION;
+    dof.index = this->numDOF;
+    dof.axis_G = rotHat_G.normalized();
+    dof.dcm_G0P = dcm_G0P;
+    dof.betaInit = thetaInit;
+    dof.betaDotInit = thetaDotInit;
+    dof.screwConstant = screwConstant;
+
+    this->jointDOFList.push_back(dof);
+    this->betaInitList.push_back(dof.betaInit);
+    this->betaDotInitList.push_back(dof.betaDotInit);
 }
 
 void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G,
@@ -532,12 +551,19 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
                                                      double rhoInit,
                                                      double rhoDotInit,
                                                      double screwConstant) {
-    this->freeAxisList.push_back(transHat_G);
-    this->dcm_G0PList.push_back(dcm_G0P);
-    this->betaInitList.push_back(rhoInit);
-    this->betaDotInitList.push_back(rhoDotInit);
-
-    this->isRotDOFList.push_back(false);
-    this->screwConstantList.push_back(screwConstant);
     this->numDOF++;
+
+    // Create the new DOF
+    DOF dof;
+    dof.type = DOF::Type::TRANSLATION;
+    dof.index = this->numDOF;
+    dof.axis_G = transHat_G.normalized();
+    dof.dcm_G0P = dcm_G0P;
+    dof.betaInit = rhoInit;
+    dof.betaDotInit = rhoDotInit;
+    dof.screwConstant = screwConstant;
+
+    this->jointDOFList.push_back(dof);
+    this->betaInitList.push_back(dof.betaInit);
+    this->betaDotInitList.push_back(dof.betaDotInit);
 }
