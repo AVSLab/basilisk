@@ -53,6 +53,15 @@ Version |release|
 - Ensure the HTML documentation figures from the example scenario look more consistent
 - Avoid a memory leak when saving off figures in the CI Unit tests to build the online documentation
 - Deprecated the ``pytest`` optional flag ``show_plots``.
+- Added :ref:`orbElemOffset`, a classical orbital element combiner that applies element offsets to a baseline orbit and
+  supports optional interpretation of the anomaly offset as a mean-anomaly increment.
+- Added :ref:`CmdForceInertialToForceAtSite<cmdForceInertialToForceAtSite>`, a module that rotates inertial-frame force
+  commands into a site-fixed :ref:`ForceAtSiteMsgPayload`.
+- Added :ref:`OrbitalElementControl<orbitalElementControl>`, a
+  :ref:`linearTimeInvariantSystem` subclass that computes orbital-element feedback and outputs inertial force commands
+  through :ref:`CmdForceInertialMsgPayload`.
+- Added :ref:`scenarioFormationFlyingWithDrag`, a MuJoCo example scenario for chief-deputy formation flying in LEO
+  with differential cannonball drag and orbital-element feedback control.
 
 
 Version 2.9.0 (Jan. 28 2026)

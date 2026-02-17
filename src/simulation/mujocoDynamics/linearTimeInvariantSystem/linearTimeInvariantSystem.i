@@ -26,6 +26,7 @@
   #include "linearTimeInvariantSystem.h"
   #include "forceAtSiteLTI.h"
   #include "singleActuatorLTI.h"
+  #include "orbitalElementControl.h"
 %}
 
 /* Python helpers consistent with your other modules */
@@ -73,6 +74,19 @@ struct SingleActuatorMsgPayload_C;
 
 %include "architecture/msgPayloadDefC/ForceAtSiteMsgPayload.h"
 struct ForceAtSiteMsgPayload_C;
+
+/* ============================
+   OrbitalElementControl
+   ============================ */
+
+%ignore OrbitalElementControl::readInput;
+%ignore OrbitalElementControl::writeOutput;
+%include "orbitalElementControl.h"
+
+%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
+struct ClassicElementsMsgPayload_C;
+%include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+struct CmdForceInertialMsgPayload_C;
 
 /* Final Python-side wrapper for the base LTI class */
 %pythoncode %{
