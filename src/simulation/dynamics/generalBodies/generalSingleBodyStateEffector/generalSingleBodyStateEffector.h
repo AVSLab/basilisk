@@ -28,7 +28,6 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
-inline
 
 /*! @brief General rigid body state effector class */
 class GeneralSingleBodyStateEffector: public StateEffector, public SysModel {
@@ -36,21 +35,37 @@ public:
     GeneralSingleBodyStateEffector();
     ~GeneralSingleBodyStateEffector();
 
-    void setMass(const double mass);    //!< Setter method for the effector mass
-    void setIPntGc_G(const Eigen::Matrix3d IPntGc_G);    //!< Setter method for IPntGc_G
-    void setR_GcG_G(const Eigen::Vector3d r_GcG_G);    //!< Setter method for r_GcG_G
+    void setMass(const double mass);  //!< Setter method for the effector mass
+    void setIPntGc_G(const Eigen::Matrix3d IPntGc_G);  //!< Setter method for IPntGc_G
+    void setR_GcG_G(const Eigen::Vector3d r_GcG_G);  //!< Setter method for r_GcG_G
 
-    double getMass() const;    //!< Getter method for the effector mass
-    const Eigen::Matrix3d getIPntGc_G() const;    //!< Getter method for IPntGc_G
-    const Eigen::Vector3d getR_GcG_G() const;    //!< Getter method for r_GcG_G
+    double getMass() const;  //!< Getter method for the effector mass
+    const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
+    const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
 
     void setBetaInit(const Eigen::VectorXd betaInit);
     void setBetaDotInit(const Eigen::VectorXd betaDotInit);
     Eigen::VectorXd getBetaInit();
     Eigen::VectorXd getBetaDotInit();
 
-    void addFreeAxis(Eigen::Vector3d gHat_G, Eigen::Matrix3d dcm_G0P, bool isRotDOF);
-
+    void addRotationalDOF(Eigen::Vector3d rotHat_G,
+                          Eigen::Matrix3d dcm_G0P,
+                          double thetaInit,
+                          double thetaDotInit);
+    void addTranslationalDOF(Eigen::Vector3d transHat_G,
+                             Eigen::Matrix3d dcm_G0P,
+                             double rhoInit,
+                             double rhoDotInit);
+    void addRotScrewDOF(Eigen::Vector3d rotHat_G,
+                        Eigen::Matrix3d dcm_G0P,
+                        double thetaInit,
+                        double thetaDotInit,
+                        double screwConstant);
+    void addTransScrewDOF(Eigen::Vector3d transHat_G,
+                          Eigen::Matrix3d dcm_G0P,
+                          double rhoInit,
+                          double rhoDotInit,
+                          double screwConstant);
 
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
@@ -79,16 +94,24 @@ public:
 private:
     static uint64_t effectorID;                                         //!< ID number of this panel
 
+    std::string nameOfBetaState;
+    std::string nameOfBetaDotState;
+    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
+
     double mass;
     Eigen::Matrix3d IPntGc_G;
     Eigen::Vector3d r_GcG_G;
     Eigen::MatrixXd T;
 
-    Eigen::VectorXd betaInit;
-    Eigen::VectorXd betaDotInit;
+    std::vector<double> betaInitList;
+    std::vector<double> betaDotInitList;
     std::vector<Eigen::Vector3d> freeAxisList;
     std::vector<Eigen::MatrixXd> dcm_G0PList;
     std::vector<bool> isRotDOFList;
+    std::vector<double> screwConstantList;
     int numDOF = 0;
 
     std::vector<Eigen::MatrixXd> dcm_GBList;
@@ -110,6 +133,14 @@ private:
     StateData* betaDotState = nullptr;
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  // Hub
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  // Hub
+
+    Eigen::Vector3d r_GcN_N{0.0, 0.0, 0.0};
+    Eigen::Vector3d v_GcN_N{0.0, 0.0, 0.0};
+    Eigen::MatrixXd* r_GN_N;
+    Eigen::MatrixXd* v_GN_N;
+    Eigen::MatrixXd* sigma_GN;
+    Eigen::MatrixXd* omega_GN_G;
+
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
