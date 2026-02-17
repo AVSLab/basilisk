@@ -134,33 +134,42 @@ void GeneralSingleBodyStateEffector::registerProperties(DynParamManager& states)
 */
 void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
 {
-//    // Set effProps.mEff
-//    this->effProps.mEff = this->mass;
-//
-//    // Get current state
-//    this->beta = this->betaState->getState();
-//    this->betaDot = this->betaDotState->getState();
-//
-//    // Compute general body attitudes
-//    for (int idx = 0; idx < this->numDOF; idx++) {
-//        if (this->isRotDOFList[idx]) {
-//
-//            Eigen::Vector3d prv_GG0 = this->beta[idx] * this->freeAxisList[idx];
-//            double prv_GG0_array[3];
-//            eigenVector3d2CArray(prv_GG0, prv_GG0_array);
-//
-//            double dcm_GG0_array[3][3];
-//            PRV2C(prv_GG0_array, dcm_GG0_array);
-//            Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
-//
-//            if (idx == 0) {
-//                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx];
-//            } else {
-//                this->dcm_GBList[idx] = dcm_GG0 * dcm_G0PList[idx] * this->dcm_GBList[idx-1];
-//            }
-//        }
-//    }
-//
+    // Set effProps.mEff
+    this->effProps.mEff = this->mass;
+
+    // Get current state
+    this->beta = this->betaState->getState();
+    this->betaDot = this->betaDotState->getState();
+
+    // Set beta and betaDot for each DOF
+    std::vector<DOF>::iterator jointDOF;
+    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+        jointDOF->beta = this->beta[jointDOF->index];
+        jointDOF->betaDot = this->betaDot[jointDOF->index];
+    }
+
+    // Compute general body attitudes
+    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+
+        if (jointDOF->type == DOF::Type::ROTATION) {
+
+            Eigen::Vector3d prv_GG0 = jointDOF->beta * jointDOF->axis_G;
+            double prv_GG0_array[3];
+            eigenVector3d2CArray(prv_GG0, prv_GG0_array);
+
+            double dcm_GG0_array[3][3];
+            PRV2C(prv_GG0_array, dcm_GG0_array);
+            Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
+
+            if (jointDOF->index == 0) {
+                jointDOF->dcm_GB = dcm_GG0 * jointDOF->dcm_G0P;
+            } else {
+                jointDOF->dcm_GB = dcm_GG0 * jointDOF->dcm_G0P * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
+            }
+        }
+    }
+
+
 //    // Compute general body transformation matrix
 //    Eigen::MatrixXd TMat(6, this->numDOF);
 //    TMat.setZero();
@@ -489,6 +498,7 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
                                                       double thetaInit,
                                                       double thetaDotInit) {
     this->numDOF++;
+    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -509,6 +519,7 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
                                                          double rhoInit,
                                                          double rhoDotInit) {
     this->numDOF++;
+    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -530,6 +541,7 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
                                                     double thetaDotInit,
                                                     double screwConstant) {
     this->numDOF++;
+    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -552,6 +564,7 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
                                                      double rhoDotInit,
                                                      double screwConstant) {
     this->numDOF++;
+    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
 
     // Create the new DOF
     DOF dof;

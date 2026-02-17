@@ -39,6 +39,11 @@ struct DOF {
     double betaInit{};
     double betaDotInit{};
     double screwConstant{1.0};
+
+
+    double beta;
+    double betaDot;
+    Eigen::Matrix3d dcm_GB;
 };
 
 
