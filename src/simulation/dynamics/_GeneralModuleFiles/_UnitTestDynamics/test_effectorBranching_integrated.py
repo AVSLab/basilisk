@@ -32,6 +32,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+from Basilisk import __path__
+bskPath = __path__[0]
+
+
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeThruster
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture.bskLogging import BasiliskError
@@ -60,11 +64,15 @@ from Basilisk.simulation import ( # dynamic effectors
     thrusterDynamicEffector,
     constraintDynamicEffector,
     dragDynamicEffector,
+    facetDragDynamicEffector,
     radiationPressure,
     facetSRPDynamicEffector,
     MtbEffector,
 )
 from Basilisk.architecture import messaging
+from Basilisk.simulation import tabularAtmosphere
+from Basilisk.utilities.readAtmTable import readAtmTable
+from Basilisk.simulation import simpleNav
 
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -97,6 +105,7 @@ from Basilisk.architecture import messaging
     ("constraintEffectorOneHub",  True),
     ("constraintEffectorNoHubs",  True),
     # ("dragEffector",                False),
+    ("facetDragDynamicEffector",  True),
     # ("radiationPressure",           False),
     # ("facetSRPDynamicEffector",     False),
     # ("MtbEffector",                 False),
@@ -272,6 +281,28 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         dynamicEff = setup_extPulseTorque()
     elif dynamicEffector == "thrusterDynamicEffector":
         dynamicEff, thFactory = setup_thrusterDynamicEffector()
+    elif dynamicEffector == "facetDragDynamicEffector":
+        dynamicEff = setup_facetDragDynamicEffector(stateEffProps)
+
+        tabAtmo = tabularAtmosphere.TabularAtmosphere()
+        tabAtmo.ModelTag = "tabularAtmosphere"
+
+        tabAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
+
+        r_eq = 6378136.6
+        dataFileName = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
+        altList, rhoList, tempList = readAtmTable(dataFileName, 'EarthGRAM')
+
+        # assign constants & ref. data to module
+        tabAtmo.planetRadius = r_eq
+        tabAtmo.altList = tabularAtmosphere.DoubleVector(altList)
+        tabAtmo.rhoList = tabularAtmosphere.DoubleVector(rhoList)
+        tabAtmo.tempList = tabularAtmosphere.DoubleVector(tempList)
+
+        dynamicEff.atmoDensInMsg.subscribeTo(tabAtmo.envOutMsgs[0])
+
+        unitTestSim.AddModelToTask(unitTaskName, tabAtmo)
+
     elif dynamicEffector == "constraintEffectorOneHub":
         dynamicEff, scObjectx = setup_constraintEffectorOneHub(scObject, stateEffProps)
         unitTestSim.AddModelToTask("unitTask", scObjectx)
@@ -541,6 +572,33 @@ def setup_thrusterDynamicEffector():
 
     return(thruster, thFactory)
 
+def setup_facetDragDynamicEffector(stateEffProps):
+    facetDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+    facetDrag.ModelTag = "facetDragDynamicEffector"
+
+    facetDrag.setPropName_inertialVelocity(stateEffProps.nameOfInertialVelocityProperty)
+    facetDrag.setPropName_inertialAttitude(stateEffProps.nameOfInertialAttitudeProperty)
+
+    panelArea = 10
+    panelOffset = 0.3  # Distance from hub COM
+    panelCd = 5
+
+    panel_normals = [
+        np.array([0, 0,  1]),
+        np.array([0, 0, -1])
+    ]
+
+    # Centered on panel
+    panel_locations = [
+        np.array([0.0, 0.0, panelOffset]),
+        np.array([0.0, 0.0, panelOffset])
+    ]
+
+    for i in range(2):
+        facetDrag.addFacet(panelArea, panelCd, panel_normals[i], panel_locations[i])
+
+    return(facetDrag)
+
 def setup_constraintEffector(scObject1):
     scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "spacecraftBody2"
@@ -670,6 +728,9 @@ def setup_spinningBodiesOneDOF():
     stateEffProps.r_PB_B = spinningBody.r_SB_B
     stateEffProps.r_PcP_P = spinningBody.r_ScS_S
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsg"
+    stateEffProps.nameOfInertialPositionProperty = spinningBody.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = spinningBody.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = spinningBody.ModelTag + "InertialAttitude1"
 
     return(spinningBody, stateEffProps)
 
@@ -710,6 +771,9 @@ def setup_spinningBodiesTwoDOF():
     stateEffProps.r_PB_B = spinningBody.r_S1B_B + np.transpose(spinningBody.dcm_S10B) @ spinningBody.r_S2S1_S1
     stateEffProps.r_PcP_P = spinningBody.r_Sc2S2_S2
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
+    stateEffProps.nameOfInertialPositionProperty = spinningBody.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = spinningBody.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = spinningBody.ModelTag + "InertialAttitude1"
 
     return(spinningBody, stateEffProps)
 
@@ -778,6 +842,9 @@ def setup_spinningBodiesNDOF():
     stateEffProps.r_PB_B = r_ScB_B - dcm_SB.transpose() @ spinningBody.getR_ScS_S()
     stateEffProps.r_PcP_P = spinningBody.getR_ScS_S()
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
+    stateEffProps.nameOfInertialPositionProperty = spinningBodyEffector.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = spinningBodyEffector.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = spinningBodyEffector.ModelTag + "InertialAttitude1"
 
     return(spinningBodyEffector, stateEffProps)
 
@@ -808,6 +875,9 @@ def setup_hingedRigidBodyStateEffector():
     stateEffProps.r_PB_B = hingedBody.r_HB_B
     stateEffProps.r_PcP_P = hingedBody.d * s1_hat
     stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
+    stateEffProps.nameOfInertialPositionProperty = hingedBody.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = hingedBody.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = hingedBody.ModelTag + "InertialAttitude1"
 
     return(hingedBody, stateEffProps)
 
@@ -841,6 +911,9 @@ def setup_translatingBodiesOneDOF():
     stateEffProps.r_PB_B = translatingBody.getR_F0B_B()
     stateEffProps.r_PcP_P = translatingBody.getR_FcF_F()
     stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsg"
+    stateEffProps.nameOfInertialPositionProperty = translatingBody.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = translatingBody.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = translatingBody.ModelTag + "InertialAttitude1"
 
     return(translatingBody, stateEffProps)
 
@@ -862,6 +935,9 @@ def setup_linearSpringMassDamper():
     stateEffProps.totalMass = linearSpring.massInit
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = linearSpring.r_PB_B
+    stateEffProps.nameOfInertialPositionProperty = linearSpring.ModelTag + "InertialPosition1"
+    stateEffProps.nameOfInertialVelocityProperty = linearSpring.ModelTag + "InertialVelocity1"
+    stateEffProps.nameOfInertialAttitudeProperty = linearSpring.ModelTag + "InertialAttitude1"
 
     return(linearSpring, stateEffProps)
 
@@ -873,6 +949,9 @@ class stateEffectorProperties:
     # to be used in checking equations of motion
     inertialPropLogName = "" # name of inertial property output log message
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
+    nameOfInertialPositionProperty = ""
+    nameOfInertialVelocityProperty = ""
+    nameOfInertialAttitudeProperty = ""
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "facetDragDynamicEffector", True)
