@@ -115,7 +115,7 @@ private:
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
 
-    Eigen::MatrixXd T;
+    Eigen::MatrixXd TMat;
 
     static uint64_t effectorID;                                         //!< ID number of this panel
 

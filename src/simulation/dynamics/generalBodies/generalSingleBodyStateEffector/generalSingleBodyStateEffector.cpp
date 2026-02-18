@@ -150,7 +150,6 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
 
     // Compute general body attitudes
     for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
-
         if (jointDOF->type == DOF::Type::ROTATION) {
 
             Eigen::Vector3d prv_GG0 = jointDOF->beta * jointDOF->axis_G;
@@ -169,25 +168,24 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         }
     }
 
+    // Compute general body transformation matrix
+    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
 
-//    // Compute general body transformation matrix
-//    Eigen::MatrixXd TMat(6, this->numDOF);
-//    TMat.setZero();
-//    for (int idx = 0; idx < this->numDOF; idx++) {
-//        Eigen::Vector3d idxDOFAxis_B = this->dcm_GBList[idx].transpose() * this->freeAxisList[idx];
-//
-//        if (this->isRotDOFList[idx]) {
-//            TMat.col(idx).tail<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
-//        } else {
-//            TMat.col(idx).head<3>() = this->screwConstantList[idx] * idxDOFAxis_B;
-//        }
-//    }
-//    this->T = TMat;
+        int dofIndex = jointDOF->index;
+        Eigen::Vector3d jointDOFAxis_B = jointDOF->dcm_GB.transpose() * jointDOF->axis_G;
+
+        if (jointDOF->type == DOF::Type::ROTATION) {
+            this->TMat.col(dofIndex).tail<3>() = jointDOF->screwConstant * jointDOFAxis_B;
+        } else {
+            this->TMat.col(dofIndex).head<3>() = jointDOF->screwConstant * jointDOFAxis_B;
+        }
+    }
+
 //
 //    // Compute and set effProps.rEff_CB_B
 //    Eigen::Matrix3d dcm_GB = this->dcm_GBList[numDOF -1];
 //    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-//    Eigen::Vector3d r_GB_B = transMap * this->T * this->beta;
+//    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
 //    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
 //    this->effProps.rEff_CB_B = r_GcB_B;
 //
@@ -198,7 +196,7 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
 //
 //    // Compute and set effProps.rEffPrime_CB_B
 //    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-//    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->T * this->betaDot;
+//    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
 //    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
 //
 //    // Compute and set effProps.IEffPrimePntB_B
@@ -433,13 +431,13 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
 //    *this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
 //
 //    // Compute the effector's inertial angular velocity
-//    *this->omega_GN_G = this->Phi_theta * this->T *this->beta + this->dcm_GB * this->omega_BN_B;
+//    *this->omega_GN_G = this->Phi_theta * this->TMat *this->beta + this->dcm_GB * this->omega_BN_B;
 //
 //    // Compute the effector's inertial position vectors
 //    this->r_GcN_N = (Eigen::Vector3d)(*this->inertialPositionProperty)
-//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->r_GcG_G + this->Phi_rho * this->T * this->beta));
+//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->r_GcG_G + this->Phi_rho * this->TMat * this->beta));
 //    *this->r_GN_N = (Eigen::Vector3d)(*this->inertialPositionProperty)
-//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->Phi_rho * this->T * this->beta));
+//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->Phi_rho * this->TMat * this->beta));
 //
 //    // Compute the effector's inertial velocity vectors
 //    this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
@@ -498,7 +496,7 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
                                                       double thetaInit,
                                                       double thetaDotInit) {
     this->numDOF++;
-    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
+    this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -519,7 +517,7 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
                                                          double rhoInit,
                                                          double rhoDotInit) {
     this->numDOF++;
-    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
+    this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -541,7 +539,7 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
                                                     double thetaDotInit,
                                                     double screwConstant) {
     this->numDOF++;
-    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
+    this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -564,7 +562,7 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
                                                      double rhoDotInit,
                                                      double screwConstant) {
     this->numDOF++;
-    this->T.conservativeResize(Eigen::NoChange, T.cols() + 1);
+    this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
 
     // Create the new DOF
     DOF dof;
