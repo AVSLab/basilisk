@@ -35,6 +35,8 @@ Version |release|
 - Warnings for not connected messages of types: ``sunInMsg``, ``planetInMsg``, ``sunEclipseInMsg`` in
   the :ref:`simpleAntenna` module for ground based antennas are not raised anymore.
 - Updated documentation on how to use ``bskExamples`` to download a copy of the tutorial examples
+- Added :ref:`thrJointCompensation`, a module to compute the motor torques required to
+  prevent joint acceleration during thruster firing for systems with attached thruster arms.
 - Added :ref:`bskPrinciples-6a` to explain how to import Basilisk provided data
 - Added :ref:`inertialCartFeedback` module to compute an inertial-frame relative motion feedback control force
 - Added :ref:`DragGeometryMsgPayload`, which contains geometry information of a body necessary to
