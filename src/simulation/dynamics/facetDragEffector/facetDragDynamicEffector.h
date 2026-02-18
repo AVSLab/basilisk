@@ -54,6 +54,7 @@ public:
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
+    void linkInProperties(DynParamManager& properties); // To allow dynamic effector to attach to state effectors
     void computeForceTorque(double integTime, double timeStep);
     void Reset(uint64_t CurrentSimNanos);               //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
@@ -74,10 +75,18 @@ public:
     Eigen::Vector3d v_hat_B;                        //!< class variable
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
+    /*! @brief setter for inertial velocity property name */
+    void setPropName_inertialVelocity(std::string value) override;
+    /*! @brief setter for inertial attitude property name */
+    void setPropName_inertialAttitude(std::string value) override;
+
 private:
     AtmoPropsMsgPayload atmoInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
 
+    // Property pointers (for state effector attachment)
+    Eigen::MatrixXd *inertialVelocityProperty;      //!< [m/s] velocity relative to inertial frame
+    Eigen::MatrixXd *inertialAttitudeProperty;      //!< attitude relative to inertial frame
 };
 
-#endif 
+#endif
