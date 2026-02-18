@@ -29,7 +29,23 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
 	this->numFacets = 0;
-	return;
+
+   // Initialize state pointers
+   this->hubSigma = nullptr;
+   this->hubVelocity = nullptr;
+
+   // Initialize property pointers
+   this->inertialVelocityProperty = nullptr;
+   this->inertialAttitudeProperty = nullptr;
+
+   // Set default state names for hub attachment
+   this->stateNameOfSigma = "hubSigma";
+   this->stateNameOfVelocity = "hubVelocity";
+
+   /* This effector can be attached onto a state effector */
+   isAttachableToStateEffector = true;
+
+   return;
 }
 
 /*! The destructor.*/
@@ -97,17 +113,59 @@ void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
 	this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
 
+/*! This method is used to link the dragEffector to the state effectors attitude, position and velocity,
+which are required for calculating drag forces and torques.
+@param properties The parameter manager to collect from
+*/
+void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties)
+{
+   // updateDragDir only requires these two to do calculations
+   this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
+   this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
+}
+
+/*! This method is used to set the inertialVelocity property when facet drag is attached to a state effector rather than the hub
+ */
+void FacetDragDynamicEffector::setPropName_inertialVelocity(std::string value) {
+   if (!value.empty()) {
+       this->propName_inertialVelocity = value;
+   } else {
+       bskLogger.bskLog(BSK_ERROR, "FacetDragDynamicEffector: propName_inertialVelocity variable must be a non-empty string");
+   }
+}
+
+/*! This method is used to set the inertialAttitude property when facet drag is attached to a state effector rather than the hub
+ */
+void FacetDragDynamicEffector::setPropName_inertialAttitude(std::string value) {
+   if (!value.empty()) {
+       this->propName_inertialAttitude = value;
+   } else {
+       bskLogger.bskLog(BSK_ERROR, "FacetDragDynamicEffector: propName_inertialAttitude variable must be a non-empty string");
+   }
+}
+
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
 */
 void FacetDragDynamicEffector::updateDragDir(){
-    Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
-    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
+   Eigen::MRPd sigmaBN;
+   Eigen::Vector3d velocity;
+   // Determine which parent to use based on what's been linked
+   if (this->inertialAttitudeProperty != nullptr && this->inertialVelocityProperty != nullptr) {
+       // Attached to state effector: use properties
+       sigmaBN = (Eigen::Vector3d)(*this->inertialAttitudeProperty);
+       velocity = (*this->inertialVelocityProperty);
+   } else {
+       // Attached to hub: use states
+       sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+       velocity = this->hubVelocity->getState();
+   }
 
-    this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-    this->v_hat_B = this->v_B / this->v_B.norm();
+   Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-    return;
+   this->v_B = dcm_BN * velocity; // [m/s] sc velocity in body frame
+   this->v_hat_B = this->v_B / this->v_B.norm();
+
+   return;
 }
 
 /*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
