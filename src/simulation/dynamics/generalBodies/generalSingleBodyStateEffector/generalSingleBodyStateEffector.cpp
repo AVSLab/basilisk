@@ -181,30 +181,29 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         }
     }
 
-//
-//    // Compute and set effProps.rEff_CB_B
-//    Eigen::Matrix3d dcm_GB = this->dcm_GBList[numDOF -1];
-//    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-//    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-//    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
-//    this->effProps.rEff_CB_B = r_GcB_B;
-//
-//    // Compute and set effProps.IEffPntB_B
-//    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * IPntGc_G * dcm_GB;
-//    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
-//    this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
-//
-//    // Compute and set effProps.rEffPrime_CB_B
-//    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-//    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
-//    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
-//
-//    // Compute and set effProps.IEffPrimePntB_B
-//    Eigen::Vector3d omega_GB_B = rotMap * T * this->betaDot;
-//    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
-//    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
-//    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
-//            - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
+    // Compute and set effProps.rEff_CB_B
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    this->effProps.rEff_CB_B = r_GcB_B;
+
+    // Compute and set effProps.IEffPntB_B
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * IPntGc_G * dcm_GB;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+    this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
+
+    // Compute and set effProps.rEffPrime_CB_B
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
+    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
+
+    // Compute and set effProps.IEffPrimePntB_B
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
+    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
+    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
+            - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
