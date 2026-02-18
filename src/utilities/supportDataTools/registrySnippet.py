@@ -29,6 +29,8 @@ REGISTRY = {
     "supportData/AtmosphereData/UranusGRAMNominal.csv": "md5:fb7ce2f93f80fb616318378491d7acba",
     "supportData/AtmosphereData/USStandardAtmosphere1976.csv": "md5:891d4c45c6116415ca9dd153eac31bba",
     "supportData/AtmosphereData/VenusGRAMNominal.csv": "md5:d17ae5d6a30f510dc82554a6002f6dbb",
+    "supportData/AtmRadioFreqDampData/oxygen.json": "md5:9da7cbceda2c3884e42359ea791c4713",
+    "supportData/AtmRadioFreqDampData/waterVapour.json": "md5:3a2f93a0db881a8d7d2e44300cbc8111",
     "supportData/DentonGEO/model_e_array_all.txt": "md5:dcd84e90630a26affe53c9f96b36e22b",
     "supportData/DentonGEO/model_e_array_high.txt": "md5:93dbe65e6b0c20be7de3c8dbae7a4d79",
     "supportData/DentonGEO/model_e_array_low.txt": "md5:a107047ac9675ac5bef46d792f8db707",
