@@ -185,24 +185,24 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
-    this->effProps.rEff_CB_B = r_GcB_B;
+    this->r_GcB_B = r_GcG_B + r_GB_B;
+    this->effProps.rEff_CB_B = this->r_GcB_B;
 
     // Compute and set effProps.IEffPntB_B
-    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * IPntGc_G * dcm_GB;
-    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+    this->IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(this->r_GcB_B);
     this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
 
     // Compute and set effProps.rEffPrime_CB_B
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
-    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
+    this->rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
+    this->effProps.rEffPrime_CB_B = this->rPrime_GcB_B;
 
     // Compute and set effProps.IEffPrimePntB_B
-    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
-    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
-    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
-    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
+    this->omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(this->omega_GB_B);
+    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(this->rPrime_GcB_B);
+    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * this->IPntGc_B - this->IPntGc_B * omegaTilde_GB_B
             - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
 }
 
@@ -228,7 +228,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
 //
 //    // Update omega_BN_B
 //    this->omega_BN_B = omega_BN_B;
-//    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+//    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 //
 //    // Update sigma_PN
 //    Eigen::Matrix3d dcm_PN = this->dcm_BP.transpose() * this->dcm_BN;
@@ -287,10 +287,10 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
 //
 //    // Prescribed motion rotation contributions
 //    Eigen::Matrix3d IPrimePntPc_B;
-//    IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
+//    IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntGc_B - this->IPntGc_B * this->omegaTilde_PB_B;
 //    backSubContr.vecRot += -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
-//                          - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntPc_B) * this->omega_PB_B
-//                          - this->IPntPc_B * this->omegaPrime_PB_B
+//                          - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntGc_B) * this->omega_PB_B
+//                          - this->IPntGc_B * this->omegaPrime_PB_B
 //                          - this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
 }
 
@@ -323,6 +323,7 @@ void GeneralSingleBodyStateEffector::computeDerivatives(double integTime,
 //        *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
 //
 //        // Compute omegaDot_PN_P
+//        Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 //        Eigen::Vector3d omegaDot_PN_B = this->omegaPrime_PM_B + this->omegaTilde_BN_B * this->omega_PM_B + omegaDot_BN_B;
 //        Eigen::Vector3d omegaDot_PN_P = this->dcm_BP.transpose() * omegaDot_PN_B;
 //
@@ -353,52 +354,19 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B)
 {
-//    // Update omega_BN_B, omega_PN_B, and omega_PN_P
-//    this->omega_BN_B = omega_BN_B;
-//    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-//    this->omega_PN_B = this->omega_PB_B + this->omega_BN_B;
-//    *this->omega_PN_P = this->dcm_BP.transpose() * this->omega_PN_B;
-//
-//    Eigen::Vector3d totRotAngMomPntC_B;
-//    totRotAngMomPntC_B.setZero();
-//    double totRotEnergy = 0.0;
-//
-//    // Loop through attached state effectors for contributions
-//    std::vector<StateEffector*>::iterator it;
-//    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
-//        rotAngMomPntCContr_B.setZero();
-//        rotEnergyContr = 0.0;
-//
-//        (*it)->updateEnergyMomContributions(integTime, rotAngMomPntCContr_B, rotEnergyContr, *this->omega_PN_P);
-//
-//        // Additional terms for rotational angular momentum
-//        Eigen::Vector3d r_EcP_B = this->dcm_BP * (*it)->effProps.rEff_CB_B;
-//        Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
-//        Eigen::Vector3d rDot_PB_B = *this->rPrime_PB_B + this->omegaTilde_BN_B * *this->r_PB_B;
-//        Eigen::Matrix3d rTilde_PB_B = eigenTilde(*this->r_PB_B);
-//        Eigen::Matrix3d omegaTilde_PN_B = eigenTilde(this->omega_PN_B);
-//        Eigen::Vector3d rDot_EcP_B = this->dcm_BP * (*it)->effProps.rEffPrime_CB_B + omegaTilde_PN_B * r_EcP_B;
-//        totRotAngMomPntC_B += this->dcm_BP * rotAngMomPntCContr_B
-//                                + (*it)->effProps.mEff * rTilde_EcP_B * rDot_PB_B
-//                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_EcP_B
-//                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_PB_B;
-//
-//        // Additional terms for rotational energy
-//        totRotEnergy += rotEnergyContr
-//                        + (*it)->effProps.mEff * rDot_EcP_B.dot(rDot_PB_B )
-//                        + 0.5 * (*it)->effProps.mEff * rDot_PB_B.dot(rDot_PB_B);
-//    }
-//
-//    rotAngMomPntCContr_B = totRotAngMomPntC_B;
-//    rotEnergyContr = totRotEnergy;
-//
-//    // Prescribed motion rotational angular momentum contribution
-//    this->rDot_PcB_B = this->rPrime_PcB_B + this->omegaTilde_BN_B * this->r_PcB_B;
-//    rotAngMomPntCContr_B += this->IPntPc_B * this->omega_PN_B + this->mass * this->rTilde_PcB_B * this->rDot_PcB_B;
-//
-//    // Prescribed motion rotational energy contribution
-//    rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
-//                     + 0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
+    // Update angular velocities
+    this->omega_BN_B = omega_BN_B;
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    this->omega_GN_B = this->omega_GB_B + this->omega_BN_B;
+
+    // Rotational angular momentum contribution
+    this->rDot_GcB_B = this->rPrime_GcB_B + omegaTilde_BN_B * this->r_GcB_B;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(this->r_GcB_B);
+    rotAngMomPntCContr_B += this->IPntGc_B * this->omega_GN_B + this->mass * rTilde_GcB_B * this->rDot_GcB_B;
+
+    // Rotational energy contribution
+    rotEnergyContr += 0.5 * this->omega_GN_B.dot(this->IPntGc_B * this->omega_GN_B)
+                     + 0.5 * this->mass * this->rDot_GcB_B.dot(this->rDot_GcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
