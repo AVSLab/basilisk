@@ -33,6 +33,7 @@ typedef struct {
     double      P_Tx;                                  //!< [W]     Transmit power
     double      P_Rx;                                  //!< [W]     Receive power
     double      DdB;                                   //!< [dB]    Antenna directivity in decibels
+    double      eta_r;                                 //!< [-]     Antenna radiation efficiency
     double      P_N;                                   //!< [W]     Noise power at the receiver
     double      P_eirp_dB;                             //!< [W]     EIRP power transmitted
     double      G_TN;                                  //!< [dB/K]  Antenna gain over system noise temperature
