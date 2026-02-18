@@ -1,0 +1,1 @@
+- Added :ref:`hillFrameRelativeControl`, a Hill-frame PD controller that computes an inertial force command to track deputy relative position and velocity with respect to a chief spacecraft.
