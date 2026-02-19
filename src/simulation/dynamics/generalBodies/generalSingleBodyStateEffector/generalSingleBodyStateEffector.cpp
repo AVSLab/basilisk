@@ -361,44 +361,23 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
 */
 void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
 {
-//    // inertial attitude
-//    Eigen::Matrix3d dcm_SN;
-//    dcm_SN = (this->dcm_BS).transpose() * this->dcm_BN;
-//    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
-//    *this->omega_SN_S = (this->dcm_BS).transpose() * this->omega_SN_B;
-//
-//    // inertial position vector
-//    this->r_ScN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_ScB_B;
-//    *this->r_SN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_SB_B;
-//
-//    // inertial velocity vector
-//    this->v_ScN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_ScB_B;
-//    *this->v_SN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_SB_B;
-//
-//
-//
-//
-//
-//
-//    // Compute the effector's attitude with respect to the inertial frame
-//    Eigen::Matrix3d dcm_GN = this->dcm_GB * this->dcm_BN;
-//    *this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
-//
-//    // Compute the effector's inertial angular velocity
-//    *this->omega_GN_G = this->Phi_theta * this->TMat *this->beta + this->dcm_GB * this->omega_BN_B;
-//
-//    // Compute the effector's inertial position vectors
-//    this->r_GcN_N = (Eigen::Vector3d)(*this->inertialPositionProperty)
-//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->r_GcG_G + this->Phi_rho * this->TMat * this->beta));
-//    *this->r_GN_N = (Eigen::Vector3d)(*this->inertialPositionProperty)
-//            + this->dcm_BN.transpose() * (this->dcm_GB.transpose() * (this->Phi_rho * this->TMat * this->beta));
-//
-//    // Compute the effector's inertial velocity vectors
-//    this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
-//            + this->dcm_BN.transpose() * this->rDot_PcB_B;
-//    *this->v_PN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
-//            + this->dcm_BN.transpose() * (*this->rPrime_PB_B +
-//            this->omegaTilde_BN_B * *this->r_PB_B);
+    // Inertial attitude
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
+    Eigen::Matrix3d dcm_GN = dcm_GB * this->dcm_BN;
+    *this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
+    *this->omega_GN_G = dcm_GB * this->omega_GN_B;
+
+    // Inertial position
+    this->r_GcN_N = this->dcm_BN.transpose() * this->r_GcB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
+    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
+    *this->r_GN_N = this->dcm_BN.transpose() * r_GB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
+
+    // Inertial velocity
+    this->v_GcN_N = this->dcm_BN.transpose() * this->rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot;
+    Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * r_GB_B;
+    *this->v_GN_N = this->dcm_BN.transpose() * rDot_GB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
 }
 
 /*! This method updates the effector state at the dynamics frequency.
