@@ -24,31 +24,31 @@ provides information on what this message is used for.
       - Msg Type
       - Description
       - Note
-    * - scInStateMsg
+    * - scStateInMsg
       - :ref:`SCStatesMsgPayload`
       - spacecraft state
-      - Required for space based antennas
-    * - groundInStateMsg
+      - Required for space-based antennas
+    * - groundStateInMsg
       - :ref:`GroundStateMsgPayload`
       - ground state
-      - Required for ground based antennas
-    * - antennaInStateMsg
-      - :ref:`antennaStateMsgPayload`
+      - Required for ground-based antennas
+    * - antennaSetStateInMsg
+      - :ref:`AntennaStateMsgPayload`
       - setting antenna to [off / Rx / Tx / RxTx]
       - optional, default is 'Off'
     * - sunInMsg
       - :ref:`SpicePlanetStateMsgPayload`
       - sun ephemeris data input message
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
     * - planetInMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet ephemeris data input messages
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
-      - sun eclipse state input Message
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground based antennas)
-    * - antennaOutStateMsg
+      - sun eclipse state input message
+      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
+    * - antennaOutMsg
       - :ref:`AntennaLogMsgPayload`
       - output msg description
       - Output message containing antenna state information
@@ -125,7 +125,7 @@ The following parameters must be configured by the user:
    * - Use Haslam Map (optional)
      - :code:`useHaslamMap`
      - [bool]
-     - Enable/Disable the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation. If false a omnidirectional galactic noise temperature is used. (default: :code:`False`)
+     - Enable/Disable the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation. If false, an omnidirectional galactic noise temperature is used. (default: :code:`False`)
      - :code:`True` or :code:`False`
    * - Antenna position vector in body frame (optional)
      - :math:`\mathbf{r}_\mathrm{AB}^\mathrm{B}`
@@ -142,7 +142,7 @@ The following parameters must be configured by the user:
 .. figure:: /../../src/simulation/communication/simpleAntenna/_Documentation/Images/CoordinateFrame.svg
    :width: 25%
    :align: center
-   :alt: Shematic antenna coordinate frame :math:`\mathrm{A}` definition
+   :alt: Schematic antenna coordinate frame :math:`\mathrm{A}` definition
 
    Figure 1: Illustration of the antenna coordinate frame :math:`{A}`
 
@@ -161,7 +161,7 @@ The antenna can be in either state:
    - **Rx** : reception only
    - **RxTx** : transmission and reception
 
-These states can either be set via the :code:`antennaInStateMsg` input message or by setting the state directly with the setter for this property.
+These states can either be set via the :code:`antennaSetStateInMsg` input message or by setting the state directly with the setter for this property.
 
 Radiation Pattern Model
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -170,7 +170,7 @@ Radiation Pattern Model
 .. figure:: /../../src/simulation/communication/simpleAntenna/_Documentation/Images/DocumentationBSKsimpleAntenna.svg
    :width: 60%
    :align: center
-   :alt: Shematic of SimpleAntenna beam pattern
+   :alt: Schematic of SimpleAntenna beam pattern
 
    Figure 1: Illustration of simpleAntenna 2D Gaussian beam pattern
 
@@ -209,9 +209,9 @@ Where :math:`G_{0}` is the boresight power gain (see :ref:`Figure 1`).
 Setting of the radiation pattern parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To set the radiation-pattern specific parameters, the user can set the directivity :math:`D_\mathrm{dB}` and the beam cross-section shape :math:`k`. From these two parameters, the Half-Power BeamWidths (HPBW) in elevation :math:`\theta_\mathrm{HPBW}` and azimuth :math:`\phi_\mathrm{HPBW}` are calculated\:
+To set the radiation-pattern specific parameters, the user can set the directivity :math:`D_\mathrm{dB}` and the beam cross-section shape :math:`k`. From these two parameters, the half-power beam widths (HPBW) in elevation :math:`\theta_\mathrm{HPBW}` and azimuth :math:`\phi_\mathrm{HPBW}` are calculated\:
 
-The unit less directivity :math:`D` and the boresight power gain :math:`G_{0}` are calculated from :math:`D_\mathrm{dB}` as follows\:
+The unitless directivity :math:`D` and the boresight power gain :math:`G_{0}` are calculated from :math:`D_\mathrm{dB}` as follows\:
 
 .. math::
 
@@ -286,7 +286,7 @@ For space-based antennas\:
 The weights are given by the antenna beam coverage fractions :math:`C_\mathrm{Galaxy}` and :math:`C_\mathrm{Planet}` (see also :ref:`module-overlap-area-computation`). The antenna gain :math:`G(\theta, \phi)` is not considered at this stage (see also :ref:`module-assumptions`).
 
 - For space-based antennas, :math:`T_\mathrm{Ambient}` can be set by the user (optional) if it is not set, a default value of :math:`T_\mathrm{Ambient} = 150.0K` is used.
-- The caculation of :math:`T_\mathrm{Sky}` is described in :ref:`Calculation of T_sky <calculation-of-tsky>`.
+- The calculation of :math:`T_\mathrm{Sky}` is described in :ref:`Calculation of T_sky <calculation-of-tsky>`.
 
 For ground-based antennas\:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -307,7 +307,7 @@ Calculation of :math:`T_\mathrm{sky}`
 
 For space-based antennas
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-The sky noise temperature for a spacecraft-mounted antenna is calculated based on the antenna position and orientation with respect to the Earth, Sun and Moon (other celestial bodies are at the moment not incuded). If the setting :code:`useHaslamMap=True` is enabled, the galactic noise temperature is calculated using the Haslam 408 MHz all-sky survey map. if :code:`useHaslamMap=False`, a simple model with a frequency dependent, omnidirectional galactic noise temperature is used.
+The sky noise temperature for a spacecraft-mounted antenna is calculated based on the antenna position and orientation with respect to the Earth, Sun and Moon (other celestial bodies are at the moment not included). If the setting :code:`useHaslamMap=True` is enabled, the galactic noise temperature is calculated using the Haslam 408 MHz all-sky survey map. If :code:`useHaslamMap=False`, a simple model with a frequency-dependent, omnidirectional galactic noise temperature is used.
 
 .. math::
 
@@ -460,7 +460,7 @@ Module Assumptions and Limitations
 
 The following assumptions and limitations apply to the simpleAntenna module:
 
-- The antennas radiation pattern is modelled as a simple 2D Gaussian beam pattern. This has the following implications\:
+- The antenna radiation pattern is modeled as a simple 2D Gaussian beam pattern. This has the following implications\:
   - Sidelobes are neglected, and thus any noise, interference or signal received through sidelobes is not considered.
   - The main-lobe is approximated as a Gaussian function in both elevation and azimuth direction :math:`\rightarrow` The antenna gain is computed as a function of the angle off boresight in both elevation and azimuth direction.
 
@@ -468,7 +468,7 @@ The following assumptions and limitations apply to the simpleAntenna module:
 
 - The antenna can be placed either on a spacecraft or on Earth (ground). It is not (yet) possible to place the antenna on other celestial bodies.
 
-- For ground based antennas, the sky noise temperature is always assumed to be :math:`T_\mathrm{Sky} = 200K`. This is because the ground antenna does not have a pointing direction. It is assumed that the ground based antenna is always precisely pointed at the spacecraft antenna.
+- For ground-based antennas, the sky noise temperature is always assumed to be :math:`T_\mathrm{Sky} = 200K`. This is because the ground antenna does not have a pointing direction. It is assumed that the ground-based antenna is always precisely pointed at the spacecraft antenna.
 
 - Doppler shift between two antennas is not (yet) considered.
 
@@ -532,7 +532,7 @@ The following parameters are optional:
 
 .. note::
 
-   Calling :code:`antenna.setUseHaslamMap(True)`` enables the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation, and calles the function :code:`configureBrightnessFile(<filepath>)` internally.
+   Calling :code:`antenna.setUseHaslamMap(True)` enables the use of the Haslam 408 MHz all-sky survey map for sky noise temperature calculation, and calls the function :code:`configureBrightnessFile(<filepath>)` internally.
    If the user wants to use a custom brightness temperature map file, they must call :code:`antenna.configureBrightnessFile(<custom filePath>)` after calling :code:`antenna.setUseHaslamMap(True)`.
 
 Setting the Antenna Position and Orientation (Space-Based Only)

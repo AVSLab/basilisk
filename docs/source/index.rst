@@ -58,7 +58,7 @@ University of Colorado `AVS
 Lab <http://hanspeterschaub.info/AVSlab.html>`__ and the `Laboratory for
 Atmospheric and Space Physics <http://lasp.colorado.edu/home/>`__
 (LASP). The resulting framework is targeted for both astrodynamics
-research modeling the orbit and attitue of complex spacecraft systems,
+research modeling the orbit and attitude of complex spacecraft systems,
 as well as sophisticated mission-specific vehicle simulations that
 include hardware-in-the-loop scenarios.
 
@@ -164,9 +164,9 @@ several different (often competing) requirements.
    and Unity visualization are active cross-platform developments.
 
 -  **Validation and Verification:** Each simulation or FSW algorithm
-   module has unit test that can be run automatically using ``pytest``.
-   Integrated scenario test validated coupled behavior between modules.
-   Each dynamics modules has associated momentum, energy and power
+   module has unit tests that can be run automatically using ``pytest``.
+   Integrated scenario tests validate coupled behavior between modules.
+   Each dynamics module has associated momentum, energy and power
    validation tests. This ensures the integrity of the validated modules
    as new simulation capabilities are added.
 
@@ -192,8 +192,8 @@ Related Publications
 - M. Cols Margenet, H. Schaub and S. Piggott, "`Modular Attitude Guidance Development using the Basilisk Software Framework  <https://hanspeterschaub.info/Papers/ColsMargenet2016.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
 - J. Alcorn, C. Allard and H. Schaub, "`Fully-Coupled Dynamical Modeling of a Rigid Spacecraft with Imbalanced Reaction Wheels  <https://hanspeterschaub.info/Papers/Alcorn2016a.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
 - C. Allard, M. Diaz Ramos and H. Schaub, "`Spacecraft Dynamics Integrating Hinged Solar Panels and Lumped-Mass Fuel Slosh Model  <https://hanspeterschaub.info/Papers/Allard2016a.pdf>`_," AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12--15, 2016.
-- J. Alcorn, H. Schaub, S. Piggott and D. Kubitschek, "`Simulating Attitude Actuation Options Using the Basilisk Astrodynamics Software Architecture  <https://hanspeterschaub.info/Papers/Alcorn2016b.pdf>`_," 67 :sup:`th` International Astronautical Congress, Guadalajara, Mexico, September 26--30, 2016.
-- S. Piggott, J. Alcorn, M. Cols Margenet, P. Kenneally and H. Schaub,  "`Flight Software Development Through Python  <https://hanspeterschaub.info/Papers/Piggott2016FSWConference.pdf>`_," 2016 Workshop on Spacecraft Flight Software , JPL, California,  Dec. 13--15 2016.
+- J. Alcorn, H. Schaub, S. Piggott and D. Kubitschek, "`Simulating Attitude Actuation Options Using the Basilisk Astrodynamics Software Architecture  <https://hanspeterschaub.info/Papers/Alcorn2016b.pdf>`_," 67\ :sup:`th` International Astronautical Congress, Guadalajara, Mexico, September 26--30, 2016.
+- S. Piggott, J. Alcorn, M. Cols Margenet, P. Kenneally and H. Schaub,  "`Flight Software Development Through Python  <https://hanspeterschaub.info/Papers/Piggott2016FSWConference.pdf>`_," 2016 Workshop on Spacecraft Flight Software, JPL, California,  Dec. 13--15 2016.
 - P. Kenneally and H. Schaub,  "`Modeling Of Solar Radiation Pressure and Self-Shadowing Using Graphics Processing Unit  <https://hanspeterschaub.info/Papers/AAS-17-127.pdf>`_," AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2--8, 2017.
 - P. Panicucci, C. Allard and H. Schaub,  "`Spacecraft Dynamics Employing a General Multi-tank and Multi-thruster Mass Depletion Formulation  <https://hanspeterschaub.info/Papers/AAS-17-011.pdf>`_," AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2--8, 2017.
 - M. Cols Margenet, H. Schaub, and S. Piggott,   "`Modular Platform for Hardware-in-the-Loop Testing of Autonomous Flight Algorithms  <https://hanspeterschaub.info/Papers/ColsMargenet2017.pdf>`_,"  International Symposium on Space Flight Dynamics, Himegin Hall, Matsuyama-Ehime, Japan, June 3--9, 2017.

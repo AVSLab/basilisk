@@ -77,7 +77,7 @@ The line of sight vector is defined through the point `B` and the direction :mat
 .. math::
     {\bf l} =  {\bf r}_{B/P} + \kappa * {\bf r}_{S/B}
 
-The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follow.  The planet is assumed to have rotational symmetry about the 3:sup`rd` axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3:sup`rd` coordinates must scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.
+The process of intersecting a line with an ellipsoid is simplified by using an affine project to render the ellipsoid a sphere.  This affine mapping preserves a line to remain a line.  The math of this is as follows.  The planet is assumed to have rotational symmetry about the 3\ :sup:`rd` axis about which it is spinning.  Thus, to map the ellipsoid into a sphere the planet relative 3\ :sup:`rd` coordinates must be scaled by the ratio of the equatorial radius to the polar radius.  The following math assumes this affine mapping has been performed in the above planet-relative position coordinates.
 
 To determine the minimum distance of the line :math:`\bf l` to the planet origin, consider the cost function :math:`J`:
 
@@ -135,18 +135,18 @@ A new instance of ``spacecraftLocation``, alongside necessary user-supplied para
     location.ModelTag = "scLocation"
     location.rEquator = orbitalMotion.REQ_EARTH * 1000.
     location.rPolar = orbitalMotion.RP_EARTH * 1000.  # optional, include to account for oblateness
-    location.maximumRange = 100e3 # optinal, sets maximum range for visibility in meters
+    location.maximumRange = 100e3 # optional, sets maximum range for visibility in meters
     scSim.AddModelToTask(simTaskName, location)
 
 The variable ``maximumRange`` is optional and set to -1 by default.  If it is set to a positive value, then the ``hasAccess`` variable is only set to 1 if the relative spacecraft distance is less than this maximum range.
 
-A optional planet emphemeris is connected via the``planetInMsg`` input message:
+An optional planet ephemeris is connected via the ``planetInMsg`` input message:
 
 .. code-block:: python
 
     location.planetInMsg.subscribeTo(planetMsg)
 
-It this message is not connected, then zero planet position and attitude orientation are set.
+If this message is not connected, then zero planet position and attitude orientation are set.
 
 
 To set a primary spacecraft body fixed sensor or communication axis :math:`\hat{\bf a}` and half-cone angle :math:`\theta`, use::
