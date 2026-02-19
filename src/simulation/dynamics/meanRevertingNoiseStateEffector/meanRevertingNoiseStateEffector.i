@@ -17,13 +17,13 @@
 
  */
 
-%module stochasticAtmDensityStateEffector
+%module meanRevertingNoiseStateEffector
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
 %{
-   #include "stochasticAtmDensityStateEffector.h"
+   #include "meanRevertingNoiseStateEffector.h"
 %}
 
 %pythoncode %{
@@ -37,10 +37,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "stochasticAtmDensityStateEffector.h"
-
-%include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
-struct AtmoPropsMsg_C;
+%include "meanRevertingNoiseStateEffector.h"
 
 %pythoncode %{
 import sys
