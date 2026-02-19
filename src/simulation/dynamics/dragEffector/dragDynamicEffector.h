@@ -58,6 +58,7 @@ public:
     bool ReadInputs();
     void cannonballDrag();
     void updateDragDir();
+    double getDensity();
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
@@ -65,13 +66,15 @@ public:
     std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
+    std::string densityCorrectionStateName = "";           //!< -- If not '', finds a state with this name to get ``densityCorrection``
+    StateData *densityCorrection;                          //!< -- Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
     Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
     BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 private:
     AtmoPropsMsgPayload atmoInData;
-    
+
 };
 
 

@@ -85,6 +85,11 @@ bool DragDynamicEffector::ReadInputs()
 void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
+
+	if (this->densityCorrectionStateName.empty())
+		this->densityCorrection = nullptr;
+	else
+		this->densityCorrection = states.getStateObject(this->densityCorrectionStateName);
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
@@ -100,6 +105,19 @@ void DragDynamicEffector::updateDragDir(){
 	return;
 }
 
+/** This method obtains the density from the input data and applies a correction based on the
+ * density correction state (if it was configured)
+ */
+double DragDynamicEffector::getDensity()
+{
+	double density = this->atmoInData.neutralDensity;
+	if (this->densityCorrection)
+	{
+		density *= 1 + this->densityCorrection->getState()(0,0);
+	}
+	return density;
+}
+
 /*! This method implements a simple "cannnonball" (attitude-independent) drag model.
 */
 void DragDynamicEffector::cannonballDrag(){
@@ -108,7 +126,7 @@ void DragDynamicEffector::cannonballDrag(){
   	this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->getDensity() * (-1.0)*this->v_hat_B;
   	this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 
   	return;
