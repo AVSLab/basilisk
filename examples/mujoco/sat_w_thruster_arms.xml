@@ -1,0 +1,56 @@
+<mujoco>
+  <option gravity="0 0 0" />
+
+  <worldbody>
+    <body name="hub">
+      <freejoint />
+      <geom name="hub_box" type="box" size="0.79 0.69 0.52" rgba="1 0 0 0.5" contype="1" conaffinity="2" mass="330" />
+      <site name="hub_center" pos="0 0 0" />
+
+      <body name="arm_1_base" pos="0.79 0 0">
+	  	<geom name="boom_1" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
+        <joint name="arm_1_joint_1" axis="1 0 0" />
+        <joint name="arm_1_joint_2" axis="0 1 0" />
+
+        <body name="arm_1_tip" pos="1 0 0">
+		  <geom name="tip_1" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
+          <joint name="arm_1_joint_3" axis="0 0 1" />
+          <joint name="arm_1_joint_4" axis="0 1 0" />
+          <site name="thruster_1" pos="0.1 0 0" />
+        </body>
+	  </body>
+
+      <body name="arm_2_base" pos="-0.79 0 0" xyaxes="-1 0 0 0 -1 0">
+	  	<geom name="boom_2" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
+        <joint name="arm_2_joint_1" axis="1 0 0" />
+        <joint name="arm_2_joint_2" axis="0 1 0" />
+
+		<body name="arm_2_tip" pos="1 0 0">
+		  <geom name="tip_2" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
+          <joint name="arm_2_joint_3" axis="0 0 1" />
+          <joint name="arm_2_joint_4" axis="0 1 0" />
+          <site name="thruster_2" pos="0.1 0 0" />
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="F_thruster_1" site="thruster_1" gear="-1 0 0 0 0 0" />
+	<motor name="F_thruster_2" site="thruster_2" gear="-1 0 0 0 0 0" />
+
+    <motor name="u_arm_1_joint_1" joint="arm_1_joint_1" gear="1" />
+    <motor name="u_arm_1_joint_2" joint="arm_1_joint_2" gear="1" />
+    <motor name="u_arm_1_joint_3" joint="arm_1_joint_3" gear="1" />
+    <motor name="u_arm_1_joint_4" joint="arm_1_joint_4" gear="1" />
+
+    <motor name="u_arm_2_joint_1" joint="arm_2_joint_1" gear="1" />
+    <motor name="u_arm_2_joint_2" joint="arm_2_joint_2" gear="1" />
+    <motor name="u_arm_2_joint_3" joint="arm_2_joint_3" gear="1" />
+    <motor name="u_arm_2_joint_4" joint="arm_2_joint_4" gear="1" />
+
+    <motor name="tau_prescribed_1" site="hub_center" gear="0 0 0 1 0 0" />
+    <motor name="tau_prescribed_2" site="hub_center" gear="0 0 0 0 1 0" />
+    <motor name="tau_prescribed_3" site="hub_center" gear="0 0 0 0 0 1" />
+  </actuator>
+</mujoco>
