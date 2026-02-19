@@ -200,7 +200,9 @@ class BSKDynamicModels:
 
         # create the thruster devices by specifying the thruster type and its location and direction
         for pos_B, dir_B in zip(location, direction):
-            self.thrusterFactory.create('EPSS_C2', pos_B, dir_B, useMinPulseTime=False)
+            # spacecraftReconfig internally skips burns with per-thruster on-time < 1 s.
+            # Use a lower thrust level in this scenario to keep fine formation-control burns active.
+            self.thrusterFactory.create('EPSS_C2', pos_B, dir_B, useMinPulseTime=False, MaxThrust=0.02)
 
         self.numThr = self.thrusterFactory.getNumOfDevices()
 
