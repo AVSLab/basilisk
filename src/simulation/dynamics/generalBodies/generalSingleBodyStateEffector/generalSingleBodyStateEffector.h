@@ -150,6 +150,7 @@ private:
     Eigen::MatrixXd* sigma_GN;
     Eigen::MatrixXd* omega_GN_G;
 
+    Eigen::Matrix3d dcm_BN;
     Eigen::Vector3d omega_GB_B;
     Eigen::Vector3d omega_BN_B;
     Eigen::Vector3d omega_GN_B;
@@ -157,6 +158,10 @@ private:
     Eigen::Vector3d r_GcB_B;
     Eigen::Vector3d rPrime_GcB_B;
     Eigen::Matrix3d IPntGc_B;
+
+    Eigen::MatrixXd ABeta;
+    Eigen::MatrixXd BBeta;
+    Eigen::VectorXd CBeta;
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */

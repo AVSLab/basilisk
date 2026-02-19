@@ -222,76 +222,80 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                                                         Eigen::Vector3d omega_BN_B,
                                                         Eigen::Vector3d g_N)
 {
-//    // Update sigma_BN and dcm_BN
-//    this->sigma_BN = sigma_BN;
-//    this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
-//
-//    // Update omega_BN_B
-//    this->omega_BN_B = omega_BN_B;
-//    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-//
-//    // Update sigma_PN
-//    Eigen::Matrix3d dcm_PN = this->dcm_BP.transpose() * this->dcm_BN;
-//    *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
-//
-//    // Update omega_PN_P
-//    *this->omega_PN_P = *this->omega_PB_P + this->dcm_BP.transpose() * this->omega_BN_B;
-//
-//    Eigen::Matrix3d totMatrixA;
-//    Eigen::Matrix3d totMatrixB;
-//    Eigen::Matrix3d totMatrixC;
-//    Eigen::Matrix3d totMatrixD;
-//    Eigen::Vector3d totVecTrans;
-//    Eigen::Vector3d totVecRot;
-//    totMatrixA.setZero();
-//    totMatrixB.setZero();
-//    totMatrixC.setZero();
-//    totMatrixD.setZero();
-//    totVecTrans.setZero();
-//    totVecRot.setZero();
-//
-//    // Loop through attached state effectors and compute their contributions
-//    std::vector<StateEffector*>::iterator it;
-//    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++)
-//    {
-//        backSubContr.matrixA.setZero();
-//        backSubContr.matrixB.setZero();
-//        backSubContr.matrixC.setZero();
-//        backSubContr.matrixD.setZero();
-//        backSubContr.vecTrans.setZero();
-//        backSubContr.vecRot.setZero();
-//
-//        (*it)->updateContributions(integTime, backSubContr, *this->sigma_PN, *this->omega_PN_P, g_N);
-//        (*it)->addPrescribedMotionCouplingContributions(backSubContr);
-//
-//        totMatrixA += this->dcm_BP * backSubContr.matrixA * this->dcm_BP.transpose();
-//        totMatrixB += this->dcm_BP * backSubContr.matrixB * this->dcm_BP.transpose();
-//        totMatrixC += this->dcm_BP * backSubContr.matrixC * this->dcm_BP.transpose();
-//        totMatrixD += this->dcm_BP * backSubContr.matrixD * this->dcm_BP.transpose();
-//        totVecTrans += this->dcm_BP * backSubContr.vecTrans;
-//        totVecRot += this->dcm_BP * backSubContr.vecRot;
-//    }
-//
-//    backSubContr.matrixA = totMatrixA;
-//    backSubContr.matrixB = totMatrixB;
-//    backSubContr.matrixC = totMatrixC;
-//    backSubContr.matrixD = totMatrixD;
-//    backSubContr.vecTrans = totVecTrans;
-//    backSubContr.vecRot = totVecRot;
-//
-//    // Prescribed motion translation contributions
-//    Eigen::Matrix3d omegaPrimeTilde_PB_B = eigenTilde(this->omegaPrime_PB_B);
-//    this->rPrimePrime_PcB_B = (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B +
-//                              this->rPrimePrime_PM_B;
-//    backSubContr.vecTrans += -this->mass * this->rPrimePrime_PcB_B;
-//
-//    // Prescribed motion rotation contributions
-//    Eigen::Matrix3d IPrimePntPc_B;
-//    IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntGc_B - this->IPntGc_B * this->omegaTilde_PB_B;
-//    backSubContr.vecRot += -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
-//                          - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntGc_B) * this->omega_PB_B
-//                          - this->IPntGc_B * this->omegaPrime_PB_B
-//                          - this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
+    // Update dcm_BN
+    Eigen::MRPd sigma_BNLoc;
+    sigma_BNLoc = sigma_BN;
+    this->dcm_BN = (sigma_BNLoc.toRotationMatrix()).transpose();
+
+    // Update omega_BN_B
+    this->omega_BN_B = omega_BN_B;
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+
+    // Define MBeta matrix
+    Eigen::Matrix<double, 6, Eigen::Dynamic> MBeta1;
+    MBeta1.resize(6, this->numDOF);
+
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    MBeta1.topRows(3) = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat;
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    Eigen::Matrix3d IPntG_B = IPntGc_B - this->mass * rTilde_GcG_B * rTilde_GcG_B;
+    MBeta1.bottomRows(3) = (IPntG_B * rotMap + this->mass * rTilde_GcG_B * transMap) * this->TMat;
+
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MBeta;
+    MBeta.resize(this->numDOF, this->numDOF);
+    MBeta = this->TMat.transpose() * MBeta1;
+
+    // Define ABetaStar matrix
+    Eigen::Matrix<double, 6, 3> ABetaStar1;
+    ABetaStar1.topRows(3) = - this->mass * Eigen::Matrix3d::Identity();
+    ABetaStar1.bottomRows(3) = - this->mass * rTilde_GcG_B;
+
+    Eigen::Matrix<double, Eigen::Dynamic, 3> ABetaStar;
+    ABetaStar.resize(this->numDOF, 3);
+    ABetaStar = this->TMat.transpose() * ABetaStar1;
+
+    // Define BBetaStar matrix
+    Eigen::Matrix<double, 6, 3> BBetaStar1;
+    BBetaStar1.topRows(3) = this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta);
+    BBetaStar1.bottomRows(3) = - (IPntG_B - this->mass * rTilde_GcG_B * eigenTilde(transMap * this->TMat * this->beta));
+
+    Eigen::Matrix<double, Eigen::Dynamic, 3> BBetaStar;
+    BBetaStar.resize(this->numDOF, 3);
+    BBetaStar = this->TMat.transpose() * BBetaStar1;
+
+    // Define CBetaStar vector
+    Eigen::VectorXd CBetaStar1;
+    CBetaStar1.resize(6);
+    CBetaStar1.head(3) = -2 * this->mass * omegaTilde_BN_B * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+            - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + transMap * this->TMat * this->beta)
+            - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
+    CBetaStar1.tail(3) = - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
+            - IPntG_B * omegaTilde_BN_B * rotMap * this->TMat * this->betaDot
+            - this->mass * rTilde_GcG_B * (2 * omegaTilde_BN_B * transMap * this->TMat * this->betaDot +
+            omegaTilde_BN_B * omegaTilde_BN_B * transMap * this->TMat * this->beta);
+
+    Eigen::VectorXd CBetaStar;
+    CBetaStar = this->TMat.transpose() * CBetaStar1;
+
+    // Define ABeta, BBeta, and CBeta matrices
+    this->ABeta = MBeta.inverse() * ABetaStar;
+    this->BBeta = MBeta.inverse() * BBetaStar;
+    this->CBeta = MBeta.inverse() * CBetaStar;
+
+    // Define BSM [A] [B] [C] [D] contributions
+    backSubContr.matrixA = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->ABeta;
+    backSubContr.matrixB = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->BBeta;
+    backSubContr.matrixC = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->ABeta;
+    backSubContr.matrixD = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->BBeta;
+
+    // Define BSM vecTrans and vecRot contributions
+    backSubContr.vecTrans = - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
+    backSubContr.vecRot = - this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
+            - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
+            - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+            - (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->CBeta;
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -463,7 +467,10 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
                                                       double thetaInit,
                                                       double thetaDotInit) {
     this->numDOF++;
-    this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
+    this->TMat.conservativeResize(6, this->TMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -485,6 +492,9 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
                                                          double rhoDotInit) {
     this->numDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -507,6 +517,9 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
                                                     double screwConstant) {
     this->numDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
 
     // Create the new DOF
     DOF dof;
@@ -530,6 +543,9 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
                                                      double screwConstant) {
     this->numDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
 
     // Create the new DOF
     DOF dof;
