@@ -68,6 +68,46 @@ FORMATION_CONFIG = {
 
 # Create your own scenario child class
 class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
+    @staticmethod
+    def _wrap_to_pi(angle):
+        return (angle + np.pi) % (2.0 * np.pi) - np.pi
+
+    def _roe_to_classic_target(self, chief_oe, delta_ex, delta_ey, delta_ix, delta_iy,
+                               delta_a=0.0, delta_lambda=0.0):
+        """
+        Convert desired quasi-nonsingular ROE-like targets into spacecraftReconfig classical-element targets:
+        [Δa, Δe, Δi, ΔΩ, Δω, ΔM].
+        """
+        e_c = chief_oe.e
+        i_c = chief_oe.i
+        omega_c = chief_oe.omega
+
+        # Rebuild deputy eccentricity vector from chief + desired relative e-vector
+        e_cx = e_c * np.cos(omega_c)
+        e_cy = e_c * np.sin(omega_c)
+        e_dx = e_cx + delta_ex
+        e_dy = e_cy + delta_ey
+        e_d = np.hypot(e_dx, e_dy)
+        omega_d = np.arctan2(e_dy, e_dx)
+
+        delta_e_classic = e_d - e_c
+        delta_omega = self._wrap_to_pi(omega_d - omega_c)
+
+        # Relative inclination vector mapping (small-angle):
+        # delta_ix = Δi, delta_iy = sin(i_c)*ΔΩ
+        sin_i = np.sin(i_c)
+        if np.abs(sin_i) < 1e-8:
+            raise ValueError("Chief inclination too close to equatorial for delta_iy = sin(i)*ΔΩ mapping.")
+
+        delta_i_classic = delta_ix
+        delta_Omega = delta_iy / sin_i
+
+        # Mean longitude difference relation:
+        # delta_lambda = ΔM + Δω + cos(i_c)ΔΩ
+        delta_M = self._wrap_to_pi(delta_lambda - delta_omega - np.cos(i_c) * delta_Omega)
+
+        return [delta_a, delta_e_classic, delta_i_classic, delta_Omega, delta_omega, delta_M]
+
     def __init__(self, numberSpacecraft, txConstTleData, formation):
         # Determine if we need barycenter based on formation type
         self.formation = formation
@@ -243,18 +283,18 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             # =====================================================
 
             a = self.oe[0].a          # chief semi-major axis
-            rho = 75.0               # meters
+            radius1 = 75.0            # desired circle radius of SC1 around SC0 [m]
+            radius2 = 150.0           # desired circle radius of SC2 around SC0 [m]
 
-            # Convert separation into relative eccentricity
-            delta_e1 = rho / a
-            delta_e2 = 2.0 * rho / a
+            # For circles in the (i_theta, i_h) view (from radial/zenith direction):
+            # y-z radius = 2*a*delta_e, with |delta_i| = 2|delta_e|.
+            delta_e1 = radius1 / (2.0 * a)
+            delta_e2 = radius2 / (2.0 * a)
+            delta_i1 = 2.0 * delta_e1
+            delta_i2 = 2.0 * delta_e2
 
-            # Circular projected condition (Schaub Eq. 14.155)
-            delta_i1 = np.sqrt(3.0) * delta_e1
-            delta_i2 = np.sqrt(3.0) * delta_e2
-
-            # IMPORTANT:
-            # All deputies MUST share the SAME phase
+            # All deputies share the same phase angle to remain concentric around SC0.
+            # Set phi = np.pi/2 to rotate the apparent circle by 90 deg in Hill-frame phase.
             phi = 0.0
 
             # =====================================================
@@ -275,17 +315,20 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             delta_ex1 = delta_e1 * np.cos(phi)
             delta_ey1 = delta_e1 * np.sin(phi)
 
-            delta_ix1 = delta_i1 * np.cos(phi + np.pi/2)
-            delta_iy1 = delta_i1 * np.sin(phi + np.pi/2)
+            # 90 deg shift between relative eccentricity and inclination vectors
+            # gives circular y-z motion when viewed from radial direction.
+            delta_ix1 = -delta_i1 * np.sin(phi)
+            delta_iy1 =  delta_i1 * np.cos(phi)
 
-            self.FSWModels[1].spacecraftReconfig.targetClassicOED = [
-                0.0,            # Δa/a = a_d/a_c - a_c/a_c  (Should be 0.0 -> prevents drift)
-                delta_e1,       # Δe   = e_d    ​ - e_c​
-                delta_iy1,      # Δi   = i_d     - i_c
-                delta_ix1,      # ΔΩ   = Ω_d     - Ω_c
-                delta_ey1,      # Δω   = ω_d     - ω_c
-                -delta_ex1      # ΔM   = M_d     - M_c
-            ]
+            self.FSWModels[1].spacecraftReconfig.targetClassicOED = self._roe_to_classic_target(
+                chief_oe=self.oe[0],
+                delta_ex=delta_ex1,
+                delta_ey=delta_ey1,
+                delta_ix=delta_ix1,
+                delta_iy=delta_iy1,
+                delta_a=0.0,
+                delta_lambda=0.0
+            )
 
             # =====================================================
             # DEPUTY 2 (SC2) ---- radius 2*rho
@@ -293,23 +336,26 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             delta_ex2 = delta_e2 * np.cos(phi)
             delta_ey2 = delta_e2 * np.sin(phi)
 
-            delta_ix2 = delta_i2 * np.cos(phi + np.pi/2)
-            delta_iy2 = delta_i2 * np.sin(phi + np.pi/2)
+            delta_ix2 = -delta_i2 * np.sin(phi)
+            delta_iy2 =  delta_i2 * np.cos(phi)
 
-            self.FSWModels[2].spacecraftReconfig.targetClassicOED = [
-                0.0,         # Δa   = a_d     - a_c  (Must be 0.0 -> req. for bounded motion)
-                delta_e2,    # Δe   = e_d​     - e_c​
-                delta_iy2,   # Δi   = i_d     - i_c
-                delta_ix2,   # ΔΩ   = Ω_d     - Ω_c
-                delta_ey2,   # Δω   = ω_d     - ω_c
-                -delta_ex2   # ΔM   = M_d     - M_c
-            ]
+            self.FSWModels[2].spacecraftReconfig.targetClassicOED = self._roe_to_classic_target(
+                chief_oe=self.oe[0],
+                delta_ex=delta_ex2,
+                delta_ey=delta_ey2,
+                delta_ix=delta_ix2,
+                delta_iy=delta_iy2,
+                delta_a=0.0,
+                delta_lambda=0.0
+            )
         elif formation == 'CIRCULAR_PROJECTED_ORBITS':
             a = self.oe[0].a          # chief semi-major axis
             rho = 50.0                # projected formation radius [m]
 
             delta_e = rho / a
-            delta_i = np.sqrt(3.0) * delta_e  # J2-invariant
+            # For a circular projection in the (i_theta, i_h) plane, use |delta_i| = 2|delta_e|.
+            # A J2-invariant alternative often uses sqrt(3)*delta_e.
+            delta_i = 2.0 * delta_e
 
             # 120 degree spacing
             phis = [0.0, 2.0*np.pi/3.0, 4.0*np.pi/3.0] # 120 degree spacing
@@ -325,54 +371,21 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 delta_ix = -delta_i * np.sin(phi)
                 delta_iy =  delta_i * np.cos(phi)
 
-                # [Δa/a, Δex, Δiy, Δix, Δey, Δλ]
-                self.FSWModels[k].spacecraftReconfig.targetClassicOED = [
-                    0.0,            # Δa     Δa = 0.0 -> required bounded motion (p. 797)
-                    delta_ex,       # Δe
-                    delta_iy,       # Δi
-                    delta_ix,       # ΔΩ
-                    delta_ey,       # Δω
-                    -delta_ex       # ΔM = -Δe ― bounded condition
-                ]
+                # spacecraftReconfig expects classical orbital-element differences.
+                # Build those from desired relative eccentricity/inclination vectors.
+                self.FSWModels[k].spacecraftReconfig.targetClassicOED = self._roe_to_classic_target(
+                    chief_oe=self.oe[0],
+                    delta_ex=delta_ex,
+                    delta_ey=delta_ey,
+                    delta_ix=delta_ix,
+                    delta_iy=delta_iy,
+                    delta_a=0.0,
+                    delta_lambda=0.0
+                )
 
                 print(f"\nSat{k} CPO target (phi={np.degrees(phi):.0f}°):")
-                print(f"  [Δa/a, Δex, Δiy, Δix, Δey, Δλ] = {self.FSWModels[k].spacecraftReconfig.targetClassicOED}")
-                                                                     #Δa     Δe         Δi          ΔΩ         Δω         ΔM
-#            self.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0,    7.22e-6,   1.25e-5,    0.0,       0.0,      7.22e-6] # Set SC0
-#            self.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0,   -3.6e-6,   -6.25e-6,   -1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC1
-#            self.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0,   -3.6e-6,   -6.25e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC2
-            self.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC0
-            self.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC1
-            self.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0,   10.0e-6,     10.0e-6,    1.08e-5,  -6.25e-6,  3.6e-6]  # Set SC2
-            # meanOEFeedback
-#            a = self.oe[0].a
-#            rho = 50.0                # projected formation radius [m]
-#
-#            delta_e = rho / a
-#            delta_i = np.sqrt(3.0) * delta_e  # J2-invariant
-#
-#            phis = [0.0, 2.0*np.pi/3.0, 4.0*np.pi/3.0]
-#
-#            for k in range(3):
-#                phi = phis[k]
-#
-#                # Equinoctial eccentricity vector at phase phi
-#                delta_h = delta_e * np.sin(phi)   # Δ(e·sin(ω+Ω))
-#                delta_k = delta_e * np.cos(phi)   # Δ(e·cos(ω+Ω))
-#
-#                # Equinoctial inclination vector perpendicular to e-vector
-#                delta_p =  delta_i * np.cos(phi)  # Δ(tan(i/2)·sin(Ω))
-#                delta_q = -delta_i * np.sin(phi)  # Δ(tan(i/2)·cos(Ω))
-#
-#                # Set equinoctial targets on meanOEFeedback
-#                # [Δa/a, Δh, Δk, Δp, Δq, Δλ]
-#                self.FSWModels[k].meanOEFeedback.targetDiffOeMean = [
-#                    0.0, delta_h, delta_k, delta_p, delta_q, 0.0   # ← Δλ = 0, not -delta_k
-#                ]
-#
-#                print(f"\nSat{k} CPO equinoctial target (phi={np.degrees(phi):.0f}°):")
-#                print(f"  [Δa/a, Δh, Δk, Δp, Δq, Δλ] = "
-#                      f"{self.FSWModels[k].meanOEFeedback.targetDiffOeMean}")
+                print(f"  ROE   [dex, dey, dix, diy] = [{delta_ex:.6e}, {delta_ey:.6e}, {delta_ix:.6e}, {delta_iy:.6e}]")
+                print(f"  OED   [dA, dE, dI, dOmega, domega, dM] = {self.FSWModels[k].spacecraftReconfig.targetClassicOED}")
         elif formation == 'LEAD_FOLLOWER': # LF TODO This might be wrong
             separation = 30.0  # [m] along-track separation
             delta_M = separation / self.oe[0].a  # [rad]
@@ -426,10 +439,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         print("\n--- ROE targets debug ---")
         for k in range(3):
             t = self.FSWModels[k].spacecraftReconfig.targetClassicOED
-            de_vec = np.array([t[1], t[4]])   # [delta_ex, delta_ey]
-            di_vec = np.array([t[2], t[3]])   # [delta_ix, delta_iy]
             print(f"Sat{k} targetClassicOED: {t}")
-            print(f"  |de|={np.linalg.norm(de_vec):.6e}, |di|={np.linalg.norm(di_vec):.6e}, de·di={np.dot(de_vec,di_vec):.6e}")
         # END DIAGNOSTIC
 
     def configure_initial_conditions(self):
@@ -441,14 +451,14 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         a_sso = EnvModel.planetRadius + alt
         i_sso = 97.6 * macros.D2R  # SSO inclination for 550 km
 
-        # Separation in along-track
-        separation = 50.0  #50  # meters
+        # Initial along-track lead-follower spacing around the future virtual-chief location
+        separation = 50.0  # meters
         delta_f = separation / a_sso  # ≈ 7.2e-6 rad
 
         # Base true anomaly (this will be the barycenter position)
         f_base = 85.3 * macros.D2R
 
-        # SC0: AHEAD of barycenter (+50m)
+        # SC0: AHEAD of barycenter (+2.5 m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[0].a = a_sso
         self.oe[0].e = 0.001
@@ -462,7 +472,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         DynModels[0].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
         DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
-        # SC1: AT barycenter (0m)
+        # SC1: AT barycenter (0 m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[1].a = a_sso
         self.oe[1].e = 0.001
@@ -476,7 +486,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         DynModels[1].scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
         DynModels[1].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
-        # SC2: BEHIND barycenter (-50m)
+        # SC2: BEHIND barycenter (-2.5 m)
         self.oe.append(orbitalMotion.ClassicElements())
         self.oe[2].a = a_sso
         self.oe[2].e = 0.001
@@ -876,7 +886,7 @@ if __name__ == "__main__":
 
     run(showPlots=True,
         numberSpacecraft=3,
-        formation='CIRCULAR_PROJECTED_ORBITS', # can be any of ['COCENTRIC_FORMATION', 'CIRCULAR_PROJECTED_ORBITS', 'LEAD_FOLLOWER']
+        formation='COCENTRIC_FORMATION', # can be any of ['COCENTRIC_FORMATION', 'CIRCULAR_PROJECTED_ORBITS', 'LEAD_FOLLOWER']
         txConstTleData=[gpsTleData] # can be any of ['GPS', 'Galileo', 'Beidou', 'Glonass']
         )
     A = 1
