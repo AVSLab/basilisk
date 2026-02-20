@@ -61,6 +61,7 @@ class BSKEnvironmentModel:
         SimBase.AddModelToTask(self.envTaskName, self.groundStationBar, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundStationSval, 200)
         SimBase.AddModelToTask(self.envTaskName, self.groundEarthCenter, 200)
+        SimBase.AddModelToTask(self.envTaskName, self.simpleAntenna, 199)
         SimBase.AddModelToTask(self.envTaskName, self.magneticField, 199)
         SimBase.AddModelToTask(self.envTaskName, self.atmosphere, 199)
 
@@ -142,7 +143,7 @@ class BSKEnvironmentModel:
         Specify the magnetic field model to use.
         """
         self.magneticField.ModelTag = "WMM"
-        self.magneticField.wmmDataFullPath = bskPath + '/supportData/MagneticField/WMM.COF'
+        self.magneticField.wmmDataFullPath = bskPath + '/supportData/MagneticField/WMM2025.COF'
         # set epoch date/time message
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(epochTimeStr)
         self.magneticField.epochInMsg.subscribeTo(epochMsg)
@@ -161,15 +162,18 @@ class BSKEnvironmentModel:
         Sets up a simple antenna for ground station use
         """
         self.simpleAntenna = simpleAntenna.SimpleAntenna()
+        self.simpleAntenna.ModelTag = "GroundSimpleAntenna"
         self.simpleAntenna.setAntennaName("groundSimpleAntenna")
         self.simpleAntenna.setAntennaDirectivity_dB(50.0)                # [dBi] 14 dBi, Guesstimate for ground station S-Band antenna
         self.simpleAntenna.setAntennaFrequency(2.1e9)                    # [Hz]  2.1GHz, S-Band according to Nano Avionics M12P specs
         self.simpleAntenna.setAntennaBandwidth(2.0e6)                    # [Hz]  2.0MHz, S-Band (typical S-Band bandwidth)
         self.simpleAntenna.setAntennaHpbwRatio(1.0)                      # [-]   Symetrical antenna beam.
         self.simpleAntenna.setAntennaP_Tx(500.0)                         # [W]   0.5kW transmit power, typical for ground station
+        self.simpleAntenna.setAntennaP_Rx(50.0)                          # [W]   receive-side power budget placeholder for ground station model
         self.simpleAntenna.setAntennaRadEfficiency(0.8)                  # [-]   80% efficiency
         self.simpleAntenna.setAntennaEquivalentNoiseTemp(40.0)           # [K]   290K equivalent noise temperature, typical for ground station
         self.simpleAntenna.setAntennaPositionBodyFrame([0.0, 0.0, 0.0])  # [m]   body fixed position
+        self.simpleAntenna.setAntennaState(simpleAntenna.ANTENNA_RX)
         self.simpleAntenna.groundStateInMsg.subscribeTo(self.groundStationSval.currentGroundStateOutMsg)  # Svalbard ground station access message
 
     # ------------------------------------------------------------------------------------------- #
