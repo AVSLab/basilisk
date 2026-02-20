@@ -6,11 +6,11 @@ Reading in the planet's ephemeris state the position of :math:`L` relative to th
 the inertial frame are evaluated at output as a message.
 
 Further, one or more spacecraft states can be added to this module to compute the spacecraft position
-relative to the ground location :math:`L`.  The associated output access output message contains the relative
-position vector in terms the spherical coordinates range, azimuth and elevation angle, as well as in terms of
+relative to the ground location :math:`L`.  The associated output access message contains the relative
+position vector in terms of the spherical coordinates range, azimuth and elevation angle, as well as in terms of
 South-East-Zenith (SEZ) coordinates.  Finally, the velocity of the spacecraft as seen by the :math:`L` location
 is provided in terms of range, azimuth, elevation, south east and zenith rates.  Finally, this access message
-has a integer variable indicating if the spacecraft is above a minimum elevation angle of the :math:`L` SEC frame.
+has an integer variable indicating if the spacecraft is above a minimum elevation angle of the :math:`L` SEZ frame.
 
 
 
@@ -23,7 +23,7 @@ a conical field of view around the normal vector from the body's surface at the 
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
+user from Python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -63,13 +63,13 @@ The ``groundLocation`` module handles the following behavior:
 Determining States
 ~~~~~~~~~~~~~~~~~~
 The position of the spacecraft in the SEZ frame, relative to the ground station, is parameterized
-by the cartesian coordinates:
+by the Cartesian coordinates:
 
 .. math:: \mathbf{r}_{B/L} = x\hat{S} + y\hat{E} + z\hat{Z}
     :label: eq:SEZ_coords:1
 
-The cartesian coordinates are converted to spherical coordinates, centered at the ground station position,
-which give the range (:math:`\rho`), azimuth(:math:`Az`), and elevation(:math:`El`).
+The Cartesian coordinates are converted to spherical coordinates, centered at the ground station position,
+which give the range (:math:`\rho`), azimuth (:math:`Az`), and elevation (:math:`El`).
 
 .. math:: \rho = \sqrt{x^2 + y^2 + z^2}
     :label: eq:rho:2
@@ -102,13 +102,13 @@ User Guide
 ----------
 
 To use this module, instantiate the class and provide it with a body-fixed location (in either lat/long/altitude,
-via the specifyLocation method, or in
+via the ``specifyLocation()`` method, or in
 planet-centered planet-fixed coordinates directly via the ``r_LP_P_Init`` attribute) and a planet position/attitude
 message (i.e., an instance of :ref:`SpicePlanetStateMsgPayload`);
 to compute access, at least one :ref:`SCStatesMsgPayload` message must be added to the module using the ``addSpacecraftToModel()`` method.
 The first spacecraft is 0, the second is 1, and so on.
 
-A new instance of groundLocation, alongside necessary user-supplied parameters, can be created by calling:
+A new instance of ``groundLocation``, alongside necessary user-supplied parameters, can be created by calling:
 
 .. code-block:: python
 
@@ -123,7 +123,7 @@ A new instance of groundLocation, alongside necessary user-supplied parameters, 
 The ``planetRadius`` variable is optional and defaults to Earth's radius.  Instead of specifying the ground location
 through the ``specifyLocation()`` method, you can also set the module variable ``r_LP_P_Init`` using the
 ``specifyLocationPCPF()`` method. Avoid setting the module variable ``r_LP_P_Init`` directly, as there are computations
-that occur within the ``specifyLocation()`` and ``specifylocationPCPF()`` methods that are important for access message
+that occur within the ``specifyLocation()`` and ``specifyLocationPCPF()`` methods that are important for access message
 states.
 
 The ``maximumRange`` variable is optional and defaults to -1.  This means by default no maximum range is considered.  Set it to a positive value to have ``hasAccess`` output message variable depend on range.
