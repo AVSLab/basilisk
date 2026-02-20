@@ -120,13 +120,13 @@ Where to make changes
 - **Bug fixes for an existing release**:
 
    #. Create branch on develop to test the fix.
-   #. Create PR for this fix branch, don't update beta release notes
-   #. On master, create a patch branch and cherry pick over the fix commit(s)
-   #. On the patch branch, update the release notes for ``v2.X.Y`` with a release date
-   #. Merge this branch into ``master``
+   #. Create PR for this fix branch and push to develop
+   #. On master, create a patch branch based off the latest tagged release
+   #. On the ``X.Y`` patch branch, update the release notes for ``v2.X.Y`` with a release date
+   #. Cherry pick over the fix commit(s)
+   #. On GitHub, the the ``pull-request`` action on this patch branch to ensure BSK builds on all platforms
+   #. Tag this patch branch to create a release
    #. Create a Release on GitHub
-   #. Charry pick the commit that updated the ``v2.X.Y`` release notes back into
-      the beta cycle on ``develop``.
 
 
 .. important::
