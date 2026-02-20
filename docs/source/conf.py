@@ -158,6 +158,10 @@ exclude_patterns = [
     'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',
     'examples/OpNavScenarios/index.rst',
     'examples/mujoco/index.rst',
+    # Release note snippets are consumed via include in bskReleaseNotes.rst and
+    # should not be treated as standalone documentation pages.
+    'Support/bskReleaseNotesSnippets/*.rst',
+    'Support/bskReleaseNotesSnippets/*.md',
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
