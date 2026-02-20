@@ -18,6 +18,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 from Basilisk.utilities.readAtmTable import readAtmTable
 from Basilisk.simulation import hingedRigidBodyStateEffector
+from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 bskPath = __path__[0]
@@ -53,7 +54,7 @@ def sph2rv(xxsph):
     return rvec_N, uvec_N
 
 
-def run(planetCase, deorbitAlt):
+def run(planetCase, DOF, deorbitAlt):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -224,6 +225,18 @@ def run(planetCase, deorbitAlt):
     panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     panel2.ModelTag = "panel2"
 
+    panel2DOF_1 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    panel2DOF_1.ModelTag = "panel1"
+
+    panel2DOF_2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    panel2DOF_2.ModelTag = "panel2"
+
+    # panelNDOF_1 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    # panelNDOF_1.ModelTag = "panel1"
+
+    # panelNDOF_2 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    # panelNDOF_2.ModelTag = "panel2"
+
     # All panels are identical exept for location 
     panelMass = 10
     I_realistic = (1/12) * panelMass * (3.0**2 + 2.0**2)
@@ -234,6 +247,7 @@ def run(planetCase, deorbitAlt):
     d = 1.5
     dcm_HB = [[1, 0, 0.0], [0.0, 1, 0.0], [0.0, 0.0, 1]]
 
+    #1DOF
     panel1.mass = panelMass
     panel1.IPntS_S = IPntS_S
     panel1.d = -d
@@ -254,6 +268,41 @@ def run(planetCase, deorbitAlt):
     panel2.thetaInit = 0.0
     panel2.thetaDotInit = 0.0
 
+    # 2DOF 
+    panel2DOF_1.mass1 = panelMass
+    panel2DOF_1.mass2 = panelMass
+    panel2DOF_1.d1 = -d 
+    panel2DOF_1.d1 = -d
+    panel2DOF_1.k1 = k 
+    panel2DOF_1.k2 = k
+    panel2DOF_1.c1 = c
+    panel2DOF_1.c2 = c
+    panel2DOF_1.l1 = -(2*d)
+    panel2DOF_1.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_1.dcm_H1B = dcm_HB
+    panel2DOF_1.theta1Init = 0.0
+    panel2DOF_1.theta1DotInit = 0.0
+    panel2DOF_1.IPntS2_S2 = IPntS_S
+    panel2DOF_1.theta2Init = 0.0
+    panel2DOF_1.theta2DotInit = 0.0
+
+    panel2DOF_2.mass1 = panelMass
+    panel2DOF_2.mass2 = panelMass
+    panel2DOF_2.d1 = -d 
+    panel2DOF_2.d1 = -d
+    panel2DOF_2.k1 = k 
+    panel2DOF_2.k2 = k
+    panel2DOF_2.c1 = c
+    panel2DOF_2.c2 = c
+    panel2DOF_2.l1 = -(2*d)
+    panel2DOF_2.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_2.dcm_H1B = dcm_HB
+    panel2DOF_2.theta1Init = 0.0
+    panel2DOF_2.theta1DotInit = 0.0
+    panel2DOF_2.IPntS2_S2 = IPntS_S
+    panel2DOF_2.theta2Init = 0.0
+    panel2DOF_2.theta2DotInit = 0.0
+
     # # Symmetrically opposite panels for each spacecraft
     panel3 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector() 
     panel3.ModelTag = "panel3"
@@ -261,6 +310,13 @@ def run(planetCase, deorbitAlt):
     panel4 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector() 
     panel4.ModelTag = "panel4"
 
+    panel2DOF_3 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    panel2DOF_3.ModelTag = "panel1"
+
+    panel2DOF_4 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    panel2DOF_4.ModelTag = "panel2"
+
+    # 1DOF
     panel3.mass = panelMass
     panel3.IPntS_S = IPntS_S
     panel3.d = d
@@ -281,24 +337,76 @@ def run(planetCase, deorbitAlt):
     panel4.thetaInit = 0.0
     panel4.thetaDotInit = 0.0
 
+    # 2DOF 
+    panel2DOF_3.mass1 = panelMass
+    panel2DOF_3.mass2 = panelMass
+    panel2DOF_3.d1 = -d 
+    panel2DOF_3.d1 = -d
+    panel2DOF_3.k1 = k 
+    panel2DOF_3.k2 = k
+    panel2DOF_3.c1 = c
+    panel2DOF_3.c2 = c
+    panel2DOF_3.l1 = -(2*d)
+    panel2DOF_3.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_3.dcm_H1B = dcm_HB
+    panel2DOF_3.theta1Init = 0.0
+    panel2DOF_3.theta1DotInit = 0.0
+    panel2DOF_3.IPntS2_S2 = IPntS_S
+    panel2DOF_3.theta2Init = 0.0
+    panel2DOF_3.theta2DotInit = 0.0
+
+    panel2DOF_4.mass1 = panelMass
+    panel2DOF_4.mass2 = panelMass
+    panel2DOF_4.d1 = -d 
+    panel2DOF_4.d1 = -d
+    panel2DOF_4.k1 = k 
+    panel2DOF_4.k2 = k
+    panel2DOF_4.c1 = c
+    panel2DOF_4.c2 = c
+    panel2DOF_4.l1 = -(2*d)
+    panel2DOF_4.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_4.dcm_H1B = dcm_HB
+    panel2DOF_4.theta1Init = 0.0
+    panel2DOF_4.theta1DotInit = 0.0
+    panel2DOF_4.IPntS2_S2 = IPntS_S
+    panel2DOF_4.theta2Init = 0.0
+    panel2DOF_4.theta2DotInit = 0.0
+
     #########
     # Add panels to spaceCraft
     #########
 
     # in order to affect dynamics
-    scObject1.addStateEffector(panel1)
-    scObject2.addStateEffector(panel2)
-    scObject1.addStateEffector(panel3)
-    scObject2.addStateEffector(panel4)
 
-    scSim.AddModelToTask(simTaskName, scObject1)
-    scSim.AddModelToTask(simTaskName, scObject2)
+    if DOF == "1": 
+        scObject1.addStateEffector(panel1)
+        scObject2.addStateEffector(panel2)
+        scObject1.addStateEffector(panel3)
+        scObject2.addStateEffector(panel4)
 
-    # in order to track messages
-    scSim.AddModelToTask(simTaskName, panel1) 
-    scSim.AddModelToTask(simTaskName, panel2)
-    scSim.AddModelToTask(simTaskName, panel3)
-    scSim.AddModelToTask(simTaskName, panel4)
+        scSim.AddModelToTask(simTaskName, scObject1)
+        scSim.AddModelToTask(simTaskName, scObject2)
+
+        # in order to track messages
+        scSim.AddModelToTask(simTaskName, panel1) 
+        scSim.AddModelToTask(simTaskName, panel2)
+        scSim.AddModelToTask(simTaskName, panel3)
+        scSim.AddModelToTask(simTaskName, panel4)
+    elif DOF == "2": 
+        scObject1.addStateEffector(panel2DOF_1)
+        scObject2.addStateEffector(panel2DOF_2)
+        scObject1.addStateEffector(panel2DOF_3)
+        scObject2.addStateEffector(panel2DOF_4)
+
+        scSim.AddModelToTask(simTaskName, scObject1)
+        scSim.AddModelToTask(simTaskName, scObject2)
+
+        # in order to track messages
+        scSim.AddModelToTask(simTaskName, panel2DOF_1) 
+        scSim.AddModelToTask(simTaskName, panel2DOF_2)
+        scSim.AddModelToTask(simTaskName, panel2DOF_3)
+        scSim.AddModelToTask(simTaskName, panel2DOF_4)
+
     
     # Attach drag to hub only (previous method)
     scObject1.addDynamicEffector(drag1) # remember later to add the other panel facets to the drag!!!
@@ -310,11 +418,17 @@ def run(planetCase, deorbitAlt):
     scSim.AddModelToTask(dragEffectorTaskName2, drag2)
     drag2.atmoDensInMsg.subscribeTo(tabAtmo.envOutMsgs[0])
 
-    panel2.addDynamicEffector(drag3)  
+    if DOF == "1": 
+        panel2.addDynamicEffector(drag3)  
+    elif DOF == "2": 
+        panel2DOF_2.addDynamicEffector(drag3)
     scSim.AddModelToTask(dragEffectorTaskName3, drag3)
     drag3.atmoDensInMsg.subscribeTo(tabAtmo.envOutMsgs[0])    
 
-    panel4.addDynamicEffector(drag4)  
+    if DOF == "1":
+        panel4.addDynamicEffector(drag4)  
+    elif DOF == "2":
+        panel2DOF_4.addDynamicEffector(drag4)  
     scSim.AddModelToTask(dragEffectorTaskName4, drag4)
     drag4.atmoDensInMsg.subscribeTo(tabAtmo.envOutMsgs[0])    
 
@@ -426,10 +540,17 @@ def run(planetCase, deorbitAlt):
 
     dataLog1 = scObject1.scStateOutMsg.recorder()
     dataLog2 = scObject2.scStateOutMsg.recorder()
-    p1Log = panel1.hingedRigidBodyOutMsg.recorder()
-    p2Log = panel2.hingedRigidBodyOutMsg.recorder()
-    p3Log = panel3.hingedRigidBodyOutMsg.recorder()
-    p4Log = panel4.hingedRigidBodyOutMsg.recorder()
+
+    if DOF == "1":
+        p1Log = panel1.hingedRigidBodyOutMsg.recorder()
+        p2Log = panel2.hingedRigidBodyOutMsg.recorder()
+        p3Log = panel3.hingedRigidBodyOutMsg.recorder()
+        p4Log = panel4.hingedRigidBodyOutMsg.recorder()
+    elif DOF == "2": 
+        p1Log = panel2DOF_1.hingedRigidBodyOutMsg.recorder()
+        p2Log = panel2DOF_2.hingedRigidBodyOutMsg.recorder()
+        p3Log = panel2DOF_3.hingedRigidBodyOutMsg.recorder()
+        p4Log = panel2DOF_4.hingedRigidBodyOutMsg.recorder()
     dataNewAtmoLog = tabAtmo.envOutMsgs[0].recorder()
 
     scSim.AddModelToTask(simTaskName, dataLog1)
@@ -458,14 +579,24 @@ def run(planetCase, deorbitAlt):
         terminal=True,
     )
 
-    scBodyList = [
-        scObject1,
-        ["panel1", panel1.hingedRigidBodyConfigLogOutMsg],
-        ["panel3", panel3.hingedRigidBodyConfigLogOutMsg],
-        scObject2,
-        ["panel2", panel2.hingedRigidBodyConfigLogOutMsg],
-        ["panel4", panel4.hingedRigidBodyConfigLogOutMsg],
-    ]
+    if DOF == "1": 
+        scBodyList = [
+            scObject1,
+            ["panel1", panel1.hingedRigidBodyConfigLogOutMsg],
+            ["panel3", panel3.hingedRigidBodyConfigLogOutMsg],
+            scObject2,
+            ["panel2", panel2.hingedRigidBodyConfigLogOutMsg],
+            ["panel4", panel4.hingedRigidBodyConfigLogOutMsg],
+        ]
+    elif DOF == "2": 
+        scBodyList = [
+            scObject1,
+            ["panel1", panel2DOF_1.hingedRigidBodyConfigLogOutMsg],
+            ["panel3", panel2DOF_3.hingedRigidBodyConfigLogOutMsg],
+            scObject2,
+            ["panel2", panel2DOF_2.hingedRigidBodyConfigLogOutMsg],
+            ["panel4", panel2DOF_4.hingedRigidBodyConfigLogOutMsg],
+        ]
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
@@ -732,5 +863,5 @@ def run(planetCase, deorbitAlt):
 
 # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
-    run('Earth', deorbitAlt=80)      # planet arrival case, can be Earth or Mars
+    run('Earth', '1', deorbitAlt=80)      # planet arrival case, can be Earth or Mars
     
