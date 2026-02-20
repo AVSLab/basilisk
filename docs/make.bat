@@ -25,6 +25,11 @@ if errorlevel 9009 (
 	exit /b 1
 )
 
+if /I "%1"=="html" (
+	py -3 source\Support\bskReleaseNotesSnippets\_compile_release_notes_snippets.py || python source\Support\bskReleaseNotesSnippets\_compile_release_notes_snippets.py
+	if errorlevel 1 exit /b 1
+)
+
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
