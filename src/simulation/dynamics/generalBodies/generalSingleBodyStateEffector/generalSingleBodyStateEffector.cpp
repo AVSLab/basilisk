@@ -26,15 +26,16 @@
 
 const Eigen::Matrix<double, 3, 6> transMap =
         (Eigen::Matrix<double, 3, 6>() <<
-                0, 0, 0,  1, 0, 0,
-                0, 0, 0,  0, 1, 0,
-                0, 0, 0,  0, 0, 1
-        ).finished();
-const Eigen::Matrix<double, 3, 6> rotMap =
-        (Eigen::Matrix<double, 3, 6>() <<
                 1, 0, 0,  0, 0, 0,
                 0, 1, 0,  0, 0, 0,
                 0, 0, 1,  0, 0, 0
+        ).finished();
+
+const Eigen::Matrix<double, 3, 6> rotMap =
+        (Eigen::Matrix<double, 3, 6>() <<
+                0, 0, 0,  1, 0, 0,
+                0, 0, 0,  0, 1, 0,
+                0, 0, 0,  0, 0, 1
         ).finished();
 
 /*! This is the constructor, setting variables to default values. */
@@ -112,6 +113,13 @@ void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states)
     Eigen::VectorXd betaVec = Eigen::VectorXd::Map(this->betaInitList.data(), this->betaInitList.size());
     this->betaState = states.registerState(this->numDOF, 1, this->nameOfBetaState);
     this->betaState->setState(betaVec);
+
+    Eigen::VectorXd betaDotVec = Eigen::VectorXd::Map(this->betaDotInitList.data(), this->betaDotInitList.size());
+    this->betaDotState = states.registerState(this->numDOF, 1, this->nameOfBetaDotState);
+    this->betaDotState->setState(betaDotVec);
+
+    this->registerProperties(states);
+
 }
 
 /*! This method allows the state effector to register its properties with the dynamic parameter manager.
@@ -234,7 +242,6 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     // Define MBeta matrix
     Eigen::Matrix<double, 6, Eigen::Dynamic> MBeta1;
     MBeta1.resize(6, this->numDOF);
-
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
@@ -454,7 +461,7 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::ROTATION;
-    dof.index = this->numDOF;
+    dof.index = this->numDOF - 1;
     dof.axis_G = rotHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
@@ -478,7 +485,7 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::TRANSLATION;
-    dof.index = this->numDOF;
+    dof.index = this->numDOF -1;
     dof.axis_G = transHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
@@ -503,7 +510,7 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::ROTATION;
-    dof.index = this->numDOF;
+    dof.index = this->numDOF - 1;
     dof.axis_G = rotHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
@@ -529,7 +536,7 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::TRANSLATION;
-    dof.index = this->numDOF;
+    dof.index = this->numDOF - 1;
     dof.axis_G = transHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
