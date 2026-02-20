@@ -20,9 +20,10 @@ import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
-                                 thrusterDynamicEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
+                                 thrusterStateEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower, magnetometer, MtbEffector, dragDynamicEffector, simpleInstrument,
-                                 partitionedStorageUnit, spaceToGroundTransmitter, simpleAntenna, antennaPower, extForceTorque)
+                                 partitionedStorageUnit, spaceToGroundTransmitter, simpleAntenna, antennaPower,
+                                 linkBudget, extForceTorque, svIntegrators)
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
 
@@ -55,7 +56,7 @@ class BSKDynamicModels:
         self.simpleMassPropsObject = simpleMassProps.SimpleMassProps()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
-        self.thrusterDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrusterStateEffector = thrusterStateEffector.ThrusterStateEffector()
         self.thrusterFactory = simIncludeThruster.thrusterFactory()
         self.solarPanel = simpleSolarPanel.SimpleSolarPanel()
         self.powerSink = simplePowerSink.SimplePowerSink()
@@ -80,7 +81,7 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, 100)
         SimBase.AddModelToTask(self.taskName, self.simpleMassPropsObject, 99)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 100)
-        SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, 100)
+        SimBase.AddModelToTask(self.taskName, self.thrusterStateEffector, 100)
         SimBase.AddModelToTask(self.taskName, self.solarPanel, 100)
         SimBase.AddModelToTask(self.taskName, self.powerSink, 100)
         SimBase.AddModelToTask(self.taskName, self.simpleAntenna, 100)
@@ -93,7 +94,9 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.instrument, 90)
         SimBase.AddModelToTask(self.taskName, self.dataMonitor, 89)
         SimBase.AddModelToTask(self.taskName, self.transmitter, 99)
+        SimBase.AddModelToTask(self.taskName, self.linkBudget, 99)
         SimBase.AddModelToTask(self.taskName, self.extForceOEFeedback, 100)
+        SimBase.AddModelToTask(self.taskName, self.extForceHillPd, 100)
 
         for item in range(self.numRW):
             SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)
@@ -190,7 +193,7 @@ class BSKDynamicModels:
         self.numRW = self.rwFactory.getNumOfDevices()
         self.rwFactory.addToSpacecraft("RWArray" + str(self.spacecraftIndex), self.rwStateEffector, self.scObject)
 
-    def SetThrusterDynEffector(self):
+    def SetThrusterStateEffector(self):
         #ALTERNATIVE -> ENPULSION IFM Nano thruster FEEP electric propulsion (https://www.enpulsion.com/ifm-nano/)
         """
         Defines the thruster state effector. | EPSS C2 thruster model
@@ -207,7 +210,7 @@ class BSKDynamicModels:
         self.numThr = self.thrusterFactory.getNumOfDevices()
 
         # create thruster object container and tie to spacecraft object
-        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterDynamicEffector, self.scObject)
+        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterStateEffector, self.scObject)
 
     def SetFuelTank(self):
         """
@@ -225,7 +228,7 @@ class BSKDynamicModels:
 
         # Add the tank and connect the thrusters
         self.scObject.addStateEffector(self.fuelTankStateEffector)
-        self.fuelTankStateEffector.addThrusterSet(self.thrusterDynamicEffector)
+        self.fuelTankStateEffector.addThrusterSet(self.thrusterStateEffector)
 
     def SetReactionWheelPower(self):
         """Sets the reaction wheel power parameters"""
@@ -374,10 +377,93 @@ class BSKDynamicModels:
         self.simpleAntennaPower.basePowerNeed = 0.0  # Watt
 
     def SetExtForceOEFeedback(self):
-        """External force effector for meanOEFeedback controller"""
+        """External force effectors for station-keeping controllers.
+
+        ``extForceOEFeedback`` is reserved for future OE-feedback controllers.
+
+        ``extForceHillPd`` is the dedicated command channel for the Hill-frame PD
+        maintenance controller.  It is modelled as an **idealized 3-DOF force
+        actuator** (``ExtForceTorque`` with an arbitrary inertial command force)
+        and does *not* map to the physical EPSS C2 thruster.  This is a valid
+        simplification for the steady-state maintenance role where required forces
+        are tiny (µN–mN) and directions change slowly over the orbit.
+
+        .. note::
+            **FUTURE IMPROVEMENT** – Replace ``extForceHillPd`` with a physically
+            realistic actuation chain that uses the single EPSS C2 thruster:
+
+            1. ``hillFrameRelativeControl`` outputs ``CmdForceInertialMsg``
+               (desired inertial force).
+            2. A new custom ``SysModel`` converts this into an ``AttRefMsg`` that
+               points the spacecraft +X thruster axis toward the commanded force
+               direction.
+            3. The existing attitude loop (``attTrackingError`` + ``mrpFeedback`` +
+               RWs) slews the spacecraft to that attitude.
+            4. Once the pointing error is within a threshold, a firing-gate module
+               (e.g. ``thrFiringRemainder``) converts the commanded force magnitude
+               into a thruster on-time and fires the EPSS C2.
+
+            This cascade handles the attitude-maneuver delay (~400 s) and the
+            unidirectional constraint of the single thruster.  It is suited to the
+            maintenance role where burn directions change slowly (near once-per-orbit
+            rate) so the attitude lag is acceptable.
+        """
         self.extForceOEFeedback = extForceTorque.ExtForceTorque()
         self.extForceOEFeedback.ModelTag = "extForceOEFeedback" + str(self.spacecraftIndex)
         self.scObject.addDynamicEffector(self.extForceOEFeedback)
+
+        self.extForceHillPd = extForceTorque.ExtForceTorque()
+        self.extForceHillPd.ModelTag = "extForceHillPd" + str(self.spacecraftIndex)
+        self.scObject.addDynamicEffector(self.extForceHillPd)
+
+    def SetLinkBudget(self, SimBase):
+        """Sets up the link budget between spacecraft and Svalbard ground antenna."""
+        self.linkBudget = linkBudget.LinkBudget()
+        self.linkBudget.ModelTag = "linkBudget" + str(self.spacecraftIndex)
+        self.linkBudget.antennaInPayload_1.subscribeTo(self.simpleAntenna.antennaOutMsg)
+        self.linkBudget.antennaInPayload_2.subscribeTo(SimBase.EnvModel.simpleAntenna.antennaOutMsg)
+
+    def SetIntegrator(self, integratorType):
+        """Set spacecraft integrator based on input keyword."""
+        integratorKey = integratorType.strip().upper()
+
+        if integratorKey in ('RK45', 'RKF45'):
+            intObj = svIntegrators.svIntegratorRKF45(self.scObject)
+        elif integratorKey in ('RK78', 'RKF78'):
+            intObj = svIntegrators.svIntegratorRKF78(self.scObject)
+        elif integratorKey == 'EULER':
+            intObj = svIntegrators.svIntegratorEuler(self.scObject)
+        elif integratorKey == 'RK2':
+            intObj = svIntegrators.svIntegratorRK2(self.scObject)
+        elif integratorKey == 'RK4':
+            intObj = svIntegrators.svIntegratorRK4(self.scObject)
+        elif integratorKey == 'RK3':
+            intObj = svIntegrators.svIntegratorRungeKutta(
+                self.scObject,
+                a_coefficients=[[0, 0, 0], [1 / 2, 0, 0], [-1, 2, 0]],
+                b_coefficients=[1 / 6, 2 / 3, 1 / 6],
+                c_coefficients=[0, 0.5, 1],
+            )
+        elif integratorKey == 'BOGACKISHAMPINE':
+            intObj = svIntegrators.svIntegratorAdaptiveRungeKutta(
+                self.scObject,
+                largest_order=3,
+                a_coefficients=[
+                    [0, 0, 0, 0],
+                    [1 / 2, 0, 0, 0],
+                    [0, 3 / 4, 0, 0],
+                    [2 / 9, 1 / 3, 4 / 9, 0],
+                ],
+                b_coefficients=[7 / 24, 1 / 4, 1 / 3, 1 / 8],
+                b_star_coefficients=[2 / 9, 1 / 3, 4 / 9, 0],
+                c_coefficients=[0, 1 / 2, 3 / 4, 1],
+            )
+        else:
+            raise ValueError("Unsupported integratorType '{}'".format(integratorType))
+
+        # Keep a Python-side reference to avoid accidental garbage collection.
+        self.integratorObject = intObj
+        self.scObject.setIntegrator(self.integratorObject)
 
     # Global call to initialize every module
     def InitAllDynObjects(self, SimBase):
@@ -395,7 +481,7 @@ class BSKDynamicModels:
         # Initialize SC modules
         self.SetReactionWheelDynEffector()
         self.SetReactionWheelPower()
-        self.SetThrusterDynEffector()
+        self.SetThrusterStateEffector()
         self.SetFuelTank()
         self.SetSimpleNavObject()
         self.SetSimpleMassPropsObject()
@@ -411,4 +497,5 @@ class BSKDynamicModels:
         self.SetTransmitter(SimBase)
         self.SetExtForceOEFeedback()
         self.SetDataMonitor()
-#        self.SetLinkBudget()
+        self.SetLinkBudget(SimBase)
+        self.SetIntegrator('RK78')
