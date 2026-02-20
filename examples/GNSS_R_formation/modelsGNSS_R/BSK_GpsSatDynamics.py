@@ -19,7 +19,7 @@
 import numpy as np
 from Basilisk import __path__
 from Basilisk.simulation import (spacecraft, simpleNav, simpleMassProps, reactionWheelStateEffector,
-                                 thrusterDynamicEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
+                                 thrusterStateEffector, simpleSolarPanel, simplePowerSink, simpleBattery, fuelTank,
                                  ReactionWheelPower)
 from Basilisk.utilities import (macros as mc, unitTestSupport as sp, RigidBodyKinematics as rbk,
                                 simIncludeRW, simIncludeThruster)
@@ -52,7 +52,7 @@ class BSK_GpsSatDynamics:
         self.simpleMassPropsObject = simpleMassProps.SimpleMassProps()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.rwFactory = simIncludeRW.rwFactory()
-        self.thrusterDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        self.thrusterStateEffector = thrusterStateEffector.ThrusterStateEffector()
         self.thrusterFactory = simIncludeThruster.thrusterFactory()
         self.solarPanel = simpleSolarPanel.SimpleSolarPanel()
         self.powerSink = simplePowerSink.SimplePowerSink()
@@ -71,7 +71,7 @@ class BSK_GpsSatDynamics:
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, 100)
         SimBase.AddModelToTask(self.taskName, self.simpleMassPropsObject, 99)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 100)
-        SimBase.AddModelToTask(self.taskName, self.thrusterDynamicEffector, 100)
+        SimBase.AddModelToTask(self.taskName, self.thrusterStateEffector, 100)
         SimBase.AddModelToTask(self.taskName, self.solarPanel, 100)
         SimBase.AddModelToTask(self.taskName, self.powerSink, 100)
         SimBase.AddModelToTask(self.taskName, self.powerMonitor, 100)
@@ -158,7 +158,7 @@ class BSK_GpsSatDynamics:
         self.numRW = self.rwFactory.getNumOfDevices()
         self.rwFactory.addToSpacecraft("RWArray" + str(self.spacecraftIndex), self.rwStateEffector, self.scObject)
 
-    def SetThrusterDynEffector(self):
+    def SetThrusterStateEffector(self):
         """
         Defines the thruster state effector.
         """
@@ -172,7 +172,7 @@ class BSK_GpsSatDynamics:
         self.numThr = self.thrusterFactory.getNumOfDevices()
 
         # create thruster object container and tie to spacecraft object
-        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterDynamicEffector, self.scObject)
+        self.thrusterFactory.addToSpacecraft("thrusterFactory", self.thrusterStateEffector, self.scObject)
 
     def SetFuelTank(self):
         """
@@ -190,7 +190,7 @@ class BSK_GpsSatDynamics:
 
         # Add the tank and connect the thrusters
         self.scObject.addStateEffector(self.fuelTankStateEffector)
-        self.fuelTankStateEffector.addThrusterSet(self.thrusterDynamicEffector)
+        self.fuelTankStateEffector.addThrusterSet(self.thrusterStateEffector)
 
     def SetReactionWheelPower(self):
         """Sets the reaction wheel power parameters"""
@@ -237,7 +237,7 @@ class BSK_GpsSatDynamics:
         self.SetGravityBodies(SimBase)
         self.SetReactionWheelDynEffector()
         self.SetReactionWheelPower()
-        self.SetThrusterDynEffector()
+        self.SetThrusterStateEffector()
         self.SetFuelTank()
         self.SetSimpleNavObject()
         self.SetSimpleMassPropsObject()
