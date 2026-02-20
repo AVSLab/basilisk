@@ -185,24 +185,24 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-    this->r_GcB_B = r_GcG_B + r_GB_B;
-    this->effProps.rEff_CB_B = this->r_GcB_B;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    this->effProps.rEff_CB_B = r_GcB_B;
 
     // Compute and set effProps.IEffPntB_B
-    this->IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
-    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(this->r_GcB_B);
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
     this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
 
     // Compute and set effProps.rEffPrime_CB_B
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-    this->rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
-    this->effProps.rEffPrime_CB_B = this->rPrime_GcB_B;
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
+    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
 
     // Compute and set effProps.IEffPrimePntB_B
-    this->omega_GB_B = rotMap * this->TMat * this->betaDot;
-    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(this->omega_GB_B);
-    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(this->rPrime_GcB_B);
-    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * this->IPntGc_B - this->IPntGc_B * omegaTilde_GB_B
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
+    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
+    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
             - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
 }
 
@@ -341,19 +341,27 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B)
 {
-    // Update angular velocities
+    // Update hub angular velocity
     this->omega_BN_B = omega_BN_B;
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-    this->omega_GN_B = this->omega_GB_B + this->omega_BN_B;
 
     // Rotational angular momentum contribution
-    this->rDot_GcB_B = this->rPrime_GcB_B + omegaTilde_BN_B * this->r_GcB_B;
-    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(this->r_GcB_B);
-    rotAngMomPntCContr_B += this->IPntGc_B * this->omega_GN_B + this->mass * rTilde_GcB_B * this->rDot_GcB_B;
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    rotAngMomPntCContr_B += IPntGc_B * omega_GN_B + this->mass * rTilde_GcB_B * rDot_GcB_B;
 
     // Rotational energy contribution
-    rotEnergyContr += 0.5 * this->omega_GN_B.dot(this->IPntGc_B * this->omega_GN_B)
-                     + 0.5 * this->mass * this->rDot_GcB_B.dot(this->rDot_GcB_B);
+    rotEnergyContr += 0.5 * omega_GN_B.dot(IPntGc_B * omega_GN_B)
+                     + 0.5 * this->mass * rDot_GcB_B.dot(rDot_GcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
@@ -365,16 +373,25 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Matrix3d dcm_GN = dcm_GB * this->dcm_BN;
     *this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
-    *this->omega_GN_G = dcm_GB * this->omega_GN_B;
+
+    // Inertial angular velocity
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
+    *this->omega_GN_G = dcm_GB * omega_GN_B;
 
     // Inertial position
-    this->r_GcN_N = this->dcm_BN.transpose() * this->r_GcB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    this->r_GcN_N = this->dcm_BN.transpose() * r_GcB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
     *this->r_GN_N = this->dcm_BN.transpose() * r_GB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
 
     // Inertial velocity
-    this->v_GcN_N = this->dcm_BN.transpose() * this->rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
+    this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
     Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot;
     Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * r_GB_B;
     *this->v_GN_N = this->dcm_BN.transpose() * rDot_GB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;

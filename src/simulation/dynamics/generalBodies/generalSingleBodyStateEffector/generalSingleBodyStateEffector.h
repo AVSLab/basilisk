@@ -151,13 +151,7 @@ private:
     Eigen::MatrixXd* omega_GN_G;
 
     Eigen::Matrix3d dcm_BN;
-    Eigen::Vector3d omega_GB_B;
     Eigen::Vector3d omega_BN_B;
-    Eigen::Vector3d omega_GN_B;
-    Eigen::Vector3d rDot_GcB_B;
-    Eigen::Vector3d r_GcB_B;
-    Eigen::Vector3d rPrime_GcB_B;
-    Eigen::Matrix3d IPntGc_B;
 
     Eigen::MatrixXd ABeta;
     Eigen::MatrixXd BBeta;
