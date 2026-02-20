@@ -29,5 +29,6 @@ runs:
     - name: Compile docs
       shell: bash
       run: |
+        python3 docs/source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py
         make -C docs html SPHINXOPTS="-W"
         echo "DOCS_HTML=${{ inputs.html-dir }}" >> "$GITHUB_ENV"
