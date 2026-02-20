@@ -56,13 +56,9 @@ public:
     void setMass(const double mass);  //!< Setter method for the effector mass
     void setIPntGc_G(const Eigen::Matrix3d IPntGc_G);  //!< Setter method for IPntGc_G
     void setR_GcG_G(const Eigen::Vector3d r_GcG_G);  //!< Setter method for r_GcG_G
-    void setBetaInit(const Eigen::VectorXd betaInit);
-    void setBetaDotInit(const Eigen::VectorXd betaDotInit);
     double getMass() const;  //!< Getter method for the effector mass
     const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
     const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
-    Eigen::VectorXd getBetaInit();
-    Eigen::VectorXd getBetaDotInit();
     void addRotationalDOF(Eigen::Vector3d rotHat_G,
                           Eigen::Matrix3d dcm_G0P,
                           double thetaInit,
