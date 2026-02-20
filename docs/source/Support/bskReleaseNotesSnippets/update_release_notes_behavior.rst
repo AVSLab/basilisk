@@ -1,0 +1,1 @@
+- Update the developer workflow on how release notes are added.  The new method now adds small release notes RST snippets into ``docs/source/Support/bskReleaseNotesSnippets`` folder.  A README.md file there explains how to do this.
