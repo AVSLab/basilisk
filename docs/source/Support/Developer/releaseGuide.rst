@@ -43,12 +43,12 @@ bumps.
 Update this file to reflect the new version number following semantic versioning
 guidelines (e.g., MAJOR.MINOR.PATCH).
 
-Updating the Changelog
-----------------------
-The changelog is located in the ``docs/source/Support/bskReleaseNotes.rst`` file.
-Before releasing a new version, ensure that this file is updated to include
-all relevant changes, bug fixes, and new features that are part of the release.
-Add a release date after the version number.
+Updating the Release Notes
+--------------------------
+For normal PR development, release notes are contributed as snippet files in:
+``docs/source/Support/bskReleaseNotesSnippets``.
+These snippets are compiled and included automatically into the current
+``Version |release|`` section in ``docs/source/Support/bskReleaseNotes.rst`` when documentation is built.
 
 Creating a Release Branch
 -------------------------
