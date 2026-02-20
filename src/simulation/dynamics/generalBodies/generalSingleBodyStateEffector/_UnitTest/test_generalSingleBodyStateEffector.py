@@ -81,31 +81,48 @@ def test_generalSingleBodyStateEffector(show_plots):
     test_sim.AddModelToTask(task_name, general_body)
 
     # Set up data logging
+    sc_state_data_log = sc_object.scStateOutMsg.recorder()
     general_body_state_data_log = general_body.generalSingleBodyConfigLogOutMsg.recorder()
+    test_sim.AddModelToTask(task_name, sc_state_data_log)
     test_sim.AddModelToTask(task_name, general_body_state_data_log)
 
     # Rum the simulation
     sim_time = 1.0
+    test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     test_sim.ExecuteSimulation()
 
     # Extract logged data
-    timespan = general_body_state_data_log.times() * macros.NANO2SEC
+    timespan = sc_state_data_log.times() * macros.NANO2SEC
+    sigma_BN = sc_state_data_log.sigma_BN
     sigma_GN = general_body_state_data_log.sigma_BN
 
-    print(timespan)
-    print(sigma_GN)
-    # # Plot general body attitude
-    # plt.figure(1)
-    # plt.clf()
-    # plt.plot(timespan, sigma_GN[:, 0], label=r'$\sigma_{1}$')
-    # plt.plot(timespan, sigma_GN[:, 1], label=r'$\sigma_{2}$')
-    # plt.plot(timespan, sigma_GN[:, 2], label=r'$\sigma_{3}$')
-    # plt.title(r'$\sigma_{\mathcal{G}/\mathcal{N}}$ General Body MRP Attitude', fontsize=14)
-    # plt.ylabel('', fontsize=14)
-    # plt.xlabel('Time (min)', fontsize=14)
-    # plt.legend(loc='center right', prop={'size': 12})
-    # plt.grid(True)
+    # Plot hub attitude
+    plt.figure(1)
+    plt.clf()
+    plt.plot(timespan, sigma_BN[:, 0], label=r'$\sigma_{1}$')
+    plt.plot(timespan, sigma_BN[:, 1], label=r'$\sigma_{2}$')
+    plt.plot(timespan, sigma_BN[:, 2], label=r'$\sigma_{3}$')
+    plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Hub Inertial MRP Attitude', fontsize=14)
+    plt.ylabel('', fontsize=14)
+    plt.xlabel('Time (min)', fontsize=14)
+    plt.legend(loc='center right', prop={'size': 12})
+    plt.grid(True)
+
+
+    # Plot general body attitude
+    plt.figure(2)
+    plt.clf()
+    plt.plot(timespan, sigma_GN[:, 0], label=r'$\sigma_{1}$')
+    plt.plot(timespan, sigma_GN[:, 1], label=r'$\sigma_{2}$')
+    plt.plot(timespan, sigma_GN[:, 2], label=r'$\sigma_{3}$')
+    plt.title(r'$\sigma_{\mathcal{G}/\mathcal{N}}$ General Body Inertial MRP Attitude', fontsize=14)
+    plt.ylabel('', fontsize=14)
+    plt.xlabel('Time (min)', fontsize=14)
+    plt.legend(loc='center right', prop={'size': 12})
+    plt.grid(True)
+
+
 
     if show_plots:
         plt.show()
