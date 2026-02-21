@@ -83,7 +83,9 @@ the following line from the python scenario script. This will cause the BSK simu
 to be stored in a binary file inside the _VizFiles sub-folder with the scenario folder. This file can be read in by
 `Vizard <vizard>`_ and played back after running the BSK simulation. ::
 
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory
+                                        # , saveFile=fileName
+                                        )
 
 The vizInterface module must be built into BSK. This is done if the correct `CMake options <cmakeOptions>`_
 are selected. The default
