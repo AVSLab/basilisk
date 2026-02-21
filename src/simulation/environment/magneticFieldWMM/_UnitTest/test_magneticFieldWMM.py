@@ -51,18 +51,18 @@ bskPath = path.split('src')[0]
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue", [
-      (2020,    0,  80,   0,  6414.5,   -153.0,  54169.0)
-    , (2020,    0,   0, 120, 39624.3,    109.9, -10932.5)
-    , (2020,    0, -80, 240,  5801.8,  15571.1, -51959.6)
-    , (2020,  100,  80,   0,  6114.2,   -191.5,  52011.7)
-    , (2020,  100,   0, 120, 37636.7,    104.9, -10474.8)
-    , (2020,  100, -80, 240,  5613.9,  14614.0, -49483.9)
-    , (2022.5,   0,  80,   0,  6374.2,    -6.9,  54274.1)
-    , (2022.5,   0,   0, 120, 39684.7,   -42.2, -10809.5)
-    , (2022.5,   0, -80, 240,  5877.0, 15575.7, -51734.1)
-    , (2022.5, 100,  80,   0,  6076.7,   -51.7,  52107.6)
-    , (2022.5, 100,   0, 120, 37694.0,   -35.3, -10362.0)
-    , (2022.5, 100, -80, 240, 5683.3,  14617.4, -49273.2)
+            (2025.0,    0,  80,   0,  6365.8,   136.3,  54350.9)
+        , (2025.0,    0,   0, 120, 39677.8,  -109.6, -10580.2)
+        , (2025.0,    0, -80, 240,  5976.7, 15551.4, -51508.8)
+        , (2025.0,  100,  80,   0,  6068.6,    83.7,  52178.2)
+        , (2025.0,  100,   0, 120, 37688.6,   -96.2, -10152.1)
+        , (2025.0,  100, -80, 240,  5774.8, 14595.2, -49062.0)
+        , (2027.5,   0,  80,   0,  6345.1,   283.5,  54427.3)
+        , (2027.5,   0,   0, 120, 39701.6,  -167.4, -10381.8)
+        , (2027.5,   0, -80, 240,  6059.0, 15530.3, -51273.8)
+        , (2027.5, 100,  80,   0,  6049.4,   223.6,  52248.5)
+        , (2027.5, 100,   0, 120, 37711.6,  -148.7,  -9969.8)
+        , (2027.5, 100, -80, 240,  5850.4, 14575.5, -48842.5)
 ])
 @pytest.mark.parametrize("useDefault, useMsg", [
     (False, False)
@@ -76,7 +76,10 @@ bskPath = path.split('src')[0]
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
                 useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy):
-    """Module Unit Test"""
+    """Module Unit Test
+
+    Baseline truth values are tied to ``supportData/MagneticField/WMM2025.COF``.
+    """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
                                      useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy)

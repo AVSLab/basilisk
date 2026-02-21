@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 from Basilisk.utilities.supportDataTools.dataFetcher import (
     POOCH,
-    LOCAL_SUPPORT,
+    local_support_path,
 )
 from Basilisk.utilities.supportDataTools.registrySnippet import REGISTRY
 
@@ -55,11 +55,10 @@ def main():
 
     for rel in tqdm(all_relpaths, desc="Fetching data files", unit="file"):
         try:
-            if LOCAL_SUPPORT:
-                local = LOCAL_SUPPORT / rel
-                if local.exists():
-                    successes += 1
-                    continue
+            local = local_support_path(rel)
+            if local and local.exists():
+                successes += 1
+                continue
             # Output progress
             tqdm.write(f"Downloading {rel}")
             quiet_fetch(rel)
