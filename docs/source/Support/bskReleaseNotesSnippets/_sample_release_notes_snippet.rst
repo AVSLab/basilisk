@@ -1,0 +1,3 @@
+- Added :ref:`scenarioBasicOrbit` showing how to set up an orbit.
+- Updated :ref:`mrpFeedback` to be more robust.
+- Added ``sgp4`` as a dependency used for TLE-to-state conversion workflows.

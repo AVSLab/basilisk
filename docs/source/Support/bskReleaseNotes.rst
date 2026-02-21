@@ -25,6 +25,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+
 - Removed the default ``--clean`` flag from ``setup.py`` to allow for incremental pip wheel builds.
 - TLE parsing fixed to be robust to file ending issues between LF and CRLF.
 - Updated ``conanfile.py`` to pass ``compiler.cstd=gnu17`` during Conan build step to avoid ``cspice/0067``

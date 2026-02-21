@@ -5,9 +5,11 @@
 ifeq ($(OS),Windows_NT)
     # windows specific code
     SPHINXBUILD = py -3 -m sphinx
+    PYTHON = py -3
 else
     # unix/macOS specific code
     SPHINXBUILD = python3 -m sphinx
+    PYTHON = python3
 endif
 SPHINXOPTS    =
 SOURCEDIR     = source
@@ -23,6 +25,11 @@ clean :
 	-rm -rf $(SOURCEDIR)/breathe.data
 	-rm -rf $(SOURCEDIR)/externalTools
 	-rm -rf $(SOURCEDIR)/examples
+
+release-notes-snippets:
+	$(PYTHON) source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py
+
+html: release-notes-snippets
 
 view:
 	    # works on macOS
