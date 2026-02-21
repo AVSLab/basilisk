@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: ${{ github.ref }}
           fetch-depth: 0
       - name: Build Basilisk
         uses: ./.github/actions/build
@@ -29,8 +29,8 @@ jobs:
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
       - name: Build docs
         uses: ./.github/actions/docs
-      - name: Deploy master branch merges to /
-        if: success() && github.ref_name == 'master'
+      - name: Deploy non-develop branch merges to /
+        if: success() && github.ref_name != 'develop'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
