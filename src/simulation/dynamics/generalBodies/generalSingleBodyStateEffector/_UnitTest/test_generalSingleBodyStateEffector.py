@@ -56,7 +56,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
     sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
     sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    sc_object.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
     test_sim.AddModelToTask(task_name, sc_object)
 
     # Create the general effector
@@ -71,23 +71,32 @@ def test_generalSingleBodyStateEffector(show_plots):
     dcm_G0B = np.array([[1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, 0.0, 1.0]])
-    thetaInit = 0.0
+    thetaInit = 5.0 * macros.D2R
     thetaDotInit = 0.0
+    spring_constant_k = 100.0
+    damper_constant_c = 0.0
     general_body.addRotationalDOF(rotHat_G,
                                   dcm_G0B,
                                   thetaInit,
-                                  thetaDotInit)
+                                  thetaDotInit,
+                                  spring_constant_k,
+                                  damper_constant_c)
     sc_object.addStateEffector(general_body)
     test_sim.AddModelToTask(task_name, general_body)
 
     # Set up data logging
     sc_state_data_log = sc_object.scStateOutMsg.recorder()
-    general_body_state_data_log = general_body.generalSingleBodyConfigLogOutMsg.recorder()
+    general_body_inertial_state_data_log = general_body.generalSingleBodyConfigLogOutMsg.recorder()
     test_sim.AddModelToTask(task_name, sc_state_data_log)
-    test_sim.AddModelToTask(task_name, general_body_state_data_log)
+    test_sim.AddModelToTask(task_name, general_body_inertial_state_data_log)
+
+    general_body_theta_states_data_log = []
+    for outMsg in general_body.spinningBodyOutMsgs:
+        general_body_theta_states_data_log.append(outMsg.recorder())
+        test_sim.AddModelToTask(task_name, general_body_theta_states_data_log[-1])
 
     # Rum the simulation
-    sim_time = 1.0
+    sim_time = 10.0
     test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     test_sim.ExecuteSimulation()
@@ -95,7 +104,13 @@ def test_generalSingleBodyStateEffector(show_plots):
     # Extract logged data
     timespan = sc_state_data_log.times() * macros.NANO2SEC
     sigma_BN = sc_state_data_log.sigma_BN
-    sigma_GN = general_body_state_data_log.sigma_BN
+    sigma_GN = general_body_inertial_state_data_log.sigma_BN
+    theta = []
+    theta_dot = []
+
+    for thetaData in general_body_theta_states_data_log:
+        theta.append(thetaData.theta * macros.R2D)
+        theta_dot.append(thetaData.thetaDot * macros.R2D)
 
     # Plot hub attitude
     plt.figure(1)
@@ -109,7 +124,6 @@ def test_generalSingleBodyStateEffector(show_plots):
     plt.legend(loc='center right', prop={'size': 12})
     plt.grid(True)
 
-
     # Plot general body attitude
     plt.figure(2)
     plt.clf()
@@ -122,7 +136,27 @@ def test_generalSingleBodyStateEffector(show_plots):
     plt.legend(loc='center right', prop={'size': 12})
     plt.grid(True)
 
+    # Plot general body theta
+    plt.figure(3)
+    plt.clf()
+    for idx, angle in enumerate(theta):
+        plt.plot(timespan, np.asarray(theta).squeeze(), label=r'$\theta_' + str(idx + 1) + '$')
+    plt.title(r'General Body Angle', fontsize=14)
+    plt.ylabel('Angle (deg)', fontsize=14)
+    plt.xlabel('Time (min)', fontsize=14)
+    plt.legend(loc='center right', prop={'size': 12})
+    plt.grid(True)
 
+    # Plot general body thetaDot
+    plt.figure(4)
+    plt.clf()
+    for idx, angle_rate in enumerate(theta_dot):
+        plt.plot(timespan, np.asarray(theta_dot).squeeze(), label=r'$\dot{\theta}_' + str(idx + 1) + '$')
+    plt.title(r'General Body Angle Rate', fontsize=14)
+    plt.ylabel('Angle Rate (deg/s)', fontsize=14)
+    plt.xlabel('Time (min)', fontsize=14)
+    plt.legend(loc='center right', prop={'size': 12})
+    plt.grid(True)
 
     if show_plots:
         plt.show()

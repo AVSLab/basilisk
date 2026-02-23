@@ -32,6 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
@@ -42,6 +43,19 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
+
+%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
+
+%include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+struct ArrayMotorTorqueMsg_C;
+
+%include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+struct LinearTranslationRigidBodyMsg_C;
+
+%include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
+struct ArrayMotorForceMsg_C;
+
 
 %pythoncode %{
 import sys

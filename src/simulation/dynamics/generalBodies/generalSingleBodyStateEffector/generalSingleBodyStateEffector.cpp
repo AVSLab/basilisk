@@ -91,6 +91,28 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentCl
         eigenMatrixXd2CArray(*this->omega_GN_G, configLogMsg.omega_BN_B);
         this->generalSingleBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
     }
+
+    for (int dofIndex = 0; dofIndex < this->numDOF; dofIndex++) {
+        int msgIndex = this->jointDOFList.at(dofIndex).index;
+
+        if (this->jointDOFList.at(dofIndex).type == DOF::Type::ROTATION) {
+            if (this->spinningBodyOutMsgs[msgIndex]->isLinked()) {
+                HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyOutMsgs[msgIndex]->zeroMsgPayload;
+
+                spinningBodyBuffer.theta = this->jointDOFList.at(dofIndex).beta;
+                spinningBodyBuffer.thetaDot = this->jointDOFList.at(dofIndex).betaDot;
+                this->spinningBodyOutMsgs[msgIndex]->write(&spinningBodyBuffer, this->moduleID, currentClock);
+            }
+        } else {
+            if (this->translatingBodyOutMsgs[msgIndex]->isLinked()) {
+                LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyOutMsgs[msgIndex]->zeroMsgPayload;
+
+                translatingBodyBuffer.rho = this->jointDOFList.at(dofIndex).beta;
+                translatingBodyBuffer.rhoDot = this->jointDOFList.at(dofIndex).betaDot;
+                this->translatingBodyOutMsgs[msgIndex]->write(&translatingBodyBuffer, this->moduleID, currentClock);
+            }
+        }
+    }
 }
 
 /*! This method allows the effector to have access to the hub states.
@@ -286,6 +308,20 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     Eigen::VectorXd CBetaStar;
     CBetaStar = this->TMat.transpose() * CBetaStar1;
 
+    for (int idx = 0; idx < this->numDOF; idx++) {
+
+        double motorForceTorque{};
+        if (this->jointDOFList.at(idx).type == DOF::Type::ROTATION) {
+            motorForceTorque = this->jointDOFList.at(idx).u;
+        } else {
+            motorForceTorque = this->jointDOFList.at(idx).f;
+        }
+
+    CBetaStar[idx] += motorForceTorque
+                      - this->jointDOFList.at(idx).k * (this->jointDOFList.at(idx).beta - this->jointDOFList.at(idx).betaRef)
+                      - this->jointDOFList.at(idx).c * (this->jointDOFList.at(idx).betaDot - this->jointDOFList.at(idx).betaDotRef);
+    }
+
     // Define ABeta, BBeta, and CBeta matrices
     this->ABeta = MBeta.inverse() * ABetaStar;
     this->BBeta = MBeta.inverse() * BBetaStar;
@@ -451,21 +487,29 @@ const Eigen::Vector3d GeneralSingleBodyStateEffector::getR_GcG_G() const { retur
 void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
                                                       Eigen::Matrix3d dcm_G0P,
                                                       double thetaInit,
-                                                      double thetaDotInit) {
+                                                      double thetaDotInit,
+                                                      double springConstantK,
+                                                      double damperConstantC) {
     this->numDOF++;
+    this->numRotDOF++;
     this->TMat.conservativeResize(6, this->TMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+    this->spinningBodyRefInMsg.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+    this->motorTorqueInMsg.push_back(ReadFunctor<ArrayMotorTorqueMsgPayload>());
+    this->spinningBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
 
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::ROTATION;
-    dof.index = this->numDOF - 1;
+    dof.index = this->numRotDOF - 1;
     dof.axis_G = rotHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
     dof.betaDotInit = thetaDotInit;
+    dof.k = springConstantK;
+    dof.c = damperConstantC;
 
     this->jointDOFList.push_back(dof);
     this->betaInitList.push_back(dof.betaInit);
@@ -475,21 +519,29 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
 void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHat_G,
                                                          Eigen::Matrix3d dcm_G0P,
                                                          double rhoInit,
-                                                         double rhoDotInit) {
+                                                         double rhoDotInit,
+                                                         double springConstantK,
+                                                         double damperConstantC) {
     this->numDOF++;
+    this->numTransDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+    this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
+    this->motorForceInMsg.push_back(ReadFunctor<ArrayMotorForceMsgPayload>());
+    this->translatingBodyOutMsgs.push_back(new Message<LinearTranslationRigidBodyMsgPayload>);
 
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::TRANSLATION;
-    dof.index = this->numDOF -1;
+    dof.index = this->numTransDOF -1;
     dof.axis_G = transHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
     dof.betaDotInit = rhoDotInit;
+    dof.k = springConstantK;
+    dof.c = damperConstantC;
 
     this->jointDOFList.push_back(dof);
     this->betaInitList.push_back(dof.betaInit);
@@ -500,22 +552,30 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
                                                     Eigen::Matrix3d dcm_G0P,
                                                     double thetaInit,
                                                     double thetaDotInit,
-                                                    double screwConstant) {
+                                                    double screwConstant,
+                                                    double springConstantK,
+                                                    double damperConstantC) {
     this->numDOF++;
+    this->numRotDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+    this->spinningBodyRefInMsg.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+    this->motorTorqueInMsg.push_back(ReadFunctor<ArrayMotorTorqueMsgPayload>());
+    this->spinningBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
 
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::ROTATION;
-    dof.index = this->numDOF - 1;
+    dof.index = this->numRotDOF - 1;
     dof.axis_G = rotHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
     dof.betaDotInit = thetaDotInit;
     dof.screwConstant = screwConstant;
+    dof.k = springConstantK;
+    dof.c = damperConstantC;
 
     this->jointDOFList.push_back(dof);
     this->betaInitList.push_back(dof.betaInit);
@@ -526,22 +586,30 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
                                                      Eigen::Matrix3d dcm_G0P,
                                                      double rhoInit,
                                                      double rhoDotInit,
-                                                     double screwConstant) {
+                                                     double screwConstant,
+                                                     double springConstantK,
+                                                     double damperConstantC) {
     this->numDOF++;
+    this->numTransDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+    this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
+    this->motorForceInMsg.push_back(ReadFunctor<ArrayMotorForceMsgPayload>());
+    this->translatingBodyOutMsgs.push_back(new Message<LinearTranslationRigidBodyMsgPayload>);
 
     // Create the new DOF
     DOF dof;
     dof.type = DOF::Type::TRANSLATION;
-    dof.index = this->numDOF - 1;
+    dof.index = this->numTransDOF - 1;
     dof.axis_G = transHat_G.normalized();
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
     dof.betaDotInit = rhoDotInit;
     dof.screwConstant = screwConstant;
+    dof.k = springConstantK;
+    dof.c = damperConstantC;
 
     this->jointDOFList.push_back(dof);
     this->betaInitList.push_back(dof.betaInit);

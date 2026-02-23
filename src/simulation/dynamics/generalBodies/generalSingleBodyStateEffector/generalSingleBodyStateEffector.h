@@ -25,6 +25,10 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
@@ -40,10 +44,16 @@ struct DOF {
     double betaDotInit{};
     double screwConstant{1.0};
 
-
     double beta;
     double betaDot;
     Eigen::Matrix3d dcm_GB;
+
+    double u{};
+    double f{};
+    double betaRef{};
+    double betaDotRef{};
+    double k{};
+    double c{};
 };
 
 
@@ -62,21 +72,29 @@ public:
     void addRotationalDOF(Eigen::Vector3d rotHat_G,
                           Eigen::Matrix3d dcm_G0P,
                           double thetaInit,
-                          double thetaDotInit);
+                          double thetaDotInit,
+                          double springConstantK,
+                          double damperConstantC);
     void addTranslationalDOF(Eigen::Vector3d transHat_G,
                              Eigen::Matrix3d dcm_G0P,
                              double rhoInit,
-                             double rhoDotInit);
+                             double rhoDotInit,
+                             double springConstantK,
+                             double damperConstantC);
     void addRotScrewDOF(Eigen::Vector3d rotHat_G,
                         Eigen::Matrix3d dcm_G0P,
                         double thetaInit,
                         double thetaDotInit,
-                        double screwConstant);
+                        double screwConstant,
+                        double springConstantK,
+                        double damperConstantC);
     void addTransScrewDOF(Eigen::Vector3d transHat_G,
                           Eigen::Matrix3d dcm_G0P,
                           double rhoInit,
                           double rhoDotInit,
-                          double screwConstant);
+                          double screwConstant,
+                          double springConstantK,
+                          double damperConstantC);
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
@@ -99,7 +117,14 @@ public:
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computeGeneralBodyInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
 
-    Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;                  //!< Output config log message for the effector's states
+    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsg;
+    std::vector<ReadFunctor<ArrayMotorTorqueMsgPayload>> motorTorqueInMsg;
+    std::vector<ReadFunctor<LinearTranslationRigidBodyMsgPayload>> translatingBodyRefInMsgs;
+    std::vector<ReadFunctor<ArrayMotorForceMsgPayload>> motorForceInMsg;
+
+    std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs;
+    std::vector<Message<LinearTranslationRigidBodyMsgPayload>*> translatingBodyOutMsgs;
+    Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;
 
 private:
     double mass;
@@ -107,6 +132,8 @@ private:
     Eigen::Vector3d r_GcG_G;
     std::vector<DOF> jointDOFList;
     int numDOF = 0;
+    int numRotDOF = 0;
+    int numTransDOF = 0;
 
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
