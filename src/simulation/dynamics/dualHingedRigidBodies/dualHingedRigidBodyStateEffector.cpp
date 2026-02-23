@@ -389,7 +389,10 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     backSubContr.vecRot = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omegaTildePNLoc_P*this->sHat12_P
                     + this->mass1*this->omegaTildePNLoc_P*this->rTildeS1P_P*this->rPrimeS1P_P + this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->rTildeS1P_P*this->sHat11_P + (this->theta1Dot+this->theta2Dot)*this->IPntS2_S2(1,1)*this->omegaTildePNLoc_P*this->sHat22_P + this->mass2*this->omegaTildePNLoc_P*this->rTildeS2P_P*this->rPrimeS2P_P
                     + this->mass2*this->rTildeS2P_P*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P) + (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P
-                    + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + (this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->vectorVDHRB);
+                    + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + (this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->vectorVDHRB) +
+                         this->dcm_S1P.transpose() * attBodyTorquePntS1_S1 + this->dcm_S2P.transpose() * attBodyTorquePntS2_S2 +
+                         eigenTilde(this->r_H1P_P) * externalForcePan1_P +
+                         eigenTilde(this->r_H2P_P) * externalForcePan2_P;
     return;
 }
 
