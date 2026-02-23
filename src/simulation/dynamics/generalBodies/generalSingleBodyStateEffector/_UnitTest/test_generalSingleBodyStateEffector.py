@@ -140,7 +140,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     plt.figure(3)
     plt.clf()
     for idx, angle in enumerate(theta):
-        plt.plot(timespan, np.asarray(theta).squeeze(), label=r'$\theta_' + str(idx + 1) + '$')
+        plt.plot(timespan, angle, label=r'$\theta_' + str(idx + 1) + '$')
     plt.title(r'General Body Angle', fontsize=14)
     plt.ylabel('Angle (deg)', fontsize=14)
     plt.xlabel('Time (min)', fontsize=14)
@@ -151,7 +151,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     plt.figure(4)
     plt.clf()
     for idx, angle_rate in enumerate(theta_dot):
-        plt.plot(timespan, np.asarray(theta_dot).squeeze(), label=r'$\dot{\theta}_' + str(idx + 1) + '$')
+        plt.plot(timespan, angle_rate, label=r'$\dot{\theta}_' + str(idx + 1) + '$')
     plt.title(r'General Body Angle Rate', fontsize=14)
     plt.ylabel('Angle Rate (deg/s)', fontsize=14)
     plt.xlabel('Time (min)', fontsize=14)
