@@ -180,6 +180,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, 
     double droppedRatePotential = 0.0;
 
     if (validParams) {
+        // Convert link quality into per-bit energy so BER can reflect user-selected bit rate.
         this->downlinkOutBuffer.cnr_dB = 10.0 * std::log10(selectedCnr);
         this->downlinkOutBuffer.cNo_dBHz = this->downlinkOutBuffer.cnr_dB + 10.0 * std::log10(this->linkBudgetBuffer.bandwidth);
         this->downlinkOutBuffer.ebN0_dB = this->downlinkOutBuffer.cNo_dBHz - 10.0 * std::log10(this->bitRateRequest);
@@ -187,6 +188,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, 
         ber = this->computeBerFromEbN0dB(this->downlinkOutBuffer.ebN0_dB);
         ber = this->clampProbability(ber);
 
+        // Any corrupted bit causes packet failure (checksum detect model).
         if (ber >= 1.0) {
             per = 1.0;
         } else if (ber <= 0.0) {
@@ -205,10 +207,12 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, 
         if (successOneAttempt <= 0.0) {
             expectedAttemptsPerPacket = static_cast<double>(maxRetx);
         } else {
+            // Truncated geometric expectation under retry cap.
             expectedAttemptsPerPacket = packetSuccessProb / successOneAttempt;
             expectedAttemptsPerPacket = std::max(1.0, expectedAttemptsPerPacket);
         }
 
+        // attemptedRatePotential is channel usage; storageRemoval is source-packet outflow.
         attemptedRatePotential = this->bitRateRequest;
         storageRemovalRatePotential = attemptedRatePotential / expectedAttemptsPerPacket;
         deliveredRatePotential = storageRemovalRatePotential * packetSuccessProb;
@@ -222,6 +226,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, 
     this->downlinkOutBuffer.expectedAttemptsPerPacket = expectedAttemptsPerPacket;
 
     double scale = 0.0;
+    // Optional packet gating plus storage saturation: never remove more than available this step.
     bool enoughForPacket = (!this->requireFullPacket) || (this->availableDataBits >= this->packetSizeBits);
     if (storageRemovalRatePotential > 0.0 && this->currentTimeStep > 0.0 && enoughForPacket) {
         double availableRemovalRate = this->availableDataBits / this->currentTimeStep;
