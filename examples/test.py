@@ -238,7 +238,10 @@ def run(planetCase, DOF, deorbitAlt):
     # panelNDOF_2.ModelTag = "panel2"
 
     # All panels are identical exept for location 
-    panelMass = 10
+    if DOF == "1": 
+        panelMass = 10
+    else: 
+        panelMass = 5
     I_realistic = (1/12) * panelMass * (3.0**2 + 2.0**2)
     IPntS_S = [[I_realistic, 0.0, 0.0], [0.0, I_realistic, 0.0], [0.0, 0.0, I_realistic]]
     k = 5000
@@ -272,11 +275,11 @@ def run(planetCase, DOF, deorbitAlt):
     panel2DOF_1.mass1 = panelMass
     panel2DOF_1.mass2 = panelMass
     panel2DOF_1.d1 = -d 
-    panel2DOF_1.d1 = -d
-    panel2DOF_1.k1 = k 
-    panel2DOF_1.k2 = k
-    panel2DOF_1.c1 = c
-    panel2DOF_1.c2 = c
+    panel2DOF_1.d2 = -d
+    panel2DOF_1.k1 = k/2
+    panel2DOF_1.k2 = k/2
+    panel2DOF_1.c1 = c/2
+    panel2DOF_1.c2 = c/2
     panel2DOF_1.l1 = -(2*d)
     panel2DOF_1.r_H1B_B = [[0.5], [0.0], [1.0]]
     panel2DOF_1.dcm_H1B = dcm_HB
@@ -289,11 +292,11 @@ def run(planetCase, DOF, deorbitAlt):
     panel2DOF_2.mass1 = panelMass
     panel2DOF_2.mass2 = panelMass
     panel2DOF_2.d1 = -d 
-    panel2DOF_2.d1 = -d
-    panel2DOF_2.k1 = k 
-    panel2DOF_2.k2 = k
-    panel2DOF_2.c1 = c
-    panel2DOF_2.c2 = c
+    panel2DOF_2.d2 = -d
+    panel2DOF_2.k1 = k/2
+    panel2DOF_2.k2 = k/2
+    panel2DOF_2.c1 = c/2
+    panel2DOF_2.c2 = c/2
     panel2DOF_2.l1 = -(2*d)
     panel2DOF_2.r_H1B_B = [[0.5], [0.0], [1.0]]
     panel2DOF_2.dcm_H1B = dcm_HB
@@ -311,10 +314,10 @@ def run(planetCase, DOF, deorbitAlt):
     panel4.ModelTag = "panel4"
 
     panel2DOF_3 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
-    panel2DOF_3.ModelTag = "panel1"
+    panel2DOF_3.ModelTag = "panel3"
 
     panel2DOF_4 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
-    panel2DOF_4.ModelTag = "panel2"
+    panel2DOF_4.ModelTag = "panel4"
 
     # 1DOF
     panel3.mass = panelMass
@@ -340,14 +343,14 @@ def run(planetCase, DOF, deorbitAlt):
     # 2DOF 
     panel2DOF_3.mass1 = panelMass
     panel2DOF_3.mass2 = panelMass
-    panel2DOF_3.d1 = -d 
-    panel2DOF_3.d1 = -d
-    panel2DOF_3.k1 = k 
-    panel2DOF_3.k2 = k
-    panel2DOF_3.c1 = c
-    panel2DOF_3.c2 = c
-    panel2DOF_3.l1 = -(2*d)
-    panel2DOF_3.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_3.d1 = d
+    panel2DOF_3.d2 = d
+    panel2DOF_3.k1 = k/2
+    panel2DOF_3.k2 = k/2
+    panel2DOF_3.c1 = c/2
+    panel2DOF_3.c2 = c/2
+    panel2DOF_3.l1 = (2*d)
+    panel2DOF_3.r_H1B_B = [[-0.5], [0.0], [1.0]]
     panel2DOF_3.dcm_H1B = dcm_HB
     panel2DOF_3.theta1Init = 0.0
     panel2DOF_3.theta1DotInit = 0.0
@@ -357,14 +360,14 @@ def run(planetCase, DOF, deorbitAlt):
 
     panel2DOF_4.mass1 = panelMass
     panel2DOF_4.mass2 = panelMass
-    panel2DOF_4.d1 = -d 
-    panel2DOF_4.d1 = -d
-    panel2DOF_4.k1 = k 
-    panel2DOF_4.k2 = k
-    panel2DOF_4.c1 = c
-    panel2DOF_4.c2 = c
-    panel2DOF_4.l1 = -(2*d)
-    panel2DOF_4.r_H1B_B = [[0.5], [0.0], [1.0]]
+    panel2DOF_4.d1 = d
+    panel2DOF_4.d2 = d
+    panel2DOF_4.k1 = k/2
+    panel2DOF_4.k2 = k/2
+    panel2DOF_4.c1 = c/2
+    panel2DOF_4.c2 = c/2
+    panel2DOF_4.l1 = (2*d)
+    panel2DOF_4.r_H1B_B = [[-0.5], [0.0], [1.0]]
     panel2DOF_4.dcm_H1B = dcm_HB
     panel2DOF_4.theta1Init = 0.0
     panel2DOF_4.theta1DotInit = 0.0
@@ -547,17 +550,17 @@ def run(planetCase, DOF, deorbitAlt):
         p3Log = panel3.hingedRigidBodyOutMsg.recorder()
         p4Log = panel4.hingedRigidBodyOutMsg.recorder()
     elif DOF == "2": 
-        p1Log = panel2DOF_1.dualHingedRigidBodyOutMsgs[1].recorder()
-        p2Log = panel2DOF_1.dualHingedRigidBodyOutMsgs[0].recorder()
+        p1Log = panel2DOF_1.dualHingedRigidBodyOutMsgs[0].recorder()
+        p2Log = panel2DOF_1.dualHingedRigidBodyOutMsgs[1].recorder()
 
-        p3Log = panel2DOF_2.dualHingedRigidBodyOutMsgs[1].recorder()
-        p4Log = panel2DOF_2.dualHingedRigidBodyOutMsgs[0].recorder()
+        p3Log = panel2DOF_2.dualHingedRigidBodyOutMsgs[0].recorder()
+        p4Log = panel2DOF_2.dualHingedRigidBodyOutMsgs[1].recorder()
 
-        p5Log = panel2DOF_3.dualHingedRigidBodyOutMsgs[1].recorder()
-        p6Log = panel2DOF_3.dualHingedRigidBodyOutMsgs[0].recorder()
+        p5Log = panel2DOF_3.dualHingedRigidBodyOutMsgs[0].recorder()
+        p6Log = panel2DOF_3.dualHingedRigidBodyOutMsgs[1].recorder()
 
-        p7Log = panel2DOF_4.dualHingedRigidBodyOutMsgs[1].recorder()
-        p8Log = panel2DOF_4.dualHingedRigidBodyOutMsgs[0].recorder()
+        p7Log = panel2DOF_4.dualHingedRigidBodyOutMsgs[0].recorder()
+        p8Log = panel2DOF_4.dualHingedRigidBodyOutMsgs[1].recorder()
 
     dataNewAtmoLog = tabAtmo.envOutMsgs[0].recorder()
 
@@ -605,11 +608,15 @@ def run(planetCase, DOF, deorbitAlt):
     elif DOF == "2": 
         scBodyList = [
             scObject1,
-            ["panel1", panel2DOF_1.dualHingedRigidBodyConfigLogOutMsgs[1]],
-            ["panel3", panel2DOF_3.dualHingedRigidBodyConfigLogOutMsgs[1]],
+            ["panel1_seg1", panel2DOF_1.dualHingedRigidBodyConfigLogOutMsgs[0]],
+            ["panel1_seg2", panel2DOF_1.dualHingedRigidBodyConfigLogOutMsgs[1]],
+            ["panel3_seg1", panel2DOF_3.dualHingedRigidBodyConfigLogOutMsgs[0]],
+            ["panel3_seg2", panel2DOF_3.dualHingedRigidBodyConfigLogOutMsgs[1]],
             scObject2,
-            ["panel2", panel2DOF_2.dualHingedRigidBodyConfigLogOutMsgs[1]],
-            ["panel4", panel2DOF_4.dualHingedRigidBodyConfigLogOutMsgs[1]],
+            ["panel2_seg1", panel2DOF_2.dualHingedRigidBodyConfigLogOutMsgs[0]],
+            ["panel2_seg2", panel2DOF_2.dualHingedRigidBodyConfigLogOutMsgs[1]],
+            ["panel4_seg1", panel2DOF_4.dualHingedRigidBodyConfigLogOutMsgs[0]],
+            ["panel4_seg2", panel2DOF_4.dualHingedRigidBodyConfigLogOutMsgs[1]],
         ]
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
@@ -629,32 +636,57 @@ def run(planetCase, DOF, deorbitAlt):
                                  color=vizSupport.toRGBA255("blue"),
                                  scale=[1, 2, 2])  # [width, length, height] in meters
 
-    # Panel 1 on spacecraft 1
-    vizSupport.createCustomModel(viz,
-                                 simBodiesToModify=["panel1"],
-                                 modelPath="CUBE",
-                                 scale=[3, 2, 0.1]) # [width, length, height] in meters
-    
-    # Panel 3 on spacecraft 1
-    vizSupport.createCustomModel(viz,
-                                 simBodiesToModify=["panel3"],
-                                 modelPath="CUBE",
-                                 scale=[3, 2, 0.1]) # [width, length, height] in meters
-    
-    # Panel 2 on spacecraft 2
-    vizSupport.createCustomModel(viz,
-                                 simBodiesToModify=["panel2"],
-                                 modelPath="CUBE",
-                                 color=vizSupport.toRGBA255("gold"),
-                                 scale=[3, 2, 0.1])  # [width, length, height] in meters
-    
-    # Panel 4 on spacecraft 2
-    vizSupport.createCustomModel(viz,
-                                 simBodiesToModify=["panel4"],
-                                 modelPath="CUBE",
-                                 color=vizSupport.toRGBA255("gold"),
-                                 scale=[3, 2, 0.1]) # [width, length, height] in meters
-    
+    if DOF == "1":
+        # Panel 1 on spacecraft 1
+        vizSupport.createCustomModel(viz,
+                                     simBodiesToModify=["panel1"],
+                                     modelPath="CUBE",
+                                     scale=[3, 2, 0.1]) # [width, length, height] in meters
+
+        # Panel 3 on spacecraft 1
+        vizSupport.createCustomModel(viz,
+                                     simBodiesToModify=["panel3"],
+                                     modelPath="CUBE",
+                                     scale=[3, 2, 0.1]) # [width, length, height] in meters
+
+        # Panel 2 on spacecraft 2
+        vizSupport.createCustomModel(viz,
+                                     simBodiesToModify=["panel2"],
+                                     modelPath="CUBE",
+                                     color=vizSupport.toRGBA255("gold"),
+                                     scale=[3, 2, 0.1])  # [width, length, height] in meters
+
+        # Panel 4 on spacecraft 2
+        vizSupport.createCustomModel(viz,
+                                     simBodiesToModify=["panel4"],
+                                     modelPath="CUBE",
+                                     color=vizSupport.toRGBA255("gold"),
+                                     scale=[3, 2, 0.1]) # [width, length, height] in meters
+    elif DOF == "2":
+        # Render both dual-hinge segments for each panel branch.
+        for panelName, panelColor in [
+            ("panel1_seg1", None),
+            ("panel1_seg2", None),
+            ("panel3_seg1", None),
+            ("panel3_seg2", None),
+            ("panel2_seg1", vizSupport.toRGBA255("gold")),
+            ("panel2_seg2", vizSupport.toRGBA255("gold")),
+            ("panel4_seg1", vizSupport.toRGBA255("gold")),
+            ("panel4_seg2", vizSupport.toRGBA255("gold")),
+        ]:
+            if panelColor is None:
+                vizSupport.createCustomModel(viz,
+                                             simBodiesToModify=[panelName],
+                                             modelPath="CUBE",
+                                             scale=[3, 2, 0.1])
+                                            
+            else:
+                vizSupport.createCustomModel(viz,
+                                             simBodiesToModify=[panelName],
+                                             modelPath="CUBE",
+                                             color=panelColor,
+                                             scale=[3, 2, 0.1])
+
     #
     #   initialize Simulation
     #
@@ -691,7 +723,7 @@ def run(planetCase, DOF, deorbitAlt):
         panel5thetaLog = p5Log.theta
         panel5thetaDotLog = p5Log.thetaDot
         panel6thetaLog = p6Log.theta
-        paneL6thetaDotLog = p6Log.thetaDot
+        panel6thetaDotLog = p6Log.thetaDot
 
         panel7thetaLog = p7Log.theta
         panel7thetaDotLog = p7Log.thetaDot
@@ -824,8 +856,8 @@ def run(planetCase, DOF, deorbitAlt):
     plt.figure(8)
     fig = plt.gcf()
     ax = fig.gca()
-    plt.plot(dataLog1.times()*macros.NANO2MIN, a1, label="Drag on hub only")    
-    plt.plot(dataLog2.times()*macros.NANO2MIN, a2, label="Drag on hub and panel") 
+    plt.plot(dataLog1.times()*macros.NANO2MIN, a1/1e3, label="Drag on hub only")
+    plt.plot(dataLog2.times()*macros.NANO2MIN, a2/1e3, label="Drag on hub and panel")
     plt.legend(loc='lower right')   
     plt.xlabel('Time [min]')    
     plt.ylabel('Semimajor axis [km]')
@@ -843,7 +875,7 @@ def run(planetCase, DOF, deorbitAlt):
     plt.ylabel('Period [s]') # check units !!!!
     plt.grid()
     pltName = fileName + "9" + planetCase
-    figureList[pltName] = plt.figure(8)
+    figureList[pltName] = plt.figure(9)
 
     plt.figure(10)
     fig = plt.gcf()
@@ -881,6 +913,50 @@ def run(planetCase, DOF, deorbitAlt):
     pltName = fileName + "4" + planetCase
     figureList[pltName] = plt.figure(12)
 
+    if DOF == "2":
+        # 2DOF angles grouped by spacecraft: SC1 (Panels 1 and 3, hinges 1 and 2)
+        plt.figure(13)
+        plt.plot(p1Log.times()*macros.NANO2MIN, panel1thetaLog, label="Panel1 H1")
+        plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaLog, linestyle='--', label="Panel1 H2")
+        plt.plot(p5Log.times()*macros.NANO2MIN, panel5thetaLog, label="Panel3 H1")
+        plt.plot(p6Log.times()*macros.NANO2MIN, panel6thetaLog, linestyle='--', label="Panel3 H2")
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [min]')
+        plt.ylabel('SC1 Panel Angles [rad]')
+        plt.grid()
+        pltName = fileName + "13" + planetCase
+        figureList[pltName] = plt.figure(13)
+
+        # 2DOF angles grouped by spacecraft: SC2 (Panels 2 and 4, hinges 1 and 2)
+        plt.figure(14)
+        plt.plot(p3Log.times()*macros.NANO2MIN, panel3thetaLog, label="Panel2 H1")
+        plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaLog, linestyle='--', label="Panel2 H2")
+        plt.plot(p7Log.times()*macros.NANO2MIN, panel7thetaLog, label="Panel4 H1")
+        plt.plot(p8Log.times()*macros.NANO2MIN, panel8thetaLog, linestyle='--', label="Panel4 H2")
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [min]')
+        plt.ylabel('SC2 Panel Angles [rad]')
+        plt.grid()
+        pltName = fileName + "14" + planetCase
+        figureList[pltName] = plt.figure(14)
+
+        # 2DOF hinge rates for all panels
+        plt.figure(15)
+        plt.plot(p1Log.times()*macros.NANO2MIN, panel1thetaDotLog, label="SC1 Panel1 H1Dot")
+        plt.plot(p3Log.times()*macros.NANO2MIN, panel3thetaDotLog, label="SC2 Panel2 H1Dot")
+        plt.plot(p5Log.times()*macros.NANO2MIN, panel5thetaDotLog, label="SC1 Panel3 H1Dot")
+        plt.plot(p7Log.times()*macros.NANO2MIN, panel7thetaDotLog, label="SC2 Panel4 H1Dot")
+        plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaDotLog, linestyle='--', label="SC1 Panel1 H2Dot")
+        plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaDotLog, linestyle='--', label="SC2 Panel2 H2Dot")
+        plt.plot(p6Log.times()*macros.NANO2MIN, panel6thetaDotLog, linestyle='--', label="SC1 Panel3 H2Dot")
+        plt.plot(p8Log.times()*macros.NANO2MIN, panel8thetaDotLog, linestyle='--', label="SC2 Panel4 H2Dot")
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [min]')
+        plt.ylabel('Hinge Rate [rad/s]')
+        plt.grid()
+        pltName = fileName + "15" + planetCase
+        figureList[pltName] = plt.figure(15)
+
     plt.show()
     plt.close("all")
 
@@ -889,4 +965,3 @@ def run(planetCase, DOF, deorbitAlt):
 # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
     run('Earth', '2', deorbitAlt=80)      # planet arrival case, can be Earth or Mars
-    
