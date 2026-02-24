@@ -5,7 +5,7 @@
 
 Executive Summary
 -----------------
-This document describes how the simpleAntenna module operates within the Basilisk astrodynamics simulation framework. The purpose of this module is to provide a simplified representation of an antenna for spacecraft-to-spacecraft and spacecraft-to-ground communication. The module abstracts away complex antenna parameters, such as detailed radiation patterns, and replaces them with general assumptions that enable simulation of typical satellite communication systems. The simplified antenna model is based on a 2D Gaussian beam pattern (see `Figure 1`_), sidelobes are neglected (see also :ref:`module-assumptions`).
+This document describes how the simpleAntenna module operates within the Basilisk astrodynamics simulation framework. The purpose of this module is to provide a simplified representation of an antenna for spacecraft-to-spacecraft and spacecraft-to-ground communication. The module abstracts away complex antenna parameters, such as detailed radiation patterns, and replaces them with general assumptions that enable simulation of typical satellite communication systems. The simplified antenna model is based on a 2D Gaussian beam pattern (see `Figure 2`), sidelobes are neglected (see also :ref:`module-assumptions`).
 
 This module enables users to simulate an antenna mounted on a spacecraft or placed in a ground environment (Earth) by configuring a set of key parameters (see :ref:`detailed-module-description`). The module must be connected to either a spacecraft state message (for space-based antennas) or a ground state message (for ground-based antennas).
 
@@ -57,7 +57,7 @@ provides information on what this message is used for.
 
 Detailed Module Description
 ---------------------------
-The simpleAntenna module simulates a directional antenna for spacecraft communication systems. It provides a simplified representation of antenna behavior by abstracting away complex antenna properties, such as detailed radiation patterns and receiver noise modeling. Instead, the radiation pattern is approximated using a 2D Gaussian field response (see `Figure 1`_ and `MATLAB Gaussian Antenna Element <https://www.mathworks.com/help/phased/ref/phased.gaussianantennaelement-system-object.html>`__).
+The simpleAntenna module simulates a directional antenna for spacecraft communication systems. It provides a simplified representation of antenna behavior by abstracting away complex antenna properties, such as detailed radiation patterns and receiver noise modeling. Instead, the radiation pattern is approximated using a 2D Gaussian field response (see `Figure 2` and `MATLAB Gaussian Antenna Element <https://www.mathworks.com/help/phased/ref/phased.gaussianantennaelement-system-object.html>`__).
 
 The module computes key antenna performance metrics including the Equivalent Isotropically Radiated Power (EIRP), the Gain-To-Noise Temperature (G/T), and the Noise Power. These outputs can be used to evaluate link budgets for spacecraft communication systems.
 
@@ -95,7 +95,7 @@ The following parameters must be configured by the user:
    * - Beam cross section shape
      - :math:`k`
      - \-
-     - Ratio between HPBW in azimuth :math:`\phi` and elevation :math:`\theta` direction (for a rotation symmetrical beam, :math:`k=1`)
+     - Ratio between HPBW in azimuth :math:`\phi` and elevation :math:`\theta` direction (for a rotation symmetric beam, :math:`k=1`)
      - :math:`0.5 < k < 5`
    * - Transmission power
      - :math:`P_\mathrm{Tx}`
@@ -166,13 +166,13 @@ These states can either be set via the :code:`antennaSetStateInMsg` input messag
 Radiation Pattern Model
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _Figure 1:
+.. _Figure 2:
 .. figure:: /../../src/simulation/communication/simpleAntenna/_Documentation/Images/DocumentationBSKsimpleAntenna.svg
    :width: 60%
    :align: center
    :alt: Schematic of SimpleAntenna beam pattern
 
-   Figure 1: Illustration of simpleAntenna 2D Gaussian beam pattern
+   Figure 2: Illustration of simpleAntenna 2D Gaussian beam pattern
 
 The antenna radiation pattern is modeled as a 2D Gaussian beam pattern (see also :ref:`module-assumptions`).
 
@@ -200,7 +200,7 @@ The power gain as a function of off-boresight angles is:
        \Bigg)
    \Bigg]
 
-Where :math:`G_{0}` is the boresight power gain (see :ref:`Figure 1`).
+Where :math:`G_{0}` is the boresight power gain (see :ref:`Figure 2`).
 
 .. math::
 
@@ -285,7 +285,7 @@ For space-based antennas\:
 :math:`T_\mathrm{Sky}` depends on the antenna pointing direction and is computed as a weighted sum of the Galactic Noise Temperature :math:`T_\mathrm{Galaxy}` and the Noise Temperature of the celestial bodies within the antenna beam coverage, :math:`T_\mathrm{Planet}`.
 The weights are given by the antenna beam coverage fractions :math:`C_\mathrm{Galaxy}` and :math:`C_\mathrm{Planet}` (see also :ref:`module-overlap-area-computation`). The antenna gain :math:`G(\theta, \phi)` is not considered at this stage (see also :ref:`module-assumptions`).
 
-- For space-based antennas, :math:`T_\mathrm{Ambient}` can be set by the user (optional) if it is not set, a default value of :math:`T_\mathrm{Ambient} = 150.0K` is used.
+- For space-based antennas, :math:`T_\mathrm{Ambient}` can be set by the user (optional) if it is not set, a default value of :math:`T_\mathrm{Ambient} = 150.0 \mathrm{K}` is used.
 - The calculation of :math:`T_\mathrm{Sky}` is described in :ref:`Calculation of T_sky <calculation-of-tsky>`.
 
 For ground-based antennas\:
@@ -354,7 +354,7 @@ If the ``sunEclipseInMsg`` is connected and the spacecraft is in full eclipse (s
 For ground-based antennas
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- For ground based antennas, :math:`T_\mathrm{sky}` is always assumed to be :math:`T_\mathrm{sky} = 200K`.
+- For ground based antennas, :math:`T_\mathrm{sky}` is always assumed to be :math:`T_\mathrm{sky} = 200 \mathrm{K}`.
 
 .. _module-overlap-area-computation:
 

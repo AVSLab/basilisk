@@ -41,8 +41,8 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief This module describes how the simple antenna model operates within the simulation environment.The purpose of this module is to provide a basic
-           representation of antenna behavior for spacecraft communication systems.The antenna is based on a simple model (2D Gaussian beam pattern).
+/*! @brief This module describes how the simple antenna model operates within the simulation environment. The purpose of this module is to provide a basic
+           representation of antenna behavior for spacecraft communication systems. The antenna is based on a simple model (2D Gaussian beam pattern).
            The user is able to set directivity, HPBW (elevation and azimuth), power demand for Tx and Rx, radiation efficiency, bandwidth and system noise temperature.
 */
 class SimpleAntenna: public SysModel {
@@ -152,7 +152,7 @@ public:
     ReadFunctor<AntennaStateMsgPayload>     antennaSetStateInMsg;  //!< setting antenna to [off / Rx / Tx / RxTx]
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg; //!< [-] sun data input message
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
-    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] Messun eclipse state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;     //!< [-] sun eclipse state input message
 
     // Variables to store (input) message data
     SCStatesMsgPayload                      scState;               //!< [-] Module variable where the input State Data message is stored
@@ -170,7 +170,7 @@ public:
     double rEqCustom;  //!< [m] Custom radius
 
 private:
-    double                     minTreshold = 1e-6;          //!< [-]     Minimum threshold for power and directivity values
+    double                     minThreshold = 1e-6;         //!< [-]     Minimum threshold for power and directivity values
 
     std::string                antennaName;                 //!< [-]     Antenna name
     AntennaTypes::EnvironmentType           environment;    //!< [-]     Antenna environment of antenna 0: SPACE, 1: EARTH, -1: UNKNOWN

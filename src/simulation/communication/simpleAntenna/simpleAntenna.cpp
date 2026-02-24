@@ -44,7 +44,7 @@ SimpleAntenna::SimpleAntenna()
     this->P_N          = {};                                                    // [W]       Noise power of the antenna
     this->P_eirp_dB    = {};                                                    // [dB]      Equivalent isotropically radiated power (EIRP) (determined at initialization)
     this->G_TN         = {};                                                    // [dB/K]    Antenna gain over system noise temperature (G/T_N)
-    // Antenna enviroment properties
+    // Antenna environment properties
     this->T_AmbientSet = -1;                                                    // [K]       User defined Ambient temperature
     this->T_Ambient    = -1;                                                    // [K]       Ambient temperature (calculated if not provided by user)
     // Antenna position and orientation
@@ -156,7 +156,7 @@ void SimpleAntenna::initializeAntenna()
     // Calculate HPBW_el && HPBW_az based on k and G
     double dir_lin  = pow(10, this->DdB / 10);                                          // [-]   Linear scale directivity
     double HPBW_el  = sqrt((log(2) * 16) / (dir_lin * this->k));                        // [rad] HPBW in elevation (derived for a gaussian beam pattern) (with default values HPBW_el = 0.333 rad = 19.1 deg)
-    double HPBW_az  = this->k * HPBW_el;                                                // [rad] HPBW in azimuth (with default values HPBW_el = 0.333 rad = 19.1 deg)
+    double HPBW_az  = this->k * HPBW_el;                                                // [rad] HPBW in azimuth (with default values HPBW_az = 0.333 rad = 19.1 deg)
     this->HPBW      = {HPBW_az, HPBW_el};                                               // [rad] store HPBW in azimuth and elevation
 
     // Calculate antenna EIRP
@@ -207,7 +207,7 @@ void SimpleAntenna::readInputMessages()
         }
     }
     if(this->sunEclipseInMsg.isLinked()) {
-        EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
+        EclipseMsgPayload sunVisibilityFactor;          // sun visibility input message
         sunVisibilityFactor = this->sunEclipseInMsg();
         this->illuminationFactor = sunVisibilityFactor.illuminationFactor;
     }
@@ -322,11 +322,11 @@ double SimpleAntenna::calculateTsky()
 double SimpleAntenna::calculatePlanetCoverage(double planetRadius, Eigen::Vector3d r_PN_N, double azimuth, double elevation)
 {
     Eigen::Vector3d r_PB_N;         //!< [m] Planet position relative to spacecraft body B
-    Eigen::Matrix3d dcm_BN;         //!< [] DCM from inertial N to body B
-    Eigen::Matrix3d dcm_BA;         //!< [] DCM from inertial N to body B
+    Eigen::Matrix3d dcm_BN;         //!< [] DCM from inertial frame N to body frame B
+    Eigen::Matrix3d dcm_BA;         //!< [] DCM from antenna frame A to body frame B
     Eigen::Vector3d pHat_N;         //!< [] unit planet heading vector in inertial frame N
     Eigen::Vector3d pHat_A;         //!< [] unit planet heading vector in antenna frame A
-    Eigen::MRPd sigma_BN;           //!< [] MRP attitude of body relative to inertial
+    Eigen::MRPd sigma_BN;           //!< [] MRP attitude of body relative to inertial frame N
 
     //! Read Message data to eigen
     sigma_BN  = cArray2EigenMRPd(this->scState.sigma_BN);
@@ -588,7 +588,7 @@ void SimpleAntenna::setAntennaFrequency(double var) {
     this->frequency = var;       // [Hz] antenna operating frequency
 }
 void SimpleAntenna::setAntennaBandwidth(double var) {
-    if (var <= minTreshold) {                // Bandwidth cannot be zero or negative
+    if (var <= minThreshold) {                // Bandwidth cannot be zero or negative
         bskLogger.bskLog(BSK_ERROR, "SimpleAntenna bandwidth B [Hz] is too small, must be larger than minimum threshold (10^-6 Hz).");
     }
     this->B = var;               // [Hz] antenna frequency bandwidth
@@ -606,7 +606,7 @@ void SimpleAntenna::setAntennaHpbwRatio(double var) {
     this->k = var;
 }
 void SimpleAntenna::setAntennaP_Tx(double var) {
-    if (var <= this->minTreshold) {
+    if (var <= this->minThreshold) {
         bskLogger.bskLog(BSK_ERROR, "SimpleAntenna transmit power P_Tx [W] is set to a value below the minimum threshold (10^-6 W) => Antenna transmit power must be larger than minimal threshold.");
         return;
     }
@@ -620,7 +620,7 @@ void SimpleAntenna::setAntennaP_Rx(double var) {
     this->P_Rx = var;            // [W] receive power
 }
 void SimpleAntenna::setAntennaEquivalentNoiseTemp(double var) {
-    if (var < this->minTreshold) {
+    if (var < this->minThreshold) {
         bskLogger.bskLog(BSK_ERROR, "SimpleAntenna equivalent noise temperature T_E [K] is set to a negative value => Antenna equivalent noise temperature must be non-negative.");
         return;
     }
@@ -633,7 +633,7 @@ void SimpleAntenna::setAntennaRadEfficiency(double var) {
     this->eta_r = var;           // [-] antenna radiation efficiency
 }
 void SimpleAntenna::setAntennaEnvironmentTemperature(double var) {
-    if (var < this->minTreshold) {
+    if (var < this->minThreshold) {
         bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Attempting to set an unrealistic environment temperature T_Ambient [K]. Value must be > 1e-6 K.");
     }
     this->T_AmbientSet = var;
