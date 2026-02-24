@@ -27,11 +27,14 @@ from Basilisk.simulation import (
     simpleNav,
     spacecraft,
     thrusterDynamicEffector,
+    magneticFieldWMM,
+    magnetometer,
 )
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeGravBody, simIncludeRW, simIncludeThruster
 from Basilisk.utilities import unitTestSupport as sp
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
 
@@ -71,6 +74,8 @@ class BSKDynamicModels():
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
         self.EarthEphemObject = ephemerisConverter.EphemerisConverter()
+        self.magModule = magneticFieldWMM.MagneticFieldWMM()
+        self.TAM = magnetometer.Magnetometer()
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()
@@ -84,6 +89,8 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
+        SimBase.AddModelToTask(self.taskName, self.magModule, 200)
+        SimBase.AddModelToTask(self.taskName, self.TAM, 200)
 
         def action_oneTimeRWFault(self):
             self.DynModels.AddRWFault("friction", 0.05, 1, self.TotalSim.CurrentNanos)
@@ -292,6 +299,24 @@ class BSKDynamicModels():
         # assign the list of CSS devices to the CSS array class
         self.CSSConstellationObject.sensorList = coarseSunSensor.CSSVector(cssList)
 
+    def SetMagneticField(self):
+        """Set the magnetic field"""
+        self.magModule.ModelTag = "WMM"
+        wmm_path = get_path(DataFile.MagneticFieldData.WMM)
+        self.magModule.configureWMMFile(str(wmm_path))
+        self.magModule.epochInMsg.subscribeTo(self.epochMsg)
+        self.magModule.addSpacecraftToModel(self.scObject.scStateOutMsg)
+
+    def SetMagnetometers(self):
+        """Set the magnetometer sensors"""
+        self.TAM.ModelTag = "TAM_sensor"
+        # specify the optional TAM variables
+        self.TAM.scaleFactor = 1.0
+        self.TAM.senNoiseStd = [4e-9, 4e-9, 4e-9]  # [T]
+        self.TAM.walkBounds = [15e-9, 15e-9, 15e-9]  # [T]
+        self.TAM.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
+        self.TAM.magInMsg.subscribeTo(self.magModule.envOutMsgs[0])
+
     # Method for adding reaction wheel faults
     def PeriodicRWFault(self, probability, faultType, fault, faultRW, currentTime):
         """
@@ -333,3 +358,6 @@ class BSKDynamicModels():
 
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
+
+        self.SetMagneticField()
+        self.SetMagnetometers()

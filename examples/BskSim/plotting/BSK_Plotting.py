@@ -21,6 +21,7 @@ from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import vizSupport
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 color_x = 'dodgerblue'
@@ -404,3 +405,70 @@ def plot_surface_rel_velocity(timeData, r_BN_N, v_BN_N, sigma_PN, omega_PN_P, id
     ax[0].set_ylabel('${}^Sv_{BS_1}$ [m/s]')
     ax[1].set_ylabel('${}^Sv_{BS_2}$ [m/s]')
     ax[2].set_ylabel('${}^Sv_{BS_3}$ [m/s]')
+
+def plot_magnetic_field(timeData, dataMagField, id=None):
+    """Plot the magnetic field."""
+    plt.figure(id)
+    for idx in range(3):
+        plt.plot(
+            timeData,
+            dataMagField[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$B\_N_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Magnetic Field $B_N$ [nT]")
+
+
+def plot_data_tam(timeData, dataTam, id=None):
+    """Plot the magnetic field."""
+    plt.figure(id)
+    for idx in range(3):
+        plt.plot(
+            timeData,
+            dataTam[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM\_S_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Magnetic Field $TAM_S$ [nT]")
+
+def plot_data_lat(timeData, dataLoc, C_PN, id=None):
+    """Plot geodetic latitude from time-series position and DCM data.
+
+    Assumes:
+    - ``timeData`` is length N
+    - ``dataLoc`` has shape (N, 3) and is expressed in frame N
+    - ``C_PN`` has shape (N, 3, 3), where each sample maps N -> P
+
+    All three inputs must be aligned sample-by-sample in time.
+    """
+    plt.figure(id)
+
+    timeData = np.asarray(timeData, dtype=float)
+    dataLoc = np.asarray(dataLoc, dtype=float)
+    C_PN = np.asarray(C_PN, dtype=float)
+
+    if len(timeData) != len(dataLoc) or len(timeData) != len(C_PN):
+        raise ValueError(
+            "plot_data_lat requires equal lengths for timeData, dataLoc, and C_PN"
+        )
+
+    numPts = len(timeData)
+    lats = np.zeros(numPts)
+
+    for i in range(numPts):
+        vec = C_PN[i] @ dataLoc[i]
+        lat_rad, _, _ = vizSupport.fixedframe2lla(
+            vec,
+            orbitalMotion.REQ_EARTH * 1000.0,
+            orbitalMotion.RP_EARTH / orbitalMotion.REQ_EARTH,
+        )
+        lats[i] = np.degrees(float(lat_rad))
+
+    plt.plot(timeData[:numPts], lats)
+    plt.yticks(np.arange(-90, 91, 30))
+    plt.xlabel("Time [min]")
+    plt.ylabel("Latitude [deg]")

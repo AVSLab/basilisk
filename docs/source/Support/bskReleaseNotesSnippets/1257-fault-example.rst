@@ -1,0 +1,1 @@
+- Added a new scenario, :ref:`scenario_FaultList`, that demonstrates the use of the fault modeling capabilities by selecting faults from :ref:`BSK_Faults`.
