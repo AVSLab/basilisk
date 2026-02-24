@@ -1,0 +1,3 @@
+- Added ``getBodyNames()``, ``getBodyParentName()``, and ``getGeomInfos()`` methods to :ref:`MJScene` and ``MJSpec``, along with the new ``MJGeomInfo`` struct, to expose body hierarchy and geometry data to Python.
+- Updated :ref:`vizSupport` ``enableUnityVisualization`` to accept :ref:`MJScene` objects. Automatically discover  body hierarchy and generate Vizard models from MuJoCo data.
+- Updated :ref:`scenarioDeployPanels` to support Vizard live stream visualization of the MuJoCo multi-body scene.
