@@ -339,8 +339,10 @@ def run(show_plots, missionType, saveVizardFile):
     #   initialize Simulation
     #
     if saveVizardFile:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                                  saveFile=fileNamePath)
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  # , saveFile=fileNamePath
+                                                  )
+
         viz.addCamMsgToModule(camMsg)
         viz.settings.viewCameraFrustumHUD = 1
     scSim.InitializeSimulation()

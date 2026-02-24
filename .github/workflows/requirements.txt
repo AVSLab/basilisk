@@ -7,3 +7,5 @@ pillow
 requests
 bokeh
 protobuf
+pooch
+sgp4

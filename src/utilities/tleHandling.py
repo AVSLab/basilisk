@@ -1,12 +1,41 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2026, Norwegian University of Science and Technology (NTNU)
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
 import numpy as np
 import datetime as dt
 import re
+from sgp4.api import Satrec, jday
 from dataclasses import dataclass, field
-from matplotlib.dates import SEC_PER_DAY
 from Basilisk.utilities import orbitalMotion as om
 
 SPUTNIK_LAUNCHDATE = dt.datetime(1957, 10, 4, 0, 0, 0)
+ARCSEC2RAD = np.deg2rad(1/3600)
+DELTA_AT = 37 # Leap seconds TAI − UTC (as of 2026) # Source: https://en.wikipedia.org/wiki/Leap_second
+DAYS_YEAR = 365.25 # Average number of days in a year (including leap years)
+AVG_DAYS_MONTH = 30.6001 # Average number of days in a month (used in Julian Date calculation, int(30.6001 * (month + 1))
+EPOCH_ALLIGNMENT_CONST = 1524.5 # Constant used in Julian Date calculation to align with J2000 epoch (JD 2451545.0)
+SEC_PER_DAY = 86400 # Number of seconds in a day
 
+
+
+# ---------------------------------------------------------------------------------------------------------- #
+#                                          TLE Data Class                                                    #
+# ---------------------------------------------------------------------------------------------------------- #
 @dataclass
 class TleData:
     """
@@ -20,7 +49,7 @@ class TleData:
     satName: str = field(default="BSK-Sat-00") # Satellite name [str] (max 24 characters)
     noradID: str = field(default="00000") # Satellite catalog number / NORAD ID [str] (5 digits)
     classification: str = field(default="Unknown") # Satellite classification ("Unclassified", "Classified", "Secret" | default: "Unknown")
-    revAtEpoch: int = field(default=0.0) # Revolution number at epoch [int] (indicates how many orbits the satellite has completed at epoch time (since launch), tops out at 99999)
+    revAtEpoch: int = field(default=0) # Revolution number at epoch [int] (indicates how many orbits the satellite has completed at epoch time (since launch), tops out at 99999)
     propagator: str = field(default="0") # Ephemeris type/propagator (0: "Unknown", 1: "SGP4", 2: "SDP4", 3: "SGP8", 4: "SDP8" | default: "Unknown")
     elemSetNo: int = field(default=999) # Element set number [int] (incremented for each newly created TLE for the same object, tops out at 999)
     nDot: float = field(default=0.0) # First derivative of mean motion "dn/dt" in [rev/day^2]
@@ -35,6 +64,275 @@ class TleData:
             raise AttributeError(f"Cannot set attribute '{name}' on TleData instance")
         object.__setattr__(self, name, value)
 
+# ---------------------------------------------------------------------------------------------------------- #
+#           Conversion of TLE (mean OE in TEME frame) -> osculating OE in J2000/ICRS frame                   #
+# ---------------------------------------------------------------------------------------------------------- #
+def utc_to_tt(jd_utc):
+    delta_t = (DELTA_AT + 32.184) / 86400.0
+    return jd_utc + delta_t
+
+def frame_bias():
+    d_alpha = -0.0146 * ARCSEC2RAD
+    xi      = -0.016617 * ARCSEC2RAD
+    eta     = -0.0068192 * ARCSEC2RAD
+
+    return (
+        rot(3, d_alpha) @
+        rot(2, -xi) @
+        rot(1, -eta)
+    )
+
+def nutation_iau1980(T):
+    # Fundamental arguments (radians) [Source: IERS Technical Note 21 (1992)]
+    L  = np.deg2rad(134.96298139 + (1325*360 + 198.8673981)*T) # Mean anomaly of the Moon
+    Lp = np.deg2rad(357.52772333 + (99*360 + 359.0503400)*T) # Mean anomaly of the Sun
+    F  = np.deg2rad(93.27191028 + (1342*360 + 82.0175381)*T) # L - Omega, Mean argument of latitude of the Moon
+    D  = np.deg2rad(297.85036306 + (1236*360 + 307.1114800)*T) # Mean Elongation of the Moon from the Sun
+    Om = np.deg2rad(125.04452222 - (5*360 + 134.1362608)*T) # Mean Longitude of the Ascending Node of the Moon
+
+    # Earth Nutation coefficients (dpsi in longitude, deps in obliquity) [Source: IERS Conventions (2010), IERS TECHNICAL NOTE 21 (1992)]
+    nut_terms = [
+    # l  lp  F   D   Om     dpsi      deps   sin_coeff  cos_coeff
+    # 1-10
+      (  0,  0,  0,  0,  1, -171996.0, -174.2,  92025.0,    8.9 ),
+      (  0,  0,  0,  0,  2,    2062.0,    0.2,   -895.0,    0.5 ),
+      ( -2,  0,  2,  0,  1,      46.0,    0.0,    -24.0,    0.0 ),
+      (  2,  0, -2,  0,  0,      11.0,    0.0,      0.0,    0.0 ),
+      ( -2,  0,  2,  0,  2,      -3.0,    0.0,      1.0,    0.0 ),
+      (  1, -1,  0, -1,  0,      -3.0,    0.0,      0.0,    0.0 ),
+      (  0, -2,  2, -2,  1,      -2.0,    0.0,      1.0,    0.0 ),
+      (  2,  0, -2,  0,  1,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  2, -2,  2,  -13187.0,   -1.6,   5736.0,   -3.1 ),
+      (  0,  1,  0,  0,  0,    1426.0,   -3.4,     54.0,   -0.1 ),
+    # 11-20
+      (  0,  1,  2, -2,  2,    -517.0,    1.2,    224.0,   -0.6 ),
+      (  0, -1,  2, -2,  2,     217.0,   -0.5,    -95.0,    0.3 ),
+      (  0,  0,  2, -2,  1,     129.0,    0.1,    -70.0,    0.0 ),
+      (  2,  0,  0, -2,  0,      48.0,    0.0,      1.0,    0.0 ),
+      (  0,  0,  2, -2,  0,     -22.0,    0.0,      0.0,    0.0 ),
+      (  0,  2,  0,  0,  0,      17.0,   -0.1,      0.0,    0.0 ),
+      (  0,  1,  0,  0,  1,     -15.0,    0.0,      9.0,    0.0 ),
+      (  0,  2,  2, -2,  2,     -16.0,    0.1,      7.0,    0.0 ),
+      (  0, -1,  0,  0,  1,     -12.0,    0.0,      6.0,    0.0 ),
+      ( -2,  0,  0,  2,  1,      -6.0,    0.0,      3.0,    0.0 ),
+    # 21-30
+      (  0, -1,  2, -2,  1,      -5.0,    0.0,      3.0,    0.0 ),
+      (  2,  0,  0, -2,  1,       4.0,    0.0,     -2.0,    0.0 ),
+      (  0,  1,  2, -2,  1,       4.0,    0.0,     -2.0,    0.0 ),
+      (  1,  0,  0, -1,  0,      -4.0,    0.0,      0.0,    0.0 ),
+      (  2,  1,  0, -2,  0,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0, -2,  2,  1,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1, -2,  2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  0,  0,  2,       1.0,    0.0,      0.0,    0.0 ),
+      ( -1,  0,  0,  1,  1,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  2, -2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+    # 31-40
+      (  0,  0,  2,  0,  2,   -2274.0,   -0.2,    977.0,   -0.5 ),
+      (  1,  0,  0,  0,  0,     712.0,    0.1,     -7.0,    0.0 ),
+      (  0,  0,  2,  0,  1,    -386.0,   -0.4,    200.0,    0.0 ),
+      (  1,  0,  2,  0,  2,    -301.0,    0.0,    129.0,   -0.1 ),
+      (  1,  0,  0, -2,  0,    -158.0,    0.0,     -1.0,    0.0 ),
+      ( -1,  0,  2,  0,  2,     123.0,    0.0,    -53.0,    0.0 ),
+      (  0,  0,  0,  2,  0,      63.0,    0.0,     -2.0,    0.0 ),
+      (  1,  0,  0,  0,  1,      63.0,    0.1,    -33.0,    0.0 ),
+      ( -1,  0,  0,  0,  1,     -58.0,   -0.1,     32.0,    0.0 ),
+      ( -1,  0,  2,  2,  2,     -59.0,    0.0,     26.0,    0.0 ),
+    # 41-50
+      (  1,  0,  2,  0,  1,     -51.0,    0.0,     27.0,    0.0 ),
+      (  0,  0,  2,  2,  2,     -38.0,    0.0,     16.0,    0.0 ),
+      (  2,  0,  0,  0,  0,      29.0,    0.0,     -1.0,    0.0 ),
+      (  1,  0,  2, -2,  2,      29.0,    0.0,    -12.0,    0.0 ),
+      (  2,  0,  2,  0,  2,     -31.0,    0.0,     13.0,    0.0 ),
+      (  0,  0,  2,  0,  0,      26.0,    0.0,     -1.0,    0.0 ),
+      ( -1,  0,  2,  0,  1,      21.0,    0.0,    -10.0,    0.0 ),
+      ( -1,  0,  0,  2,  1,      16.0,    0.0,     -8.0,    0.0 ),
+      (  1,  0,  0, -2,  1,     -13.0,    0.0,      7.0,    0.0 ),
+      ( -1,  0,  2,  2,  1,     -10.0,    0.0,      5.0,    0.0 ),
+    # 51-60
+      (  1,  1,  0, -2,  0,      -7.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  2,  0,  2,       7.0,    0.0,     -3.0,    0.0 ),
+      (  0, -1,  2,  0,  2,      -7.0,    0.0,      3.0,    0.0 ),
+      (  1,  0,  2,  2,  2,      -8.0,    0.0,      3.0,    0.0 ),
+      (  1,  0,  0,  2,  0,       6.0,    0.0,      0.0,    0.0 ),
+      (  2,  0,  2, -2,  2,       6.0,    0.0,     -3.0,    0.0 ),
+      (  0,  0,  0,  2,  1,      -6.0,    0.0,      3.0,    0.0 ),
+      (  0,  0,  2,  2,  1,      -7.0,    0.0,      3.0,    0.0 ),
+      (  1,  0,  2, -2,  1,       6.0,    0.0,     -3.0,    0.0 ),
+      (  0,  0,  0, -2,  1,      -5.0,    0.0,      3.0,    0.0 ),
+    # 61-70
+      (  1, -1,  0,  0,  0,       5.0,    0.0,      0.0,    0.0 ),
+      (  2,  0,  2,  0,  1,      -5.0,    0.0,      3.0,    0.0 ),
+      (  0,  1,  0, -2,  0,      -4.0,    0.0,      0.0,    0.0 ),
+      (  1,  0, -2,  0,  0,       4.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  0,  1,  0,      -4.0,    0.0,      0.0,    0.0 ),
+      (  1,  1,  0,  0,  0,      -3.0,    0.0,      0.0,    0.0 ),
+      (  1,  0,  2,  0,  0,       3.0,    0.0,      0.0,    0.0 ),
+      (  1, -1,  2,  0,  2,      -3.0,    0.0,      1.0,    0.0 ),
+      ( -1, -1,  2,  2,  2,      -3.0,    0.0,      1.0,    0.0 ),
+      ( -2,  0,  0,  0,  1,      -2.0,    0.0,      1.0,    0.0 ),
+    # 71-80
+      (  3,  0,  2,  0,  2,      -3.0,    0.0,      1.0,    0.0 ),
+      (  0, -1,  2,  2,  2,      -3.0,    0.0,      1.0,    0.0 ),
+      (  1,  1,  2,  0,  2,       2.0,    0.0,     -1.0,    0.0 ),
+      ( -1,  0,  2, -2,  1,      -2.0,    0.0,      1.0,    0.0 ),
+      (  2,  0,  0,  0,  1,       2.0,    0.0,     -1.0,    0.0 ),
+      (  1,  0,  0,  0,  2,      -2.0,    0.0,      1.0,    0.0 ),
+      (  3,  0,  0,  0,  0,       2.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  2,  1,  2,       2.0,    0.0,     -1.0,    0.0 ),
+      ( -1,  0,  0,  0,  2,       1.0,    0.0,     -1.0,    0.0 ),
+      (  1,  0,  0, -4,  0,      -1.0,    0.0,      0.0,    0.0 ),
+    # 81-90
+      ( -2,  0,  2,  2,  2,       1.0,    0.0,     -1.0,    0.0 ),
+      ( -1,  0,  2,  4,  2,      -2.0,    0.0,      1.0,    0.0 ),
+      (  2,  0,  0, -4,  0,      -1.0,    0.0,      0.0,    0.0 ),
+      (  1,  1,  2, -2,  2,       1.0,    0.0,     -1.0,    0.0 ),
+      (  1,  0,  2,  2,  1,      -1.0,    0.0,      1.0,    0.0 ),
+      ( -2,  0,  2,  4,  2,      -1.0,    0.0,      1.0,    0.0 ),
+      ( -1,  0,  4,  0,  2,       1.0,    0.0,      0.0,    0.0 ),
+      (  1, -1,  0, -2,  0,       1.0,    0.0,      0.0,    0.0 ),
+      (  2,  0,  2, -2,  1,       1.0,    0.0,     -1.0,    0.0 ),
+      (  2,  0,  2,  2,  2,      -1.0,    0.0,      0.0,    0.0 ),
+    # 91-100
+      (  1,  0,  0,  2,  1,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  4, -2,  2,       1.0,    0.0,      0.0,    0.0 ),
+      (  3,  0,  2, -2,  2,       1.0,    0.0,      0.0,    0.0 ),
+      (  1,  0,  2, -2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  2,  0,  1,       1.0,    0.0,      0.0,    0.0 ),
+      ( -1, -1,  0,  2,  1,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0, -2,  0,  1,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  2, -1,  2,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  0,  2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+      (  1,  0, -2, -2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+    # 101-106
+      (  0, -1,  2,  0,  1,      -1.0,    0.0,      0.0,    0.0 ),
+      (  1,  1,  0, -2,  1,      -1.0,    0.0,      0.0,    0.0 ),
+      (  1,  0, -2,  2,  0,      -1.0,    0.0,      0.0,    0.0 ),
+      (  2,  0,  0,  2,  0,       1.0,    0.0,      0.0,    0.0 ),
+      (  0,  0,  2,  4,  2,      -1.0,    0.0,      0.0,    0.0 ),
+      (  0,  1,  0,  1,  0,       1.0,    0.0,      0.0,    0.0 )
+    ]
+
+    dpsi = 0.0 # Nutation in longitude (radians)
+    deps = 0.0 # Nutation in obliquity (radians)
+
+    for l, lp, f, d, om, psi0, psiT, eps0, epsT in nut_terms:
+        arg = l*L + lp*Lp + f*F + d*D + om*Om
+        dpsi += (psi0 + psiT*T) * np.sin(arg)
+        deps += (eps0 + epsT*T) * np.cos(arg)
+
+    dpsi *= 1e-4 * ARCSEC2RAD
+    deps *= 1e-4 * ARCSEC2RAD
+
+    # Mean obliquity of the ecliptic
+    eps0 = (84381.448 - 46.8150*T - 0.00059*T**2 + 0.001813*T**3) * ARCSEC2RAD
+    # True obliquity of the ecliptic
+    eps  = eps0 + deps
+
+    # Nutation rotation matrix
+    N = rot(1,-eps) @ rot(3,-dpsi) @ rot(1,eps0)
+
+    return N, dpsi, eps0
+
+def datetime_to_jd(t: dt.datetime):
+    """
+    Convert a datetime object to Julian Date.
+    [JD = continuous count of days since 01.01.4713 BC, 12:00 UTC
+    J2000 epoch corresponds to JD 2451545.0 (01.01.2000, 12:00 UTC)]
+
+    Source: https://en.wikipedia.org/wiki/Julian_day
+
+    :param t: datetime object
+    :return: Julian Date
+    """
+    # Combine day and time into a single day value with fractional part
+    year  = t.year
+    month = t.month
+    day   = t.day + (
+        t.hour +
+        t.minute / 60.0 +
+        t.second / 3600.0 +
+        t.microsecond / 3.6e9
+    ) / 24.0
+
+    # Jan & Feb are counted as months 13 & 14 of the previous year
+    if month <= 2:
+        year -= 1
+        month += 12
+
+    # Gregorian calendar correction
+    # Not needed for TLE since they are all after 1957, but included for completeness
+    A = int(year / 100)
+    B = 2 - A + int(A / 4)
+
+    # Calculate Julian Date
+    jd = int(DAYS_YEAR * (year + 4716)) + int(AVG_DAYS_MONTH * (month + 1)) + day + B - EPOCH_ALLIGNMENT_CONST
+
+    return jd
+
+def rot(axis, angle):
+    """
+    Rotation matrix for a given axis and angle.
+
+    :param axis:  Axis of rotation (1, 2, or 3)
+    :param angle: Rotation angle in radians
+    :return:      3x3 rotation matrix
+    """
+    c = np.cos(angle)
+    s = np.sin(angle)
+
+    if axis == 1:
+        return np.array([[1,0,0],
+                         [0,c,s],
+                         [0,-s,c]])
+    elif axis == 2:
+        return np.array([[c,0,-s],
+                         [0,1,0],
+                         [s,0,c]])
+    elif axis == 3:
+        return np.array([[c,s,0],
+                         [-s,c,0],
+                         [0,0,1]])
+    else:
+        raise ValueError("Axis must be 1,2,3")
+
+# Helper functions: Coordinate conversion; TEME -> J2000/ICRS
+def _teme2j2000(r, v, epoch):
+
+    jd_utc = datetime_to_jd(epoch)
+    jd_tt  = utc_to_tt(jd_utc)
+
+    T = (jd_tt - 2451545.0) / 36525.0
+
+    # Precession
+    zeta  = (2306.2181*T + 0.30188*T**2 + 0.017998*T**3) * ARCSEC2RAD
+    theta = (2004.3109*T - 0.42665*T**2 - 0.041833*T**3) * ARCSEC2RAD
+    z     = (2306.2181*T + 1.09468*T**2 + 0.018203*T**3) * ARCSEC2RAD
+    P = rot(3,-z) @ rot(2,theta) @ rot(3,-zeta)
+
+    # Nutation (FULL)
+    N, dpsi, eps = nutation_iau1980(T)
+
+    # EqEq
+    eqeq = dpsi * np.cos(eps)
+    R_eqeq = rot(3,-eqeq)
+
+    # Frame bias
+    B = frame_bias()
+
+    R = B.T @ P.T @ N.T @ R_eqeq
+
+    return R @ r, R @ v
+
+# ---------------------------------------------------------------------------------------------------------- #
+#                                          Helper functions                                                  #
+# ---------------------------------------------------------------------------------------------------------- #
+# Helper function to wrap angles to [0, 360) degrees
+def _wrap_deg(angle_rad: float) -> float:
+    return np.rad2deg(angle_rad) % 360.0
+
+# ---------------------------------------------------------------------------------------------------------- #
+#                                            TLE parsing functions                                           #
+# ---------------------------------------------------------------------------------------------------------- #
 def _calcTleChecksum(stringArray: str) -> int:
     """
     Calculate TLE checksum per line.
@@ -133,7 +431,7 @@ def _parseTle(tle: str) -> TleData:
     if line2_str != '2':
         raise ValueError(f"_parseTle() received line2 starting with '{line2_str}'. The first character of line2 should be '2'.")
     satID_2_str = line2[2:7].strip()
-    if satID_2_str != satId1_str:
+    if satID_2_str != satId1_str.strip():
         raise ValueError(f"_parseTle() received mismatched satellite ID numbers in line1 ('{satId1_str}') and line2 ('{satID_2_str}').")
     inclDeg_str = line2[8:16] # Inclination in degrees
     OmegaDeg_str = line2[17:25] # Right Ascension of Ascending Node in degrees
@@ -149,7 +447,7 @@ def _parseTle(tle: str) -> TleData:
 
     # Parsing numerical values getting
     satName = line0.strip()
-    noradId = int(satId1_str)
+    noradId = satId1_str.strip()
     classification = {'U': 'Unclassified', 'C': 'Classified', 'S': 'Secret'}.get(class_str, 'Unknown')
 
     epochYear = _parseTleYear(line1[18:20])
@@ -191,6 +489,174 @@ def _parseTle(tle: str) -> TleData:
 
     return tleData
 
+def _convertMean2osculating(line1: str, line2: str, tleData: TleData) -> om.ClassicElements:
+    """
+    Convert the TLE mean orbital elements (NORAD/SGP4) to osculating orbital elements used by basilisk.
+
+    spg4MeanOE -> SPG4 -> state vector -> osculating OE
+
+    :param tleDataList: list of TleData objects containing the mean orbital elements from the TLE
+    :return: tleDataList with updated osculating orbital elements used by basilisk
+    """
+    # Get initial state vector from SGP4 mean orbital elements
+    satellite = Satrec.twoline2rv(line1, line2)
+
+    # Convert epoch to Julian date
+    epoch = tleData.tleEpoch
+    jd, fr = jday(epoch.year, epoch.month, epoch.day,
+                  epoch.hour, epoch.minute,
+                  epoch.second + epoch.microsecond / 1e6)
+
+    # Propagate to epoch to get True Equator, Mean Equinox (TEME) state vector
+    e, r, v = satellite.sgp4(jd, fr)
+
+    if e != 0:
+        raise ValueError(f"SPG4 propagation failed for satellite {tleData.satName} with NORAD ID {tleData.noradID} at epoch {tleData.tleEpoch}. Error code: {e}")
+
+    # Convert km -> m for Basilisk
+    r_teme_m = np.array(r) * 1e3
+    v_teme_m = np.array(v) * 1e3
+
+    # Convert TEME -> J2000/ICRF (Basilisk inertial frame)
+    r_m, v_m = _teme2j2000(r_teme_m, v_teme_m, tleData.tleEpoch)
+
+    # Convert state vector to osculating orbital elements
+    osculatingOE = om.rv2elem(om.MU_EARTH*1e9, r_m, v_m)
+
+    return osculatingOE
+
+def _osculating2mean_j2(oe_osc: om.ClassicElements) -> om.ClassicElements:
+    """
+    Convert osculating to mean elements using first-order J2 mapping.
+
+    :param oe_osc: osculating classical orbital elements
+    :return: mean classical orbital elements
+    """
+    oe_mean = om.ClassicElements()
+    om.clMeanOscMap(om.REQ_EARTH*1e3, om.J2_EARTH, oe_osc, oe_mean, sign=-1)
+    return oe_mean
+
+def _osculating2mean_sgp4(tleData: TleData, tol: float = 0.1, max_iter: int = 50) -> om.ClassicElements:
+    """
+    Convert osculating elements to SGP4-compatible mean elements via iteration.
+    """
+    oe_osc = tleData.oe
+    epoch = tleData.tleEpoch
+
+    oe_mean = _osculating2mean_j2(oe_osc)
+
+    jd, fr = jday(epoch.year, epoch.month, epoch.day,
+                  epoch.hour, epoch.minute,
+                  epoch.second + epoch.microsecond / 1e6)
+
+    r_target, v_target = om.elem2rv(om.MU_EARTH * 1e9, oe_osc)
+    r_target = np.array(r_target)
+
+    # Track best result (TLE quantization may prevent reaching tol)
+    best_error = float('inf')
+    best_oe = _copy_oe(oe_mean)
+    stall_count = 0
+    STALL_LIMIT = 5
+    # TLE quantization floor: ~0.0001 deg ≈ 12m at LEO
+    TLE_PRECISION_FLOOR = 15.0  # [m]
+
+    for iteration in range(max_iter):
+        tle_str = _generateTleFromMean(oe_mean, tleData)
+        lines = tle_str.split('\n')
+        sat = Satrec.twoline2rv(lines[1], lines[2])
+        e, r_sgp4, v_sgp4 = sat.sgp4(jd, fr)
+
+        if e != 0:
+            raise RuntimeError(
+                f"SGP4 propagation failed (error code {e}) for satellite "
+                f"'{tleData.satName}' (NORAD {tleData.noradID}) at iteration "
+                f"{iteration}.")
+
+        r_sgp4_m = np.array(r_sgp4) * 1e3
+        v_sgp4_m = np.array(v_sgp4) * 1e3
+        r_sgp4_j2000, v_sgp4_j2000 = _teme2j2000(r_sgp4_m, v_sgp4_m, epoch)
+
+        pos_error = np.linalg.norm(np.array(r_target) - r_sgp4_j2000)
+
+        # Track best solution
+        if pos_error < best_error:
+            best_error = pos_error
+            best_oe = _copy_oe(oe_mean)
+            stall_count = 0
+        else:
+            stall_count += 1
+
+        if pos_error < tol:
+            return oe_mean
+
+        # If stalled near the TLE precision floor, accept best result
+        if stall_count >= STALL_LIMIT and best_error < TLE_PRECISION_FLOOR:
+            return best_oe
+
+        oe_sgp4 = om.rv2elem(om.MU_EARTH * 1e9, r_sgp4_j2000, v_sgp4_j2000)
+
+        oe_mean.a     += (oe_osc.a     - oe_sgp4.a)
+        oe_mean.e     += (oe_osc.e     - oe_sgp4.e)
+        oe_mean.i     += (oe_osc.i     - oe_sgp4.i)
+        oe_mean.Omega += (oe_osc.Omega - oe_sgp4.Omega)
+        oe_mean.omega += (oe_osc.omega - oe_sgp4.omega)
+        oe_mean.f     += (oe_osc.f     - oe_sgp4.f)
+
+        # Wrap angles to [0, 2pi) to prevent numerical issues
+        oe_mean.Omega = oe_mean.Omega % (2.0 * np.pi)
+        oe_mean.omega = oe_mean.omega % (2.0 * np.pi)
+        oe_mean.f     = oe_mean.f     % (2.0 * np.pi)
+
+    # If best error is within TLE precision limits, accept it
+    if best_error < TLE_PRECISION_FLOOR:
+        return best_oe
+
+    raise RuntimeError(
+        f"Mean-element iteration did not converge for satellite "
+        f"'{tleData.satName}' (NORAD {tleData.noradID}) after {max_iter} "
+        f"iterations. Final position error: {best_error:.2f} m "
+        f"(tolerance: {tol} m).")
+
+def _copy_oe(oe: om.ClassicElements) -> om.ClassicElements:
+    copy = om.ClassicElements()
+    copy.a = oe.a
+    copy.e = oe.e
+    copy.i = oe.i
+    copy.Omega = oe.Omega
+    copy.omega = oe.omega
+    copy.f = oe.f
+    return copy
+
+def _generateTleFromMean(oe_mean: om.ClassicElements, tleData: TleData) -> str:
+    """
+    Generate TLE string directly from mean elements (no conversion).
+    """
+    Norad_str = f"{int(tleData.noradID):05d}"
+    epoch_str = f"{tleData.tleEpoch:%y%j}" + f"{(tleData.tleEpoch.hour * 3600 + tleData.tleEpoch.minute * 60 + tleData.tleEpoch.second + tleData.tleEpoch.microsecond / 1e6) / SEC_PER_DAY:.8f}"[1:]
+    classification = tleData.classification[0].upper() if tleData.classification[0].upper() in ['U', 'C', 'S'] else 'U'
+
+    # Format these separately to avoid slicing issues
+    IntD_LYear = f"{tleData.launchDate.year % 100:02d}"
+    IntD_LNo = f"{tleData.launchNo:03d}"
+    pol_str = f"{tleData.pol:<3}"[:3]
+    b_star_str = _str2tleFormat(tleData.bStar)
+
+    # Line 1 - properly formatted
+    line1_content = f"1 {Norad_str}{classification} {IntD_LYear}{IntD_LNo}{pol_str} {epoch_str}  .00000000  00000-0 {b_star_str} 0  {tleData.elemSetNo:03d}"
+    checksum1 = _calcTleChecksum([line1_content])
+    line1 = f"{line1_content}{checksum1}"
+
+    # Line 2
+    a_km = oe_mean.a / 1000.0
+    n_revday = np.sqrt(om.MU_EARTH / a_km ** 3) * SEC_PER_DAY / (2.0 * np.pi)
+    M = om.E2M(om.f2E(oe_mean.f, oe_mean.e), oe_mean.e)
+
+    line2_content = f"2 {Norad_str} {np.rad2deg(oe_mean.i):8.4f} {_wrap_deg(oe_mean.Omega):8.4f} {int(oe_mean.e * 1e7):07d} {_wrap_deg(oe_mean.omega):8.4f} {np.rad2deg(M) % 360.0:8.4f} {n_revday:11.8f}{int(tleData.revAtEpoch):05d}"
+    checksum2 = _calcTleChecksum([line2_content])
+    line2 = f"{line2_content}{checksum2}"
+
+    return f"{tleData.satName}\n{line1}\n{line2}"
+
 def satTle2elem(tle_path: str):
     """
     Convert the TLEs of a constellation to classical orbital elements for each satellite.
@@ -205,10 +671,10 @@ def satTle2elem(tle_path: str):
         """
         nonlocal satTLE, satTleReady, readingOrderIndex
         readingOrderIndex = 0
-        if type == 2:
+        if tleType == 2:
             satTLE = ['', '']
             satTleReady = [False, False] # flags to check if all three lines are present
-        elif type == 3:
+        elif tleType == 3:
             readingOrderIndex = 0
             satTLE = ['', '', '']
             satTleReady = [False, False, False] # flags to check if all three lines are present
@@ -232,28 +698,28 @@ def satTle2elem(tle_path: str):
         raise ValueError(f"constTLE2Elem() received a TLE with {noOfLinesStartingWith1} lines starting with '1' and {noOfLinesStartingWith2} lines starting with '2'. The number of lines starting with '1' and '2' must be equal.")
     if noOfLinesStartingWithOther >= noOfLinesStartingWith1:
         #TLE contains at least as many titles as lines starting with '1' or '2'=> 3LE datatype
-        type = 3 # 3LE
+        tleType = 3 # 3LE
     elif noOfLinesStartingWithOther == 0 and noLines >= 2:
         # TLE has no title lines at least two or more lines => 2LE
-        type = 2 # 2LE
+        tleType = 2 # 2LE
     elif noOfLinesStartingWithOther == 1 and noLines > 2:
         # TLE has one title line and more than two lines => 2LE (first line likely title for 2LE-file)
-        type = 2 # 2LE
+        tleType = 2 # 2LE
         if tle_lines[0].startswith('1') or tle_lines[0].startswith('2'):
             raise ValueError("constTLE2Elem() received a TLE with one title line but the first line starts with '1' or '2'. --- TLE not valid ---.")
 
-    # Define the reading order based on the TLE type
-    if type == 2:
+    # Define the reading order based on the TLE tleType
+    if tleType == 2:
         readingOrder = ['line1', 'line2']
         satTLE = ['', '']
         satTleReady = [False, False] # flags to check if all three lines are present
-    elif type == 3:
+    elif tleType == 3:
         readingOrder = ['title', 'line1', 'line2']
         satTLE = ['', '', '']
         satTleReady = [False, False, False] # flags to check if all three lines are present
     else:
         # This point should be unreachable, kept here for Robustness
-        raise ValueError(f"constTLE2Elem() received an invalid TLE type '{type}'. The type must be '2LE' or '3LE'.")
+        raise ValueError(f"constTLE2Elem() received an invalid TLE type '{tleType}'. The type must be '2LE' or '3LE'.")
 
     resetTleStr()
     # Read through all lines and extract TLEs
@@ -265,18 +731,20 @@ def satTle2elem(tle_path: str):
                 # Reset for next TLE
                 resetTleStr()
             # First TLE-line
-            satTLE[type-2] = line
-            satTleReady[type-2] = True
+            satTLE[tleType-2] = line
+            satTleReady[tleType-2] = True
             readingOrderIndex += 1
+            line1 = line
         elif line.startswith('2') and expected == 'line2':
-            if satTleReady[type-1]:
+            if satTleReady[tleType-1]:
                 print(f"WARNING: constTLE2Elem() found a new TLE line2 before completing the previous TLE (line number {lineNo}). The previous TLE will be discarded.")
                 # Reset for next TLE
                 resetTleStr()
             # Second TLE-line
-            satTLE[type-1] = line
-            satTleReady[type-1] = True
-        elif expected == 'title' and type == 3:
+            satTLE[tleType-1] = line
+            satTleReady[tleType-1] = True
+            line2 = line
+        elif expected == 'title' and tleType == 3:
             if satTleReady[0]:
                 print(f"WARNING: constTLE2Elem() found a new TLE title line before completing the previous TLE (line number {lineNo}). The previous TLE will be discarded.")
                 # Reset for next TLE
@@ -292,6 +760,8 @@ def satTle2elem(tle_path: str):
 
         if all(satTleReady):
             tleDataClass = _parseTle(satTLE)
+            oscOE = _convertMean2osculating(line1, line2, tleDataClass)
+            tleDataClass.oe = oscOE
             tleDataList.append(tleDataClass)
             # Reset for next TLE
             resetTleStr()
@@ -347,53 +817,70 @@ def generateTle(tleData: TleData) -> str:
     :param BStar: B* drag term (optional, default: 0.0)                                  [float, 1/Earth radii]
     :return: TLE string                                                                  [str, 3 lines]
     """
+    # Work on a copy to avoid mutating the caller's object
+    td = TleData(oe=tleData.oe, tleEpoch=tleData.tleEpoch)
+    td.satName = tleData.satName
+    td.noradID = tleData.noradID
+    td.classification = tleData.classification
+    td.revAtEpoch = tleData.revAtEpoch
+    td.propagator = tleData.propagator
+    td.elemSetNo = tleData.elemSetNo
+    td.nDot = tleData.nDot
+    td.nDotDot = tleData.nDotDot
+    td.bStar = tleData.bStar
+    td.launchDate = tleData.launchDate
+    td.launchNo = tleData.launchNo
+    td.pol = tleData.pol
+
+    meanOrbElem = _osculating2mean_sgp4(td)
+
     # Make sure NORAD_ID is an integer and no longer than 5 characters (truncate)
-    Norad_str = f"{tleData.noradID:05d}"
-    if len(str(tleData.noradID)) > 5:
-        print(f"TLE Writing: NORAD_ID truncated to 5 digits: {tleData.noradID}")
-    if tleData.launchDate is None:
-        tleData.launchDate = dt.datetime.now(dt.timezone.utc)
-        print(f"TLE Writing: Launch date not provided, using current UTC time: {tleData.launchDate}")
-    if tleData.launchNo is None:
-        tleData.launchNo = 1
-        print(f"TLE Writing: launch_Noyear not provided, defaulting to: {tleData.launchNo}")
-    if tleData.pol is None or len(tleData.pol) > 3:
-        tleData.pol = "A"
+    Norad_str = f"{int(td.noradID):05d}"
+    if len(str(td.noradID)) > 5:
+        print(f"TLE Writing: NORAD_ID truncated to 5 digits: {td.noradID}")
+    if td.launchDate is None:
+        td.launchDate = dt.datetime.now(dt.timezone.utc)
+        print(f"TLE Writing: Launch date not provided, using current UTC time: {td.launchDate}")
+    if td.launchNo is None:
+        td.launchNo = 1
+        print(f"TLE Writing: launch_Noyear not provided, defaulting to: {td.launchNo}")
+    if td.pol is None or len(td.pol) > 3:
+        td.pol = "A"
         print(f"TLE Writing: Piece of the Launch (PoL) was not provided or is invalid, defaulting to 'A  '.")
-    if tleData.tleEpoch is None:
-        tleData.tleEpoch = dt.datetime.now(dt.timezone.utc)
-        print(f"TLE Writing: TLE epoch not provided, using current UTC time: {tleData.tleEpoch.isoformat()}")
-    epoch_str = f"{tleData.tleEpoch:%y%j}" + f"{(tleData.tleEpoch.hour * 3600 + tleData.tleEpoch.minute * 60 + tleData.tleEpoch.second + tleData.tleEpoch.microsecond / 1e6) / SEC_PER_DAY:.8f}"[1:]
-    if tleData.nDot is None:
-        tleData.nDot = 0.0
-        print(f"TLE Writing: First derivative of mean motion / balistic coefficient (nDot) not provided, defaulting to: {tleData.nDot}")
-    if tleData.nDotDot is None:
-        tleData.nDotDot = 0.0
-        print(f"TLE Writing: Second derivative of mean motion (nDotDot) not provided, defaulting to: {tleData.nDotDot}")
-    if tleData.bStar is None:
-        tleData.bStar = 0.0
-        print(f"TLE Writing: BStar drag term not provided, defaulting to: {tleData.bStar}")
-    tleData.classification = tleData.classification[0].upper() if tleData.classification[0].upper() in ['U', 'C', 'S'] else 'U'
+    if td.tleEpoch is None:
+        td.tleEpoch = dt.datetime.now(dt.timezone.utc)
+        print(f"TLE Writing: TLE epoch not provided, using current UTC time: {td.tleEpoch.isoformat()}")
+    epoch_str = f"{td.tleEpoch:%y%j}" + f"{(td.tleEpoch.hour * 3600 + td.tleEpoch.minute * 60 + td.tleEpoch.second + td.tleEpoch.microsecond / 1e6) / SEC_PER_DAY:.8f}"[1:]
+    if td.nDot is None:
+        td.nDot = 0.0
+        print(f"TLE Writing: First derivative of mean motion / balistic coefficient (nDot) not provided, defaulting to: {td.nDot}")
+    if td.nDotDot is None:
+        td.nDotDot = 0.0
+        print(f"TLE Writing: Second derivative of mean motion (nDotDot) not provided, defaulting to: {td.nDotDot}")
+    if td.bStar is None:
+        td.bStar = 0.0
+        print(f"TLE Writing: BStar drag term not provided, defaulting to: {td.bStar}")
+    td.classification = td.classification[0].upper() if td.classification[0].upper() in ['U', 'C', 'S'] else 'U'
     # Line 0
-    line0_str = tleData.satName   # Satellite name (User defined satellite name, Default: "BSK00")
+    line0_str = td.satName   # Satellite name (User defined satellite name, Default: "BSK00")
     # Line 1
     line_no_1_str = "1"  # Line number "1"
     satIDStr = Norad_str  # NORAD ID or default
-    classStr = tleData.classification  # The satellite is unclassified [Can be U: Unclassified, C: Classified, S: Secret]
-    IntD_LYear = f"{tleData.launchDate.year % 100:02d}"  # International Designator (last two digits of launch year) COSPAR ID
-    IntD_LNo = f"{int(tleData.launchNo):03d}"  # International Designator (launch no. of the year) COSPAR ID
-    IntD_PoL = f"{tleData.pol:<3}"[:3]  # International Designator (piece of the launch) COSPAR ID [default 'A']
+    classStr = td.classification  # The satellite is unclassified [Can be U: Unclassified, C: Classified, S: Secret]
+    IntD_LYear = f"{td.launchDate.year % 100:02d}"  # International Designator (last two digits of launch year) COSPAR ID
+    IntD_LNo = f"{int(td.launchNo):03d}"  # International Designator (launch no. of the year) COSPAR ID
+    IntD_PoL = f"{td.pol:<3}"[:3]  # International Designator (piece of the launch) COSPAR ID [default 'A']
     epochStr = epoch_str  # Epoch in TLE format [YYDDD.DDDDDDDD]
-    n_dot_str = re.sub(r"-0", "-", f"{tleData.nDot:10.8f}")  # Balistic coeffizient / First derivative of the mean motion in TLE format
-    n_dot_str = n_dot_str.replace("0.", " .") if tleData.nDot > 0 else n_dot_str.replace("0.", "-.")  # Remove the decimal point
+    n_dot_str = re.sub(r"-0", "-", f"{td.nDot:10.8f}")  # Balistic coeffizient / First derivative of the mean motion in TLE format
+    n_dot_str = n_dot_str.replace("0.", " .") if td.nDot > 0 else n_dot_str.replace("0.", "-.")  # Remove the decimal point
     n_dotdot_str = _str2tleFormat(
-        tleData.nDotDot
+        td.nDotDot
     )
     b_star_str = _str2tleFormat(
-        tleData.bStar
+        td.bStar
     )
     ephemeris_str = "0" # Ephemeris type is 0 for BSK
-    elem_st_no_str = f"{tleData.elemSetNo:03d}"  # Element set number (incremented for each new TLE for the same object)
+    elem_st_no_str = f"{td.elemSetNo:03d}"  # Element set number (incremented for each new TLE for the same object)
     checksum1 = _calcTleChecksum(
         [
             line_no_1_str,
@@ -412,15 +899,15 @@ def generateTle(tleData: TleData) -> str:
     # Line 2
     line_no_2_str = "2"  # Line number "2"
     satcat_str = satIDStr  # Satellite Catalog Number (5 digits) [same as satID]
-    i_str = f"{np.rad2deg(tleData.oe.i):8.4f}"  # Inclination in degrees
-    raan_str = f"{np.rad2deg(tleData.oe.Omega):8.4f}"  # Right Ascension of Ascending Node in degrees
-    eccen_str = f"{int(tleData.oe.e * 1e7):07d}"  # Eccentricity  * 10^7 as decimal value / decimal point assumed
-    per_str = f"{np.rad2deg(tleData.oe.omega):8.4f}"  # Argument of perigee in degrees
+    i_str = f"{np.rad2deg(meanOrbElem.i):8.4f}"  # Inclination in degrees
+    raan_str = f"{_wrap_deg(meanOrbElem.Omega):8.4f}"  # Right Ascension of Ascending Node in degrees
+    eccen_str = f"{int(meanOrbElem.e * 1e7):07d}"  # Eccentricity  * 10^7 as decimal value / decimal point assumed
+    per_str = f"{_wrap_deg(meanOrbElem.omega):8.4f}"  # Argument of perigee in degrees
     # Calculate M from orbital elements
-    M = om.E2M(om.f2E(tleData.oe.f, tleData.oe.e), tleData.oe.e)
-    mean_anom_str = f"{np.rad2deg(M):8.4f}"  # Mean anomaly
+    M = om.E2M(om.f2E(meanOrbElem.f, meanOrbElem.e), meanOrbElem.e)
+    mean_anom_str = f"{np.rad2deg(M) % 360.0:8.4f}"  # Mean anomaly
     # Calculate mean motion in [rev/day^2]
-    n = np.sqrt(om.MU_EARTH / (tleData.oe.a / 1000.0) ** 3) * SEC_PER_DAY / (2.0 * np.pi)
+    n = np.sqrt(om.MU_EARTH / (meanOrbElem.a / 1000.0) ** 3) * SEC_PER_DAY / (2.0 * np.pi)
     mean_Mot_str = f"{n:11.8f}"  # Revolutions per day
     rev_str = f"{0:05d}"  # Revolution number at epoch [hardcoded to '00000']
     checksum2 = _calcTleChecksum(
