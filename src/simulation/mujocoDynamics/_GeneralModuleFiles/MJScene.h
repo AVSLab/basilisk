@@ -71,6 +71,39 @@ public:
     MJScene& operator=(MJScene&&) = delete;
 
     /**
+     * @brief Retrieves the names of all bodies in the scene.
+     *
+     * This method does not trigger model recompilation, so it
+     * can safely be called before initialization.
+     *
+     * @return A vector of body names.
+     */
+    std::vector<std::string> getBodyNames() const;
+
+    /**
+     * @brief Retrieves the parent body name of a given body.
+     *
+     * Returns an empty string if the body's parent is the worldbody
+     * or the body is not found. This method does not trigger model
+     * recompilation, so it can safely be called before initialization.
+     *
+     * @param bodyName The name of the body.
+     * @return The parent body's name, or empty string if none.
+     */
+    std::string getBodyParentName(const std::string& bodyName) const;
+
+    /**
+     * @brief Retrieves geometry information for all geoms in the scene.
+     *
+     * Each entry describes a geom's shape, size, position, orientation,
+     * and color, along with which body it belongs to. This method does
+     * not trigger model recompilation.
+     *
+     * @return A vector of `MJGeomInfo` structs.
+     */
+    std::vector<MJGeomInfo> getGeomInfos() const;
+
+    /**
      * @brief Retrieves a body by name.
      *
      * @param name The name of the body.
