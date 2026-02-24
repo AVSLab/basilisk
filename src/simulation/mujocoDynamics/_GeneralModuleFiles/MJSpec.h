@@ -35,6 +35,19 @@ namespace Eigen
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 }
 
+/**
+ * @brief Describes the geometry (shape, size, position, orientation, color) of a single
+ * MuJoCo geom, suitable for visualization.
+ */
+struct MJGeomInfo {
+    std::string bodyName; ///< Name of the body this geom belongs to.
+    int type;             ///< MuJoCo geom type (e.g. mjGEOM_BOX=6, mjGEOM_SPHERE=2, mjGEOM_CYLINDER=5, etc.).
+    std::vector<double> size;  ///< Size parameters (3 elements).
+    std::vector<double> pos;   ///< Position in body frame (3 elements).
+    std::vector<double> quat;  ///< Quaternion in body frame (4 elements: w, x, y, z).
+    std::vector<double> rgba;  ///< Color (4 elements, 0-1 range).
+};
+
 class MJScene;
 
 /**
@@ -163,6 +176,39 @@ public:
      * @return Reference to the list of `MJEquality` objects.
      */
     std::list<MJEquality>& getEqualities() { return equalities; }
+
+    /**
+     * @brief Retrieves the names of all bodies in the specification.
+     *
+     * This method does not trigger model recompilation, so it
+     * can be called before initialization.
+     *
+     * @return A vector of body names.
+     */
+    std::vector<std::string> getBodyNames() const;
+
+    /**
+     * @brief Retrieves the parent body name of a given body.
+     *
+     * Uses the existing compiled model (without triggering recompilation)
+     * to look up the parent relationship. Returns an empty string if
+     * the body's parent is the worldbody or the body is not found.
+     *
+     * @param bodyName The name of the body.
+     * @return The parent body's name, or empty string if none.
+     */
+    std::string getBodyParentName(const std::string& bodyName) const;
+
+    /**
+     * @brief Retrieves geometry information for all geoms in the model.
+     *
+     * Uses the existing compiled model (without triggering recompilation).
+     * Each entry describes a geom's shape, size, position, orientation,
+     * and color, along with which body it belongs to.
+     *
+     * @return A vector of `MJGeomInfo` structs.
+     */
+    std::vector<MJGeomInfo> getGeomInfos() const;
 
     /**
      * @brief Checks if an actuator exists with the given name.
