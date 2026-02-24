@@ -67,7 +67,7 @@ from contextlib import contextmanager
 
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
+from Basilisk.utilities import macros, vizSupport
 from Basilisk.simulation import StatefulSysModel
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
@@ -173,7 +173,7 @@ def generateProfiles(
     return interpolators
 
 
-def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = False):
+def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = False, vizard: bool = False):
     """Main function, see scenario description.
 
     Args:
@@ -183,6 +183,8 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
             Defaults to False.
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
+        vizard (bool, optional): If True, the simulation is visualized using Vizard.
+            Defaults to False.
     """
 
     dt = 1 # s
@@ -306,6 +308,9 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     # Record the minimal coordinates of the entire scene for visualization
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
+
+    if vizard:
+        vizSupport.enableUnityVisualization(scSim, "test", scene, liveStream=True)
 
     # Initialize the simulation and set the initial angles of the joints.
     # NOTE: the simulation MUST be initialized before setting the initial
@@ -447,4 +452,4 @@ class PIDController(StatefulSysModel.StatefulSysModel):
 
 
 if __name__ == "__main__":
-    run(False, True, True)
+    run(False, True, True, vizard=True)
