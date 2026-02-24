@@ -54,13 +54,13 @@ public:
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
+    void linkInProperties(DynParamManager& properties); // To allow dynamic effector to attach to state effectors
     void computeForceTorque(double integTime, double timeStep);
     void Reset(uint64_t CurrentSimNanos);               //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
-
 private:
 
     void plateDrag();
@@ -74,10 +74,34 @@ public:
     Eigen::Vector3d v_hat_B;                        //!< class variable
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
+    std::string stateNameOfSigma;
+    std::string stateNameOfVelocity;
+
+    // Property names (for state effector attachment)
+    std::string propName_inertialPosition;
+    std::string propName_inertialVelocity;
+    std::string propName_inertialAttitude;
+    std::string propName_inertialAngVelocity;
+
+    void setPropName_inertialPosition(std::string value) override;
+    void setPropName_inertialVelocity(std::string value) override;
+    void setPropName_inertialAttitude(std::string value) override;
+    void setPropName_inertialAngVelocity(std::string value) override;
+
+    std::string getPropName_inertialPosition() const { return this->propName_inertialPosition; }
+    std::string getPropName_inertialVelocity() const { return this->propName_inertialVelocity; }
+    std::string getPropName_inertialAttitude() const { return this->propName_inertialAttitude; }
+    std::string getPropName_inertialAngVelocity() const { return this->propName_inertialAngVelocity; }
+
+
 private:
     AtmoPropsMsgPayload atmoInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
-
+     // Property pointers (for state effector attachment)
+    Eigen::MatrixXd *inertialPositionProperty;      //!< [m] position relative to inertial frame
+    Eigen::MatrixXd *inertialVelocityProperty;      //!< [m/s] velocity relative to inertial frame
+    Eigen::MatrixXd *inertialAttitudeProperty;      //!< attitude relative to inertial frame
+    Eigen::MatrixXd *inertialAngVelocity;      //!< attitude relative to inertial frame
 };
 
 #endif 
