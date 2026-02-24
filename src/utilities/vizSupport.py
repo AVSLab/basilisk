@@ -37,6 +37,13 @@ try:
 except ImportError:
     vizFound = False
 
+try:
+    from Basilisk.simulation import mujoco
+
+    mujocoFound = True
+except ImportError:
+    mujocoFound = False
+
 pauseFlag = False
 endFlag = False
 
@@ -526,6 +533,90 @@ def updateTargetLineList(viz):
     del viz.liveSettings.targetLineList[:]
     viz.liveSettings.targetLineList = vizInterface.PointLineConfig(targetLineList)
     return
+
+
+def _createCustomModelsFromMJScene(viz, scene):
+    """Auto-create Vizard custom models from MuJoCo geom data.
+
+    Maps MuJoCo geom types to Vizard primitive shapes and creates
+    custom models with the correct size, position, orientation, and color
+    for each body in the scene.
+    """
+    from Basilisk.utilities import RigidBodyKinematics as RBK
+
+    # MuJoCo geom type constants (from mjtGeom enum) — only types with Vizard primitives
+    _MJGEOM_SPHERE = 2
+    _MJGEOM_CAPSULE = 3
+    _MJGEOM_ELLIPSOID = 4
+    _MJGEOM_CYLINDER = 5
+    _MJGEOM_BOX = 6
+
+    # Map MuJoCo geom types to Vizard primitive model paths
+    _GEOM_TYPE_MAP = {
+        _MJGEOM_BOX: "CUBE",
+        _MJGEOM_SPHERE: "SPHERE",
+        _MJGEOM_CYLINDER: "CYLINDER",
+        _MJGEOM_CAPSULE: "CYLINDER",
+        _MJGEOM_ELLIPSOID: "SPHERE",
+    }
+
+    geomInfos = scene.getGeomInfos()
+
+    # Group geoms by body name
+    bodyGeoms = {}
+    for geom in geomInfos:
+        bodyGeoms.setdefault(geom.bodyName, []).append(geom)
+
+    for bodyName, geoms in bodyGeoms.items():
+        for geom in geoms:
+            modelPath = _GEOM_TYPE_MAP.get(geom.type)
+            if modelPath is None:
+                continue
+
+            # Convert SWIG vector members to plain Python lists so indexing works
+            # regardless of how the __getitem__ overload resolves across SWIG versions.
+            sz = list(geom.size)
+            pos_list = list(geom.pos)
+            quat_list = list(geom.quat)
+            rgba_list = list(geom.rgba)
+
+            # Compute scale from MuJoCo size
+            if geom.type == _MJGEOM_BOX:
+                # MuJoCo size = half-extents, Vizard CUBE default = 1x1x1
+                scale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
+            elif geom.type == _MJGEOM_SPHERE:
+                # MuJoCo size[0] = radius, Vizard SPHERE default diameter = 1
+                scale = [2 * sz[0], 2 * sz[0], 2 * sz[0]]
+            elif geom.type == _MJGEOM_CYLINDER:
+                # MuJoCo size[0] = radius, size[1] = half-height
+                # Vizard CYLINDER default = diameter 1, height 1
+                scale = [2 * sz[0], 2 * sz[1], 2 * sz[0]]
+            elif geom.type == _MJGEOM_CAPSULE:
+                # Approximate as cylinder
+                scale = [2 * sz[0], 2 * sz[1], 2 * sz[0]]
+            elif geom.type == _MJGEOM_ELLIPSOID:
+                # MuJoCo size = semi-axes
+                scale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
+            else:
+                scale = [1, 1, 1]
+
+            # Position offset in body frame
+            offset = pos_list
+
+            # Convert quaternion (w, x, y, z) to 3-2-1 Euler angles [yaw, pitch, roll]
+            rotation = list(RBK.EP2Euler321(quat_list))
+
+            color = [int(c * 255) for c in rgba_list]
+
+            createCustomModel(
+                viz,
+                modelPath=modelPath,
+                simBodiesToModify=[bodyName],
+                scale=scale,
+                offset=offset,
+                rotation=rotation,
+                color=color,
+            )
 
 
 customModelList = []
@@ -1060,6 +1151,12 @@ def ensure_correct_len_list(input, length, depth=1):
         current_depth += 1
         # Skip over Nones when checking shapes at a given level
         level = next((item for item in level if item is not None), None)
+        # A dict at this level is a valid terminal element (e.g. {"bodyName": [sensors]}
+        # for per-body addressing in MJScene).  Count it as one more depth level so
+        # the outer list is not spuriously wrapped.
+        if isinstance(level, dict):
+            current_depth += 1
+            break
 
     for _ in range(current_depth, depth):
         input = [input]
@@ -1068,6 +1165,379 @@ def ensure_correct_len_list(input, length, depth=1):
         raise ValueError(f"List length should be {length}, not {len(input)}")
 
     return input
+
+
+def _resolveBodyVisual(visual_entry, body_name, is_hub):
+    """Return the visual element list for one body within an MJScene.
+
+    *visual_entry* is the value at ``someList[c]`` when the corresponding
+    entry in ``scList`` is an :ref:`MJScene`.  It may be:
+
+    * ``None``  — no visuals for any body in this scene.
+    * A ``dict`` mapping body names to their visual-element lists — used to
+      target specific bodies (hub *or* child).
+    * Any other value (e.g. a plain list) — applied to hub bodies only;
+      child bodies receive ``None``.
+    """
+    if visual_entry is None:
+        return None
+    if isinstance(visual_entry, dict):
+        return visual_entry.get(body_name)
+    return visual_entry if is_hub else None
+
+
+def _applyVisuals(
+    scData,
+    *,
+    cssList=None,
+    genericSensorList=None,
+    ellipsoidList=None,
+    lightList=None,
+    genericStorageList=None,
+    transceiverList=None,
+    spriteList=None,
+    modelDictionaryKeyList=None,
+    logoTextureList=None,
+    oscOrbitColorList=None,
+    trueOrbitColorList=None,
+    trueOrbitColorInMsgList=None,
+    groundTrackColorList=None,
+    groundTrackBodyNameList=None,
+    msmInfoList=None,
+):
+    """Attach pre-resolved visual element lists directly to a VizSpacecraftData.
+
+    Unlike :func:`_handleSubComponents`, the parameters here are the already-
+    resolved lists for a *single* body (not indexed by spacecraft position).
+    Reaction-wheel and thruster effectors are omitted because those are
+    modelled as MuJoCo joints / actuators, not Basilisk effector objects.
+    """
+    if cssList:
+        cssDeviceList = [css.cssConfigLogOutMsg.addSubscriber() for css in cssList]
+        scData.cssInMsgs = messaging.CSSConfigLogMsgInMsgsVector(cssDeviceList)
+
+    if genericSensorList:
+        scData.genericSensorList = vizInterface.GenericSensorVector(list(genericSensorList))
+
+    if ellipsoidList:
+        scData.ellipsoidList = vizInterface.EllipsoidVector(list(ellipsoidList))
+
+    if lightList:
+        scData.lightList = vizInterface.LightVector(list(lightList))
+
+    if genericStorageList:
+        gsdList = []
+        for gsd in genericStorageList:
+            if len(gsd.color) > 1:
+                if len(gsd.color) / 4 != len(gsd.thresholds) + 1:
+                    print(
+                        "ERROR: vizSupport: generic storage "
+                        + gsd.label
+                        + " threshold list does not have the correct dimension.  "
+                        "It should be 1 smaller than the list of colors."
+                    )
+                    exit(1)
+            else:
+                if len(gsd.thresholds) > 0:
+                    print(
+                        "ERROR: vizSupport: generic storage "
+                        + gsd.label
+                        + " threshold list is set, but no multiple of colors are provided."
+                    )
+                    exit(1)
+            gsdList.append(gsd)
+        scData.genericStorageList = vizInterface.GenericStorageVector(gsdList)
+
+    if transceiverList:
+        scData.transceiverList = vizInterface.TransceiverVector(list(transceiverList))
+
+    if spriteList is not None:
+        scData.spacecraftSprite = spriteList
+
+    if modelDictionaryKeyList is not None:
+        scData.modelDictionaryKey = modelDictionaryKeyList
+
+    if logoTextureList is not None:
+        scData.logoTexture = logoTextureList
+
+    if oscOrbitColorList is not None:
+        scData.oscOrbitLineColor = vizInterface.IntVector(oscOrbitColorList)
+
+    if trueOrbitColorList is not None:
+        scData.trueTrajectoryLineColor = vizInterface.IntVector(trueOrbitColorList)
+
+    if trueOrbitColorInMsgList is not None:
+        scData.trueTrajectoryLineColorInMsg = trueOrbitColorInMsgList
+
+    if groundTrackColorList is not None:
+        scData.groundTrackLineColor = vizInterface.IntVector(groundTrackColorList)
+
+    if groundTrackBodyNameList is not None:
+        scData.groundTrackBodyName = groundTrackBodyNameList
+
+    if msmInfoList is not None:
+        scData.msmInfo = msmInfoList
+
+
+def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgList, *,
+                   cssList, genericSensorList, ellipsoidList, lightList,
+                   genericStorageList, transceiverList, spriteList,
+                   modelDictionaryKeyList, logoTextureList, oscOrbitColorList,
+                   trueOrbitColorList, trueOrbitColorInMsgList,
+                   groundTrackColorList, groundTrackBodyNameList, msmInfoList):
+    """Register all MJScene bodies with the vizInterface messenger.
+
+    Gravity bodies are pulled from the ``_vizGravBodies`` attribute on the
+    scene if present.  Set this before calling
+    :func:`enableUnityVisualization`::
+
+        scene._vizGravBodies = gravFactory.gravBodies
+
+    Visual elements (CSS, lights, sensors, etc.) follow the same list-per-
+    spacecraft convention as the rest of :func:`enableUnityVisualization`.
+    The entry at index *c* for each visual-element list may be:
+
+    * ``None``  — no visuals.
+    * A plain list / object — applied to hub (world-parented) bodies only.
+    * A ``dict {bodyName: list}`` — applied per named body (hub or child).
+    """
+    bodyNames = sc.getBodyNames()
+
+    freeBodyNames = [name for name in bodyNames if sc.getBodyParentName(name) == "world"]
+    if not freeBodyNames:
+        raise ValueError(
+            "MJScene has no top-level body. Cannot determine the hub spacecraft."
+        )
+
+    # Collect gravity bodies attached by the user for Vizard planet display.
+    _registerGravBodies(
+        scSim, list((getattr(sc, "_vizGravBodies", None) or {}).values()),
+        planetNameList, planetInfoList, spiceMsgList,
+    )
+
+    def _visuals(name, is_hub):
+        """Build kwargs for _applyVisuals for one body."""
+        def resolve(lst):
+            return _resolveBodyVisual(lst[c] if lst else None, name, is_hub)
+
+        return dict(
+            cssList=resolve(cssList),
+            genericSensorList=resolve(genericSensorList),
+            ellipsoidList=resolve(ellipsoidList),
+            lightList=resolve(lightList),
+            genericStorageList=resolve(genericStorageList),
+            transceiverList=resolve(transceiverList),
+            spriteList=resolve(spriteList),
+            modelDictionaryKeyList=resolve(modelDictionaryKeyList),
+            logoTextureList=resolve(logoTextureList),
+            oscOrbitColorList=resolve(oscOrbitColorList),
+            trueOrbitColorList=resolve(trueOrbitColorList),
+            trueOrbitColorInMsgList=resolve(trueOrbitColorInMsgList),
+            groundTrackColorList=resolve(groundTrackColorList),
+            groundTrackBodyNameList=resolve(groundTrackBodyNameList),
+            msmInfoList=resolve(msmInfoList),
+        )
+
+    for hubName in freeBodyNames:
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = hubName
+        scData.scStateInMsg.subscribeTo(sc.getBody(hubName).getOrigin().stateOutMsg)
+        _applyVisuals(scData, **_visuals(hubName, is_hub=True))
+        viz.scData.push_back(scData)
+
+    for name in bodyNames:
+        if name in freeBodyNames:
+            continue
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = name
+        scData.parentSpacecraftName = sc.getBodyParentName(name)
+        scData.scStateInMsg.subscribeTo(sc.getBody(name).getOrigin().stateOutMsg)
+        _applyVisuals(scData, **_visuals(name, is_hub=False))
+        viz.scData.push_back(scData)
+
+    _createCustomModelsFromMJScene(viz, sc)
+
+
+def _registerGravBodies(scSim, gravBodies, planetNameList, planetInfoList, spiceMsgList):
+    """Register a list of gravity bodies for Vizard planet display.
+
+    Deduplicates by planet name across all spacecraft/scenes in the simulation.
+    Called by both :func:`_handleSpacecraft` and :func:`_handleMJScene`.
+    """
+    kept = getattr(scSim, "_kept_grav_bodies", {})
+    for gravBody in gravBodies:
+        if gravBody.planetName not in kept:
+            kept[gravBody.planetName] = gravBody
+            planetNameList.append(gravBody.planetName)
+            planetInfo = vizInterface.GravBodyInfo()
+            planetInfo.bodyName = getattr(gravBody, "displayName", "") or gravBody.planetName
+            planetInfo.mu = gravBody.mu
+            planetInfo.radEquator = gravBody.radEquator
+            planetInfo.radiusRatio = gravBody.radiusRatio
+            planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
+            planetInfoList.append(planetInfo)
+            spiceMsgList.append(gravBody.planetBodyInMsg)
+    scSim._kept_grav_bodies = kept
+
+
+def _handleSpacecraft(scSim, sc, scData, planetNameList, planetInfoList, spiceMsgList):
+    """Populate scData for a Spacecraft entry and collect grav body info.
+
+    Returns the spacecraftParentName for use by subsequent effector entries.
+    """
+    scData.spacecraftName = sc.ModelTag
+    scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
+
+    gravBodies = list(getattr(getattr(sc, "gravField", None), "gravBodies", []))
+    _registerGravBodies(scSim, gravBodies, planetNameList, planetInfoList, spiceMsgList)
+
+    return sc.ModelTag
+
+
+def _handleEffector(sc, scData, spacecraftParentName):
+    """Populate scData for an effector tuple (name, stateOutMsg) entry."""
+    scData.parentSpacecraftName = spacecraftParentName
+    scData.spacecraftName = sc[0]
+    scData.scStateInMsg.subscribeTo(sc[1])
+
+
+def _handleSubComponents(
+    scData,
+    c,
+    *,
+    rwEffectorList,
+    thrEffectorList,
+    thrColors,
+    cssList,
+    genericSensorList,
+    ellipsoidList,
+    lightList,
+    genericStorageList,
+    transceiverList,
+    spriteList,
+    modelDictionaryKeyList,
+    logoTextureList,
+    oscOrbitColorList,
+    trueOrbitColorList,
+    trueOrbitColorInMsgList,
+    groundTrackColorList,
+    groundTrackBodyNameList,
+    msmInfoList,
+):
+    """Attach all per-spacecraft effector and display data to scData."""
+    if rwEffectorList:
+        rwList = []
+        if rwEffectorList[c] is not None:
+            for rwLogMsg in rwEffectorList[c].rwOutMsgs:
+                rwList.append(rwLogMsg.addSubscriber())
+        scData.rwInMsgs = messaging.RWConfigLogMsgInMsgsVector(rwList)
+
+    if thrEffectorList:
+        thrList = []
+        thrInfo = []
+        if thrEffectorList[c] is not None:
+            clusterCounter = 0
+            for thrEff in thrEffectorList[c]:
+                thSet = vizInterface.ThrClusterMap()
+                thSet.thrTag = thrEff.ModelTag
+                if thrColors:
+                    if thrColors[c] is not None:
+                        thSet.color = thrColors[c][clusterCounter]
+                # optionally offset the thruster positions, useful for effector branching corrections
+                if scData.parentSpacecraftName != "":
+                    thSet.thrOffset = thrEff.r_PcP_P
+                for thrLogMsg in thrEff.thrusterOutMsgs:
+                    thrList.append(thrLogMsg.addSubscriber())
+                    thrInfo.append(thSet)
+                clusterCounter += 1
+        scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
+        scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
+
+    if cssList:
+        cssDeviceList = []
+        if cssList[c] is not None:
+            for css in cssList[c]:
+                cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
+            scData.cssInMsgs = messaging.CSSConfigLogMsgInMsgsVector(cssDeviceList)
+
+    if genericSensorList:
+        gsList = []
+        if genericSensorList[c] is not None:
+            for gs in genericSensorList[c]:
+                gsList.append(gs)
+            scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
+
+    if ellipsoidList:
+        elList = []
+        if ellipsoidList[c] is not None:
+            for el in ellipsoidList[c]:
+                elList.append(el)
+            scData.ellipsoidList = vizInterface.EllipsoidVector(elList)
+
+    if lightList:
+        liList = []
+        if lightList[c] is not None:
+            for li in lightList[c]:
+                liList.append(li)
+            scData.lightList = vizInterface.LightVector(liList)
+
+    if genericStorageList:
+        gsdList = []
+        if genericStorageList[c] is not None:
+            for gsd in genericStorageList[c]:
+                if len(gsd.color) > 1:
+                    if len(gsd.color) / 4 != len(gsd.thresholds) + 1:
+                        print(
+                            "ERROR: vizSupport: generic storage "
+                            + gsd.label
+                            + " threshold list does not have the correct dimension.  "
+                            "It should be 1 smaller than the list of colors."
+                        )
+                        exit(1)
+                else:
+                    if len(gsd.thresholds) > 0:
+                        print(
+                            "ERROR: vizSupport: generic storage "
+                            + gsd.label
+                            + " threshold list is set, but no multiple of colors are provided."
+                        )
+                        exit(1)
+                gsdList.append(gsd)
+            scData.genericStorageList = vizInterface.GenericStorageVector(gsdList)
+
+    if transceiverList:
+        tcList = []
+        if transceiverList[c] is not None:
+            for tc in transceiverList[c]:
+                tcList.append(tc)
+            scData.transceiverList = vizInterface.TransceiverVector(tcList)
+
+    if spriteList and spriteList[c] is not None:
+        scData.spacecraftSprite = spriteList[c]
+
+    if modelDictionaryKeyList and modelDictionaryKeyList[c] is not None:
+        scData.modelDictionaryKey = modelDictionaryKeyList[c]
+
+    if logoTextureList and logoTextureList[c] is not None:
+        scData.logoTexture = logoTextureList[c]
+
+    if oscOrbitColorList and oscOrbitColorList[c] is not None:
+        scData.oscOrbitLineColor = vizInterface.IntVector(oscOrbitColorList[c])
+
+    if trueOrbitColorList and trueOrbitColorList[c] is not None:
+        scData.trueTrajectoryLineColor = vizInterface.IntVector(trueOrbitColorList[c])
+
+    if trueOrbitColorInMsgList and trueOrbitColorInMsgList[c] is not None:
+        scData.trueTrajectoryLineColorInMsg = trueOrbitColorInMsgList[c]
+
+    if groundTrackColorList and groundTrackColorList[c] is not None:
+        scData.groundTrackLineColor = vizInterface.IntVector(groundTrackColorList[c])
+
+    if groundTrackBodyNameList and groundTrackBodyNameList[c] is not None:
+        scData.groundTrackBodyName = groundTrackBodyNameList[c]
+
+    if msmInfoList and msmInfoList[c] is not None:
+        scData.msmInfo = msmInfoList[c]
 
 
 def enableUnityVisualization(
@@ -1108,7 +1578,30 @@ def enableUnityVisualization(
     simTaskName:
         task to which to add the vizInterface module
     scList:
-        :ref:`spacecraft` objects.  Can be a single object or list of objects
+        :ref:`spacecraft` objects, :ref:`MJScene` objects, or tuples of (name, stateOutMsg).
+        Can be a single object or list of objects.
+        When an :ref:`MJScene` is provided, all bodies are auto-discovered and their
+        parent-child hierarchy is resolved from the MuJoCo model.
+
+        **Gravity bodies** — attach a ``gravBodyFactory`` body list to the scene
+        before calling this function so that planets appear in Vizard::
+
+            gravFactory = simIncludeGravBody.gravBodyFactory()
+            earth = gravFactory.createEarth()
+            earth.isCentralBody = True
+            scene._vizGravBodies = gravFactory.gravBodies
+
+        **Visual elements** — ``cssList``, ``lightList``, etc. support an extra
+        addressing mode when the corresponding ``scList`` entry is an
+        :ref:`MJScene`.  Instead of a plain list (which is applied to hub bodies
+        only), you may pass a ``dict`` mapping body names to their element lists
+        to target specific bodies::
+
+            # CSS on the hub body only (flat list → hub bodies):
+            cssList = [[css1, css2]]
+
+            # CSS on specific named bodies (dict):
+            cssList = [{"hub": [css1], "panel_1": [css2]}]
 
     Keyword Args
     ------------
@@ -1186,6 +1679,7 @@ def enableUnityVisualization(
     del pointLineList[:]
     del actuatorGuiSettingList[:]
     del coneInOutList[:]
+    del customModelList[:]
     global firstSpacecraftName
 
     # set up the Vizard interface module
@@ -1199,7 +1693,18 @@ def enableUnityVisualization(
         scList = [scList]
     scListLength = len(scList)
 
-    firstSpacecraftName = scList[0].ModelTag
+    # firstSpacecraftName is the name used to default per-spacecraft helpers
+    # like setInstrumentGuiSetting.  For MJScene, the scData entries are keyed
+    # by *body* name (each free body becomes one spacecraft in Vizard) rather
+    # than the scene's ModelTag, so default to the first free body name.
+    if mujocoFound and isinstance(scList[0], mujoco.MJScene):
+        sceneBodyNames = scList[0].getBodyNames()
+        firstSpacecraftName = next(
+            (n for n in sceneBodyNames if scList[0].getBodyParentName(n) == "world"),
+            scList[0].ModelTag,
+        )
+    else:
+        firstSpacecraftName = scList[0].ModelTag
 
     if rwEffectorList is not None:
         rwEffectorList = ensure_correct_len_list(rwEffectorList, scListLength)
@@ -1258,211 +1763,68 @@ def enableUnityVisualization(
     if msmInfoList is not None:
         msmInfoList = ensure_correct_len_list(msmInfoList, scListLength)
 
-    # loop over all spacecraft to associated states and msg information
+    # loop over all spacecraft to associate states and msg information
     planetNameList = []
     planetInfoList = []
     spiceMsgList = []
     scSim.vizMessenger.scData.clear()
-    c = 0
     spacecraftParentName = ""
 
-    for sc in scList:
-        # create spacecraft information container
+    for c, sc in enumerate(scList):
+        if mujocoFound and isinstance(sc, mujoco.MJScene):
+            _handleMJScene(
+                scSim.vizMessenger, sc, scSim, c,
+                planetNameList, planetInfoList, spiceMsgList,
+                cssList=cssList,
+                genericSensorList=genericSensorList,
+                ellipsoidList=ellipsoidList,
+                lightList=lightList,
+                genericStorageList=genericStorageList,
+                transceiverList=transceiverList,
+                spriteList=spriteList,
+                modelDictionaryKeyList=modelDictionaryKeyList,
+                logoTextureList=logoTextureList,
+                oscOrbitColorList=oscOrbitColorList,
+                trueOrbitColorList=trueOrbitColorList,
+                trueOrbitColorInMsgList=trueOrbitColorInMsgList,
+                groundTrackColorList=groundTrackColorList,
+                groundTrackBodyNameList=groundTrackBodyNameList,
+                msmInfoList=msmInfoList,
+            )
+            continue
+
         scData = vizInterface.VizSpacecraftData()
 
-        # link to spacecraft state message
         if isinstance(sc, type(spacecraft.Spacecraft())):
-            # set spacecraft name
-            scData.spacecraftName = sc.ModelTag
-            spacecraftParentName = sc.ModelTag
-            scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
-
-            # link to celestial bodies information
-            bodies = list(getattr(getattr(sc, "gravField", None), "gravBodies", []))
-            if bodies:  # only runs if gravField exists and has bodies
-                # get the existing dict of kept wrappers, or start fresh
-                kept = getattr(scSim, "_kept_grav_bodies", {})
-
-                for gravBody in bodies:
-                    # use planetName as a unique key; you could also key by id(gravBody) if needed
-                    if gravBody.planetName not in kept:
-                        kept[gravBody.planetName] = gravBody
-
-                        planetNameList.append(gravBody.planetName)
-                        planetInfo = vizInterface.GravBodyInfo()
-                        planetInfo.bodyName = getattr(gravBody, "displayName", "") or gravBody.planetName
-                        planetInfo.mu = gravBody.mu
-                        planetInfo.radEquator = gravBody.radEquator
-                        planetInfo.radiusRatio = gravBody.radiusRatio
-                        planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
-                        planetInfoList.append(planetInfo)
-                        spiceMsgList.append(gravBody.planetBodyInMsg)
-
-                # update the dict back onto scSim
-                scSim._kept_grav_bodies = kept
+            spacecraftParentName = _handleSpacecraft(
+                scSim, sc, scData, planetNameList, planetInfoList, spiceMsgList
+            )
         else:
-            # the scList object is an effector belonging to the parent spacecraft
-            scData.parentSpacecraftName = spacecraftParentName
-            ModelTag = sc[0]
-            effStateOutMsg = sc[1]
-            scData.spacecraftName = ModelTag
-            scData.scStateInMsg.subscribeTo(effStateOutMsg)
+            _handleEffector(sc, scData, spacecraftParentName)
 
-        # process RW effectors
-        if rwEffectorList:
-            rwList = []
-            if rwEffectorList[c] is not None:
-                # RWs have been added to this spacecraft
-                for rwLogMsg in rwEffectorList[c].rwOutMsgs:
-                    rwList.append(rwLogMsg.addSubscriber())
-            scData.rwInMsgs = messaging.RWConfigLogMsgInMsgsVector(rwList)
-
-        # process THR effectors
-        if thrEffectorList:
-            thrList = []
-            thrInfo = []
-            if (
-                thrEffectorList[c] is not None
-            ):  # THR clusters have been added to this spacecraft
-                clusterCounter = 0
-                for thrEff in thrEffectorList[
-                    c
-                ]:  # loop over the THR effectors attached to this spacecraft
-                    thSet = vizInterface.ThrClusterMap()
-                    thSet.thrTag = (
-                        thrEff.ModelTag
-                    )  # set the label for this cluster of THR devices
-                    if thrColors:
-                        if thrColors[c] is not None:
-                            thSet.color = thrColors[c][clusterCounter]
-                    # optionally offset the thruster positions, useful for effector branching corrections
-                    if scData.parentSpacecraftName != "":
-                        thSet.thrOffset = thrEff.r_PcP_P
-                    for thrLogMsg in (thrEff.thrusterOutMsgs):  # loop over the THR cluster log message
-                        thrList.append(thrLogMsg.addSubscriber())
-                        thrInfo.append(thSet)
-                    clusterCounter += 1
-            scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
-            scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
-
-        # process CSS information
-        if cssList:
-            cssDeviceList = []
-            if cssList[c] is not None:  # CSS list has been added to this spacecraft
-                for css in cssList[c]:
-                    cssDeviceList.append(css.cssConfigLogOutMsg.addSubscriber())
-                scData.cssInMsgs = messaging.CSSConfigLogMsgInMsgsVector(cssDeviceList)
-
-        # process generic sensor HUD information
-        if genericSensorList:
-            gsList = []
-            if (
-                genericSensorList[c] is not None
-            ):  # generic sensor(s) have been added to this spacecraft
-                for gs in genericSensorList[c]:
-                    gsList.append(gs)
-                scData.genericSensorList = vizInterface.GenericSensorVector(gsList)
-
-        # process spacecraft ellipsoids
-        if ellipsoidList:
-            elList = []
-            if (
-                ellipsoidList[c] is not None
-            ):  # generic sensor(s) have been added to this spacecraft
-                for el in ellipsoidList[c]:
-                    elList.append(el)
-                scData.ellipsoidList = vizInterface.EllipsoidVector(elList)
-
-        # process spacecraft lights
-        if lightList:
-            liList = []
-            if (
-                lightList[c] is not None
-            ):  # light objects(s) have been added to this spacecraft
-                for li in lightList[c]:
-                    liList.append(li)
-                scData.lightList = vizInterface.LightVector(liList)
-
-        # process generic storage HUD information
-        if genericStorageList:
-            gsdList = []
-            if (
-                genericStorageList[c] is not None
-            ):  # generic storage device(s) have been added to this spacecraft
-                for gsd in genericStorageList[c]:
-                    if len(gsd.color) > 1:
-                        if len(gsd.color) / 4 != len(gsd.thresholds) + 1:
-                            print(
-                                "ERROR: vizSupport: generic storage "
-                                + gsd.label
-                                + " threshold list does not have the correct dimension.  "
-                                "It should be 1 smaller than the list of colors."
-                            )
-                            exit(1)
-                    else:
-                        if len(gsd.thresholds) > 0:
-                            print(
-                                "ERROR: vizSupport: generic storage "
-                                + gsd.label
-                                + " threshold list is set, but no multiple of colors are provided."
-                            )
-                            exit(1)
-                    gsdList.append(gsd)
-                scData.genericStorageList = vizInterface.GenericStorageVector(gsdList)
-
-        # process transceiver HUD information
-        if transceiverList:
-            tcList = []
-            if (
-                transceiverList[c] is not None
-            ):  # transceiver(s) have been added to this spacecraft
-                for tc in transceiverList[c]:
-                    tcList.append(tc)
-                scData.transceiverList = vizInterface.TransceiverVector(tcList)
-
-        # process sprite information
-        if spriteList:
-            if spriteList[c] is not None:
-                scData.spacecraftSprite = spriteList[c]
-        # process modelDictionaryKey information
-        if modelDictionaryKeyList:
-            if modelDictionaryKeyList[c] is not None:
-                scData.modelDictionaryKey = modelDictionaryKeyList[c]
-        # process logoTexture information
-        if logoTextureList:
-            if logoTextureList[c] is not None:
-                scData.logoTexture = logoTextureList[c]
-
-        if oscOrbitColorList:
-            if oscOrbitColorList[c] is not None:
-                scData.oscOrbitLineColor = vizInterface.IntVector(oscOrbitColorList[c])
-
-        if trueOrbitColorList:
-            if trueOrbitColorList[c] is not None:
-                scData.trueTrajectoryLineColor = vizInterface.IntVector(
-                    trueOrbitColorList[c]
-                )
-
-        if trueOrbitColorInMsgList:
-            if trueOrbitColorInMsgList[c] is not None:
-                scData.trueTrajectoryLineColorInMsg = trueOrbitColorInMsgList[c]
-
-        if groundTrackColorList:
-            if groundTrackColorList[c] is not None:
-                scData.groundTrackLineColor = vizInterface.IntVector(groundTrackColorList[c])
-
-        if groundTrackBodyNameList:
-            if groundTrackBodyNameList[c] is not None:
-                scData.groundTrackBodyName = groundTrackBodyNameList[c]
-
-        # process MSM information
-        if msmInfoList:
-            if msmInfoList[c] is not None:  # MSM have been added to this spacecraft
-                scData.msmInfo = msmInfoList[c]
+        _handleSubComponents(
+            scData, c,
+            rwEffectorList=rwEffectorList,
+            thrEffectorList=thrEffectorList,
+            thrColors=thrColors,
+            cssList=cssList,
+            genericSensorList=genericSensorList,
+            ellipsoidList=ellipsoidList,
+            lightList=lightList,
+            genericStorageList=genericStorageList,
+            transceiverList=transceiverList,
+            spriteList=spriteList,
+            modelDictionaryKeyList=modelDictionaryKeyList,
+            logoTextureList=logoTextureList,
+            oscOrbitColorList=oscOrbitColorList,
+            trueOrbitColorList=trueOrbitColorList,
+            trueOrbitColorInMsgList=trueOrbitColorInMsgList,
+            groundTrackColorList=groundTrackColorList,
+            groundTrackBodyNameList=groundTrackBodyNameList,
+            msmInfoList=msmInfoList,
+        )
 
         scSim.vizMessenger.scData.push_back(scData)
-
-        c += 1
 
     scSim.vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
     scSim.vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
