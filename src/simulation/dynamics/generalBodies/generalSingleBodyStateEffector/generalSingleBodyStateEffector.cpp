@@ -172,13 +172,13 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     this->betaDot = this->betaDotState->getState();
 
     // Set beta and betaDot for each DOF
-    std::vector<DOF>::iterator jointDOF;
-    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
-        jointDOF->beta = this->beta[jointDOF->index];
-        jointDOF->betaDot = this->betaDot[jointDOF->index];
+    for (int idx = 0; idx < this->numDOF; idx++) {
+        this->jointDOFList.at(idx).beta = this->beta[idx];
+        this->jointDOFList.at(idx).betaDot = this->betaDot[idx];
     }
 
     // Compute general body attitudes
+    std::vector<DOF>::iterator jointDOF;
     for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
         if (jointDOF->type == DOF::Type::ROTATION) {
 
@@ -205,9 +205,11 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         Eigen::Vector3d jointDOFAxis_B = jointDOF->dcm_GB.transpose() * jointDOF->axis_G;
 
         if (jointDOF->type == DOF::Type::ROTATION) {
+            this->TMat.col(dofIndex).head<3>().setZero();
             this->TMat.col(dofIndex).tail<3>() = jointDOF->screwConstant * jointDOFAxis_B;
         } else {
             this->TMat.col(dofIndex).head<3>() = jointDOF->screwConstant * jointDOFAxis_B;
+            this->TMat.col(dofIndex).tail<3>().setZero();
         }
     }
 
@@ -221,7 +223,7 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     // Compute and set effProps.IEffPntB_B
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
     Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
-    this->effProps.IEffPntB_B = this->IPntGc_G - this->mass * rTilde_GcB_B * rTilde_GcB_B;
+    this->effProps.IEffPntB_B = IPntGc_B - this->mass * rTilde_GcB_B * rTilde_GcB_B;
 
     // Compute and set effProps.rEffPrime_CB_B
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
@@ -317,9 +319,9 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
             motorForceTorque = this->jointDOFList.at(idx).f;
         }
 
-    CBetaStar[idx] += motorForceTorque
-                      - this->jointDOFList.at(idx).k * (this->jointDOFList.at(idx).beta - this->jointDOFList.at(idx).betaRef)
-                      - this->jointDOFList.at(idx).c * (this->jointDOFList.at(idx).betaDot - this->jointDOFList.at(idx).betaDotRef);
+        CBetaStar[idx] += motorForceTorque
+                          - this->jointDOFList.at(idx).k * (this->jointDOFList.at(idx).beta - this->jointDOFList.at(idx).betaRef)
+                          - this->jointDOFList.at(idx).c * (this->jointDOFList.at(idx).betaDot - this->jointDOFList.at(idx).betaDotRef);
     }
 
     // Define ABeta, BBeta, and CBeta matrices
@@ -335,6 +337,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
 
     // Define BSM vecTrans and vecRot contributions
     backSubContr.vecTrans = - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
+                            - this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->CBeta;
     backSubContr.vecRot = - this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
             - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
             - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
@@ -400,11 +403,18 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
     Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
     Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
-    rotAngMomPntCContr_B += IPntGc_B * omega_GN_B + this->mass * rTilde_GcB_B * rDot_GcB_B;
+    rotAngMomPntCContr_B = IPntGc_B * omega_GN_B + this->mass * rTilde_GcB_B * rDot_GcB_B;
 
     // Rotational energy contribution
-    rotEnergyContr += 0.5 * omega_GN_B.dot(IPntGc_B * omega_GN_B)
+    rotEnergyContr = 0.5 * omega_GN_B.dot(IPntGc_B * omega_GN_B)
                      + 0.5 * this->mass * rDot_GcB_B.dot(rDot_GcB_B);
+
+    for (int idx = 0; idx < this->numDOF; idx++) {
+        double rotEnergy = 0.5 * this->jointDOFList.at(idx).k * (this->jointDOFList.at(idx).beta
+                - this->jointDOFList.at(idx).betaRef) * (this->jointDOFList.at(idx).beta
+                        - this->jointDOFList.at(idx).betaRef);
+        rotEnergyContr += rotEnergy;
+    }
 }
 
 /*! This method computes the effector states relative to the inertial frame.
