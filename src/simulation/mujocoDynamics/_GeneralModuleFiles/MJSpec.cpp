@@ -207,6 +207,53 @@ mjData* MJSpec::getMujocoData()
     return this->data.get();
 }
 
+std::vector<std::string> MJSpec::getBodyNames() const
+{
+    std::vector<std::string> names;
+    for (auto&& body : this->bodies) {
+        names.push_back(body.getName());
+    }
+    return names;
+}
+
+std::string MJSpec::getBodyParentName(const std::string& bodyName) const
+{
+    // Use the existing model directly without recompile since the body structure 
+    // should not change after initial compilation
+    int bodyId = mj_name2id(this->model.get(), mjOBJ_BODY, bodyName.c_str());
+    if (bodyId <= 0) return "";
+    int parentId = this->model->body_parentid[bodyId];
+    if (parentId == 0) return "";
+    return std::string(this->model->names + this->model->name_bodyadr[parentId]);
+}
+
+std::vector<MJGeomInfo> MJSpec::getGeomInfos() const
+{
+    std::vector<MJGeomInfo> geoms;
+    auto m = this->model.get();
+
+    for (int i = 0; i < m->ngeom; i++) {
+        MJGeomInfo info;
+
+        int bodyId = m->geom_bodyid[i];
+        if (bodyId == 0) continue;
+        info.bodyName = std::string(m->names + m->name_bodyadr[bodyId]);
+
+        info.type = m->geom_type[i];
+        info.size = {m->geom_size[i * 3], m->geom_size[i * 3 + 1], m->geom_size[i * 3 + 2]};
+        info.pos = {m->geom_pos[i * 3], m->geom_pos[i * 3 + 1], m->geom_pos[i * 3 + 2]};
+        info.quat = {m->geom_quat[i * 4], m->geom_quat[i * 4 + 1],
+                     m->geom_quat[i * 4 + 2], m->geom_quat[i * 4 + 3]};
+        info.rgba = {static_cast<double>(m->geom_rgba[i * 4]),
+                     static_cast<double>(m->geom_rgba[i * 4 + 1]),
+                     static_cast<double>(m->geom_rgba[i * 4 + 2]),
+                     static_cast<double>(m->geom_rgba[i * 4 + 3])};
+
+        geoms.push_back(std::move(info));
+    }
+    return geoms;
+}
+
 bool MJSpec::hasActuator(const std::string& name)
 {
     return std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) {
