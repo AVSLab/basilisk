@@ -1,0 +1,3 @@
+- Added a ``Dockerfile`` to build Basilisk container images. See :ref:`bskContainers` for usage details.
+- Prebuilt multi-architecture (``linux/amd64``, ``linux/arm64``) container images are now published to GHCR on each release tag.
+- Updated :ref:`vizInterface` to bind to all network interfaces (``0.0.0.0``) by default, enabling Vizard connectivity when Basilisk is running inside a container.
