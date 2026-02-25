@@ -25,7 +25,7 @@ def loadGravFromFile(
         maxDeg: int = 2
     ):
 
-    [clmList, slmList, mu, radEquator] = loadGravFromFileToList(fileName, maxDeg=2)
+    [clmList, slmList, mu, radEquator] = loadGravFromFileToList(fileName, maxDeg=maxDeg)
 
     spherHarm.muBody = mu
     spherHarm.radEquator = radEquator
