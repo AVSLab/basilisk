@@ -20,43 +20,27 @@
 #include "facetedSpacecraftModel.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/msgPayloadDefC/FacetElementBodyMsgPayload.h"
 #include <cmath>
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
 void FacetedSpacecraftModel::Reset(uint64_t callTime) {
-    // Check the required messages are linked
-    if (!this->facetedSCInMsg.isLinked()) {
-        _bskLog(this->bskLogger,
-                BSK_ERROR,
-                "FacetedSpacecraftModel.facetedSCInMsg wasn't connected.");
-    }
+    // Read faceted spacecraft element messages
+    for (int idx = 0; idx < this->numFacets; idx++) {
+        if (this->facetElementInMsgs[idx].isLinked() && this->facetElementInMsgs[idx].isWritten()) {
+            FacetElementMsgPayload facetElementIn{};
+            facetElementIn = this->facetElementInMsgs[idx]();
 
-    // Read faceted spacecraft configuration message
-    FacetedSCMsgPayload facetedSCIn{};
-    if (this->facetedSCInMsg.isWritten()) {
-        facetedSCIn = this->facetedSCInMsg();
-        this->numFacets = facetedSCIn.numFacets;
-        this->numArticulatedFacets = facetedSCIn.numArticulatedFacets;
-
-        if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
-            _bskLog(this->bskLogger,
-                    BSK_ERROR,
-                    "THE SET NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
-        }
-
-        for (int idx = 0; idx < this->numFacets; idx++) {
             // Save facet data to lists
-            this->facetAreaList.push_back(facetedSCIn.facets[idx].area);
-            this->facetR_CopF_FList.push_back(cArray2EigenVector3d(facetedSCIn.facets[idx].r_CopF_F));
-            this->facetNHat_FList.push_back(cArray2EigenVector3d(facetedSCIn.facets[idx].nHat_F));
-            this->facetRotHat_FList.push_back(cArray2EigenVector3d(facetedSCIn.facets[idx].rotHat_F));
-            this->facetDcm_F0BList.push_back(cArray2EigenMatrix3d(*facetedSCIn.facets[idx].dcm_F0B));
-            this->facetR_FB_BList.push_back(cArray2EigenVector3d(facetedSCIn.facets[idx].r_FB_B));
-            this->facetDiffuseCoeffList.push_back(facetedSCIn.facets[idx].c_diffuse);
-            this->facetSpecularCoeffList.push_back(facetedSCIn.facets[idx].c_specular);
+            this->facetAreaList.push_back(facetElementIn.area);
+            this->facetR_CopF_FList.push_back(cArray2EigenVector3d(facetElementIn.r_CopF_F));
+            this->facetNHat_FList.push_back(cArray2EigenVector3d(facetElementIn.nHat_F));
+            this->facetRotHat_FList.push_back(cArray2EigenVector3d(facetElementIn.rotHat_F));
+            this->facetDcm_F0BList.push_back(cArray2EigenMatrix3d(*facetElementIn.dcm_F0B));
+            this->facetR_FB_BList.push_back(cArray2EigenVector3d(facetElementIn.r_FB_B));
+            this->facetDiffuseCoeffList.push_back(facetElementIn.c_diffuse);
+            this->facetSpecularCoeffList.push_back(facetElementIn.c_specular);
 
             // Initialize output data lists
             this->facetR_CopB_BList.push_back(Eigen::Vector3d::Zero());
@@ -79,8 +63,8 @@ articulatedFacetDataInMsgs input messages.
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
 void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
-//    this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
-    this->articulatedFacetDataInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+    this->numArticulatedFacets++;
+    this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
 
@@ -132,21 +116,32 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
  @param callTime [s] Time the method is called
 */
 void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
-    FacetedSCBodyMsgPayload facetSCBodyOut{};
-    facetSCBodyOut.numFacets = this->numFacets;
-    facetSCBodyOut.numArticulatedFacets = this->numArticulatedFacets;
-
-    FacetElementBodyMsgPayload facetElementBodyOut{};
     for (int idx = 0; idx < this->numFacets; idx++) {
-        facetElementBodyOut.area = facetAreaList.at(idx);
-        eigenVector3d2CArray(facetR_CopB_BList.at(idx), facetElementBodyOut.r_CopB_B);
-        eigenVector3d2CArray(facetNHat_BList.at(idx), facetElementBodyOut.nHat_B);
-        eigenVector3d2CArray(facetRotHat_BList.at(idx), facetElementBodyOut.rotHat_B);
-        facetElementBodyOut.c_diffuse = facetDiffuseCoeffList.at(idx);
-        facetElementBodyOut.c_specular = facetSpecularCoeffList.at(idx);
-
-        facetSCBodyOut.facets[idx] = facetElementBodyOut;
+            FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
+            facetElementBodyOut.area = facetAreaList.at(idx);
+            eigenVector3d2CArray(facetR_CopB_BList.at(idx), facetElementBodyOut.r_CopB_B);
+            eigenVector3d2CArray(facetNHat_BList.at(idx), facetElementBodyOut.nHat_B);
+            eigenVector3d2CArray(facetRotHat_BList.at(idx), facetElementBodyOut.rotHat_B);
+            facetElementBodyOut.c_diffuse = facetDiffuseCoeffList.at(idx);
+            facetElementBodyOut.c_specular = facetSpecularCoeffList.at(idx);
+            this->facetElementBodyOutMsgs[idx]->write(&facetElementBodyOut, moduleID, callTime);
     }
-
-    this->facetedSCBodyOutMsg.write(&facetSCBodyOut, moduleID, callTime);
 }
+
+/*! Setter method for the total number of spacecraft facets.
+ @param numFacets [-]
+*/
+void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
+    this->numFacets = numFacets;
+
+    // Push back vectors for the facet messages
+    for (uint64_t idx = 0; idx < this->numFacets; idx++) {
+        this->facetElementInMsgs.push_back(ReadFunctor<FacetElementMsgPayload>());
+        this->facetElementBodyOutMsgs.push_back(new Message<FacetElementBodyMsgPayload>);
+    }
+}
+
+/*! Getter method for the total number of spacecraft facets.
+ @return const uint64_t
+*/
+const uint64_t FacetedSpacecraftModel::getNumTotalFacets() const { return this->numFacets; }

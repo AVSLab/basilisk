@@ -26,8 +26,8 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/FacetedSCMsgPayload.h"
-#include "architecture/msgPayloadDefC/FacetedSCBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/FacetElementMsgPayload.h"
+#include "architecture/msgPayloadDefC/FacetElementBodyMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
@@ -37,15 +37,17 @@ public:
     FacetedSpacecraftModel() = default;  //!< Constructor
     ~FacetedSpacecraftModel() = default;  //!< Destructor
     void Reset(uint64_t callTime) override;  //!< Reset method
-    void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);  //!< Method for adding articulated facets
+    void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);  //!< Method required to add articulated facets
     void UpdateState(uint64_t callTime) override;  //!< Update method
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
+    void setNumTotalFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
+    const uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
 
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;  //!< Articulated facet angle data input message
-    ReadFunctor<FacetedSCMsgPayload> facetedSCInMsg;  //!< Faceted SC input message (Expressed in facet frames)
-    Message<FacetedSCBodyMsgPayload> facetedSCBodyOutMsg;  //!< Faceted SC output message (Expressed in hub B frame)
+    std::vector<ReadFunctor<FacetElementMsgPayload>> facetElementInMsgs;  //!< Facet geometry data input message (Expressed in facet frames)
+    std::vector<Message<FacetElementBodyMsgPayload>*> facetElementBodyOutMsgs;  //!< Facet geometry data output message (Expressed in hub B frame)
 
-    BSKLogger *bskLogger;  //!< BSK Logging
+    BSKLogger *bskLogger;
 
 private:
     /* Facet input message data */
