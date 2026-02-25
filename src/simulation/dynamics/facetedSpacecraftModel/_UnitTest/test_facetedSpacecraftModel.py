@@ -39,23 +39,47 @@ from Basilisk.architecture import messaging
 
 
 @pytest.mark.parametrize("articulated_facet_1_initial_angle", [macros.D2R * 0.0, macros.D2R * 10.0, macros.D2R * 75.0, macros.D2R * -90.0])
-@pytest.mark.parametrize("articulated_facet_2_initial_angle", [macros.D2R * 0.0, macros.D2R * -10.0, macros.D2R * 90.0, macros.D2R * 180.0])
 @pytest.mark.parametrize("articulated_facet_1_intermediate_angle", [macros.D2R * -33.3, macros.D2R * 45.2, macros.D2R * 90.0, macros.D2R * 180.0])
-@pytest.mark.parametrize("articulated_facet_2_intermediate_angle", [macros.D2R * -28.0, macros.D2R * 45.2, macros.D2R * -90.0, macros.D2R * 180.0])
 @pytest.mark.parametrize("articulated_facet_1_final_angle", [macros.D2R * 0.0, macros.D2R * -5.4, macros.D2R * 22.5])
-@pytest.mark.parametrize("articulated_facet_2_final_angle", [macros.D2R * 0.0, macros.D2R * -14.0, macros.D2R * 22.5])
-@pytest.mark.parametrize("fixed_facet_3_angle", [macros.D2R * 0.0, macros.D2R * 10.0, macros.D2R * 75.0, macros.D2R * -90.0])
-@pytest.mark.parametrize("fixed_facet_4_angle", [macros.D2R * 0.0, macros.D2R * -10.0, macros.D2R * 90.0, macros.D2R * 180.0])
-
+@pytest.mark.parametrize("fixed_facet_2_initial_angle", [macros.D2R * 0.0, macros.D2R * 10.0, macros.D2R * 75.0, macros.D2R * -90.0])
 def test_facetedSpacecraftModel(show_plots,
                                 articulated_facet_1_initial_angle,
-                                articulated_facet_2_initial_angle,
                                 articulated_facet_1_intermediate_angle,
-                                articulated_facet_2_intermediate_angle,
                                 articulated_facet_1_final_angle,
-                                articulated_facet_2_final_angle,
-                                fixed_facet_3_angle,
-                                fixed_facet_4_angle):
+                                fixed_facet_2_initial_angle):
+    r"""
+    **Verification Test Description**
+
+    This unit test verifies that the faceted spacecraft BSK module correctly transforms facet geometry data from
+    the local facet frames to the spacecraft hub body frame. The module is configured to map either fixed or single-axis
+    articulating facets to the spacecraft hub frame. The facet geometry input data to the BSK module is provided in
+    each local facet frame. The facet geometry data is transformed and output from the BSK module in the spacecraft
+    hub body frame. Articulating facets must be configured by calling the method
+    addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) with a HingedRigidBodyMsgPayload message for each
+    articulating facet. The module assumes the articulating facets are added first to the module, followed by any
+    fixed facets.
+
+    This test sets up the faceted spacecraft BSK module with two facets. The first facet articulates while the second
+    is fixed. A stand-alone HingedRigidBodyMsgPayload is provided for the articulated facet. To ensure the module
+    correctly handles articulating facets, the simulation is broken up into two segments. The first segment provides
+    an intermediate articulation angle while the second segment provides a final articulation angle. The test varies
+    the articulated facet initial angle, intermediate angle, and final angle. The initial angle for the initial facet
+    is also varied in the test.
+
+    **Test Parameters**
+
+    Args:
+        articulated_facet_1_initial_angle (float): [rad] Initial articulated facet 1 angle
+        articulated_facet_1_intermediate_angle (float): [rad] Intermediate articulated facet 1 angle
+        articulated_facet_1_final_angle (float): [steps] Final articulated facet 1 angle
+        fixed_facet_2_initial_angle (float): [rad] Initial fixed facet 2 angle
+
+    **Description of Variables Being Tested**
+
+     The test checks that the facet geometry data is correctly transformed to the spacecraft hub body frame. The
+     specific variables checked are the facet center of pressure locations ``r_CopB_B``, the facet normal
+     vectors ``nHat_B``, and the facet articulation axes ``rotHat_B``.
+    """
 
     task_name = "unitTask"
     process_name = "TestProcess"
@@ -65,108 +89,82 @@ def test_facetedSpacecraftModel(show_plots,
     test_process = test_sim.CreateNewProcess(process_name)
     test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
 
-    # Facet information
-    num_facets = 4
-    num_articulated_facets = 2
-    facet_area_list = [0.5, 0.75, 1.0, 1.25]
-    facet_r_CopF_F_list = [np.array([0.0, 0.1, 0.0]),
-                           np.array([0.0, 0.0, 0.0]),
-                           np.array([0.1, 0.0, -0.1]),
-                           np.array([0.0, 0.0, 0.1])]
+    # Facet geometry information
+    num_facets = 2
+    facet_area_list = [0.5, 1.0]
+    facet_r_CopF_F_list = [np.array([-0.1, 0.1, -0.1]),
+                           np.array([0.1, -0.1, -0.1])]
     facet_nHat_F_list = [np.array([1.0, 0.0, 0.0]),
-                         np.array([0.0, -1.0, 0.0]),
-                         np.array([0.0, 1.0, 0.0]),
-                         np.array([1.0, 0.0, 0.0])]
-    facet_rotHat_F_list = [np.array([1.0, 0.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 0.0, 1.0]),
-                           np.array([0.0, 0.0, -1.0])]
-    facet_r_FB_B_list = [np.array([0.0, 0.0, 0.0]),
-                         np.array([1.0, 0.0, 0.0]),
-                         np.array([0.0, 1.0, 0.0]),
+                         np.array([0.0, 1.0, 0.0])]
+    facet_rotHat_F_list = [np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 0.0, 1.0])]
+    facet_r_FB_B_list = [np.array([0.0, 1.0, 0.0]),
                          np.array([0.0, 0.0, -1.0])]
-    facet_diffuse_coeff_list = [0.1, 0.1, 0.1, 0.1]
-    facet_specular_coeff_list = [0.9, 0.9, 0.9, 0.9]
+    facet_diffuse_coeff_list = [0.1, 0.1]
+    facet_specular_coeff_list = [0.9, 0.9]
     prv_F01B = articulated_facet_1_initial_angle * facet_rotHat_F_list[0]
-    prv_F02B = articulated_facet_2_initial_angle * facet_rotHat_F_list[1]
-    prv_F03B = fixed_facet_3_angle * facet_rotHat_F_list[2]
-    prv_F04B = fixed_facet_4_angle * facet_rotHat_F_list[3]
+    prv_F02B = fixed_facet_2_initial_angle * facet_rotHat_F_list[1]
     facet_dcm_F0B_list = [rbk.PRV2C(prv_F01B),
-                          rbk.PRV2C(prv_F02B),
-                          rbk.PRV2C(prv_F03B),
-                          rbk.PRV2C(prv_F04B)]
+                          rbk.PRV2C(prv_F02B)]
 
-    # Create the faceted spacecraft message
-    faceted_sc_message_data = messaging.FacetedSCMsgPayload(
-        numFacets = num_facets,
-        numArticulatedFacets = num_articulated_facets,
-        facets = [
-            messaging.FacetElementMsgPayload(
-                area = facet_area_list[idx],
-                r_CopF_F = facet_r_CopF_F_list[idx],
-                nHat_F = facet_nHat_F_list[idx],
-                rotHat_F = facet_rotHat_F_list[idx],
-                dcm_F0B = facet_dcm_F0B_list[idx],
-                r_FB_B = facet_r_FB_B_list[idx],
-                c_diffuse = facet_diffuse_coeff_list[idx],
-                c_specular = facet_specular_coeff_list[idx],
-            )
-            for idx in range(num_facets)
-        ]
+    # Create the facet element input messages
+    articulated_facet_1_element_message_data = messaging.FacetElementMsgPayload(
+        area = facet_area_list[0],
+        r_CopF_F = facet_r_CopF_F_list[0],
+        nHat_F = facet_nHat_F_list[0],
+        rotHat_F = facet_rotHat_F_list[0],
+        dcm_F0B = facet_dcm_F0B_list[0],
+        r_FB_B = facet_r_FB_B_list[0],
+        c_diffuse = facet_diffuse_coeff_list[0],
+        c_specular = facet_specular_coeff_list[0],
     )
-    faceted_sc_message = messaging.FacetedSCMsg().write(faceted_sc_message_data)
+    fixed_facet_2_element_message_data = messaging.FacetElementMsgPayload(
+        area = facet_area_list[1],
+        r_CopF_F = facet_r_CopF_F_list[1],
+        nHat_F = facet_nHat_F_list[1],
+        rotHat_F = facet_rotHat_F_list[1],
+        dcm_F0B = facet_dcm_F0B_list[1],
+        r_FB_B = facet_r_FB_B_list[1],
+        c_diffuse = facet_diffuse_coeff_list[1],
+        c_specular = facet_specular_coeff_list[1],
+    )
+    articulated_facet_1_element_message = messaging.FacetElementMsg().write(articulated_facet_1_element_message_data)
+    fixed_facet_2_element_message = messaging.FacetElementMsg().write(fixed_facet_2_element_message_data)
 
-
-
-
-
-
-
-
-
-    # Create the first articulated facet angle messages
-    articulated_facet_1_angle_message_data = messaging.HingedRigidBodyMsgPayload()
-    articulated_facet_1_angle_message_data.theta = articulated_facet_1_intermediate_angle  # [rad]
-    articulated_facet_1_angle_message_data.thetaDot = 0.0  # [rad]
-    articulated_facet_1_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_1_angle_message_data)
-
-    articulated_facet_2_angle_message_data = messaging.HingedRigidBodyMsgPayload()
-    articulated_facet_2_angle_message_data.theta = articulated_facet_2_intermediate_angle  # [rad]
-    articulated_facet_2_angle_message_data.thetaDot = 0.0  # [rad]
-    articulated_facet_2_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_2_angle_message_data)
+    # Create the articulated facet angle message (facet 1)
+    articulated_facet_angle_message_data = messaging.HingedRigidBodyMsgPayload()
+    articulated_facet_angle_message_data.theta = articulated_facet_1_intermediate_angle  # [rad]
+    articulated_facet_angle_message_data.thetaDot = 0.0  # [rad]
+    articulated_facet_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_angle_message_data)
 
     # Create the faceted spacecraft module
     faceted_sc_model = facetedSpacecraftModel.FacetedSpacecraftModel()
     faceted_sc_model.ModelTag = "facetedSCModel"
-    faceted_sc_model.addArticulatedFacet(articulated_facet_1_angle_message)
-    faceted_sc_model.addArticulatedFacet(articulated_facet_2_angle_message)
-    faceted_sc_model.articulatedFacetDataInMsgs[0].subscribeTo(articulated_facet_1_angle_message)
-    faceted_sc_model.articulatedFacetDataInMsgs[1].subscribeTo(articulated_facet_2_angle_message)
-    faceted_sc_model.facetedSCInMsg.subscribeTo(faceted_sc_message)
+    faceted_sc_model.setNumTotalFacets(num_facets)
+    faceted_sc_model.addArticulatedFacet(articulated_facet_angle_message)
+    faceted_sc_model.articulatedFacetDataInMsgs[0].subscribeTo(articulated_facet_angle_message)
+    faceted_sc_model.facetElementInMsgs[0].subscribeTo(articulated_facet_1_element_message)
+    faceted_sc_model.facetElementInMsgs[1].subscribeTo(fixed_facet_2_element_message)
     test_sim.AddModelToTask(task_name, faceted_sc_model)
 
     # Set up data logging
-    faceted_sc_body_data_log = faceted_sc_model.facetedSCBodyOutMsg.recorder()
-    test_sim.AddModelToTask(task_name, faceted_sc_body_data_log)
+    facet_element_body_data_log = []
+    for outMsg in faceted_sc_model.facetElementBodyOutMsgs:
+        facet_element_body_data_log.append(outMsg.recorder())
+        test_sim.AddModelToTask(task_name, facet_element_body_data_log[-1])
 
     # Execute simulation chunk 1
     test_sim.InitializeSimulation()
-    sim_time_1 = macros.sec2nano(3.0)
+    sim_time_1 = macros.sec2nano(2.0)
     test_sim.ConfigureStopTime(sim_time_1)
     test_sim.ExecuteSimulation()
 
-    # Create the second articulated facet angle messages
-    articulated_facet_1_angle_message_data = messaging.HingedRigidBodyMsgPayload()
-    articulated_facet_1_angle_message_data.theta = articulated_facet_1_final_angle  # [rad]
-    articulated_facet_1_angle_message_data.thetaDot = 0.0  # [rad]
-    articulated_facet_1_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_1_angle_message_data)
-    faceted_sc_model.articulatedFacetDataInMsgs[0].subscribeTo(articulated_facet_1_angle_message)
-
-    articulated_facet_2_angle_message_data = messaging.HingedRigidBodyMsgPayload()
-    articulated_facet_2_angle_message_data.theta = articulated_facet_2_final_angle  # [rad]
-    articulated_facet_2_angle_message_data.thetaDot = 0.0  # [rad]
-    articulated_facet_2_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_2_angle_message_data)
-    faceted_sc_model.articulatedFacetDataInMsgs[1].subscribeTo(articulated_facet_2_angle_message)
+    # Create the second articulated facet angle message (facet 1)
+    articulated_facet_angle_message_data = messaging.HingedRigidBodyMsgPayload()
+    articulated_facet_angle_message_data.theta = articulated_facet_1_final_angle  # [rad]
+    articulated_facet_angle_message_data.thetaDot = 0.0  # [rad]
+    articulated_facet_angle_message = messaging.HingedRigidBodyMsg().write(articulated_facet_angle_message_data)
+    faceted_sc_model.articulatedFacetDataInMsgs[0].subscribeTo(articulated_facet_angle_message)
 
     # Execute simulation chunk 2
     sim_time_2 = macros.sec2nano(3.0)
@@ -174,24 +172,13 @@ def test_facetedSpacecraftModel(show_plots,
     test_sim.ExecuteSimulation()
 
     # Retrieve the logged data
-    timespan = faceted_sc_body_data_log.times() * macros.NANO2SEC  # [s]
-    facet_1_body_data_list = faceted_sc_body_data_log.facets[0]
-    facet_2_body_data_list = faceted_sc_body_data_log.facets[1]
-    facet_3_body_data_list = faceted_sc_body_data_log.facets[2]
-    facet_4_body_data_list = faceted_sc_body_data_log.facets[3]
-
-    facet_r_CopB_B_list_sim = [facet_1_body_data_list.r_CopB_B,
-                               facet_2_body_data_list.r_CopB_B,
-                               facet_3_body_data_list.r_CopB_B,
-                               facet_4_body_data_list.r_CopB_B]
-    facet_nHat_B_list_sim = [facet_1_body_data_list.nHat_B,
-                             facet_2_body_data_list.nHat_B,
-                             facet_3_body_data_list.nHat_B,
-                             facet_4_body_data_list.nHat_B]
-    facet_rotHat_B_list_sim =[facet_1_body_data_list.rotHat_B,
-                              facet_2_body_data_list.rotHat_B,
-                              facet_3_body_data_list.rotHat_B,
-                              facet_4_body_data_list.rotHat_B]
+    facet_r_CopB_B_list_sim = []
+    facet_nHat_B_list_sim = []
+    facet_rotHat_B_list_sim = []
+    for data in facet_element_body_data_log:
+        facet_r_CopB_B_list_sim.append(data.r_CopB_B)
+        facet_nHat_B_list_sim.append(data.nHat_B)
+        facet_rotHat_B_list_sim.append(data.rotHat_B)
 
     # Compute truth data
     (facet_r_CopB_B_list_truth,
@@ -202,41 +189,43 @@ def test_facetedSpacecraftModel(show_plots,
                                                          facet_r_FB_B_list,
                                                          facet_dcm_F0B_list,
                                                          articulated_facet_1_intermediate_angle,
-                                                         articulated_facet_2_intermediate_angle,
-                                                         articulated_facet_1_final_angle,
-                                                         articulated_facet_2_final_angle)
+                                                         articulated_facet_1_final_angle)
 
-    print("\n\nfacet_r_CopB_B_list_truth")
-    print(facet_r_CopB_B_list_truth)
-    print("facet_r_CopB_B_list_sim")
-    print(facet_r_CopB_B_list_sim)
+    # Unit test check
+    accuracy = 1e-12
 
-    print("\n\nfacet_nHat_B_list_truth")
-    print(facet_nHat_B_list_truth)
-    print("facet_nHat_B_list_sim")
-    print(facet_nHat_B_list_sim)
+    # Check facet 1 data
+    articulated_facet_1_data_to_check = [
+        (facet_r_CopB_B_list_sim[0][0:3], facet_r_CopB_B_list_truth[0]),
+        (facet_nHat_B_list_sim[0][0:3], facet_nHat_B_list_truth[0]),
+        (facet_rotHat_B_list_sim[0][0:3], facet_rotHat_B_list_truth[0]),
+        (facet_r_CopB_B_list_sim[0][3:6], facet_r_CopB_B_list_truth[1]),
+        (facet_r_CopB_B_list_sim[0][3:6], facet_r_CopB_B_list_truth[1]),
+        (facet_r_CopB_B_list_sim[0][3:6], facet_r_CopB_B_list_truth[1])
+    ]
+    for sim_data, truth_data in articulated_facet_1_data_to_check:
+        for row in sim_data:
+            np.testing.assert_allclose(
+                row,
+                truth_data,
+                atol=accuracy,
+                verbose=True
+            )
 
-    print("\n\nfacet_rotHat_B_list_truth")
-    print(facet_rotHat_B_list_truth)
-    print("facet_rotHat_B_list_sim")
-    print(facet_rotHat_B_list_sim)
-
-    # # Check the simulation body vectors match the truth values
-    # accuracy = 1e-12
-    # np.testing.assert_allclose(facet_r_CopB_B_list_sim,
-    #                            facet_r_CopB_B_list_truth,
-    #                            atol=accuracy,
-    #                            verbose=True)
-    #
-    # np.testing.assert_allclose(facet_nHat_B_list_sim,
-    #                            facet_nHat_B_list_truth,
-    #                            atol=accuracy,
-    #                            verbose=True)
-    #
-    # np.testing.assert_allclose(facet_rotHat_B_list_sim,
-    #                            facet_rotHat_B_list_truth,
-    #                            atol=accuracy,
-    #                            verbose=True)
+    # Check facet 2 data
+    fixed_facet_2_data_to_check = [
+        (facet_r_CopB_B_list_sim[1], facet_r_CopB_B_list_truth[2]),
+        (facet_nHat_B_list_sim[1], facet_nHat_B_list_truth[2]),
+        (facet_rotHat_B_list_sim[1], facet_rotHat_B_list_truth[2]),
+    ]
+    for sim_data, truth_data in fixed_facet_2_data_to_check:
+        for row in sim_data:
+            np.testing.assert_allclose(
+                row,
+                truth_data,
+                atol=accuracy,
+                verbose=True
+            )
 
 def compute_facet_body_data(facet_r_CopF_F_list,
                             facet_nHat_F_list,
@@ -244,85 +233,47 @@ def compute_facet_body_data(facet_r_CopF_F_list,
                             facet_r_FB_B_list,
                             facet_dcm_F0B_list,
                             articulated_facet_1_intermediate_angle,
-                            articulated_facet_2_intermediate_angle,
-                            articulated_facet_1_final_angle,
-                            articulated_facet_2_final_angle):
+                            articulated_facet_1_final_angle):
 
-    facet_3_r_CopB_B = np.matmul(facet_dcm_F0B_list[2].transpose(), facet_r_CopF_F_list[2]) + facet_r_FB_B_list[2]
-    facet_3_nHat_B = np.matmul(facet_dcm_F0B_list[2].transpose(), facet_nHat_F_list[2])
-    facet_3_rotHat_B = np.matmul(facet_dcm_F0B_list[2].transpose(), facet_rotHat_F_list[2])
+    # Compute articulated facet 1 truth data for simulation segment 1
+    prv_FF0 = articulated_facet_1_intermediate_angle * facet_rotHat_F_list[0]
+    dcm_FF0 = rbk.PRV2C(prv_FF0)
+    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[0])
+    articulated_facet_1_r_CopB_B_intermediate = np.matmul(dcm_FB.transpose(), facet_r_CopF_F_list[0]) + facet_r_FB_B_list[0]
+    articulated_facet_1_nHat_B_intermediate = np.matmul(dcm_FB.transpose(), facet_nHat_F_list[0])
+    articulated_facet_1_rotHat_B_intermediate = np.matmul(dcm_FB.transpose(), facet_rotHat_F_list[0])
 
-    facet_4_r_CopB_B = np.matmul(facet_dcm_F0B_list[3].transpose(), facet_r_CopF_F_list[3]) + facet_r_FB_B_list[3]
-    facet_4_nHat_B = np.matmul(facet_dcm_F0B_list[3].transpose(), facet_nHat_F_list[3])
-    facet_4_rotHat_B = np.matmul(facet_dcm_F0B_list[3].transpose(), facet_rotHat_F_list[3])
+    # Compute articulated facet 1 truth data for simulation segment 2
+    prv_FF0 = articulated_facet_1_final_angle * facet_rotHat_F_list[0]
+    dcm_FF0 = rbk.PRV2C(prv_FF0)
+    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[0])
+    articulated_facet_1_r_CopB_B_final = np.matmul(dcm_FB.transpose(), facet_r_CopF_F_list[0]) + facet_r_FB_B_list[0]
+    articulated_facet_1_nHat_B_final = np.matmul(dcm_FB.transpose(), facet_nHat_F_list[0])
+    articulated_facet_1_rotHat_B_final = np.matmul(dcm_FB.transpose(), facet_rotHat_F_list[0])
 
-    facet_r_CopB_B_list_truth = []
-    facet_nHat_B_list_truth = []
-    facet_rotHat_B_list_truth = []
-    for idx_segment in range(3):
-        for idx_facet in range(4):
-            if idx_facet == 0:
-                if idx_segment == 0:
-                    dcm_FB = facet_dcm_F0B_list[0]
-                elif idx_segment == 1:
-                    angle = articulated_facet_1_intermediate_angle
-                    prv_FF0 = angle * facet_rotHat_F_list[idx_facet]
-                    dcm_FF0 = rbk.PRV2C(prv_FF0)
-                    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[idx_facet])
-                else:
-                    angle = articulated_facet_1_final_angle
-                    prv_FF0 = angle * facet_rotHat_F_list[idx_facet]
-                    dcm_FF0 = rbk.PRV2C(prv_FF0)
-                    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[idx_facet])
+    # Compute fixed facet 2 truth data
+    fixed_facet_2_r_CopB_B = np.matmul(facet_dcm_F0B_list[1].transpose(), facet_r_CopF_F_list[1]) + facet_r_FB_B_list[1]
+    fixed_facet_2_nHat_B = np.matmul(facet_dcm_F0B_list[1].transpose(), facet_nHat_F_list[1])
+    fixed_facet_2_rotHat_B = np.matmul(facet_dcm_F0B_list[1].transpose(), facet_rotHat_F_list[1])
 
-                facet_r_CopB_B = np.matmul(dcm_FB.transpose(), facet_r_CopF_F_list[idx_facet]) + facet_r_FB_B_list[idx_facet]
-                facet_nHat_B = np.matmul(dcm_FB.transpose(), facet_nHat_F_list[idx_facet])
-                facet_rotHat_B = np.matmul(dcm_FB.transpose(), facet_rotHat_F_list[idx_facet])
-
-                facet_r_CopB_B_list_truth.append(facet_r_CopB_B)
-                facet_nHat_B_list_truth.append(facet_nHat_B)
-                facet_rotHat_B_list_truth.append(facet_rotHat_B)
-            elif idx_facet == 1:
-                if idx_segment == 0:
-                    dcm_FB = facet_dcm_F0B_list[1]
-                elif idx_segment == 1:
-                    angle = articulated_facet_2_intermediate_angle
-                    prv_FF0 = angle * facet_rotHat_F_list[idx_facet]
-                    dcm_FF0 = rbk.PRV2C(prv_FF0)
-                    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[idx_facet])
-                else:
-                    angle = articulated_facet_2_final_angle
-                    prv_FF0 = angle * facet_rotHat_F_list[idx_facet]
-                    dcm_FF0 = rbk.PRV2C(prv_FF0)
-                    dcm_FB = np.matmul(dcm_FF0, facet_dcm_F0B_list[idx_facet])
-
-                facet_r_CopB_B = np.matmul(dcm_FB.transpose(), facet_r_CopF_F_list[idx_facet]) + facet_r_FB_B_list[idx_facet]
-                facet_nHat_B = np.matmul(dcm_FB.transpose(), facet_nHat_F_list[idx_facet])
-                facet_rotHat_B = np.matmul(dcm_FB.transpose(), facet_rotHat_F_list[idx_facet])
-
-                facet_r_CopB_B_list_truth.append(facet_r_CopB_B)
-                facet_nHat_B_list_truth.append(facet_nHat_B)
-                facet_rotHat_B_list_truth.append(facet_rotHat_B)
-            elif idx_facet == 2:
-                facet_r_CopB_B_list_truth.append(facet_3_r_CopB_B)
-                facet_nHat_B_list_truth.append(facet_3_nHat_B)
-                facet_rotHat_B_list_truth.append(facet_3_rotHat_B)
-            else:
-                facet_r_CopB_B_list_truth.append(facet_4_r_CopB_B)
-                facet_nHat_B_list_truth.append(facet_4_nHat_B)
-                facet_rotHat_B_list_truth.append(facet_4_rotHat_B)
+    # Format and output truth data as lists
+    facet_r_CopB_B_list_truth = [articulated_facet_1_r_CopB_B_intermediate,
+                                 articulated_facet_1_r_CopB_B_final,
+                                 fixed_facet_2_r_CopB_B]
+    facet_nHat_B_list_truth = [articulated_facet_1_nHat_B_intermediate,
+                               articulated_facet_1_nHat_B_final,
+                               fixed_facet_2_nHat_B]
+    facet_rotHat_B_list_truth = [articulated_facet_1_rotHat_B_intermediate,
+                                 articulated_facet_1_rotHat_B_final,
+                                 fixed_facet_2_rotHat_B]
 
     return facet_r_CopB_B_list_truth, facet_nHat_B_list_truth, facet_rotHat_B_list_truth
 
 if __name__=="__main__":
     test_facetedSpacecraftModel(
         True,  # show plots
-        0.0 * macros.D2R,  # [rad] Articulated facet 1 initial angle
-        0.0 * macros.D2R,  # [rad] Articulated facet 2 initial angle
-        0.0 * macros.D2R,  # [rad] Articulated facet 1 intermediate angle
-        0.0 * macros.D2R,  # [rad] Articulated facet 2 intermediate angle
-        0.0 * macros.D2R,  # [rad] Articulated facet 2 final angle
-        0.0 * macros.D2R,  # [rad] Articulated facet 2 final angle
-        0.0 * macros.D2R,  # [rad] Fixed facet 3 angle
-        0.0 * macros.D2R,  # [rad] Fixed facet 4 angle
+        10.0 * macros.D2R,  # [rad] Articulated facet 1 initial angle
+        45.0 * macros.D2R,  # [rad] Articulated facet 1 intermediate angle
+        110.0 * macros.D2R,  # [rad] Articulated facet 1 final angle
+        -30.0 * macros.D2R,  # [rad] Fixed facet 2 initial angle
     )
