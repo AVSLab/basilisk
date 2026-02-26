@@ -19,6 +19,7 @@
 
 #include "facetedSpacecraftModel.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <cassert>
 
 FacetedSpacecraftModel::~FacetedSpacecraftModel() {
@@ -107,6 +108,42 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
  @param callTime [s] Time the method is called
 */
 void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
+    // Read the articulated facet input messages
+    HingedRigidBodyMsgPayload articulatedFacetAngleIn{};
+    std::vector<double> articulatedFacetAngleList;
+    for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
+        if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
+            this->bskLogger->bskLog(BSK_ERROR,
+                                    "FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
+            return;
+        }
+        articulatedFacetAngleList.push_back(this->articulatedFacetDataInMsgs[idx]().theta);
+    }
+
+    double dcm_FF0Array[3][3];
+    Eigen::Matrix3d dcm_FF0;
+    Eigen::Matrix3d dcm_FB;
+    for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
+        // Save current facet articulation angle
+        double articulationAngle = articulatedFacetAngleList[idx];
+
+        // Determine the current facet attitude relative to its initial orientation F0
+        double prv_FF0Array[3] = {articulationAngle * this->facetRotHat_FList[idx][0],
+                                  articulationAngle * this->facetRotHat_FList[idx][1],
+                                  articulationAngle * this->facetRotHat_FList[idx][2]};
+        PRV2C(prv_FF0Array, dcm_FF0Array);
+        dcm_FF0 = c2DArray2EigenMatrix3d(dcm_FF0Array);
+
+        // Determine the current facet attitude relative to the hub frame B
+        dcm_FB = dcm_FF0 * this->facetDcm_F0BList[idx];
+
+        // Compute the articulating facet output data in the hub B frame
+        this->facetR_CopB_BList[idx] = dcm_FB.transpose() * this->facetR_CopF_FList[idx]
+                                          + this->facetR_FB_BList[idx];
+        this->facetNHat_BList[idx] = dcm_FB.transpose() * this->facetNHat_FList[idx];
+        this->facetRotHat_BList[idx] = dcm_FB.transpose() * this->facetRotHat_FList[idx];
+    }
+
     // Write module output messages
     this->writeOutputMessages(callTime);
 }
