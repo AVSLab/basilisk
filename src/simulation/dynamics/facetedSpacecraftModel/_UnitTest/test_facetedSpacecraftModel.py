@@ -142,7 +142,6 @@ def test_facetedSpacecraftModel(show_plots,
     faceted_sc_model.ModelTag = "facetedSCModel"
     faceted_sc_model.setNumTotalFacets(num_facets)
     faceted_sc_model.addArticulatedFacet(articulated_facet_angle_message)
-    faceted_sc_model.articulatedFacetDataInMsgs[0].subscribeTo(articulated_facet_angle_message)
     faceted_sc_model.facetElementInMsgs[0].subscribeTo(articulated_facet_1_element_message)
     faceted_sc_model.facetElementInMsgs[1].subscribeTo(fixed_facet_2_element_message)
     test_sim.AddModelToTask(task_name, faceted_sc_model)
