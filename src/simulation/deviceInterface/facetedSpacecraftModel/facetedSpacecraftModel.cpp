@@ -153,6 +153,16 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
  @param callTime [s] Time the method is called
 */
 void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
+    for (uint64_t idx = 0; idx < this->numFacets; idx++) {
+        FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
+        facetElementBodyOut.area = facetAreaList[idx];
+        eigenVector3d2CArray(facetR_CopB_BList[idx], facetElementBodyOut.r_CopB_B);
+        eigenVector3d2CArray(facetNHat_BList[idx], facetElementBodyOut.nHat_B);
+        eigenVector3d2CArray(facetRotHat_BList[idx], facetElementBodyOut.rotHat_B);
+        facetElementBodyOut.c_diffuse = facetDiffuseCoeffList[idx];
+        facetElementBodyOut.c_specular = facetSpecularCoeffList[idx];
+        this->facetElementBodyOutMsgs[idx]->write(&facetElementBodyOut, moduleID, callTime);
+    }
 }
 
 /*! This method subscribes the articulated facet angle input messages to the module
