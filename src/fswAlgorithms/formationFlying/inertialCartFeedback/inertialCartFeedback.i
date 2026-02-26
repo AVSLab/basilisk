@@ -39,6 +39,8 @@
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
+%include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
+struct TransRefMsg_C;
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 struct VehicleConfigMsg_C;
 %include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"

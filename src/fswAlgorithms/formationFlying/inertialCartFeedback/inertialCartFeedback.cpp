@@ -26,11 +26,11 @@ void InertialCartFeedback::SelfInit()
 
 void InertialCartFeedback::Reset(uint64_t CurrentSimNanos)
 {
-    if (!this->deputyTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyTransInMsg was not linked.");
+    if (!this->deputyNavInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyNavInMsg was not linked.");
     }
-    if (!this->deputyTransDesiredInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyTransDesiredInMsg was not linked.");
+    if (!this->deputyRefInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyRefInMsg was not linked.");
     }
     if (!this->deputyVehicleConfigInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyVehicleConfigInMsg was not linked.");
@@ -52,51 +52,38 @@ void InertialCartFeedback::Reset(uint64_t CurrentSimNanos)
 
 void InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
 {
-    NavTransMsgPayload depTrans = this->deputyTransInMsg();
-    NavTransMsgPayload depDes = this->deputyTransDesiredInMsg();
-    CmdForceInertialMsgPayload feedforward_N = this->forceOutMsg.zeroMsgPayload;
-    if (this->forceFeedforwardInMsg.isLinked()) {
-        feedforward_N = this->forceFeedforwardInMsg();
-    }
+    NavTransMsgPayload depNav = this->deputyNavInMsg();
+    TransRefMsgPayload depRef = this->deputyRefInMsg();
+    CmdForceInertialMsgPayload forceOut = this->forceOutMsg.zeroMsgPayload;
 
-    const Eigen::Vector3d rDeputy_N = cArray2EigenVector3d(depTrans.r_BN_N);
-    const Eigen::Vector3d vDeputy_N = cArray2EigenVector3d(depTrans.v_BN_N);
-    const Eigen::Vector3d rDeputyDes_N = cArray2EigenVector3d(depDes.r_BN_N);
-    const Eigen::Vector3d vDeputyDes_N = cArray2EigenVector3d(depDes.v_BN_N);
-    const Eigen::Vector3d deltaR_N = rDeputy_N - rDeputyDes_N;
-    const Eigen::Vector3d deltaV_N = vDeputy_N - vDeputyDes_N;
+    const Eigen::Vector3d r_BN_N = cArray2EigenVector3d(depNav.r_BN_N);
+    const Eigen::Vector3d v_BN_N = cArray2EigenVector3d(depNav.v_BN_N);
+    const Eigen::Vector3d r_RN_N = cArray2EigenVector3d(depRef.r_RN_N);
+    const Eigen::Vector3d v_RN_N = cArray2EigenVector3d(depRef.v_RN_N);
+    const Eigen::Vector3d a_RN_N = cArray2EigenVector3d(depRef.a_RN_N); // total reference acceleration for the deputy, including feed-forward terms for non-natural motion if applicable
+    const Eigen::Vector3d deltaR_N = r_BN_N - r_RN_N;
+    const Eigen::Vector3d deltaV_N = v_BN_N - v_RN_N;
+    const double normRDeputy = r_BN_N.norm();
+    const double normRDeputyRef = r_RN_N.norm();
 
-    const double normRDeputy = rDeputy_N.norm();
-    const double normRDeputyDes = rDeputyDes_N.norm();
-
-    Eigen::Vector3d gravityCompAccel_N = Eigen::Vector3d::Zero();
+    Eigen::Vector3d aGravDeputy_N = Eigen::Vector3d::Zero();
     if (this->mu > 0.0) {
-        Eigen::Vector3d aGravDeputy_N = Eigen::Vector3d::Zero();
-        Eigen::Vector3d aGravDeputyStar_N = Eigen::Vector3d::Zero();
         if (normRDeputy > 1e-6) {
-            aGravDeputy_N = -this->mu * rDeputy_N / (normRDeputy * normRDeputy * normRDeputy);
+            aGravDeputy_N = -this->mu * r_BN_N / (normRDeputy * normRDeputy * normRDeputy);
         } else {
             bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback deputy position norm too small to evaluate gravity.");
         }
-        if (normRDeputyDes > 1e-6) {
-            aGravDeputyStar_N = -this->mu * rDeputyDes_N / (normRDeputyDes * normRDeputyDes * normRDeputyDes);
-        } else {
-            bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback desired deputy position norm too small to evaluate gravity.");
-        }
-        gravityCompAccel_N = aGravDeputy_N - aGravDeputyStar_N;
     }
 
-    const Eigen::Vector3d forceFF_N = cArray2EigenVector3d(feedforward_N.forceRequestInertial);
     Eigen::Vector3d forceCmd_N =
-            -this->deputyMass * gravityCompAccel_N
-            -this->deputyMass * this->K * deltaR_N
-            -this->deputyMass * this->P * deltaV_N
-            +forceFF_N;
+            -this->deputyMass * aGravDeputy_N
+            +this->deputyMass * a_RN_N
+            -this->K * deltaR_N
+            -this->P * deltaV_N;
 
-    CmdForceInertialMsgPayload forceOutBuffer = this->forceOutMsg.zeroMsgPayload;
-    eigenVector3d2CArray(forceCmd_N, forceOutBuffer.forceRequestInertial);
-    this->forceOutMsg.write(&forceOutBuffer, this->moduleID, CurrentSimNanos);
-    CmdForceInertialMsg_C_write(&forceOutBuffer, &this->forceOutMsgC, this->moduleID, CurrentSimNanos);
+    eigenVector3d2CArray(forceCmd_N, forceOut.forceRequestInertial);
+    this->forceOutMsg.write(&forceOut, this->moduleID, CurrentSimNanos);
+    CmdForceInertialMsg_C_write(&forceOut, &this->forceOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
 void InertialCartFeedback::setMu(const double value)
