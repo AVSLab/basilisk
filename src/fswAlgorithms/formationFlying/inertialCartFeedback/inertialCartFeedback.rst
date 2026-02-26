@@ -40,18 +40,15 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - deputyTransInMsg
+    * - deputyNavInMsg
       - :ref:`NavTransMsgPayload`
       - Deputy inertial position and velocity input msg
-    * - deputyTransDesiredInMsg
-      - :ref:`NavTransMsgPayload`
-      - Desired deputy inertial position and velocity input msg
+    * - deputyRefInMsg
+      - :ref:`TransRefMsgPayload`
+      - Deputy inertial reference state input msg containing desired position, velocity, and total inertial acceleration
     * - deputyVehicleConfigInMsg
       - :ref:`VehicleConfigMsgPayload`
       - Deputy spacecraft configuration input msg
-    * - forceFeedforwardInMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - (Optional) inertial feed-forward force input msg
     * - forceOutMsg
       - :ref:`CmdForceInertialMsgPayload`
       - Inertial force command output msg
