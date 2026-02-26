@@ -1,0 +1,1 @@
+- Added a new :ref:`facetedSpacecraftModel` module to convert spacecraft facet geometry from the local facet frames to the spacecraft hub body frame. The module supports both fixed facets and single-axis articulating facets.
