@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="820" viewBox="0 0 1600 820">
+  <defs>
+    <style>
+      .title { font: 700 36px Arial, Helvetica, sans-serif; fill: #17233a; }
+      .label { font: 600 24px Arial, Helvetica, sans-serif; fill: #17233a; }
+      .small { font: 500 20px Arial, Helvetica, sans-serif; fill: #2a3b55; }
+      .box { stroke: #2f4f6f; stroke-width: 3; rx: 20; ry: 20; }
+      .arrow { stroke: #2f4f6f; stroke-width: 4; fill: none; marker-end: url(#arrowHead); }
+      .arrowDashed { stroke: #506d8e; stroke-width: 3; fill: none; stroke-dasharray: 12 10; marker-end: url(#arrowHeadLite); }
+    </style>
+    <marker id="arrowHead" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#2f4f6f"/>
+    </marker>
+    <marker id="arrowHeadLite" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#506d8e"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="820" fill="#f5f8fc"/>
+  <text x="800" y="58" text-anchor="middle" class="title">downlinkHandling Integration and Message Flow</text>
+
+  <rect class="box" x="80" y="120" width="280" height="170" fill="#deebfa"/>
+  <text x="220" y="175" text-anchor="middle" class="label">simpleAntenna #1</text>
+  <text x="220" y="212" text-anchor="middle" class="small">AntennaLogMsgPayload</text>
+  <text x="220" y="244" text-anchor="middle" class="small">(state, gain/noise, pointing)</text>
+
+  <rect class="box" x="80" y="350" width="280" height="170" fill="#deebfa"/>
+  <text x="220" y="405" text-anchor="middle" class="label">simpleAntenna #2</text>
+  <text x="220" y="442" text-anchor="middle" class="small">AntennaLogMsgPayload</text>
+  <text x="220" y="474" text-anchor="middle" class="small">(state, gain/noise, pointing)</text>
+
+  <rect class="box" x="470" y="215" width="300" height="210" fill="#d7f2ea"/>
+  <text x="620" y="275" text-anchor="middle" class="label">linkBudget</text>
+  <text x="620" y="312" text-anchor="middle" class="small">LinkBudgetMsgPayload</text>
+  <text x="620" y="346" text-anchor="middle" class="small">CNR1, CNR2, bandwidth,</text>
+  <text x="620" y="378" text-anchor="middle" class="small">antennaState1, antennaState2</text>
+
+  <rect class="box" x="900" y="190" width="360" height="260" fill="#f7e4d1"/>
+  <text x="1080" y="250" text-anchor="middle" class="label">downlinkHandling</text>
+  <text x="1080" y="288" text-anchor="middle" class="small">CNR → BER → PER → ARQ</text>
+  <text x="1080" y="322" text-anchor="middle" class="small">attempt/remove/deliver/drop</text>
+  <text x="1080" y="356" text-anchor="middle" class="small">storage saturation + packet gate</text>
+  <text x="1080" y="390" text-anchor="middle" class="small">nodeDataOutMsg + diagnostics</text>
+
+  <rect class="box" x="1320" y="190" width="220" height="260" fill="#dcefd3"/>
+  <text x="1430" y="254" text-anchor="middle" class="label">Storage Unit</text>
+  <text x="1430" y="290" text-anchor="middle" class="small">DataStorageStatus</text>
+  <text x="1430" y="324" text-anchor="middle" class="small">partition bits/names</text>
+  <text x="1430" y="358" text-anchor="middle" class="small">consumes</text>
+  <text x="1430" y="390" text-anchor="middle" class="small">DataNodeUsage</text>
+
+  <rect class="box" x="900" y="520" width="640" height="220" fill="#e8eef8"/>
+  <text x="1220" y="582" text-anchor="middle" class="label">DownlinkHandlingMsgPayload (Diagnostics)</text>
+  <text x="1220" y="618" text-anchor="middle" class="small">linkActive, receiverIndex, BER, PER, packetSuccess/drop, expectedAttempts</text>
+  <text x="1220" y="652" text-anchor="middle" class="small">attempted/removal/delivered/dropped rates, remaining bits, cumulative counters</text>
+
+  <path class="arrow" d="M360 205 L470 270"/>
+  <path class="arrow" d="M360 435 L470 370"/>
+  <path class="arrow" d="M770 320 L900 320"/>
+  <path class="arrow" d="M1260 320 L1320 320"/>
+  <path class="arrowDashed" d="M1320 360 L1260 360"/>
+  <path class="arrowDashed" d="M900 400 L760 520 L760 630 L900 630"/>
+</svg>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="700" viewBox="0 0 1700 700">
+  <defs>
+    <style>
+      .title { font: 700 34px Arial, Helvetica, sans-serif; fill: #142033; }
+      .hdr { font: 700 22px Arial, Helvetica, sans-serif; fill: #10263c; }
+      .txt { font: 500 19px Arial, Helvetica, sans-serif; fill: #21344f; }
+      .eq { font: 500 20px 'Courier New', monospace; fill: #2a3d5c; }
+      .box { stroke: #365776; stroke-width: 3; rx: 18; ry: 18; }
+      .arrow { stroke: #365776; stroke-width: 4; fill: none; marker-end: url(#arrowHead); }
+    </style>
+    <marker id="arrowHead" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#365776"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1700" height="700" fill="#f4f8fe"/>
+  <text x="850" y="58" text-anchor="middle" class="title">CNR to Effective Throughput Pipeline in downlinkHandling</text>
+
+  <rect class="box" x="80" y="120" width="280" height="210" fill="#dff0ff"/>
+  <text x="220" y="170" text-anchor="middle" class="hdr">Link Input</text>
+  <text x="220" y="208" text-anchor="middle" class="txt">selected CNR</text>
+  <text x="220" y="240" text-anchor="middle" class="txt">overlap bandwidth</text>
+  <text x="220" y="282" text-anchor="middle" class="eq">C/N0 = CNR + 10log10(B)</text>
+
+  <rect class="box" x="410" y="120" width="280" height="210" fill="#e3f8ec"/>
+  <text x="550" y="170" text-anchor="middle" class="hdr">Bit-Energy Domain</text>
+  <text x="550" y="208" text-anchor="middle" class="txt">user bit rate Rb</text>
+  <text x="550" y="240" text-anchor="middle" class="eq">Eb/N0 = C/N0 - 10log10(Rb)</text>
+  <text x="550" y="282" text-anchor="middle" class="eq">BER = 0.5*erfc(sqrt(Eb/N0))</text>
+
+  <rect class="box" x="740" y="120" width="280" height="210" fill="#fff1de"/>
+  <text x="880" y="170" text-anchor="middle" class="hdr">Packet Reliability</text>
+  <text x="880" y="208" text-anchor="middle" class="txt">packet size L</text>
+  <text x="880" y="240" text-anchor="middle" class="eq">PER = 1 - (1-BER)^L</text>
+  <text x="880" y="272" text-anchor="middle" class="eq">Pdrop = PER^N</text>
+  <text x="880" y="304" text-anchor="middle" class="eq">Psuccess = 1 - Pdrop</text>
+
+  <rect class="box" x="1070" y="120" width="280" height="210" fill="#efe7ff"/>
+  <text x="1210" y="170" text-anchor="middle" class="hdr">Rate Mapping</text>
+  <text x="1210" y="208" text-anchor="middle" class="eq">E[A] = Psuccess / (1-PER)</text>
+  <text x="1210" y="240" text-anchor="middle" class="eq">Rremove = Rb / E[A]</text>
+  <text x="1210" y="272" text-anchor="middle" class="eq">Rdeliv = Rremove * Psuccess</text>
+  <text x="1210" y="304" text-anchor="middle" class="eq">Rdrop = Rremove - Rdeliv</text>
+
+  <rect class="box" x="1400" y="120" width="220" height="210" fill="#f3f4f7"/>
+  <text x="1510" y="170" text-anchor="middle" class="hdr">Storage Gate</text>
+  <text x="1510" y="208" text-anchor="middle" class="txt">full-packet check</text>
+  <text x="1510" y="240" text-anchor="middle" class="txt">dt + available bits</text>
+  <text x="1510" y="282" text-anchor="middle" class="eq">scale in [0, 1]</text>
+
+  <rect class="box" x="300" y="410" width="1100" height="220" fill="#dbe7f6"/>
+  <text x="850" y="470" text-anchor="middle" class="hdr">Outputs Written Each Step</text>
+  <text x="850" y="510" text-anchor="middle" class="txt">DataNodeUsageMsgPayload: nodeDataOutMsg.baudRate = -Rremove_scaled</text>
+  <text x="850" y="545" text-anchor="middle" class="txt">DownlinkHandlingMsgPayload: BER, PER, success/drop probs, rates, storage estimates, cumulative counters</text>
+  <text x="850" y="580" text-anchor="middle" class="txt">These outputs drive onboard buffer depletion and provide telemetry for fault diagnosis pipelines</text>
+
+  <path class="arrow" d="M360 225 L410 225"/>
+  <path class="arrow" d="M690 225 L740 225"/>
+  <path class="arrow" d="M1020 225 L1070 225"/>
+  <path class="arrow" d="M1350 225 L1400 225"/>
+  <path class="arrow" d="M1510 330 L1510 410"/>
+  <path class="arrow" d="M1210 330 L1210 410"/>
+</svg>
