@@ -37,6 +37,8 @@ public:
     void Reset(uint64_t callTime) override;  //!< Reset method
     void UpdateState(uint64_t callTime) override;  //!< Update method
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
+    void setNumTotalFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
+    const uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
 
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;  //!< Articulated facet angle data input message
     std::vector<ReadFunctor<FacetElementMsgPayload>> facetElementInMsgs;  //!< Facet geometry data input message (Expressed in facet frames)
@@ -45,6 +47,7 @@ public:
     BSKLogger *bskLogger = nullptr;  //!< BSK logging
 
 private:
+    uint64_t numFacets{};  //!< Total number of spacecraft facets
 };
 
 #endif
