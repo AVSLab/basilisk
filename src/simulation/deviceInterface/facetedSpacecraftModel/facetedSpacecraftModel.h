@@ -50,6 +50,21 @@ public:
 private:
     uint64_t numFacets{};  //!< Total number of spacecraft facets
     uint64_t numArticulatedFacets{};  //!< Number of articulated facets
+
+    /* Facet input message data */
+    std::vector<double> facetAreaList;  //!< [m^2] List of facet areas
+    std::vector<Eigen::Vector3d> facetR_CopF_FList;  //!< [m] List of facet center of pressure locations wrt facet frame origin point F
+    std::vector<Eigen::Vector3d> facetNHat_FList;  //!< [-] List of facet normal vectors expressed in facet frame F components
+    std::vector<Eigen::Vector3d> facetRotHat_FList;  //!< [-] List of facet rotation axes expressed in facet frame F components
+    std::vector<Eigen::Matrix3d> facetDcm_F0BList;  //!< [-] List of initial facet attitudes relative to hub B frame
+    std::vector<Eigen::Vector3d> facetR_FB_BList;  //!< [m] List of facet locations relative to hub frame origin point B
+    std::vector<double> facetDiffuseCoeffList;  //!< [-] List of facet diffuse reflection optical coefficient list
+    std::vector<double> facetSpecularCoeffList;  //!< [-] List of facet specular reflection optical coefficient list
+
+    /* Facet output message data */
+    std::vector<Eigen::Vector3d> facetR_CopB_BList;  //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
+    std::vector<Eigen::Vector3d> facetNHat_BList;  //!< [-] List of facet normal vectors expressed in hub B frame components
+    std::vector<Eigen::Vector3d> facetRotHat_BList;  //!< [-] List of facet rotation axes expressed in hub B frame components
 };
 
 #endif
