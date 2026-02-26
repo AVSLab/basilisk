@@ -21,6 +21,8 @@ Version |release|
   exist in your folder.  Simulation script importing directly using a local file path to ``supportData``
   will not work.  Rather, ``pooch`` is being used to manage data which puts the data files into a
   cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
+- The method ``loadGravFromFile()`` was hard-coded to load a 2nd order gravity field.  This is fixed in current
+  version.
 
 Version 2.9.0
 -------------
