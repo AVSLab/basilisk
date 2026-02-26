@@ -27,6 +27,7 @@
 #include "architecture/messaging/messaging.h"
 #include "cMsgCInterface/CmdForceInertialMsg_C.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
@@ -48,13 +49,12 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 public:
-    ReadFunctor<NavTransMsgPayload> deputyTransInMsg;                  //!< deputy translational navigation input msg
-    ReadFunctor<NavTransMsgPayload> deputyTransDesiredInMsg;           //!< desired deputy translational navigation input msg
+    ReadFunctor<NavTransMsgPayload> deputyNavInMsg;                  //!< deputy translational navigation input msg
+    ReadFunctor<TransRefMsgPayload> deputyRefInMsg;                  //!< deputy translational reference input msg
     ReadFunctor<VehicleConfigMsgPayload> deputyVehicleConfigInMsg;     //!< deputy spacecraft mass/config input msg
-    ReadFunctor<CmdForceInertialMsgPayload> forceFeedforwardInMsg;     //!< (optional) inertial feed-forward thrust for non-natural deputy motion input msg
 
     Message<CmdForceInertialMsgPayload> forceOutMsg;                   //!< inertial force command output msg
-    CmdForceInertialMsg_C forceOutMsgC = {};                           //!< C-wrapped inertial force output msg
+    CmdForceInertialMsg_C forceOutMsgC = {};                           //!< C-wrapped inertial force command output msg
 
     BSKLogger bskLogger;                                               //!< BSK logging interface
 
@@ -76,8 +76,8 @@ private:
     double mu = -1;                                                    //!< [m^3/s^2] (optional) gravitational parameter
     bool setKFlag = false;                                             //!< flag to check if K has been set
     bool setPFlag = false;                                             //!< flag to check if P has been set
-    Eigen::Matrix3d K;                                                 //!< [1/s^2] proportional acceleration gain (mass-scaled in force law)
-    Eigen::Matrix3d P;                                                 //!< [1/s] derivative acceleration gain (mass-scaled in force law)
+    Eigen::Matrix3d K;                                                 //!< [N/m] Proportional gain applied to position errors
+    Eigen::Matrix3d P;                                                 //!< [N*s/m] Rate error feedback gain applied
 };
 
 #endif
