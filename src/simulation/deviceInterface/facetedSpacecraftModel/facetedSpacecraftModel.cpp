@@ -18,6 +18,7 @@
 */
 
 #include "facetedSpacecraftModel.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <cassert>
 
 FacetedSpacecraftModel::~FacetedSpacecraftModel() {
@@ -28,6 +29,77 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() {
  @param callTime [ns] Time the method is called
 */
 void FacetedSpacecraftModel::Reset(uint64_t callTime) {
+    if (this->numArticulatedFacets > this->numFacets) {
+        this->bskLogger->bskLog(BSK_ERROR,
+                        "FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
+        return;
+    }
+    if (this->facetElementInMsgs.size() != this->numFacets ||
+        this->facetElementBodyOutMsgs.size() != this->numFacets ||
+        this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
+            this->bskLogger->bskLog(BSK_ERROR,
+                                    "FacetedSpacecraftModel: Message vector size mismatch during Reset.");
+            return;
+        }
+
+    // Clear and allocate data lists
+    this->facetAreaList.clear();
+    this->facetR_CopF_FList.clear();
+    this->facetNHat_FList.clear();
+    this->facetRotHat_FList.clear();
+    this->facetDcm_F0BList.clear();
+    this->facetR_FB_BList.clear();
+    this->facetDiffuseCoeffList.clear();
+    this->facetSpecularCoeffList.clear();
+    this->facetR_CopB_BList.clear();
+    this->facetNHat_BList.clear();
+    this->facetRotHat_BList.clear();
+    this->facetAreaList.reserve(this->numFacets);
+    this->facetR_CopF_FList.reserve(this->numFacets);
+    this->facetNHat_FList.reserve(this->numFacets);
+    this->facetRotHat_FList.reserve(this->numFacets);
+    this->facetDcm_F0BList.reserve(this->numFacets);
+    this->facetR_FB_BList.reserve(this->numFacets);
+    this->facetDiffuseCoeffList.reserve(this->numFacets);
+    this->facetSpecularCoeffList.reserve(this->numFacets);
+    this->facetR_CopB_BList.reserve(this->numFacets);
+    this->facetNHat_BList.reserve(this->numFacets);
+    this->facetRotHat_BList.reserve(this->numFacets);
+
+    // Read faceted spacecraft element messages
+    for (uint64_t idx = 0; idx < this->numFacets; idx++) {
+        if (!this->facetElementInMsgs[idx].isLinked() || !this->facetElementInMsgs[idx].isWritten()) {
+            this->bskLogger->bskLog(BSK_ERROR,
+                                    "FacetedSpacecraftModel: Input message is not linked or written.");
+            return;
+        }
+
+        FacetElementMsgPayload facetElementIn{};
+        facetElementIn = this->facetElementInMsgs[idx]();
+
+        // Save facet data to lists
+        this->facetAreaList.push_back(facetElementIn.area);
+        this->facetR_CopF_FList.push_back(cArray2EigenVector3d(facetElementIn.r_CopF_F));
+        this->facetNHat_FList.push_back(cArray2EigenVector3d(facetElementIn.nHat_F).normalized());
+        this->facetRotHat_FList.push_back(cArray2EigenVector3d(facetElementIn.rotHat_F));
+        this->facetDcm_F0BList.push_back(cArray2EigenMatrix3d(*facetElementIn.dcm_F0B));
+        this->facetR_FB_BList.push_back(cArray2EigenVector3d(facetElementIn.r_FB_B));
+        this->facetDiffuseCoeffList.push_back(facetElementIn.c_diffuse);
+        this->facetSpecularCoeffList.push_back(facetElementIn.c_specular);
+
+        // Initialize output data lists
+        this->facetR_CopB_BList.push_back(Eigen::Vector3d::Zero());
+        this->facetNHat_BList.push_back(Eigen::Vector3d::Zero());
+        this->facetRotHat_BList.push_back(Eigen::Vector3d::Zero());
+    }
+
+    // Populate output data lists for fixed facets
+    for (uint64_t idx = this->numArticulatedFacets; idx < this->numFacets; idx++) {
+        this->facetR_CopB_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetR_CopF_FList[idx]
+                                          + this->facetR_FB_BList[idx];
+        this->facetNHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetNHat_FList[idx];
+        this->facetRotHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetRotHat_FList[idx];
+    }
 }
 
 
