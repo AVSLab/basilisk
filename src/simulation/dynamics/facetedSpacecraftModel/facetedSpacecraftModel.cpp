@@ -35,8 +35,8 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
             // Save facet data to lists
             this->facetAreaList.push_back(facetElementIn.area);
             this->facetR_CopF_FList.push_back(cArray2EigenVector3d(facetElementIn.r_CopF_F));
-            this->facetNHat_FList.push_back(cArray2EigenVector3d(facetElementIn.nHat_F));
-            this->facetRotHat_FList.push_back(cArray2EigenVector3d(facetElementIn.rotHat_F));
+            this->facetNHat_FList.push_back(cArray2EigenVector3d(facetElementIn.nHat_F).normalized());
+            this->facetRotHat_FList.push_back(cArray2EigenVector3d(facetElementIn.rotHat_F).normalized());
             this->facetDcm_F0BList.push_back(cArray2EigenMatrix3d(*facetElementIn.dcm_F0B));
             this->facetR_FB_BList.push_back(cArray2EigenVector3d(facetElementIn.r_FB_B));
             this->facetDiffuseCoeffList.push_back(facetElementIn.c_diffuse);
@@ -117,14 +117,14 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
 */
 void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
     for (int idx = 0; idx < this->numFacets; idx++) {
-            FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
-            facetElementBodyOut.area = facetAreaList.at(idx);
-            eigenVector3d2CArray(facetR_CopB_BList.at(idx), facetElementBodyOut.r_CopB_B);
-            eigenVector3d2CArray(facetNHat_BList.at(idx), facetElementBodyOut.nHat_B);
-            eigenVector3d2CArray(facetRotHat_BList.at(idx), facetElementBodyOut.rotHat_B);
-            facetElementBodyOut.c_diffuse = facetDiffuseCoeffList.at(idx);
-            facetElementBodyOut.c_specular = facetSpecularCoeffList.at(idx);
-            this->facetElementBodyOutMsgs[idx]->write(&facetElementBodyOut, moduleID, callTime);
+        FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
+        facetElementBodyOut.area = facetAreaList.at(idx);
+        eigenVector3d2CArray(facetR_CopB_BList.at(idx), facetElementBodyOut.r_CopB_B);
+        eigenVector3d2CArray(facetNHat_BList.at(idx), facetElementBodyOut.nHat_B);
+        eigenVector3d2CArray(facetRotHat_BList.at(idx), facetElementBodyOut.rotHat_B);
+        facetElementBodyOut.c_diffuse = facetDiffuseCoeffList.at(idx);
+        facetElementBodyOut.c_specular = facetSpecularCoeffList.at(idx);
+        this->facetElementBodyOutMsgs[idx]->write(&facetElementBodyOut, moduleID, callTime);
     }
 }
 
