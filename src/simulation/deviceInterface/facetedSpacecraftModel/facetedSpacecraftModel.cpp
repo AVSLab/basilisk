@@ -40,3 +40,30 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
 */
 void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
 }
+
+/*! Setter method for the total number of spacecraft facets.
+ @param numFacets [-]
+*/
+void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
+    this->numFacets = numFacets;
+
+    // Release old output messages if this setter is called multiple times
+    for (auto* msg : this->facetElementBodyOutMsgs) {
+        delete msg;
+    }
+    this->facetElementInMsgs.clear();
+    this->facetElementBodyOutMsgs.clear();
+    this->facetElementInMsgs.reserve(this->numFacets);
+    this->facetElementBodyOutMsgs.reserve(this->numFacets);
+
+    // Push back facet message vectors
+    for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
+        this->facetElementInMsgs.push_back(ReadFunctor<FacetElementMsgPayload>{});
+        this->facetElementBodyOutMsgs.push_back(new Message<FacetElementBodyMsgPayload>());
+    }
+}
+
+/*! Getter method for the total number of spacecraft facets.
+ @return const uint64_t
+*/
+const uint64_t FacetedSpacecraftModel::getNumTotalFacets() const { return this->numFacets; }
