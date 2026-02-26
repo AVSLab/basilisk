@@ -18,6 +18,7 @@
 */
 
 #include "facetedSpacecraftModel.h"
+#include <cassert>
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
@@ -39,6 +40,19 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
  @param callTime [s] Time the method is called
 */
 void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
+}
+
+/*! This method subscribes the articulated facet angle input messages to the module
+articulatedFacetDataInMsgs input messages.
+ @param tmpMsg hingedRigidBody input message containing facet articulation angle data
+*/
+void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
+    // Safety checks
+    assert(tmpMsg != nullptr && "addArticulatedFacet() received null msg pointer");
+    assert(this->numArticulatedFacets < this->numFacets && "addArticulatedFacet() called more times than total facets");
+
+    this->numArticulatedFacets++;
+    this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
 /*! Setter method for the total number of spacecraft facets.

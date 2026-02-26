@@ -37,6 +37,7 @@ public:
     void Reset(uint64_t callTime) override;  //!< Reset method
     void UpdateState(uint64_t callTime) override;  //!< Update method
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
+    void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);  //!< Method required to add articulated facets
     void setNumTotalFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
     const uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
 
@@ -48,6 +49,7 @@ public:
 
 private:
     uint64_t numFacets{};  //!< Total number of spacecraft facets
+    uint64_t numArticulatedFacets{};  //!< Number of articulated facets
 };
 
 #endif
