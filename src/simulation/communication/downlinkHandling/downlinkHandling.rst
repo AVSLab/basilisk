@@ -1,66 +1,81 @@
-.. _downlinkHandling:
-
 .. Warning::
 
-   **[BETA]** :ref:`downlinkHandling` is a beta module in an initial public release. This module might be
+   :beta:`downlinkHandling` is a beta module in an initial public release. This module might be
    subject to changes in future releases.
 
 Executive Summary
 -----------------
-This document describes how the :ref:`downlinkHandling` module operates within the Basilisk simulation framework.
-The module maps radio link quality from :ref:`linkBudget` into communication reliability and effective telemetry throughput.
-It then converts this throughput into a data sink request that removes data from onboard storage.
+This document describes how the downlinkHandling module maps radio link quality into realistic
+data transfer outcomes.
 
-In short, the module provides:
+At each simulation step, the module:
 
-- Link-quality to BER/PER conversion for a configurable bit rate and packet size.
-- Retry-limited delivery modeling (ARQ-style retransmissions).
-- Effective throughput estimates (attempted, removed, delivered, dropped).
-- Tight coupling to Basilisk storage units through :ref:`DataNodeUsageMsgPayload`.
+- reads link quality from :ref:`linkBudget`
+- converts CNR into BER and packet error rate
+- applies retry-limited ARQ reliability
+- removes data from onboard storage at the resulting effective rate
+- publishes detailed diagnostics for analysis and fault studies
+
+The module is designed to sit between RF-link modeling (:ref:`simpleAntenna`, :ref:`linkBudget`)
+and onboard data-buffer dynamics (:ref:`DataStorageStatusMsgPayload`, :ref:`DataNodeUsageMsgPayload`).
+
+System Role and Data Flow
+-------------------------
+
+.. _downlinkhandling-figure-flow:
+.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingFlow.svg
+   :width: 90%
+   :align: center
+   :alt: downlinkHandling integration flow with simpleAntenna, linkBudget, and storage
+
+   Figure 1: Integration flow and message-level role of downlinkHandling.
 
 Message Connection Descriptions
 -------------------------------
 The following table lists all module input and output messages.
-The module message connections are set by the user from Python.
+The message connection is set by the user from Python.
 
 .. list-table:: Module I/O Messages
-   :widths: 24 22 34 20
+   :widths: 22 22 36 20
    :header-rows: 1
 
    * - Msg Variable Name
      - Msg Type
      - Description
      - Note
-   * - linkBudgetInMsg
+   * - ``linkBudgetInMsg``
      - :ref:`LinkBudgetMsgPayload`
-     - Link-quality input from :ref:`linkBudget` (CNR, overlap bandwidth, frequency, antenna states).
-     - Required
-   * - storageUnitInMsgs (via ``addStorageUnitToDownlink``)
+     - Link-quality input from :ref:`linkBudget` (receiver states, ``CNR1``, ``CNR2``, overlap bandwidth).
+     - Required for non-zero downlink
+   * - ``storageUnitInMsgs`` (via ``addStorageUnitToDownlink``)
      - :ref:`DataStorageStatusMsgPayload`
-     - Storage state input used to determine available data and selected partition name.
+     - Storage state input (partition names, partition bits, total storage level).
      - Required for actual data removal
-   * - nodeDataOutMsg
+   * - ``nodeDataOutMsg``
      - :ref:`DataNodeUsageMsgPayload`
-     - Data-node output where negative baud rate removes data from storage.
-     - Output (inherited from ``DataNodeBase``)
-   * - downlinkOutMsg
+     - Data-node output inherited from ``DataNodeBase``. Negative baud rate removes bits from storage.
+     - Output
+   * - ``downlinkOutMsg``
      - :ref:`DownlinkHandlingMsgPayload`
-     - Detailed diagnostics (BER/PER, retry probabilities, rates, cumulative counters).
+     - Diagnostics output with link metrics, reliability metrics, rates, and cumulative counters.
      - Output
 
 Detailed Module Description
 ---------------------------
-The module extends ``DataNodeBase`` and executes once per simulation step.
-At each step it:
+The module extends ``DataNodeBase`` and runs once per simulation step.
 
-1. Reads ``LinkBudgetMsgPayload`` and storage status messages.
-2. Selects the receive path (forced receiver index or auto-select).
-3. Converts CNR and overlap bandwidth to :math:`C/N_0`.
-4. Converts :math:`C/N_0` and requested bit rate to :math:`E_b/N_0`.
-5. Computes BER and packet error rate (PER).
-6. Applies retry limit to estimate packet delivery/drop probabilities.
-7. Converts reliability into effective source-data outflow from storage.
-8. Writes both standard data-node output and a detailed diagnostics output.
+The per-step sequence is:
+
+1. Read ``LinkBudgetMsgPayload`` and all connected storage status messages.
+2. Select one storage partition (largest currently available data in the most recently connected storage unit).
+3. Select receiver path (forced receiver index or auto mode).
+4. Convert selected CNR and overlap bandwidth into :math:`C/N_0`.
+5. Convert :math:`C/N_0` and requested bit rate into :math:`E_b/N_0`.
+6. Compute BER and PER.
+7. Apply retry-limited ARQ model to obtain success/drop probability and expected attempts.
+8. Compute attempted, removed, delivered, and dropped rates.
+9. Apply packet gating and storage saturation.
+10. Write ``nodeDataOutMsg`` and ``downlinkOutMsg``.
 
 Configurable Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,54 +91,74 @@ Configurable Parameters
    * - ``bitRateRequest``
      - 0.0
      - bit/s
-     - Requested raw channel bit rate :math:`R_b`.
+     - Requested raw channel bit rate :math:`R_b`. If :math:`R_b \le 0`, throughput is zero.
    * - ``packetSizeBits``
      - 256.0
      - bit
-     - Packet length :math:`L` used for BER-to-PER conversion.
+     - Packet length :math:`L` for BER-to-PER conversion.
    * - ``maxRetransmissions``
      - 10
      - -
-     - Retry cap used in truncated ARQ probability model.
+     - Retry cap used in the ARQ model. Current implementation enforces :math:`N \ge 1` and treats :math:`N` as maximum transmission attempts.
    * - ``receiverAntenna``
      - 0
      - -
-     - Receiver selection: 0=auto, 1=use antenna1 CNR, 2=use antenna2 CNR.
+     - Receiver selection: 0=auto, 1=use receiver path 1, 2=use receiver path 2.
    * - ``requireFullPacket``
-     - True
+     - ``True``
      - bool
-     - If enabled, downlink only starts when at least one full packet exists in storage.
+     - If ``True``, downlink waits until selected storage has at least one full packet.
 
-Receiver Path Selection
-^^^^^^^^^^^^^^^^^^^^^^^
-The module uses antenna state information from ``LinkBudgetMsgPayload``:
+Receiver Selection and CNR1/CNR2 Usage
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The module uses receiver-specific fields from :ref:`LinkBudgetMsgPayload`:
 
-- ``ANTENNA_RX`` and ``ANTENNA_RXTX`` are treated as valid receiver states.
-- For ``receiverAntenna = 0`` (auto), the module chooses the valid receiver path with highest CNR.
-- If no valid receiver path exists, the link is treated as inactive for this step.
+- ``CNR1`` corresponds to receiver path 1
+- ``CNR2`` corresponds to receiver path 2
 
-BER/PER and Throughput Model
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+These are not duplicates. They represent two possible receiving directions/modes in the bidirectional
+link-budget result.
 
-For valid inputs (:math:`\mathrm{CNR} > 0`, overlap bandwidth :math:`>0`, :math:`R_b>0`, packet size :math:`>0`):
+Selection behavior:
+
+- ``receiverAntenna = 1``: use path 1 (only if antenna state 1 is RX or RXTX)
+- ``receiverAntenna = 2``: use path 2 (only if antenna state 2 is RX or RXTX)
+- ``receiverAntenna = 0``: auto-select valid RX path with higher CNR
+
+If no valid receiver path exists, the link is treated as inactive for that step.
+
+Reliability and Throughput Model
+--------------------------------
+
+.. _downlinkhandling-figure-model:
+.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingReliabilityChain.svg
+   :width: 95%
+   :align: center
+   :alt: CNR to BER to PER to ARQ to effective throughput chain
+
+   Figure 2: Computation chain from RF link quality to storage removal and delivered data rates.
+
+For valid inputs (linked/written link budget, selected CNR :math:`>0`, overlap bandwidth :math:`>0`,
+:math:`R_b>0`, packet size :math:`>0`):
 
 .. math::
 
-   \mathrm{CNR}_{dB} = 10 \log_{10}(\mathrm{CNR})
+   \mathrm{CNR}_{dB} = 10\log_{10}(\mathrm{CNR})
 
 .. math::
 
-   \frac{C}{N_0}\,[dBHz] = \mathrm{CNR}_{dB} + 10\log_{10}(B_\mathrm{overlap})
+   \frac{C}{N_0}\,[dBHz] = \mathrm{CNR}_{dB} + 10\log_{10}(B_{\mathrm{overlap}})
 
 .. math::
 
    \frac{E_b}{N_0}\,[dB] = \frac{C}{N_0}[dBHz] - 10\log_{10}(R_b)
 
-The current BER model is BPSK over AWGN:
+Current BER model (BPSK over AWGN):
 
 .. math::
 
-   \mathrm{BER} = Q\left(\sqrt{2E_b/N_0}\right) = \frac{1}{2}\,\mathrm{erfc}\left(\sqrt{E_b/N_0}\right)
+   \mathrm{BER} = Q\left(\sqrt{2E_b/N_0}\right)
+   = \frac{1}{2}\,\mathrm{erfc}\left(\sqrt{E_b/N_0}\right)
 
 Packet error model (independent bit errors, any bit error fails packet):
 
@@ -131,93 +166,121 @@ Packet error model (independent bit errors, any bit error fails packet):
 
    \mathrm{PER} = 1 - (1-\mathrm{BER})^L
 
-Retry-limited completion/drop model:
+Let :math:`N=\max(1,\texttt{maxRetransmissions})`. Retry-limited ARQ model:
 
 .. math::
 
-   P_\mathrm{drop} = \mathrm{PER}^{N}
+   P_{\mathrm{drop}} = \mathrm{PER}^{N}
 
 .. math::
 
-   P_\mathrm{success} = 1 - P_\mathrm{drop}
+   P_{\mathrm{success}} = 1 - P_{\mathrm{drop}}
 
-where :math:`N` is ``maxRetransmissions``.
-
-Expected attempts per source packet (truncated geometric form):
+Expected attempts per source packet (truncated geometric expectation):
 
 .. math::
 
-   \mathbb{E}[A] = \frac{P_\mathrm{success}}{1-\mathrm{PER}}
+   \mathbb{E}[A] =
+   \begin{cases}
+   \dfrac{P_{\mathrm{success}}}{1-\mathrm{PER}}, & \mathrm{PER}<1 \\
+   N, & \mathrm{PER}=1
+   \end{cases}
 
-Rate mapping:
-
-.. math::
-
-   R_\mathrm{attempt} = R_b
-
-.. math::
-
-   R_\mathrm{remove} = \frac{R_\mathrm{attempt}}{\mathbb{E}[A]}
+Unscaled rates:
 
 .. math::
 
-   R_\mathrm{delivered} = R_\mathrm{remove}\,P_\mathrm{success}
+   R_{\mathrm{attempt,pot}} = R_b
 
 .. math::
 
-   R_\mathrm{dropped} = R_\mathrm{remove} - R_\mathrm{delivered}
+   R_{\mathrm{remove,pot}} = \frac{R_{\mathrm{attempt,pot}}}{\mathbb{E}[A]}
 
-The module then applies storage/time-step saturation so removed data in a step never exceeds available bits.
-The final storage removal is written as negative baud rate to ``nodeDataOutMsg``.
+.. math::
 
-Output Diagnostics Message
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-The custom output message :ref:`DownlinkHandlingMsgPayload` includes:
+   R_{\mathrm{delivered,pot}} = R_{\mathrm{remove,pot}}\,P_{\mathrm{success}}
 
-- Link state and selected receiver path.
-- CNR, :math:`C/N_0`, :math:`E_b/N_0`, BER, PER.
-- Packet success/drop probabilities and expected attempts.
-- Attempted/removal/delivered/dropped rates.
-- Available and estimated remaining bits for selected data partition.
-- Cumulative attempted/removed/delivered/dropped bit counters.
+.. math::
+
+   R_{\mathrm{dropped,pot}} = R_{\mathrm{remove,pot}} - R_{\mathrm{delivered,pot}}
+
+Storage and packet gating scale factor:
+
+.. math::
+
+   s = \mathrm{clamp}\!\left(
+   \frac{B_{\mathrm{available}}/\Delta t}{R_{\mathrm{remove,pot}}},
+   0, 1\right)
+
+with additional logic:
+
+- if ``requireFullPacket`` is ``True``, enforce :math:`B_{\mathrm{available}} \ge L`
+- if :math:`\Delta t \le 0` or :math:`R_{\mathrm{remove,pot}} \le 0`, set :math:`s=0`
+
+Final rates:
+
+.. math::
+
+   R_{\mathrm{attempt}} = s\,R_{\mathrm{attempt,pot}}, \quad
+   R_{\mathrm{remove}} = s\,R_{\mathrm{remove,pot}}, \quad
+   R_{\mathrm{delivered}} = s\,R_{\mathrm{delivered,pot}}, \quad
+   R_{\mathrm{dropped}} = s\,R_{\mathrm{dropped,pot}}
+
+The value written to storage through ``nodeDataOutMsg`` is:
+
+.. math::
+
+   \texttt{nodeDataOutMsg.baudRate} = -R_{\mathrm{remove}}
+
+Output Diagnostics
+------------------
+The custom output :ref:`DownlinkHandlingMsgPayload` reports:
+
+- link/selection state (``linkActive``, ``receiverIndex``, antenna names)
+- physical-layer quality terms (CNR, :math:`C/N_0`, :math:`E_b/N_0`, BER, PER)
+- ARQ reliability terms (success/drop probabilities, expected attempts)
+- rate terms (attempted, removed, delivered, dropped)
+- storage terms (available and estimated remaining bits)
+- cumulative counters (attempted/removed/delivered/dropped bits)
 
 Integration with simpleAntenna and linkBudget
 ----------------------------------------------
-Typical communication chain:
+Typical chain:
 
-1. Two :ref:`simpleAntenna` modules compute antenna-level properties and output :ref:`AntennaLogMsgPayload`.
-2. :ref:`linkBudget` consumes both antenna logs and computes CNR and overlap bandwidth in :ref:`LinkBudgetMsgPayload`.
-3. :ref:`downlinkHandling` consumes :ref:`LinkBudgetMsgPayload` and storage status to produce effective downlink throughput.
-4. Storage units consume ``nodeDataOutMsg`` and decrement onboard data.
+1. :ref:`simpleAntenna` modules compute antenna logs.
+2. :ref:`linkBudget` computes overlap bandwidth and CNR per receiver path.
+3. :ref:`downlinkHandling` converts link quality to effective data transfer and storage removal.
+4. Storage modules consume ``nodeDataOutMsg`` and reduce onboard buffered data.
 
-This separation lets RF/pointing/frequency effects propagate naturally through CNR into BER/PER and finally into delivered data.
+This separation is useful for fault modeling: upstream RF degradation (pointing, frequency mismatch,
+atmospheric attenuation, receive-state changes) naturally propagates into BER/PER and delivered data.
 
-Module Assumptions and Limitations
-----------------------------------
+Assumptions and Current Limits
+------------------------------
 
-- BER model is currently analytic BPSK/AWGN.
-- Bit errors are assumed independent.
-- Packet failure occurs if any bit is wrong.
-- Retry model is expectation-based (not packet-by-packet Monte Carlo simulation).
-- No explicit ACK latency, framing overhead, coding gain, or adaptive modulation/coding.
-- If no valid receiver or invalid link inputs exist, output rates are zero for that step.
+- BER model is analytic BPSK/AWGN.
+- Bit errors are independent.
+- Any bit error fails the packet.
+- ARQ is expectation-based, not packet-by-packet Monte Carlo.
+- No explicit ACK latency, coding gain, framing overhead, or adaptive coding/modulation.
+- Storage partition selection currently targets the largest partition in the latest connected storage unit.
 
 Unit Test Coverage
 ------------------
-The module unit test is located at:
+Test file:
 
 ``src/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.py``
 
-The test suite verifies:
+The tests verify:
 
-- Numerical parity with the Python-equivalent BER/PER/ARQ equations.
-- Zero-flow behavior when link quality is invalid.
-- Retry-cap effects on drop probability and storage removal behavior.
-- Storage-limited behavior and remaining-data estimates.
-- Automatic receiver-path selection from link-budget antenna states.
+- equation parity versus a Python-equivalent BER/PER/ARQ model
+- zero-flow behavior for invalid link inputs
+- retry-cap effects on drop probability and removal/delivery behavior
+- storage-limited rate capping and drain behavior
+- automatic receiver selection from antenna RX states and CNR values
 
-User Guide Snippet
-------------------
+Usage Snippet
+-------------
 
 .. code-block:: python
 
@@ -227,15 +290,13 @@ User Guide Snippet
    dlh.bitRateRequest = 1.0e5       # bit/s
    dlh.packetSizeBits = 1024.0      # bit
    dlh.maxRetransmissions = 8
-   dlh.receiverAntenna = 0          # auto
+   dlh.receiverAntenna = 0          # auto-select valid RX path with highest CNR
    dlh.requireFullPacket = True
 
    storage = simpleStorageUnit.SimpleStorageUnit()
    storage.storageCapacity = int(8e9)
-
-   # storage consumes downlink node output (negative baud removes data)
    storage.addDataNodeToModel(dlh.nodeDataOutMsg)
    dlh.addStorageUnitToDownlink(storage.storageUnitDataOutMsg)
 
-   # linkBudgetOutMsg would be connected from linkBudget module
+   # linkBudgetOutPayload is produced by the linkBudget module:
    # dlh.linkBudgetInMsg.subscribeTo(linkBudgetModule.linkBudgetOutPayload)
