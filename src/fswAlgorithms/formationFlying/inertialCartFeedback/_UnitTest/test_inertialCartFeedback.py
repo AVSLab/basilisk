@@ -24,26 +24,35 @@ from Basilisk.fswAlgorithms import inertialCartFeedback
 from Basilisk.utilities import SimulationBaseClass, macros
 
 
-def computeTruthForce(mu, deputyMass, K, P, rDeputy, vDeputy, rDeputyDes, vDeputyDes, forceFF):
+def computeTruthForce(mu, deputyMass, K, P, rDeputy, vDeputy,
+                      rDeputyRef, vDeputyRef, aDeputyRef):
     """Compute expected inertial control force for the test case."""
-    deltaR = rDeputy - rDeputyDes
-    deltaV = vDeputy - vDeputyDes
+    deltaR = rDeputy - rDeputyRef
+    deltaV = vDeputy - vDeputyRef
 
     if mu > 0.0:
-        gravityTerm = -deputyMass * (
-            -mu * rDeputy / np.linalg.norm(rDeputy) ** 3
-            +mu * rDeputyDes / np.linalg.norm(rDeputyDes) ** 3
-        )
+        gravAccelDeputy = gravAccel(mu, rDeputy)
     else:
-        gravityTerm = np.zeros(3)
+        gravAccelDeputy = np.zeros(3)
 
-    return gravityTerm - deputyMass * K.dot(deltaR) - deputyMass * P.dot(deltaV) + forceFF
+    return -deputyMass * gravAccelDeputy + deputyMass * aDeputyRef - K.dot(deltaR) - P.dot(deltaV)
+
+def gravAccel(mu, r):
+    """Compute gravitational acceleration for the test case."""
+    r = np.asarray(r, dtype=float)
+    if mu > 0.0:
+        if np.linalg.norm(r) > 1e-6:
+            return -mu * r / np.linalg.norm(r) ** 3
+        else:
+            raise ValueError("Position norm too small to evaluate gravity.")
+    else:
+        return np.zeros(3)
 
 
 @pytest.mark.parametrize("useMu", [True, False])
-@pytest.mark.parametrize("useFeedForward", [True, False])
+@pytest.mark.parametrize("nonNaturalMotion", [True, False])
 @pytest.mark.parametrize("accuracy", [1e-10])
-def test_inertialCartFeedback(useMu, useFeedForward, accuracy):
+def test_inertialCartFeedback(useMu, nonNaturalMotion, accuracy):
     r"""
     **Validation Test Description**
 
@@ -52,8 +61,8 @@ def test_inertialCartFeedback(useMu, useFeedForward, accuracy):
 
     1. `mu > 0` (gravity compensation active)
     2. `mu <= 0` (gravity compensation skipped)
-    3. `forceFeedforwardInMsg` connected (feedforward included in control law)
-    4. `forceFeedforwardInMsg` not connected (feedforward excluded from control law)
+    3. `nonNaturalMotion` set to True (non-natural motion is included in control law)
+    4. `nonNaturalMotion` set to False (non-natural motion is excluded from control law)
 
     **Description of Variables Being Tested**
 
@@ -87,24 +96,25 @@ def test_inertialCartFeedback(useMu, useFeedForward, accuracy):
     deputyData.v_BN_N = [0.05, 7500.08, 49.92]
     deputyMsg = messaging.NavTransMsg().write(deputyData)
 
-    desiredData = messaging.NavTransMsgPayload()
-    desiredData.r_BN_N = [7000e3 + 10.0, 100e3 - 20.0, -50e3 + 15.0]
-    desiredData.v_BN_N = [0.03, 7500.0 - 0.01, 50.0 + 0.02]
-    desiredMsg = messaging.NavTransMsg().write(desiredData)
+    refData = messaging.TransRefMsgPayload()
+    refData.r_RN_N = [7000e3 + 10.0, 100e3 - 20.0, -50e3 + 15.0]
+    refData.v_RN_N = [0.03, 7500.0 - 0.01, 50.0 + 0.02]
+    aGravRef_N = gravAccel(mu, refData.r_RN_N)
+    if nonNaturalMotion:
+        # Include non-natural motion feed-forward in reference acceleration
+        refData.a_RN_N = aGravRef_N + np.array([0.001, -0.002, 0.003])  # small non-natural acceleration for testing
+    else:
+        # Exclude non-natural motion feed-forward from reference acceleration
+        refData.a_RN_N = aGravRef_N
+    refMsg = messaging.TransRefMsg().write(refData)
 
     deputyConfigData = messaging.VehicleConfigMsgPayload()
     deputyConfigData.massSC = 300.0
     deputyConfigMsg = messaging.VehicleConfigMsg().write(deputyConfigData)
 
-    ffData = messaging.CmdForceInertialMsgPayload()
-    ffData.forceRequestInertial = [0.12, -0.34, 0.56]
-    ffMsg = messaging.CmdForceInertialMsg().write(ffData)
-
-    module.deputyTransInMsg.subscribeTo(deputyMsg)
-    module.deputyTransDesiredInMsg.subscribeTo(desiredMsg)
+    module.deputyNavInMsg.subscribeTo(deputyMsg)
+    module.deputyRefInMsg.subscribeTo(refMsg)
     module.deputyVehicleConfigInMsg.subscribeTo(deputyConfigMsg)
-    if useFeedForward:
-        module.forceFeedforwardInMsg.subscribeTo(ffMsg)
 
     dataLog = module.forceOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -114,7 +124,6 @@ def test_inertialCartFeedback(useMu, useFeedForward, accuracy):
 
     forceOut = dataLog.forceRequestInertial[0]
 
-    forceFF = np.array(ffData.forceRequestInertial) if useFeedForward else np.zeros(3)
     trueForce = computeTruthForce(
         mu=mu,
         deputyMass=deputyConfigData.massSC,
@@ -122,9 +131,9 @@ def test_inertialCartFeedback(useMu, useFeedForward, accuracy):
         P=np.array(P).reshape((3, 3)),
         rDeputy=np.array(deputyData.r_BN_N),
         vDeputy=np.array(deputyData.v_BN_N),
-        rDeputyDes=np.array(desiredData.r_BN_N),
-        vDeputyDes=np.array(desiredData.v_BN_N),
-        forceFF=forceFF
+        rDeputyRef=np.array(refData.r_RN_N),
+        vDeputyRef=np.array(refData.v_RN_N),
+        aDeputyRef=np.array(refData.a_RN_N)
     )
 
     np.testing.assert_allclose(forceOut, trueForce, atol=accuracy)
