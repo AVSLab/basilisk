@@ -33,7 +33,7 @@
 class FacetedSpacecraftModel: public SysModel {
 public:
     FacetedSpacecraftModel() = default;  //!< Constructor
-    ~FacetedSpacecraftModel() = default;  //!< Destructor
+    ~FacetedSpacecraftModel() override;  //!< Destructor
     void Reset(uint64_t callTime) override;  //!< Reset method
     void UpdateState(uint64_t callTime) override;  //!< Update method
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages

@@ -20,6 +20,10 @@
 #include "facetedSpacecraftModel.h"
 #include <cassert>
 
+FacetedSpacecraftModel::~FacetedSpacecraftModel() {
+    for (auto* msg : this->facetElementBodyOutMsgs) { delete msg; }
+}
+
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
