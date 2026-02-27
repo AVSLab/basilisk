@@ -20,12 +20,12 @@ import csv
 from Basilisk import __path__
 
 def loadGravFromFile(
-        fileName: str, 
-        spherHarm: "SphericalHarmonicsGravityModel", 
+        fileName: str,
+        spherHarm: "SphericalHarmonicsGravityModel",
         maxDeg: int = 2
     ):
 
-    [clmList, slmList, mu, radEquator] = loadGravFromFileToList(fileName, maxDeg=2)
+    [clmList, slmList, mu, radEquator] = loadGravFromFileToList(fileName, maxDeg=maxDeg)
 
     spherHarm.muBody = mu
     spherHarm.radEquator = radEquator
@@ -57,7 +57,7 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             raise ValueError(f"Requested using Spherical Harmonics of degree {maxDeg}"
                              f", but file '{fileName}' has maximum degree/order of"
                              f"{min(maxDegreeFile, maxOrderFile)}")
-        
+
         if not coefficientsNormalized:
             raise ValueError("Coefficients in given file are not normalized. This is "
                             "not currently supported in Basilisk.")
@@ -84,8 +84,8 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             slmRow.append(float(gravRow[3]))
 
         return [clmList, slmList, mu, radEquator]
-        
-        
+
+
 def loadPolyFromFile(fileName: str, poly: "PolyhedralGravityModel"):
     [vertList, faceList, _, _] = loadPolyFromFileToList(fileName)
     poly.xyzVertex = vertList

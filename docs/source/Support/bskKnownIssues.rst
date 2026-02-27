@@ -21,6 +21,8 @@ Version |release|
   cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
 - If you install Basilisk via ``pip install bsk``, note that the ``basilisk/supportData`` folder does not
   exist in your folder.  Simulation script importing directly using a local file path to ``supportData``
+- The method ``loadGravFromFile()`` was hard-coded to load a 2nd order gravity field.  This is fixed in current
+  version.
 
 
 Version 2.9.0 (Jan. 28, 2026)

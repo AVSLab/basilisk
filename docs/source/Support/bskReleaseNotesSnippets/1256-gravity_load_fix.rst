@@ -1,0 +1,1 @@
+- Fixed how the gravity spherical harmonic coefficient are loaded in ``loadGravFromFile()``.  They were hard coded to 2nd order.
