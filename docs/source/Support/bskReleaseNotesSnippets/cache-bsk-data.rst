@@ -1,0 +1,1 @@
+- Added ``BSK_SUPPORT_DATA_CACHE`` environment variable to ``dataFetcher.py`` to allow overriding the default Pooch cache directory for support data files.  See :ref:`addSupportData` for details.
