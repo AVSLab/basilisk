@@ -44,7 +44,7 @@ Eigen::MRPd cArray2EigenMRPd(double* inArray);
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
 //!@brief Specfici conversion between a C 2D array and an Eigen 3x3 matrix
 Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3]);
-//!@brief returns the first axis DCM with the input angle 
+//!@brief returns the first axis DCM with the input angle
 Eigen::Matrix3d eigenM1(double angle);
 //!@brief returns the second axis DCM with the input angle
 Eigen::Matrix3d eigenM2(double angle);
@@ -60,5 +60,7 @@ Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 //!@brief solves for the zero of the provided function
 double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime);
 
+//!@brief solves for the zero of the provided function using Bisection
+double bisectionSolve(double *interval, double accuracy, std::function< double(double) >& f);
 
 #endif /* _AVSEIGENSUPPORT_ */
