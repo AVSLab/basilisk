@@ -42,7 +42,7 @@ jobs:
 
   build-windows:
     runs-on: windows-2025
-    timeout-minutes: 90
+    timeout-minutes: 105
     needs: pre-commit
     strategy:
       fail-fast: false
