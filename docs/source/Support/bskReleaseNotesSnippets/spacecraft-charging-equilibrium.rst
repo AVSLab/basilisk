@@ -1,0 +1,1 @@
+- Added :ref:`spacecraftChargingEquilibrium` module to solve coupled servicer/target equilibrium potentials with electron-beam current coupling.
