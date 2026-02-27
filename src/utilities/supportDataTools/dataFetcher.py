@@ -19,6 +19,7 @@
 from enum import Enum
 from pathlib import Path
 import functools
+import os
 import requests
 import pooch
 import logging
@@ -47,6 +48,11 @@ for key in EXTERNAL_KERNEL_URLS:
     REGISTRY[key] = None
 
 DATA_VERSION = f"v{__version__}"
+
+# Allow overriding the pooch cache directory via environment variable. This is
+# useful for users who want to manage the cache location themselves and for CI.
+_env_cache = os.environ.get("BSK_SUPPORT_DATA_CACHE")
+_POOCH_PATH = Path(_env_cache) if _env_cache else pooch.os_cache("bsk_support_data")
 
 ALBEDO_DATA_BASE_PATH = "AlbedoData/"
 ATMOSPHERE_DATA_BASE_PATH = "AtmosphereData/"
@@ -97,7 +103,7 @@ _remote_version = DATA_VERSION if tag_exists(_version_tag_url) else "develop"
 BASE_URL = f"https://raw.githubusercontent.com/AVSLab/basilisk/{_remote_version}/"
 
 POOCH = pooch.create(
-    path=pooch.os_cache("bsk_support_data"),
+    path=_POOCH_PATH,
     base_url=BASE_URL,
     registry=REGISTRY,
     urls=EXTERNAL_KERNEL_URLS,
