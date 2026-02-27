@@ -46,6 +46,7 @@ src/moduleTemplates/autoCppModule/*
 CMakeUserPresets.json
 
 supportData/EphemerisData/*.bsp
+.bsk-cache/
 
 *.fdb_latexmk
 *.fls
