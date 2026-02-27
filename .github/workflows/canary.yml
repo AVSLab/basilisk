@@ -31,6 +31,7 @@ jobs:
           echo "Initial package versions:" >> $GITHUB_STEP_SUMMARY
           cat initial_versions.txt >> $GITHUB_STEP_SUMMARY
           echo "\n" >> $GITHUB_STEP_SUMMARY
+      - uses: ./.github/actions/data-cache
       - name: Build Basilisk
         uses: ./.github/actions/build
         with:

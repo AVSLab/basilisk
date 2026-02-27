@@ -26,6 +26,7 @@ jobs:
     name: Linux (${{ matrix.python }})
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
@@ -53,6 +54,7 @@ jobs:
       MPLBACKEND: agg
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
@@ -104,6 +106,7 @@ jobs:
     name: macOS (${{ matrix.python }}) ${{ matrix.job_suffix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
@@ -122,12 +125,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/data-cache
       - name: Build Basilisk
         uses: ./.github/actions/build
         with:
           python-version: 3.13
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
-      - name: Pre-fetch supportData
-        run: bskLargeData
       - name: Build docs
         uses: ./.github/actions/docs
