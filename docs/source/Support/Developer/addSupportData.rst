@@ -114,6 +114,31 @@ For example, adding ``NewMarsAtmosphere2025.csv`` requires:
 
 
 ----------------------------------------------------------------------
+Configuring the Cache Directory
+----------------------------------------------------------------------
+
+By default, Pooch stores downloaded files in the OS-specific user cache
+directory (e.g. ``~/.cache/bsk_support_data`` on Linux).  You can override
+this by setting the ``BSK_SUPPORT_DATA_CACHE`` environment variable to any
+writable path:
+
+.. code-block:: bash
+
+    export BSK_SUPPORT_DATA_CACHE=/path/to/my/cache
+
+This is useful for:
+
+- **CI pipelines** — point the cache at a workspace-relative directory that
+  can be saved and restored between runs.
+- **Shared installations** — redirect all users on a system to a common
+  pre-populated cache directory.
+- **Testing** — isolate the cache to a temporary directory.
+
+When ``BSK_SUPPORT_DATA_CACHE`` is set, the ``LOCAL_SUPPORT`` shortcut
+(files already present in a cloned repo's ``supportData/`` directory) still
+takes priority for any file that exists there.
+
+----------------------------------------------------------------------
 External Data Sources
 ----------------------------------------------------------------------
 
