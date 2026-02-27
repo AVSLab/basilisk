@@ -162,3 +162,30 @@ TEST(avsEigenSupport, MRPdToVector3d) {
     EXPECT_NEAR(mrp.y(), vec[1], 1e-10);
     EXPECT_NEAR(mrp.z(), vec[2], 1e-10);
 }
+
+TEST(avsEigenSupport, BisectionEndpointRoot) {
+    std::function<double(double)> f = [](double x) { return x; };
+    double interval[2] = {0.0, 1.0};
+    double result = bisectionSolve(interval, 1e-12, f);
+
+    EXPECT_NEAR(result, 0.0, 1e-14);
+}
+
+TEST(avsEigenSupport, BisectionPreTightenedInterval) {
+    std::function<double(double)> f = [](double x) { return x - 0.5; };
+    double interval[2] = {0.49, 0.51};
+    double result = bisectionSolve(interval, 0.05, f);
+
+    EXPECT_NEAR(result, 0.5, 1e-14);
+}
+
+TEST(avsEigenSupport, BisectionRejectsNegativeAccuracy) {
+    std::function<double(double)> f = [](double x) { return x - 0.5; };
+    double interval[2] = {0.0, 1.0};
+    try {
+        double result = bisectionSolve(interval, -1e-3, f);
+        EXPECT_TRUE(std::isnan(result));
+    } catch (...) {
+        SUCCEED();
+    }
+}
