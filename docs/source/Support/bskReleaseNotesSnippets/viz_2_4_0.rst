@@ -1,0 +1,2 @@
+- Added support for Vizard 2.4.0 features
+- Fixed typo in :ref:`attTrackingError` documentation
