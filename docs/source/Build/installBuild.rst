@@ -1,9 +1,9 @@
 .. toctree::
    :hidden:
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/t9VrmrVfJ0M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: t9VrmrVfJ0M
+   :width: 560
+   :height: 315
 
 .. _configureBuild:
 

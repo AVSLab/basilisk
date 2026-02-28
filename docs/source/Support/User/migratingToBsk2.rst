@@ -59,7 +59,7 @@ Module and Message Naming Changes
 Some early Basilisk modules and message names never complied with the naming guidelines in :ref:`codingGuidelines`.
 The following list outlines any module or message naming changes that occurred in this upgrade process.  That is,
 message naming is listed if it is outside the standard adjusted (see :ref:`codingGuidelines`) where
-``descriptionOutMsgName`` becomes ``descriptionOutMsg``.    
+``descriptionOutMsgName`` becomes ``descriptionOutMsg``.
 This list makes it simple to see what naming will need to be changed.  Further, some modules have now a new name.
 For example, the module ``spacecraftPlus`` is now called simply ``spacecraft``.  These module name changes are
 also listed in this table below.
@@ -543,6 +543,6 @@ then you can now access these definitions using  ``messaging.i`` using::
 
 
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/7psCHvvrf4Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: 7psCHvvrf4Q
+   :width: 560
+   :height: 315

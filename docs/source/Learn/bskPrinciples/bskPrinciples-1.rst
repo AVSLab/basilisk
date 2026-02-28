@@ -1,7 +1,7 @@
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/6YmZyu0f-qI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: 6YmZyu0f-qI
+   :width: 560
+   :height: 315
 
 .. _bskPrinciples-1:
 
@@ -67,5 +67,3 @@ Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where
     scSim.ExecuteSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(10.0))
     scSim.ExecuteSimulation()
-
-

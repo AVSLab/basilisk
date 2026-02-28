@@ -1,6 +1,6 @@
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/e_938BFwtiI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: e_938BFwtiI
+   :width: 560
+   :height: 315
 
 .. _bskPrinciples-7:
 
@@ -93,5 +93,3 @@ After executing the script you should see the following terminal output:
     [2.0, 0.0, 0.0]
     cppMsg:
     [2.0, 0.0, 0.0]
-
-

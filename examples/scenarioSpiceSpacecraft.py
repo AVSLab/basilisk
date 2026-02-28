@@ -18,9 +18,9 @@
 
 r"""
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/Fux_UsZ5FR0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: Fux_UsZ5FR0
+   :width: 560
+   :height: 315
 
 Overview
 --------
