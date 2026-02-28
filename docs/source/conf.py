@@ -114,7 +114,8 @@ extensions = [
     "sphinx_rtd_theme",
     'recommonmark',
     'breathe',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'sphinxcontrib.youtube'
 ]
 
 # Use MathJax SVG output instead of CHTML to avoid browser/font-metric
