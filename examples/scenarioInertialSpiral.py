@@ -18,9 +18,9 @@
 
 r"""
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/MT8Z_86-B4M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: MT8Z_86-B4M
+   :width: 560
+   :height: 315
 
 Overview
 --------
