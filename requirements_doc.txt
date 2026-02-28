@@ -4,3 +4,4 @@ recommonmark==0.7.1
 sphinx>7.0.0,<=8.2.3
 sphinx_rtd_theme>=3.0.0,<=3.0.2
 sphinx-copybutton==0.5.2
+sphinxcontrib-youtube==1.4.1
