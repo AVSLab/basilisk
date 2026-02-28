@@ -18,9 +18,9 @@
 
 r"""
 
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/71ZFeameBcU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+.. youtube:: 71ZFeameBcU
+   :width: 560
+   :height: 315
 
 Overview
 --------

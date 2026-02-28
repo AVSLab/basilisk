@@ -1,7 +1,6 @@
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/F7pcy5dkZw4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+.. youtube:: F7pcy5dkZw4
+   :width: 560
+   :height: 315
 
 .. _bskPrinciples-3:
 
