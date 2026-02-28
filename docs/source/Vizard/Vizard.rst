@@ -7,12 +7,9 @@
 About Vizard
 ============
 
-
-.. raw:: html
-
-    <video src="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4" controls autoplay style="width:100%;"></video>
-
-|
+.. youtube:: jLKt2lb1ZYs
+   :width: 100%
+   :aspect: 16:9
 
 .. sidebar:: Vizard Info
 
