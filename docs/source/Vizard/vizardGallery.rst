@@ -4,25 +4,54 @@
 Video Gallery
 =============
 
+.. youtube:: I_Laaz9she4
+   :width: 480
+   :height: 270
 
-.. |inline-image1| image:: https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.jpg
-   :target: https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.mp4
-   :height: 10em
+.. youtube:: vil0QEt_zk4
+   :width: 480
+   :height: 270
 
-.. |inline-image2| image:: https://hanspeterschaub.info/Movies/Vizard-Basic-Features.jpg
-   :target: https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4
-   :height: 10em
+.. youtube:: lCN0TiNJ1i4
+   :width: 480
+   :height: 270
 
-.. list-table:: Table of Vizard Video Links
-    :widths: auto
-    :header-rows: 1
+.. youtube:: eQEoTOYADKc
+   :width: 480
+   :height: 270
 
-    * - Site
-      - Date
-      - Description
-    * - |inline-image1|
-      - 2020 July 23
-      - EMM Hope launch visualization departing Earth
-    * - |inline-image2|
-      - 2020 July 5
-      - Basic Vizard 1.4 features illustration
+.. youtube:: Aas0z43uS9M
+   :width: 480
+   :height: 270
+
+.. youtube:: 4orleGCi7n0
+   :width: 480
+   :height: 270
+
+.. youtube:: Ia_1dXj_pP4
+   :width: 480
+   :height: 270
+
+.. youtube:: x5iylxf6k6A
+   :width: 480
+   :height: 270
+
+.. youtube:: MlWVIi0kYlE
+   :width: 480
+   :height: 270
+
+.. youtube:: 8qR-AGrCFQw
+   :width: 480
+   :height: 270
+
+.. youtube:: 4mMCCTVHZkA
+   :width: 480
+   :height: 270
+
+.. youtube:: kbcqUD4MW9c
+   :width: 480
+   :height: 270
+
+.. youtube:: g4t0bZIaJO4
+   :width: 480
+   :height: 270
