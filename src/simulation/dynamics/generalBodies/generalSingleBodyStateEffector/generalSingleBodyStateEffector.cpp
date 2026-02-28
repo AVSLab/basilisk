@@ -84,7 +84,7 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentCl
     {
         SCStatesMsgPayload configLogMsg = this->generalSingleBodyConfigLogOutMsg.zeroMsgPayload;
 
-        // Note that the configLogMsg B frame represents the effector body frame (frame P)
+        // Note that the configLogMsg B frame represents the effector body frame (frame G)
         eigenVector3d2CArray(this->r_GcN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_GcN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_GN, configLogMsg.sigma_BN);
@@ -296,13 +296,18 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     BBetaStar.resize(this->numDOF, 3);
     BBetaStar = this->TMat.transpose() * BBetaStar1;
 
+    // Define forces and torques due to gravity
+    Eigen::Vector3d g_B = this->dcm_BN * g_N;
+    Eigen::Vector3d gravityForce_B = this->mass * g_B;
+    Eigen::Vector3d gravityTorquePntG_B = rTilde_GcG_B * gravityForce_B;
+
     // Define CBetaStar vector
     Eigen::VectorXd CBetaStar1;
     CBetaStar1.resize(6);
-    CBetaStar1.head(3) = -2 * this->mass * omegaTilde_BN_B * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+    CBetaStar1.head(3) = gravityForce_B - 2 * this->mass * omegaTilde_BN_B * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
             - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + transMap * this->TMat * this->beta)
             - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
-    CBetaStar1.tail(3) = - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
+    CBetaStar1.tail(3) = gravityTorquePntG_B - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
             - IPntG_B * omegaTilde_BN_B * rotMap * this->TMat * this->betaDot
             - this->mass * rTilde_GcG_B * (2 * omegaTilde_BN_B * transMap * this->TMat * this->betaDot +
             omegaTilde_BN_B * omegaTilde_BN_B * transMap * this->TMat * this->beta);
@@ -336,7 +341,7 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     backSubContr.matrixD = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->BBeta;
 
     // Define BSM vecTrans and vecRot contributions
-    backSubContr.vecTrans = - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
+    backSubContr.vecTrans = - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
                             - this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->CBeta;
     backSubContr.vecRot = - this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
             - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
