@@ -77,30 +77,16 @@ public:
                           double thetaInit,
                           double thetaDotInit,
                           double springConstantK,
-                          double damperConstantC);
+                          double damperConstantC,
+                          double screwConstant);
     void addTranslationalDOF(Eigen::Vector3d transHat_G,
                              Eigen::Vector3d r_G0P_P,
                              Eigen::Matrix3d dcm_G0P,
                              double rhoInit,
                              double rhoDotInit,
                              double springConstantK,
-                             double damperConstantC);
-    void addRotScrewDOF(Eigen::Vector3d rotHat_G,
-                        Eigen::Vector3d r_G0P_P,
-                        Eigen::Matrix3d dcm_G0P,
-                        double thetaInit,
-                        double thetaDotInit,
-                        double screwConstant,
-                        double springConstantK,
-                        double damperConstantC);
-    void addTransScrewDOF(Eigen::Vector3d transHat_G,
-                          Eigen::Vector3d r_G0P_P,
-                          Eigen::Matrix3d dcm_G0P,
-                          double rhoInit,
-                          double rhoDotInit,
-                          double screwConstant,
-                          double springConstantK,
-                          double damperConstantC);
+                             double damperConstantC,
+                             double screwConstant);
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
@@ -135,12 +121,10 @@ public:
 private:
     double mass;
     Eigen::Matrix3d IPntGc_G;
-    Eigen::Vector3d r_GcG_G;
-    Eigen::Vector3d r_GB_B;
+    Eigen::Vector3d r_GcG_G{0.0, 0.0, 0.0};
+    Eigen::Vector3d r_GB_B{0.0, 0.0, 0.0};
     std::vector<DOF> jointDOFList;
     int numDOF = 0;
-    int numRotDOF = 0;
-    int numTransDOF = 0;
 
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
@@ -181,7 +165,7 @@ private:
     Eigen::MatrixXd* omega_GN_G;
 
     Eigen::Matrix3d dcm_BN;
-    Eigen::Vector3d omega_BN_B;
+    Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};
 
     Eigen::MatrixXd ABeta;
     Eigen::MatrixXd BBeta;
