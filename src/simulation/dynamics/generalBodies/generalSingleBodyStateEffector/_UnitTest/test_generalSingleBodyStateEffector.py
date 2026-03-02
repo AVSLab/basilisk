@@ -42,7 +42,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     task_name = "unitTask"
     process_name = "TestProcess"
     test_sim = SimulationBaseClass.SimBaseClass()
-    test_time_step_sec = 0.01
+    test_time_step_sec = 0.0001
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
     test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
@@ -51,7 +51,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     sc_object = spacecraft.Spacecraft()
     sc_object.ModelTag = "spacecraftBody"
     sc_object.hub.mHub = 750.0
-    sc_object.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc_object.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     sc_object.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
     sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
     sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
@@ -59,23 +59,38 @@ def test_generalSingleBodyStateEffector(show_plots):
     sc_object.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
     test_sim.AddModelToTask(task_name, sc_object)
 
+    # Add Earth gravity to the simulation
+    earthGravBody = gravityEffector.GravBodyData()
+    earthGravBody.planetName = "earth_planet_data"
+    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.isCentralBody = True
+    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
+
     # Create the general effector
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
-    general_body.setMass(50.0)
-    general_body.setIPntGc_G(np.array([[50.0, 0.0, 0.0],
-                                       [0.0, 30.0, 0.0],
-                                       [0.0, 0.0, 40.0]]))
-    general_body.setR_GcG_G(np.array([0.0, 0.0, 0.0]))
-    rotHat_G = np.array([1.0, 0.0, 0.0])
+    general_body.setMass(np.random.uniform(5.0, 50.0))
+    general_body.setIPntGc_G([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
+                              [0.0, np.random.uniform(5.0, 100.0), 0.0],
+                              [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    general_body.setR_GcG_G([[np.random.uniform(-1.0, 1.0)],
+                             [np.random.uniform(-1.0, 1.0)],
+                             [np.random.uniform(-1.0, 1.0)]])
+    rotHat_G = np.array([[np.sqrt(1/2)],
+                         [np.sqrt(1/2)],
+                         [0]])
+    r_G0B_B = [[np.random.uniform(-1.0, 1.0)],
+               [np.random.uniform(-1.0, 1.0)],
+               [np.random.uniform(-1.0, 1.0)]]
     dcm_G0B = np.array([[1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, 0.0, 1.0]])
-    thetaInit = 5.0 * macros.D2R
+                        [0.0, -1.0, 0.0],
+                        [0.0, 0.0, -1.0]])
+    thetaInit = np.random.uniform(-10.0, 10.0) * macros.D2R
     thetaDotInit = 0.0
-    spring_constant_k = 100.0
+    spring_constant_k = np.random.uniform(50.0, 100.0)
     damper_constant_c = 0.0
     general_body.addRotationalDOF(rotHat_G,
+                                  r_G0B_B,
                                   dcm_G0B,
                                   thetaInit,
                                   thetaDotInit,
@@ -95,7 +110,7 @@ def test_generalSingleBodyStateEffector(show_plots):
     test_sim.AddModelToTask(task_name, sc_state_data_log)
 
     # Rum the simulation
-    sim_time = 60.0
+    sim_time = 10.0
     test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     test_sim.ExecuteSimulation()

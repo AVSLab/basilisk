@@ -198,6 +198,28 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         }
     }
 
+    // Compute general body position vector relative to hub frame
+    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+        if (jointDOF->type == DOF::Type::TRANSLATION) {
+            Eigen::Vector3d r_GG0_G = jointDOF->beta * jointDOF->axis_G;
+            Eigen::Vector3d r_GG0_B = jointDOF->dcm_GB.transpose() * r_GG0_G;
+
+            if (jointDOF->index == 0) {
+                jointDOF->r_GB_B = r_GG0_B + jointDOF->r_G0P_P;
+            } else {
+                Eigen::Vector3d r_G0P_B = this->jointDOFList.at(jointDOF->index - 1).dcm_GB.transpose() * jointDOF->r_G0P_P;
+                jointDOF->r_GB_B = r_GG0_B + r_G0P_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
+            }
+        } else {
+            if (jointDOF->index == 0) {
+                jointDOF->r_GB_B = jointDOF->r_G0P_P;
+            } else {
+                Eigen::Vector3d r_G0P_B = this->jointDOFList.at(jointDOF->index - 1).dcm_GB.transpose() * jointDOF->r_G0P_P;
+                jointDOF->r_GB_B = r_G0P_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
+            }
+        }
+    }
+
     // Compute general body transformation matrix
     for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
 
@@ -216,8 +238,8 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
     // Compute and set effProps.rEff_CB_B
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    this->r_GB_B = this->jointDOFList.at(this->numDOF - 1).r_GB_B;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
     this->effProps.rEff_CB_B = r_GcB_B;
 
     // Compute and set effProps.IEffPntB_B
@@ -289,8 +311,8 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
 
     // Define BBetaStar matrix
     Eigen::Matrix<double, 6, 3> BBetaStar1;
-    BBetaStar1.topRows(3) = this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta);
-    BBetaStar1.bottomRows(3) = - (IPntG_B - this->mass * rTilde_GcG_B * eigenTilde(transMap * this->TMat * this->beta));
+    BBetaStar1.topRows(3) = this->mass * eigenTilde(r_GcG_B + this->r_GB_B);
+    BBetaStar1.bottomRows(3) = - (IPntG_B - this->mass * rTilde_GcG_B * eigenTilde(this->r_GB_B));
 
     Eigen::Matrix<double, Eigen::Dynamic, 3> BBetaStar;
     BBetaStar.resize(this->numDOF, 3);
@@ -305,12 +327,12 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     Eigen::VectorXd CBetaStar1;
     CBetaStar1.resize(6);
     CBetaStar1.head(3) = gravityForce_B - 2 * this->mass * omegaTilde_BN_B * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
-            - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + transMap * this->TMat * this->beta)
+            - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + this->r_GB_B)
             - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B;
     CBetaStar1.tail(3) = gravityTorquePntG_B - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
             - IPntG_B * omegaTilde_BN_B * rotMap * this->TMat * this->betaDot
             - this->mass * rTilde_GcG_B * (2 * omegaTilde_BN_B * transMap * this->TMat * this->betaDot +
-            omegaTilde_BN_B * omegaTilde_BN_B * transMap * this->TMat * this->beta);
+            omegaTilde_BN_B * omegaTilde_BN_B * this->r_GB_B);
 
     Eigen::VectorXd CBetaStar;
     CBetaStar = this->TMat.transpose() * CBetaStar1;
@@ -337,16 +359,16 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     // Define BSM [A] [B] [C] [D] contributions
     backSubContr.matrixA = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->ABeta;
     backSubContr.matrixB = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->BBeta;
-    backSubContr.matrixC = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->ABeta;
-    backSubContr.matrixD = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->BBeta;
+    backSubContr.matrixC = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->ABeta;
+    backSubContr.matrixD = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->BBeta;
 
     // Define BSM vecTrans and vecRot contributions
     backSubContr.vecTrans = - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
                             - this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->CBeta;
-    backSubContr.vecRot = - this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
+    backSubContr.vecRot = - this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
             - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
-            - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
-            - (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + transMap * this->TMat * this->beta) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->CBeta;
+            - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+            - (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->CBeta;
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -399,8 +421,7 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
     Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot;
     Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
@@ -439,10 +460,9 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
 
     // Inertial position
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
-    Eigen::Vector3d r_GB_B = transMap * this->TMat * this->beta;
-    Eigen::Vector3d r_GcB_B = r_GcG_B + r_GB_B;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
     this->r_GcN_N = this->dcm_BN.transpose() * r_GcB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
-    *this->r_GN_N = this->dcm_BN.transpose() * r_GB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
+    *this->r_GN_N = this->dcm_BN.transpose() * this->r_GB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
 
     // Inertial velocity
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
@@ -451,7 +471,7 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
     this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
     Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot;
-    Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * r_GB_B;
+    Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * this->r_GB_B;
     *this->v_GN_N = this->dcm_BN.transpose() * rDot_GB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
 }
 
@@ -500,6 +520,7 @@ const Eigen::Matrix3d GeneralSingleBodyStateEffector::getIPntGc_G() const { retu
 const Eigen::Vector3d GeneralSingleBodyStateEffector::getR_GcG_G() const { return this->r_GcG_G; }
 
 void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
+                                                      Eigen::Vector3d r_G0P_P,
                                                       Eigen::Matrix3d dcm_G0P,
                                                       double thetaInit,
                                                       double thetaDotInit,
@@ -520,6 +541,7 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
     dof.type = DOF::Type::ROTATION;
     dof.index = this->numRotDOF - 1;
     dof.axis_G = rotHat_G.normalized();
+    dof.r_G0P_P = r_G0P_P;
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
     dof.betaDotInit = thetaDotInit;
@@ -532,6 +554,7 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(Eigen::Vector3d rotHat_G,
 }
 
 void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHat_G,
+                                                         Eigen::Vector3d r_G0P_P,
                                                          Eigen::Matrix3d dcm_G0P,
                                                          double rhoInit,
                                                          double rhoDotInit,
@@ -552,6 +575,7 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
     dof.type = DOF::Type::TRANSLATION;
     dof.index = this->numTransDOF -1;
     dof.axis_G = transHat_G.normalized();
+    dof.r_G0P_P = r_G0P_P;
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
     dof.betaDotInit = rhoDotInit;
@@ -564,6 +588,7 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(Eigen::Vector3d transHa
 }
 
 void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
+                                                    Eigen::Vector3d r_G0P_P,
                                                     Eigen::Matrix3d dcm_G0P,
                                                     double thetaInit,
                                                     double thetaDotInit,
@@ -585,6 +610,7 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
     dof.type = DOF::Type::ROTATION;
     dof.index = this->numRotDOF - 1;
     dof.axis_G = rotHat_G.normalized();
+    dof.r_G0P_P = r_G0P_P;
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = thetaInit;
     dof.betaDotInit = thetaDotInit;
@@ -598,12 +624,13 @@ void GeneralSingleBodyStateEffector::addRotScrewDOF(Eigen::Vector3d rotHat_G,
 }
 
 void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G,
-                                                     Eigen::Matrix3d dcm_G0P,
-                                                     double rhoInit,
-                                                     double rhoDotInit,
-                                                     double screwConstant,
-                                                     double springConstantK,
-                                                     double damperConstantC) {
+                                                      Eigen::Vector3d r_G0P_P,
+                                                      Eigen::Matrix3d dcm_G0P,
+                                                      double rhoInit,
+                                                      double rhoDotInit,
+                                                      double screwConstant,
+                                                      double springConstantK,
+                                                      double damperConstantC) {
     this->numDOF++;
     this->numTransDOF++;
     this->TMat.conservativeResize(Eigen::NoChange, this->TMat.cols() + 1);
@@ -619,6 +646,7 @@ void GeneralSingleBodyStateEffector::addTransScrewDOF(Eigen::Vector3d transHat_G
     dof.type = DOF::Type::TRANSLATION;
     dof.index = this->numTransDOF - 1;
     dof.axis_G = transHat_G.normalized();
+    dof.r_G0P_P = r_G0P_P;
     dof.dcm_G0P = dcm_G0P;
     dof.betaInit = rhoInit;
     dof.betaDotInit = rhoDotInit;

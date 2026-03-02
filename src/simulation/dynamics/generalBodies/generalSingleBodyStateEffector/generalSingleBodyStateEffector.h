@@ -39,6 +39,7 @@ struct DOF {
     int index;
 
     Eigen::Vector3d axis_G = Eigen::Vector3d::Zero();
+    Eigen::Vector3d r_G0P_P = Eigen::Vector3d::Zero();
     Eigen::Matrix3d dcm_G0P = Eigen::Matrix3d::Identity();
     double betaInit{};
     double betaDotInit{};
@@ -47,6 +48,7 @@ struct DOF {
     double beta{};
     double betaDot{};
     Eigen::Matrix3d dcm_GB = Eigen::Matrix3d::Identity();
+    Eigen::Vector3d r_GB_B = Eigen::Vector3d::Zero();
 
     double u{};
     double f{};
@@ -70,18 +72,21 @@ public:
     const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
     const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
     void addRotationalDOF(Eigen::Vector3d rotHat_G,
+                          Eigen::Vector3d r_G0P_P,
                           Eigen::Matrix3d dcm_G0P,
                           double thetaInit,
                           double thetaDotInit,
                           double springConstantK,
                           double damperConstantC);
     void addTranslationalDOF(Eigen::Vector3d transHat_G,
+                             Eigen::Vector3d r_G0P_P,
                              Eigen::Matrix3d dcm_G0P,
                              double rhoInit,
                              double rhoDotInit,
                              double springConstantK,
                              double damperConstantC);
     void addRotScrewDOF(Eigen::Vector3d rotHat_G,
+                        Eigen::Vector3d r_G0P_P,
                         Eigen::Matrix3d dcm_G0P,
                         double thetaInit,
                         double thetaDotInit,
@@ -89,6 +94,7 @@ public:
                         double springConstantK,
                         double damperConstantC);
     void addTransScrewDOF(Eigen::Vector3d transHat_G,
+                          Eigen::Vector3d r_G0P_P,
                           Eigen::Matrix3d dcm_G0P,
                           double rhoInit,
                           double rhoDotInit,
@@ -130,6 +136,7 @@ private:
     double mass;
     Eigen::Matrix3d IPntGc_G;
     Eigen::Vector3d r_GcG_G;
+    Eigen::Vector3d r_GB_B;
     std::vector<DOF> jointDOFList;
     int numDOF = 0;
     int numRotDOF = 0;
