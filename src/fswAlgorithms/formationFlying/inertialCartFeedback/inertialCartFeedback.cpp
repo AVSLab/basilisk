@@ -64,7 +64,6 @@ void InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
     const Eigen::Vector3d deltaR_N = r_BN_N - r_RN_N;
     const Eigen::Vector3d deltaV_N = v_BN_N - v_RN_N;
     const double normRDeputy = r_BN_N.norm();
-    const double normRDeputyRef = r_RN_N.norm();
 
     Eigen::Vector3d aGravDeputy_N = Eigen::Vector3d::Zero();
     if (this->mu > 0.0) {
