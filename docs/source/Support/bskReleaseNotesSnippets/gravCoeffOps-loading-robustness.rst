@@ -1,0 +1,4 @@
+- Improved ``gravityEffector`` gravity-coefficient loading to always include the requested highest degree and consistently enforce ``maxDeg`` truncation.
+- Updated spherical-harmonic coefficient parsing to map values by explicit ``(degree, order)`` indices, handle missing entries as zero-filled terms, and reject duplicate or malformed rows.
+- Added validation for negative requested degrees and non-monotonic degree row ordering in spherical-harmonic coefficient files.
+- Improved parsing diagnostics by chaining header-format exceptions and narrowed ``.tab`` polyhedral file detection error handling to avoid masking unrelated failures.
