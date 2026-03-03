@@ -43,8 +43,6 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
     with open(fileName, 'r') as csvfile:
         gravReader = csv.reader(csvfile, delimiter=',')
         firstRow = next(gravReader)
-        clmList = []
-        slmList = []
 
         try:
             radEquator = float(firstRow[0])
@@ -73,31 +71,35 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
                              " or latitude that is not zero. This is not currently "
                              "supported in Basilisk.")
 
-        clmRow = []
-        slmRow = []
-        currDeg = 0
+        clmList = [[0.0] * (degree + 1) for degree in range(maxDeg + 1)]
+        slmList = [[0.0] * (degree + 1) for degree in range(maxDeg + 1)]
+        assignedCoefficients = set()
         for gravRow in gravReader:
-            rowDeg = int(gravRow[0])
-            while rowDeg > currDeg and currDeg <= maxDeg:
-                if (len(clmRow) < currDeg + 1):
-                    clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
-                    slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
-                clmList.append(clmRow)
-                slmList.append(slmRow)
-                clmRow = []
-                slmRow = []
-                currDeg += 1
+            try:
+                rowDeg = int(gravRow[0])
+                rowOrder = int(gravRow[1])
+                clm = float(gravRow[2])
+                slm = float(gravRow[3])
+            except Exception as ex:
+                raise ValueError("Gravity coefficient row is not in the expected format", ex)
+
+            if rowDeg < 0 or rowOrder < 0 or rowOrder > rowDeg:
+                raise ValueError(
+                    f"Invalid gravity coefficient row with degree/order ({rowDeg}, {rowOrder})"
+                )
+
             if rowDeg > maxDeg:
                 break
-            clmRow.append(float(gravRow[2]))
-            slmRow.append(float(gravRow[3]))
 
-        if len(clmRow) > 0 and currDeg <= maxDeg:
-            if (len(clmRow) < currDeg + 1):
-                clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
-                slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
-            clmList.append(clmRow)
-            slmList.append(slmRow)
+            coeffIndex = (rowDeg, rowOrder)
+            if coeffIndex in assignedCoefficients:
+                raise ValueError(
+                    f"Duplicate gravity coefficient row for degree/order ({rowDeg}, {rowOrder})"
+                )
+            assignedCoefficients.add(coeffIndex)
+
+            clmList[rowDeg][rowOrder] = clm
+            slmList[rowDeg][rowOrder] = slm
 
         return [clmList, slmList, mu, radEquator]
 
