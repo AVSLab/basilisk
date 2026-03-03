@@ -55,7 +55,7 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             refLat = float(firstRow[7])
         except Exception as ex:
             raise ValueError("File is not in the expected JPL format for "
-                             "spherical Harmonics", ex)
+                             "spherical Harmonics") from ex
 
         if maxDegreeFile < maxDeg or maxOrderFile < maxDeg:
             raise ValueError(f"Requested using Spherical Harmonics of degree {maxDeg}"
@@ -82,7 +82,7 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
                 clm = float(gravRow[2])
                 slm = float(gravRow[3])
             except Exception as ex:
-                raise ValueError("Gravity coefficient row is not in the expected format", ex)
+                raise ValueError("Gravity coefficient row is not in the expected format") from ex
 
             if rowDeg < 0 or rowOrder < 0 or rowOrder > rowDeg:
                 raise ValueError(
