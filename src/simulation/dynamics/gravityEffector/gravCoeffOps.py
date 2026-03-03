@@ -71,7 +71,8 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
         slmRow = []
         currDeg = 0
         for gravRow in gravReader:
-            while int(gravRow[0]) > currDeg:
+            rowDeg = int(gravRow[0])
+            while rowDeg > currDeg and currDeg <= maxDeg:
                 if (len(clmRow) < currDeg + 1):
                     clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
                     slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
@@ -80,10 +81,12 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
                 clmRow = []
                 slmRow = []
                 currDeg += 1
+            if rowDeg > maxDeg:
+                break
             clmRow.append(float(gravRow[2]))
             slmRow.append(float(gravRow[3]))
 
-        if len(clmRow) > 0:
+        if len(clmRow) > 0 and currDeg <= maxDeg:
             if (len(clmRow) < currDeg + 1):
                 clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
                 slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
