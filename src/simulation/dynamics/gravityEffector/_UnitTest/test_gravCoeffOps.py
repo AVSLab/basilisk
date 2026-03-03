@@ -98,3 +98,9 @@ def test_load_grav_from_file_to_list_rejects_degree_above_file_limit():
 
     with pytest.raises(ValueError, match="maximum degree/order"):
         loadGravFromFileToList(str(GGM03S_PATH), maxDeg=requested_degree)
+
+
+def test_load_grav_from_file_to_list_rejects_negative_degree():
+    """Verify negative requested degree raises a clear ValueError."""
+    with pytest.raises(ValueError, match="must be non-negative"):
+        loadGravFromFileToList(str(GGM03S_PATH), maxDeg=-1)
