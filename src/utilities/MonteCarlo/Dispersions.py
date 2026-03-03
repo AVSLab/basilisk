@@ -562,7 +562,7 @@ class OrbitalElementDispersion:
 
 
     def generate(self, sim=None):
-        elems = orbitalMotion.ClassicElements
+        elems = orbitalMotion.ClassicElements()
         for key in self.oeDict.keys():
             if self.oeDict[key] is not None and key != "mu":
                 distribution = getattr(np.random, self.oeDict[key][0])
