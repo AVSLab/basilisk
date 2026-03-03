@@ -83,6 +83,13 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             clmRow.append(float(gravRow[2]))
             slmRow.append(float(gravRow[3]))
 
+        if len(clmRow) > 0:
+            if (len(clmRow) < currDeg + 1):
+                clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
+                slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
+            clmList.append(clmRow)
+            slmList.append(slmRow)
+
         return [clmList, slmList, mu, radEquator]
 
 
