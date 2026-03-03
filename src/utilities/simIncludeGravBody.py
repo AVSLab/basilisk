@@ -371,6 +371,18 @@ class gravBodyFactory:
         It connects the gravBodyData objects to the spice planet state messages.  Thus,
         it must be run after the gravBodyData objects are created.
 
+        .. note::
+
+           ``spicePlanetFrames`` specifies the output frames used to compute
+           ``J20002Pfix`` for each planet state output message. If this argument is not
+           set, the method uses the frames gathered when bodies were created (typically
+           ``IAU_*`` frame names).
+
+           Alternatives to ``IAU_*`` can be provided as long as SPICE can resolve the
+           frame IDs from loaded kernels. For example, ``"ITRF93"`` can be used for
+           Earth-fixed outputs when Earth high precision kernels are available, and
+           ``"J2000"`` can be used to request an inertial-aligned output frame.
+
         Args:
             path (str): The absolute path to the folder that contains the
                 kernels to be loaded.
@@ -416,6 +428,18 @@ class gravBodyFactory:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
         the Basilisk directory.
 
+        .. note::
+
+           ``spicePlanetFrames`` specifies the output frames used to compute
+           ``J20002Pfix`` for each planet state output message. If this argument is not
+           set, the method uses the frames gathered when bodies were created (typically
+           ``IAU_*`` frame names).
+
+           Alternatives to ``IAU_*`` can be provided as long as SPICE can resolve the
+           frame IDs from loaded kernels. For example, ``"ITRF93"`` can be used for
+           Earth-fixed outputs when Earth high precision kernels are available, and
+           ``"J2000"`` can be used to request an inertial-aligned output frame.
+
         Args:
             path (str): The absolute path to the folder that contains the
                 kernels to be loaded.
@@ -452,6 +476,46 @@ class gravBodyFactory:
         epochInMsg: bool = False,
         spiceKernalFileNames=None,
     ) -> spiceInterface.SpiceInterface:
+        """A convenience function to configure a NAIF Spice module for the simulation.
+        It connect the gravBodyData objects to the spice planet state messages.  Thus,
+        it must be run after the gravBodyData objects are created.
+
+        Unless the 'path' input is provided, the kernels are loaded from the folder:
+        `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
+        the Basilisk directory.
+
+        .. note::
+
+           ``spicePlanetFrames`` specifies the output frames used to compute
+           ``J20002Pfix`` for each planet state output message. If this argument is not
+           set, the method uses the frames gathered when bodies were created (typically
+           ``IAU_*`` frame names).
+
+           Alternatives to ``IAU_*`` can be provided as long as SPICE can resolve the
+           frame IDs from loaded kernels. For example, ``"ITRF93"`` can be used for
+           Earth-fixed outputs when Earth high precision kernels are available, and
+           ``"J2000"`` can be used to request an inertial-aligned output frame.
+
+        Args:
+            path (str): The absolute path to the folder that contains the
+                kernels to be loaded.
+            time (str): The time string in a format that SPICE recognizes.
+            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
+                names including file extension. Defaults to
+                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
+                whose Spice data is loaded. If this is not provided, Spice data is
+                loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
+                frame names to load in Spice. If this is not provided, frames are loaded
+                for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional): Flag to set an epoch input message for the
+                spice interface. Defaults to False.
+
+        Returns:
+            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
+            same as the stored `self.spiceObject`
+        """
         if time == "":
             raise ValueError(
                 "'time' argument must be provided and a valid SPICE time string"
