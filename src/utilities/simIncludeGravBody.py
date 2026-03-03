@@ -383,6 +383,9 @@ class gravBodyFactory:
            Earth-fixed outputs when Earth high precision kernels are available, and
            ``"J2000"`` can be used to request an inertial-aligned output frame.
 
+           Earth frame-association FK kernels (for example ``earth_assoc_itrf93.tf``)
+           do not override ``spicePlanetFrames``.
+
         Args:
             path (str): The absolute path to the folder that contains the
                 kernels to be loaded.
@@ -440,6 +443,9 @@ class gravBodyFactory:
            Earth-fixed outputs when Earth high precision kernels are available, and
            ``"J2000"`` can be used to request an inertial-aligned output frame.
 
+           Earth frame-association FK kernels (for example ``earth_assoc_itrf93.tf``)
+           do not override ``spicePlanetFrames``.
+
         Args:
             path (str): The absolute path to the folder that contains the
                 kernels to be loaded.
@@ -495,6 +501,9 @@ class gravBodyFactory:
            frame IDs from loaded kernels. For example, ``"ITRF93"`` can be used for
            Earth-fixed outputs when Earth high precision kernels are available, and
            ``"J2000"`` can be used to request an inertial-aligned output frame.
+
+           Earth frame-association FK kernels (for example ``earth_assoc_itrf93.tf``)
+           do not override ``spicePlanetFrames``.
 
         Args:
             path (str): The absolute path to the folder that contains the
