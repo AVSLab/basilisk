@@ -58,6 +58,29 @@ def _load_reference_coefficients(file_path: Path, max_degree: int):
     return c_ref, s_ref, mu, rad_equator, max_degree_file, max_order_file
 
 
+def _load_header_and_rows(file_path: Path, max_degree: int):
+    with file_path.open("r", newline="") as grav_file:
+        grav_reader = csv.reader(grav_file, delimiter=",")
+        header = next(grav_reader)
+        rows = []
+        for grav_row in grav_reader:
+            if int(grav_row[0]) > max_degree:
+                break
+            rows.append(grav_row)
+
+    return header, rows
+
+
+def _write_temp_gravity_file(tmp_path: Path, header, rows):
+    temp_gravity_file = tmp_path / "temporaryGravityFile.csv"
+    with temp_gravity_file.open("w", newline="") as grav_file:
+        grav_writer = csv.writer(grav_file)
+        grav_writer.writerow(header)
+        grav_writer.writerows(rows)
+
+    return temp_gravity_file
+
+
 def test_load_grav_from_file_to_list_respects_max_degree():
     """Verify spherical-harmonic loading is truncated to the requested degree."""
     max_degree = 8
@@ -104,3 +127,47 @@ def test_load_grav_from_file_to_list_rejects_negative_degree():
     """Verify negative requested degree raises a clear ValueError."""
     with pytest.raises(ValueError, match="must be non-negative"):
         loadGravFromFileToList(str(GGM03S_PATH), maxDeg=-1)
+
+
+def test_load_grav_from_file_to_list_uses_row_order_column(tmp_path):
+    """Verify rows are placed by explicit order value, even if row order is shuffled."""
+    header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
+    shuffled_rows = [
+        rows_by_index[(0, 0)],
+        rows_by_index[(1, 0)],
+        rows_by_index[(1, 1)],
+        rows_by_index[(2, 0)],
+        rows_by_index[(2, 2)],
+        rows_by_index[(2, 1)],
+    ]
+    temp_file = _write_temp_gravity_file(tmp_path, header, shuffled_rows)
+
+    c_ref, s_ref, _, _, _, _ = _load_reference_coefficients(GGM03S_PATH, max_degree=2)
+    c_list, s_list, _, _ = loadGravFromFileToList(str(temp_file), maxDeg=2)
+
+    for degree in range(3):
+        np.testing.assert_allclose(c_list[degree], c_ref[degree], rtol=0.0, atol=0.0)
+        np.testing.assert_allclose(s_list[degree], s_ref[degree], rtol=0.0, atol=0.0)
+
+
+def test_load_grav_from_file_to_list_preserves_zero_for_missing_order(tmp_path):
+    """Verify missing coefficients remain zero at their degree/order index."""
+    header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
+    missing_order_rows = [
+        rows_by_index[(0, 0)],
+        rows_by_index[(1, 0)],
+        rows_by_index[(1, 1)],
+        rows_by_index[(2, 0)],
+        rows_by_index[(2, 2)],
+    ]
+    temp_file = _write_temp_gravity_file(tmp_path, header, missing_order_rows)
+
+    c_ref, s_ref, _, _, _, _ = _load_reference_coefficients(GGM03S_PATH, max_degree=2)
+    c_list, s_list, _, _ = loadGravFromFileToList(str(temp_file), maxDeg=2)
+
+    assert c_list[2][1] == 0.0
+    assert s_list[2][1] == 0.0
+    assert c_list[2][2] == c_ref[2][2]
+    assert s_list[2][2] == s_ref[2][2]
