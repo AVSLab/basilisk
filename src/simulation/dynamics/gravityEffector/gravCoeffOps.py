@@ -34,6 +34,12 @@ def loadGravFromFile(
     spherHarm.maxDeg = maxDeg
 
 def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
+    if maxDeg < 0:
+        raise ValueError(
+            f"Requested using Spherical Harmonics of degree {maxDeg}, but the degree"
+            " must be non-negative"
+        )
+
     with open(fileName, 'r') as csvfile:
         gravReader = csv.reader(csvfile, delimiter=',')
         firstRow = next(gravReader)
