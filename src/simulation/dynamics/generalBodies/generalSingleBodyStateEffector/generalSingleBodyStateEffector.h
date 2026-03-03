@@ -32,32 +32,55 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
+
 struct DOF {
+
+public:
     enum class Type { ROTATION, TRANSLATION };
 
-    Type type;
-    int index;
+    void setDOFType(Type type) {this->type = type;};
+    void setDOFAxis(Eigen::Vector3d axis_G) {this->axis_G = axis_G;};
+    void setR_G0P_P(Eigen::Vector3d r_G0P_P) {this->r_G0P_P = r_G0P_P;};
+    void setDCM_G0P(Eigen::Matrix3d dcm_G0P) {this->dcm_G0P = dcm_G0P;};
+    void setBetaInit(double betaInit) {this->betaInit = betaInit;};
+    void setBetaDotInit(double betaDotInit) {this->betaDotInit = betaDotInit;};
+    void setSpringConstantK(double k) {this->k = k;};
+    void setDampingConstantK(double c) {this->c = c;};
+    void setScrewConstant(double screwConstant) {this->screwConstant = screwConstant;};
 
+    Type getDOFType() const {return this->type;};
+    Eigen::Vector3d getDOFAxis() const {return this->axis_G;};
+    Eigen::Vector3d getR_G0P_P() const {return this->r_G0P_P;};
+    Eigen::Matrix3d getDCM_G0P() const {return this->dcm_G0P;};
+    double getBetaInit() const {return this->betaInit;};
+    double getBetaDotInit() const {return this->betaDotInit;};
+    double getSpringConstantK() const {return this->k;};
+    double getDampingConstantK() const {return this->c;};
+    double getScrewConstant() const {return this->screwConstant;};
+
+private:
+    friend class GeneralSingleBodyStateEffector;
+
+    Type type;
+    uint64_t index;
     Eigen::Vector3d axis_G = Eigen::Vector3d::Zero();
     Eigen::Vector3d r_G0P_P = Eigen::Vector3d::Zero();
     Eigen::Matrix3d dcm_G0P = Eigen::Matrix3d::Identity();
     double betaInit{};
     double betaDotInit{};
     double screwConstant{1.0};
+    double k{};
+    double c{};
 
     double beta{};
     double betaDot{};
-    Eigen::Matrix3d dcm_GB = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d r_GB_B = Eigen::Vector3d::Zero();
-
-    double u{};
-    double f{};
     double betaRef{};
     double betaDotRef{};
-    double k{};
-    double c{};
+    Eigen::Matrix3d dcm_GB = Eigen::Matrix3d::Identity();
+    Eigen::Vector3d r_GB_B = Eigen::Vector3d::Zero();
+    double u{};
+    double f{};
 };
-
 
 /*! @brief General rigid body state effector class */
 class GeneralSingleBodyStateEffector: public StateEffector, public SysModel {
@@ -71,22 +94,9 @@ public:
     double getMass() const;  //!< Getter method for the effector mass
     const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
     const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
-    void addRotationalDOF(Eigen::Vector3d rotHat_G,
-                          Eigen::Vector3d r_G0P_P,
-                          Eigen::Matrix3d dcm_G0P,
-                          double thetaInit,
-                          double thetaDotInit,
-                          double springConstantK,
-                          double damperConstantC,
-                          double screwConstant);
-    void addTranslationalDOF(Eigen::Vector3d transHat_G,
-                             Eigen::Vector3d r_G0P_P,
-                             Eigen::Matrix3d dcm_G0P,
-                             double rhoInit,
-                             double rhoDotInit,
-                             double springConstantK,
-                             double damperConstantC,
-                             double screwConstant);
+    void addRotationalDOF(DOF newDOF);
+    void addTranslationalDOF(DOF newDOF);
+    DOF getDegreeOfFreedom(uint64_t index);
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
@@ -119,11 +129,12 @@ public:
     Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;
 
 private:
+    std::vector<DOF> jointDOFList;
+
     double mass;
     Eigen::Matrix3d IPntGc_G;
     Eigen::Vector3d r_GcG_G{0.0, 0.0, 0.0};
     Eigen::Vector3d r_GB_B{0.0, 0.0, 0.0};
-    std::vector<DOF> jointDOFList;
     int numDOF = 0;
 
     std::vector<double> betaInitList;
