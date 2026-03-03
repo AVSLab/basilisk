@@ -407,11 +407,13 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    int thetaCount=0;
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
-        if (numRWJitter > 0) {
-            rw.theta = this->thetasState->getState()(i, 0);
+        if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
+            rw.theta = this->thetasState->getState()(thetaCount, 0);
+            thetaCount++;
         }
         rw.Omega = this->OmegasState->getState()(i, 0);
 
@@ -443,12 +445,14 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
+    int thetaCount = 0;
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
-        if (numRWJitter > 0) {
-            rw.theta = this->thetasState->getState()(i, 0);
+        if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
+            rw.theta = this->thetasState->getState()(thetaCount, 0);
             this->rwSpeedMsgBuffer.wheelThetas[i] = rw.theta;
+            thetaCount++;
         }
         rw.Omega = this->OmegasState->getState()(i, 0);
         this->rwSpeedMsgBuffer.wheelSpeeds[i] = rw.Omega;
