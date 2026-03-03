@@ -171,3 +171,19 @@ def test_load_grav_from_file_to_list_preserves_zero_for_missing_order(tmp_path):
     assert s_list[2][1] == 0.0
     assert c_list[2][2] == c_ref[2][2]
     assert s_list[2][2] == s_ref[2][2]
+
+
+def test_load_grav_from_file_to_list_rejects_degree_regression(tmp_path):
+    """Verify decreasing degree rows are rejected."""
+    header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
+    regressed_rows = [
+        rows_by_index[(0, 0)],
+        rows_by_index[(1, 0)],
+        rows_by_index[(2, 0)],
+        rows_by_index[(1, 1)],
+    ]
+    temp_file = _write_temp_gravity_file(tmp_path, header, regressed_rows)
+
+    with pytest.raises(ValueError, match="non-decreasing degree"):
+        loadGravFromFileToList(str(temp_file), maxDeg=2)
