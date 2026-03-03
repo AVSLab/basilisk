@@ -33,6 +33,7 @@ grav_coeff_ops = importlib.util.module_from_spec(grav_coeff_ops_spec)
 grav_coeff_ops_spec.loader.exec_module(grav_coeff_ops)
 
 loadGravFromFileToList = grav_coeff_ops.loadGravFromFileToList
+loadPolyFromFileToList = grav_coeff_ops.loadPolyFromFileToList
 
 
 def _load_reference_coefficients(file_path: Path, max_degree: int):
@@ -187,3 +188,12 @@ def test_load_grav_from_file_to_list_rejects_degree_regression(tmp_path):
 
     with pytest.raises(ValueError, match="non-decreasing degree"):
         loadGravFromFileToList(str(temp_file), maxDeg=2)
+
+
+def test_load_poly_from_file_to_list_rejects_empty_tab_file(tmp_path):
+    """Verify empty .tab polyhedral files are rejected with a clear error."""
+    empty_tab_file = tmp_path / "emptyShape.tab"
+    empty_tab_file.write_text("")
+
+    with pytest.raises(ValueError, match="polyhedral file is empty"):
+        loadPolyFromFileToList(str(empty_tab_file))
