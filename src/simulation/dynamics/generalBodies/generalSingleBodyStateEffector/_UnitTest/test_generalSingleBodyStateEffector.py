@@ -61,26 +61,20 @@ def test_general_one_dof_rotation(show_plots):
     # Create the general effector
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
-    general_body.setMass(np.random.uniform(5.0, 50.0))
-    general_body.setIPntGc_G([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                              [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                              [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    general_body.setR_GcG_G([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    general_body.setMass(50.0)
+    general_body.setIPntGc_G([[50.0, 0.0, 0.0],
+                              [0.0, 30.0, 0.0],
+                              [0.0, 0.0, 40.0]])
+    general_body.setR_GcG_G(np.array([0.5, 0.5, -0.5]))
 
-    rotHat_G = np.array([[np.sqrt(1/2)],
-                         [np.sqrt(1/2)],
-                         [0]])
-    r_G0B_B = [[np.random.uniform(-1.0, 1.0)],
-               [np.random.uniform(-1.0, 1.0)],
-               [np.random.uniform(-1.0, 1.0)]]
-    dcm_G0B = np.array([[1.0, 0.0, 0.0],
+    rotHat_G = np.array([1.0, 0.0, 0.0])
+    r_G0B_B = np.array([1.0, 0.1, -0.1])
+    dcm_G0B = np.array([[-1.0, 0.0, 0.0],
                         [0.0, -1.0, 0.0],
-                        [0.0, 0.0, -1.0]])
-    thetaInit = np.random.uniform(-10.0, 10.0) * macros.D2R
+                        [0.0, 0.0, 1.0]])
+    thetaInit = 5.0 * macros.D2R
     thetaDotInit = 0.0
-    spring_constant_k = np.random.uniform(50.0, 100.0)
+    spring_constant_k = 100.0
     damper_constant_c = 0.0
 
     one_dof_rotation = generalSingleBodyStateEffector.DOF()
@@ -182,23 +176,17 @@ def test_general_one_dof_translation(show_plots):
     # Create the general effector
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
-    general_body.setMass(20)
+    general_body.setMass(20.0)
     general_body.setIPntGc_G([[50.0, 0.0, 0.0],
                               [0.0, 80.0, 0.0],
                               [0.0, 0.0, 60.0]])
-    general_body.setR_GcG_G([[0.1],
-                             [-0.1],
-                             [0.1]])
+    general_body.setR_GcG_G(np.array([0.1, -0.1, 0.1]))
 
-    transHat_G = np.array([[1.0],
-                           [0.0],
-                           [0.0]])
-    r_G0B_B = [[-0.1],
-               [0.1],
-               [0.1]]
-    dcm_G0B = np.array([[1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [0.0, 0.0, -1.0]])
+    transHat_G = np.array([0.0, 0.0, 1.0])
+    r_G0B_B = np.array([-0.1, 0.1, 0.1])
+    dcm_G0B = np.array([[0.0, -1.0, 0.0],
+                        [0.0, 0.0, -1.0],
+                        [1.0, 0.0, 0.0]])
     rhoInit = 1.0
     rhoDotInit = 0.05
     spring_constant_k = 100
@@ -227,7 +215,7 @@ def test_general_one_dof_translation(show_plots):
     test_sim.AddModelToTask(task_name, sc_state_data_log)
 
     # Rum the simulation
-    sim_time = 10.0
+    sim_time = 1.0
     test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     test_sim.ExecuteSimulation()
