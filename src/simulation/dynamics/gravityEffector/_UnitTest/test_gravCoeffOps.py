@@ -15,25 +15,17 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import csv
-import importlib.util
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-GRAV_COEFF_OPS_PATH = Path(__file__).resolve().parents[1] / "gravCoeffOps.py"
+from Basilisk.simulation import gravityEffector
+
 GGM03S_PATH = Path(__file__).resolve().with_name("GGM03S.txt")
 
-grav_coeff_ops_spec = importlib.util.spec_from_file_location(
-    "gravCoeffOps", GRAV_COEFF_OPS_PATH
-)
-if grav_coeff_ops_spec is None or grav_coeff_ops_spec.loader is None:
-    raise ImportError(f"Unable to load module from {GRAV_COEFF_OPS_PATH}")
-grav_coeff_ops = importlib.util.module_from_spec(grav_coeff_ops_spec)
-grav_coeff_ops_spec.loader.exec_module(grav_coeff_ops)
-
-loadGravFromFileToList = grav_coeff_ops.loadGravFromFileToList
-loadPolyFromFileToList = grav_coeff_ops.loadPolyFromFileToList
+loadGravFromFileToList = gravityEffector.loadGravFromFileToList
+loadPolyFromFileToList = gravityEffector.loadPolyFromFileToList
 
 
 def _load_reference_coefficients(file_path: Path, max_degree: int):
