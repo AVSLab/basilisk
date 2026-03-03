@@ -120,9 +120,14 @@ def loadPolyFromFileToList(fileName: str):
     with open(fileName) as polyFile:
         if fileName.endswith('.tab'):
             try:
-                nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+                firstLine = next(polyFile)  # read first line
+            except StopIteration as ex:
+                raise ValueError("The '.tab' polyhedral file is empty.") from ex
+
+            try:
+                nVertex, nFacet = [int(x) for x in firstLine.split()]
                 fileType = 'gaskell'
-            except:
+            except ValueError:
                 polyFile.seek(0)
                 fileType = 'pds3'
 
