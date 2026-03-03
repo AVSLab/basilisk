@@ -74,6 +74,7 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
         clmList = [[0.0] * (degree + 1) for degree in range(maxDeg + 1)]
         slmList = [[0.0] * (degree + 1) for degree in range(maxDeg + 1)]
         assignedCoefficients = set()
+        previousDegree = -1
         for gravRow in gravReader:
             try:
                 rowDeg = int(gravRow[0])
@@ -87,6 +88,12 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
                 raise ValueError(
                     f"Invalid gravity coefficient row with degree/order ({rowDeg}, {rowOrder})"
                 )
+
+            if rowDeg < previousDegree:
+                raise ValueError(
+                    "Gravity coefficient rows must be ordered by non-decreasing degree"
+                )
+            previousDegree = rowDeg
 
             if rowDeg > maxDeg:
                 break
