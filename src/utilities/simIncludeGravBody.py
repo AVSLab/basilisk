@@ -368,8 +368,8 @@ class gravBodyFactory:
         epochInMsg: bool = False,
     ) -> spiceInterface.SpiceInterface:
         """A convenience function to configure a NAIF Spice module for the simulation.
-        It connects the gravBodyData objects to the spice planet state messages.  Thus,
-        it must be run after the gravBodyData objects are created.
+        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
+        it must be run after the ``gravBodyData`` objects are created.
 
         .. note::
 
@@ -424,10 +424,10 @@ class gravBodyFactory:
         epochInMsg: bool = False,
     ) -> spiceInterface.SpiceInterface:
         """A convenience function to configure a NAIF Spice module for the simulation.
-        It connect the gravBodyData objects to the spice planet state messages.  Thus,
-        it must be run after the gravBodyData objects are created.
+        It connect the ``gravBodyData`` objects to the spice planet state messages.  Thus,
+        it must be run after the ``gravBodyData`` objects are created.
 
-        Unless the 'path' input is provided, the kernels are loaded from the folder:
+        Unless the ``path`` input is provided, the kernels are loaded from the folder:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
         the Basilisk directory.
 
@@ -483,10 +483,10 @@ class gravBodyFactory:
         spiceKernalFileNames=None,
     ) -> spiceInterface.SpiceInterface:
         """A convenience function to configure a NAIF Spice module for the simulation.
-        It connect the gravBodyData objects to the spice planet state messages.  Thus,
-        it must be run after the gravBodyData objects are created.
+        It connect the ``gravBodyData`` objects to the spice planet state messages.  Thus,
+        it must be run after the ``gravBodyData`` objects are created.
 
-        Unless the 'path' input is provided, the kernels are loaded from the folder:
+        Unless the ``path`` input is provided, the kernels are loaded from the folder:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
         the Basilisk directory.
 
