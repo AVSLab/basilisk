@@ -23,6 +23,7 @@ Version |release|
   cache folder on your system.  See :ref:`bskPrinciples-6a` on how to get a file data path and import it.
 - The method ``loadGravFromFile()`` was hard-coded to load a 2nd order gravity field.  This is fixed in current
   version.
+- In :ref:`reactionWheelStateEffector`, mixed balanced and jitter wheel-model configurations could log ``theta`` to the wrong wheel output index. This is fixed in current version.
 
 Version 2.9.0
 -------------
