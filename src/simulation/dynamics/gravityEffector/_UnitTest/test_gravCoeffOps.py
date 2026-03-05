@@ -13,6 +13,11 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+"""Unit tests for gravity and polyhedral coefficient loading helpers.
+
+The tests exercise :mod:`gravCoeffOps` behavior through the installed
+``gravityEffector`` bindings.
+"""
 
 import csv
 from pathlib import Path
@@ -29,6 +34,12 @@ loadPolyFromFileToList = gravityEffector.loadPolyFromFileToList
 
 
 def _load_reference_coefficients(file_path: Path, max_degree: int):
+    """Load a deterministic reference coefficient table from ``GGM03S`` data.
+
+    :param file_path: Path to the gravity coefficient CSV file.
+    :param max_degree: Highest spherical-harmonic degree to load.
+    :return: Tuple ``(c_ref, s_ref, mu, rad_equator, max_degree_file, max_order_file)``.
+    """
     with file_path.open("r", newline="") as grav_file:
         grav_reader = csv.reader(grav_file, delimiter=",")
         first_row = next(grav_reader)
@@ -52,6 +63,12 @@ def _load_reference_coefficients(file_path: Path, max_degree: int):
 
 
 def _load_header_and_rows(file_path: Path, max_degree: int):
+    """Load the header and all coefficient rows up to ``max_degree``.
+
+    :param file_path: Path to the gravity coefficient CSV file.
+    :param max_degree: Highest degree to include.
+    :return: Tuple ``(header, rows)`` with the original CSV rows.
+    """
     with file_path.open("r", newline="") as grav_file:
         grav_reader = csv.reader(grav_file, delimiter=",")
         header = next(grav_reader)
@@ -65,6 +82,13 @@ def _load_header_and_rows(file_path: Path, max_degree: int):
 
 
 def _write_temp_gravity_file(tmp_path: Path, header, rows):
+    """Write a temporary gravity CSV file used by mutation-style tests.
+
+    :param tmp_path: ``pytest`` temporary directory fixture.
+    :param header: CSV header row.
+    :param rows: Data rows to write.
+    :return: Path to the written temporary CSV file.
+    """
     temp_gravity_file = tmp_path / "temporaryGravityFile.csv"
     with temp_gravity_file.open("w", newline="") as grav_file:
         grav_writer = csv.writer(grav_file)
@@ -125,6 +149,9 @@ def test_load_grav_from_file_to_list_rejects_negative_degree():
 def test_load_grav_from_file_to_list_uses_row_order_column(tmp_path):
     """Verify rows are placed by explicit order value, even if row order is shuffled."""
     header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    # Build a stable lookup by (degree, order), then intentionally shuffle
+    # only the degree-2 rows to verify assignment is by column values, not
+    # by row position within the file.
     rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
     shuffled_rows = [
         rows_by_index[(0, 0)],
@@ -147,6 +174,8 @@ def test_load_grav_from_file_to_list_uses_row_order_column(tmp_path):
 def test_load_grav_from_file_to_list_preserves_zero_for_missing_order(tmp_path):
     """Verify missing coefficients remain zero at their degree/order index."""
     header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    # Omit degree=2, order=1 on purpose and verify the parser keeps that
+    # coefficient at the initialized zero value.
     rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
     missing_order_rows = [
         rows_by_index[(0, 0)],
@@ -169,6 +198,8 @@ def test_load_grav_from_file_to_list_preserves_zero_for_missing_order(tmp_path):
 def test_load_grav_from_file_to_list_rejects_degree_regression(tmp_path):
     """Verify decreasing degree rows are rejected."""
     header, rows = _load_header_and_rows(GGM03S_PATH, max_degree=2)
+    # Re-introduce a degree-1 row after a degree-2 row to violate
+    # non-decreasing-degree ordering.
     rows_by_index = {(int(row[0]), int(row[1])): row for row in rows}
     regressed_rows = [
         rows_by_index[(0, 0)],
