@@ -387,20 +387,19 @@ class gravBodyFactory:
            do not override ``spicePlanetFrames``.
 
         Args:
-            path (str): The absolute path to the folder that contains the
-                kernels to be loaded.
+            path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
-                names including file extension. Defaults to
-                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
-            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
-                whose Spice data is loaded. If this is not provided, Spice data is
-                loaded for the bodies created with this factory object. Defaults to None.
-            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
-                frame names to load in Spice. If this is not provided, frames are loaded
-                for the bodies created with this factory function. Defaults to None.
-            epochInMsg (bool, optional): Flag to set an epoch input message for the
-                spice interface. Defaults to False.
+            spiceKernelFileNames (Iterable[str], optional):
+                A list of spice kernel file names including file extension.
+                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional):
+                A list of planet names whose Spice data is loaded. If this is not provided,
+                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional):
+                A list of planet frame names to load in Spice. If this is not provided,
+                frames are loaded for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional):
+                Flag to set an epoch input message for the spice interface. Defaults to False.
 
         Returns:
             spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
@@ -424,7 +423,7 @@ class gravBodyFactory:
         epochInMsg: bool = False,
     ) -> spiceInterface.SpiceInterface:
         """A convenience function to configure a NAIF Spice module for the simulation.
-        It connect the ``gravBodyData`` objects to the spice planet state messages.  Thus,
+        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
         it must be run after the ``gravBodyData`` objects are created.
 
         Unless the ``path`` input is provided, the kernels are loaded from the folder:
@@ -447,20 +446,19 @@ class gravBodyFactory:
            do not override ``spicePlanetFrames``.
 
         Args:
-            path (str): The absolute path to the folder that contains the
-                kernels to be loaded.
+            path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
-                names including file extension. Defaults to
-                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
-            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
-                whose Spice data is loaded. If this is not provided, Spice data is
-                loaded for the bodies created with this factory object. Defaults to None.
-            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
-                frame names to load in Spice. If this is not provided, frames are loaded
-                for the bodies created with this factory function. Defaults to None.
-            epochInMsg (bool, optional): Flag to set an epoch input message for the
-                spice interface. Defaults to False.
+            spiceKernelFileNames (Iterable[str], optional):
+                A list of spice kernel file names including file extension.
+                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional):
+                A list of planet names whose Spice data is loaded. If this is not provided,
+                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional):
+                A list of planet frame names to load in Spice. If this is not provided,
+                frames are loaded for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional):
+                Flag to set an epoch input message for the spice interface. Defaults to False.
 
         Returns:
             spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
@@ -483,7 +481,7 @@ class gravBodyFactory:
         spiceKernalFileNames=None,
     ) -> spiceInterface.SpiceInterface:
         """A convenience function to configure a NAIF Spice module for the simulation.
-        It connect the ``gravBodyData`` objects to the spice planet state messages.  Thus,
+        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
         it must be run after the ``gravBodyData`` objects are created.
 
         Unless the ``path`` input is provided, the kernels are loaded from the folder:
@@ -505,21 +503,20 @@ class gravBodyFactory:
            Earth frame-association FK kernels (for example ``earth_assoc_itrf93.tf``)
            do not override ``spicePlanetFrames``.
 
-           Args:
-            path (str): The absolute path to the folder that contains the
-                kernels to be loaded.
+        Args:
+            path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional): A list of spice kernel file
-                names including file extension. Defaults to
-                `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
-            spicePlanetNames (Optional[Sequence[str]], optional): A list of planet names
-                whose Spice data is loaded. If this is not provided, Spice data is
-                loaded for the bodies created with this factory object. Defaults to None.
-            spicePlanetFrames (Optional[Sequence[str]], optional): A list of planet
-                frame names to load in Spice. If this is not provided, frames are loaded
-                for the bodies created with this factory function. Defaults to None.
-            epochInMsg (bool, optional): Flag to set an epoch input message for the
-                spice interface. Defaults to False.
+            spiceKernelFileNames (Iterable[str], optional):
+                A list of spice kernel file names including file extension.
+                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spicePlanetNames (Optional[Sequence[str]], optional):
+                A list of planet names whose Spice data is loaded. If this is not provided,
+                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+            spicePlanetFrames (Optional[Sequence[str]], optional):
+                A list of planet frame names to load in Spice. If this is not provided,
+                frames are loaded for the bodies created with this factory function. Defaults to None.
+            epochInMsg (bool, optional):
+                Flag to set an epoch input message for the spice interface. Defaults to False.
 
         Returns:
             spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
