@@ -95,7 +95,7 @@ def jointTorques(nSc, nArms, nJoints, M, theta, bias, thrust, armCfg, maxTorque=
         baseAccel = np.linalg.solve(Mbase, baseThr + baseBias)
         jointBias = bias_sc[nBase:]
         tauThr_sc = tauJoint[sc*(nArms*nJoints):(sc+1)*(nArms*nJoints)]
-        uH_sc = -(Mthb @ baseAccel) - jointBias + tauThr_sc
+        uH_sc = (Mthb @ baseAccel) - jointBias - tauThr_sc
         uH[sc*(nArms*nJoints):(sc+1)*(nArms*nJoints)] = uH_sc
 
     if maxTorque is not None:
