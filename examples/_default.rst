@@ -219,6 +219,16 @@ It's recommended to study the first 6 scenarios in order:
   Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
   Translation-only formation flying under differential drag <mujoco/scenarioFormationFlyingWithDrag>
   Satellite Drag with Stochastic (Random) Density using MuJoCo <mujoco/scenarioStochasticDrag>
+  Spacecraft Control with Thruster Arms using MuJoCo <mujoco/scenarioThrArmControl>
+
+Support Files
+^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   Master File <mujoco/BSK_mujocoMasters>
+   Models Folder <mujoco/mujocoModels/index>
 
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------
