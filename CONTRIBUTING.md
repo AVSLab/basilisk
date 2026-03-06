@@ -76,11 +76,12 @@ pre-commit 3.6.2
 
 If you are using python virtual environments, you may need to activate your environment to use pre-commit.
 
-Next, change your current directory to be the Basilisk repo folder.  Then run ```pre-commit install``` to set up the git hook scripts.
+Next, change your current directory to be the Basilisk repo folder.  Then run ```pre-commit install --hook-type pre-commit --hook-type commit-msg``` to set up the git hook scripts.
 You must run this inside of the repo folder and the associated files will only be installed inside that repository.
 ```
-$ pre-commit install
+$ pre-commit install --hook-type pre-commit --hook-type commit-msg
 pre-commit installed at .git/hooks/pre-commit
+pre-commit installed at .git/hooks/commit-msg
 ```
 Now ```pre-commit``` will run automatically whenever you run ```git commit```!
 
