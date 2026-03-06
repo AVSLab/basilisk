@@ -386,7 +386,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             const int hGlobal = hingeGlobalIdxs[i];
             tauThrTree(i) = tauJoint(hGlobal);
         }
-        Eigen::VectorXd uH_tree = -(Mthb * baseAccel) - jointBias + tauThrTree;
+        Eigen::VectorXd uH_tree = (Mthb * baseAccel) - jointBias - tauThrTree;
 
         for (int i = 0; i < nHingeJoints; ++i) {
             const int hGlobal = hingeGlobalIdxs[i];
