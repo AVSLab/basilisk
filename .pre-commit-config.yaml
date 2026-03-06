@@ -18,3 +18,8 @@ repos:
           language: python
           files: ^supportData/
           pass_filenames: false
+      -   id: check-commit-message-prefix
+          name: Ensure commit message starts with [#xxxx]
+          entry: python src/utilities/preCommitTools/checkCommitMessage.py
+          language: python
+          stages: [commit-msg]
