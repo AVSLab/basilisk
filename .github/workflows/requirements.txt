@@ -1,6 +1,7 @@
 pandas
 matplotlib
 numpy
+scipy
 colorama
 tqdm
 pillow
