@@ -329,6 +329,12 @@ class BasiliskConan(ConanFile):
         # tc.cache_variables["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
         tc.parallel = True
 
+        # Use sccache as a compiler launcher if available (e.g. in CI via CMAKE_C/CXX_COMPILER_LAUNCHER env vars)
+        if c_launcher := os.environ.get("CMAKE_C_COMPILER_LAUNCHER"):
+            tc.cache_variables["CMAKE_C_COMPILER_LAUNCHER"] = c_launcher
+        if cxx_launcher := os.environ.get("CMAKE_CXX_COMPILER_LAUNCHER"):
+            tc.cache_variables["CMAKE_CXX_COMPILER_LAUNCHER"] = cxx_launcher
+
         py_limited = resolve_py_limited_api(self.options.get_safe("pyLimitedAPI"))
         tc.cache_variables["PY_LIMITED_API"] = py_limited
         print(f"{statusColor}PY_LIMITED_API={py_limited}{endColor}")
