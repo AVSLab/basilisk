@@ -1,0 +1,3 @@
+- Added :ref:`downlinkHandling` with a validated configuration interface (setters/getters), finite-value guards, and bounded outputs to prevent non-physical downlink rates.
+- Added :ref:`DownlinkHandlingMsgPayload` diagnostics and dedicated unit-test coverage for equation parity, receiver-path selection, storage-limited behavior, and invalid-input handling.
+- Improved storage-target selection robustness across connected storage status messages and aligned module documentation with implemented behavior and validation interface.
