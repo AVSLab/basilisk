@@ -36,6 +36,43 @@ Example setup:
 
     scObject.addDynamicEffector(drag)
 
+Atmosphere Relative Velocity
+-----------------------------
+The drag computation can optionally use the spacecraft velocity relative to a rotating atmosphere instead of the inertial spacecraft velocity. This is useful for modeling atmospheric drag in Low Earth Orbit, where the atmosphere approximately co-rotates with the Earth.
+
+If ``useAtmosphereRelativeVelocity`` is enabled, the drag model computes
+
+.. math::
+
+    \mathbf{v}_{rel} = \mathbf{v}_{sc} - (\boldsymbol{\omega}_{planet} \times \mathbf{r}_{sc})
+
+where
+
+- :math:`\mathbf{v}_{sc}` is the spacecraft inertial velocity
+- :math:`\mathbf{r}_{sc}` is the spacecraft inertial position
+- :math:`\boldsymbol{\omega}_{planet}` is the planetary rotation vector
+
+For Earth simulations, the planetary rotation rate is automatically taken from ``OMEGA_EARTH`` in ``astroConstants.h``.
+For other bodies it can be configured through ``planetOmega_N``.
+
+If ``useAtmosphereRelativeVelocity`` is left disabled (default), the drag model uses the spacecraft inertial velocity directly.
+
+Example setup:
+
+.. code-block:: python
+
+    drag = dragDynamicEffector.DragDynamicEffector()
+
+    drag.coreParams.dragCoeff = 2.2
+    drag.coreParams.projectedArea = 10.0
+    drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
+
+    # Enable atmosphere-relative velocity
+    drag.useAtmosphereRelativeVelocity = True
+    drag.planetOmega_N = [0.0, 0.0, 7.2921159e-5]
+
+    scObject.addDynamicEffector(drag)
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg connection is set by the

@@ -33,6 +33,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/astroConstants.h"
 
 
 
@@ -71,9 +72,12 @@ public:
     Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
     BSKLogger bskLogger;                                   //!< -- BSK Logging
+    Eigen::Vector3d planetOmega_N;                         //!< planetary rotation vector expressed in inertial frame
+    bool useAtmosphereRelativeVelocity;                    //!< enable velocity relative to rotating atmosphere
 
 private:
     AtmoPropsMsgPayload atmoInData;
+    StateData* hubPosition = nullptr;
 
 };
 
