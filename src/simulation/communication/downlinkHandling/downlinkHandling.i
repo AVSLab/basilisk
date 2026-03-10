@@ -44,6 +44,44 @@ struct DownlinkHandlingMsg_C;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 
 %pythoncode %{
+def _set_bit_rate_request(self, value):
+    if not self.setBitRateRequest(value):
+        raise ValueError("bitRateRequest must be finite and >= 0 [bit/s].")
+
+
+def _set_packet_size_bits(self, value):
+    if not self.setPacketSizeBits(value):
+        raise ValueError("packetSizeBits must be finite and > 0 [bit].")
+
+
+def _set_max_retransmissions(self, value):
+    if not self.setMaxRetransmissions(value):
+        raise ValueError("maxRetransmissions must be >= 1.")
+
+
+def _set_receiver_antenna(self, value):
+    if not self.setReceiverAntenna(value):
+        raise ValueError("receiverAntenna must be 0 (auto), 1, or 2.")
+
+
+def _set_removal_policy(self, value):
+    if not self.setRemovalPolicy(value):
+        raise ValueError("removalPolicy must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).")
+
+
+def _set_require_full_packet(self, value):
+    self.setRequireFullPacket(bool(value))
+
+
+DownlinkHandling.bitRateRequest = property(DownlinkHandling.getBitRateRequest, _set_bit_rate_request)
+DownlinkHandling.packetSizeBits = property(DownlinkHandling.getPacketSizeBits, _set_packet_size_bits)
+DownlinkHandling.maxRetransmissions = property(DownlinkHandling.getMaxRetransmissions, _set_max_retransmissions)
+DownlinkHandling.receiverAntenna = property(DownlinkHandling.getReceiverAntenna, _set_receiver_antenna)
+DownlinkHandling.removalPolicy = property(DownlinkHandling.getRemovalPolicy, _set_removal_policy)
+DownlinkHandling.requireFullPacket = property(DownlinkHandling.getRequireFullPacket, _set_require_full_packet)
+%}
+
+%pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}

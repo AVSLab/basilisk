@@ -27,6 +27,7 @@ typedef struct {
     uint32_t linkActive;                    //!< [-]     1 if link-quality inputs are valid for downlink calculations
     uint32_t receiverIndex;                 //!< [-]     Selected receiver antenna index (1, 2) or 0 if none
     uint64_t maxRetransmissions;            //!< [-]     Maximum ARQ retransmission attempts per packet
+    uint32_t removalPolicy;                 //!< [-]     Storage-removal policy (0=REMOVE_ATTEMPTED, 1=REMOVE_DELIVERED_ONLY)
     char transmitterAntennaName[20];        //!< [-]     Name of the selected transmitting antenna
     char receiverAntennaName[20];           //!< [-]     Name of the selected receiving antenna
     char dataName[128];                     //!< [-]     Name of the data partition currently downlinked
@@ -44,7 +45,7 @@ typedef struct {
     double packetDropProb;                  //!< [-]     Packet drop probability within max retransmissions
     double expectedAttemptsPerPacket;       //!< [-]     Expected number of attempts needed to complete one source packet
     double attemptedDataRate;               //!< [bit/s] Attempted channel transmission rate including retransmissions
-    double storageRemovalRate;              //!< [bit/s] Data removed from spacecraft storage (success + drop)
+    double storageRemovalRate;              //!< [bit/s] Data removed from spacecraft storage per selected removal policy
     double deliveredDataRate;               //!< [bit/s] Data delivered successfully to receiver
     double droppedDataRate;                 //!< [bit/s] Data dropped after reaching retransmission limit
     double availableDataBits;               //!< [bit]   Data available in selected storage partition at start of step
