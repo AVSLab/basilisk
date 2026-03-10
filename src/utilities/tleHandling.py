@@ -47,7 +47,7 @@ class TleData:
 
     # Optional
     satName: str = field(default="BSK-Sat-00") # Satellite name [str] (max 24 characters)
-    noradID: str = field(default="00000") # Satellite catalog number / NORAD ID [str] (5 digits)
+    noradID: str = field(default="00000") # Satellite catalog number / NORAD ID [str] (integer 0–99999; TLE format cannot represent catalog numbers ≥ 100000, which will be assigned from ~July 2026)
     classification: str = field(default="Unknown") # Satellite classification ("Unclassified", "Classified", "Secret" | default: "Unknown")
     revAtEpoch: int = field(default=0) # Revolution number at epoch [int] (indicates how many orbits the satellite has completed at epoch time (since launch), tops out at 99999)
     propagator: str = field(default="0") # Ephemeris type/propagator (0: "Unknown", 1: "SGP4", 2: "SDP4", 3: "SGP8", 4: "SDP8" | default: "Unknown")
@@ -333,6 +333,82 @@ def _wrap_deg(angle_rad: float) -> float:
 # ---------------------------------------------------------------------------------------------------------- #
 #                                            TLE parsing functions                                           #
 # ---------------------------------------------------------------------------------------------------------- #
+_TLE_MAX_NORAD_ID = 99999  # Maximum catalog number representable in the 5-character TLE field
+
+
+def _check_tle_id_is_5_digit_numeric(id_field: str, line_name: str) -> None:
+    """
+    Ensure a TLE catalog field contains only numeric characters.
+
+    :param id_field: raw fixed-width catalog field from a TLE line
+    :param line_name: name of the TLE line for error messages
+    :raises ValueError: if the field is not numeric
+    """
+    id_clean = id_field.strip()
+    if not id_clean.isdigit():
+        raise ValueError(
+            f"_parseTle() received a non-numeric catalog field in {line_name} "
+            f"('{id_field}'). This parser only supports standard numeric TLE "
+            "catalog IDs in the 5-character field."
+        )
+
+
+def _check_tle_id_is_not_alpha5_like(id_field: str, line_name: str) -> None:
+    """
+    Reject Alpha-5-style catalog IDs.
+
+    :param id_field: raw fixed-width catalog field from a TLE line
+    :param line_name: name of the TLE line for error messages
+    :raises ValueError: if the field appears Alpha-5 encoded
+    """
+    id_clean = id_field.strip().upper()
+    if len(id_clean) == 5 and id_clean[0].isalpha() and id_clean[1:].isdigit():
+        raise ValueError(
+            f"_parseTle() received an Alpha-5-like catalog field in {line_name} "
+            f"('{id_field}'). This parser only supports classic numeric TLE IDs "
+            "up to 99999. Use OMM (CSV/JSON/XML) for newer catalog schemes."
+        )
+
+
+def _check_tle_id_no_overflow(line: str, line_name: str) -> None:
+    """
+    Detect likely 6-digit catalog number overflow in fixed-width TLE columns.
+
+    :param line: raw TLE line
+    :param line_name: name of the TLE line for error messages
+    :raises ValueError: if overflow is detected
+    """
+    if len(line) > 7 and line[7].isdigit():
+        raise ValueError(
+            f"_parseTle() detected a catalog-ID overflow in {line_name}. "
+            "This is likely a 6+ digit object ID forced into the 5-character "
+            "TLE field. Use OMM (CSV/JSON/XML) for these objects."
+        )
+
+def _norad_id_to_tle_str(norad_id) -> str:
+    """
+    Format a NORAD catalog number for use in a TLE line.
+
+    The TLE format uses a fixed 5-character field for the catalog number, limiting
+    it to integers 0-99999. CelesTrak will not produce TLE data for objects with
+    catalog numbers >= 100000 (expected from ~July 2026). Use OMM format
+    (CSV/JSON/XML) for those objects instead.
+
+    :param norad_id: catalog number as int or string
+    :return: zero-padded 5-character string
+    :raises ValueError: if catalog number >= 100000
+    """
+    norad_id_int = int(norad_id)
+    if norad_id_int > _TLE_MAX_NORAD_ID:
+        raise ValueError(
+            f"TLE format cannot represent catalog number {norad_id_int}. "
+            f"The TLE 5-character field supports integers 0–{_TLE_MAX_NORAD_ID}. "
+            "Objects with 6+ digit catalog numbers (assigned from ~July 2026) require "
+            "the OMM format (CSV/JSON/XML) instead. "
+            "See: https://celestrak.org/NORAD/elements/gp-faq.php"
+        )
+    return f"{norad_id_int:05d}"
+
 def _calcTleChecksum(stringArray: str) -> int:
     """
     Calculate TLE checksum per line.
@@ -405,7 +481,11 @@ def _parseTle(tle: str) -> TleData:
     line1_str = line1[0:1]
     if line1_str != '1':
         raise ValueError(f"_parseTle() received line1 starting with '{line1_str}'. The first character of line1 should be '1'.")
-    satId1_str = line1[2:7] # Satellite catalog number
+    _check_tle_id_no_overflow(line1, "line1")
+    satId1_str = line1[2:7] # Satellite catalog number (5-char field, max 99999)
+    _check_tle_id_is_not_alpha5_like(satId1_str, "line1")
+    _check_tle_id_is_5_digit_numeric(satId1_str, "line1")
+    sat_id_1_clean = satId1_str.strip()
     class_str = line1[7:8] # Classification (U=Unclassified, C=Classified, S=Secret)
     launchYear_str = line1[9:11] # Launch year
     launchNo_str = line1[11:14] # Launch number of the year
@@ -430,8 +510,11 @@ def _parseTle(tle: str) -> TleData:
     line2_str = line2[0:1]
     if line2_str != '2':
         raise ValueError(f"_parseTle() received line2 starting with '{line2_str}'. The first character of line2 should be '2'.")
+    _check_tle_id_no_overflow(line2, "line2")
     satID_2_str = line2[2:7].strip()
-    if satID_2_str != satId1_str.strip():
+    _check_tle_id_is_not_alpha5_like(line2[2:7], "line2")
+    _check_tle_id_is_5_digit_numeric(line2[2:7], "line2")
+    if satID_2_str != sat_id_1_clean:
         raise ValueError(f"_parseTle() received mismatched satellite ID numbers in line1 ('{satId1_str}') and line2 ('{satID_2_str}').")
     inclDeg_str = line2[8:16] # Inclination in degrees
     OmegaDeg_str = line2[17:25] # Right Ascension of Ascending Node in degrees
@@ -447,7 +530,7 @@ def _parseTle(tle: str) -> TleData:
 
     # Parsing numerical values getting
     satName = line0.strip()
-    noradId = satId1_str.strip()
+    noradId = sat_id_1_clean
     classification = {'U': 'Unclassified', 'C': 'Classified', 'S': 'Secret'}.get(class_str, 'Unknown')
 
     epochYear = _parseTleYear(line1[18:20])
@@ -631,7 +714,7 @@ def _generateTleFromMean(oe_mean: om.ClassicElements, tleData: TleData) -> str:
     """
     Generate TLE string directly from mean elements (no conversion).
     """
-    Norad_str = f"{int(tleData.noradID):05d}"
+    Norad_str = _norad_id_to_tle_str(tleData.noradID)
     epoch_str = f"{tleData.tleEpoch:%y%j}" + f"{(tleData.tleEpoch.hour * 3600 + tleData.tleEpoch.minute * 60 + tleData.tleEpoch.second + tleData.tleEpoch.microsecond / 1e6) / SEC_PER_DAY:.8f}"[1:]
     classification = tleData.classification[0].upper() if tleData.classification[0].upper() in ['U', 'C', 'S'] else 'U'
 
@@ -680,7 +763,9 @@ def satTle2elem(tle_path: str):
             satTleReady = [False, False, False] # flags to check if all three lines are present
 
     with open(tle_path, 'r') as f:
-        tle_lines = f.read().splitlines()
+        tle_text = f.read()
+
+    tle_lines = tle_text.splitlines()
     noLines = len(tle_lines)
     if noLines < 2:
         raise ValueError(f"constTLE2Elem() received a TLE with {noLines} lines. A valid TLE must have at least two lines.")
@@ -807,7 +892,7 @@ def generateTle(tleData: TleData) -> str:
     :param satelliteName: Name of the satellite (optional, default: "BSK-Sat-00")        [string, <= 24 char]
     :param launchYear_dt: Launch date of the satellite (optional, default: current year) [datetime object]
     :param launch_Noyear: Launch number of the year (optional, default: 1)               [int]
-    :param NORAD_ID: NORAD ID (5 digits) of the satellite (optional, default: "00000")   [str, 5 char]
+    :param NORAD_ID: NORAD catalog number 0–99999 (optional, default: "00000"). Catalog numbers ≥ 100000 (assigned from ~July 2026) cannot be represented in TLE format.
     :param classification: Satellite classification (U: Unclassified, C: Classified, S: Secret | default: "U") [str, 1 char]
     :param PoL: Piece of the launch (optional, default: "A  ")                           [str, 3 char]
     :param tleEpoch: Epoch of the TLE as datetime object (optional default: current UTC time) [datetime object]
@@ -834,10 +919,7 @@ def generateTle(tleData: TleData) -> str:
 
     meanOrbElem = _osculating2mean_sgp4(td)
 
-    # Make sure NORAD_ID is an integer and no longer than 5 characters (truncate)
-    Norad_str = f"{int(td.noradID):05d}"
-    if len(str(td.noradID)) > 5:
-        print(f"TLE Writing: NORAD_ID truncated to 5 digits: {td.noradID}")
+    Norad_str = _norad_id_to_tle_str(td.noradID)
     if td.launchDate is None:
         td.launchDate = dt.datetime.now(dt.timezone.utc)
         print(f"TLE Writing: Launch date not provided, using current UTC time: {td.launchDate}")
