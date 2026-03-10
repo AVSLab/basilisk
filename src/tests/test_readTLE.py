@@ -199,6 +199,73 @@ def test_read_write_tle(tlePath):
 
     assert eCountTle < 1, f"{eCountTle} functions failed in tleHandling.py script, generateTleDataString() method"
 
+def _write_modified_hypso_tle(tmp_path, line1=None, line2=None):
+    """Create a temporary TLE file based on hypso1.tle with optional line overrides."""
+    src = DATA_DIR / "hypso1.tle"
+    with open(src, 'r') as file:
+        lines = file.read().splitlines()
+    if line1 is not None:
+        lines[1] = line1
+    if line2 is not None:
+        lines[2] = line2
+    out_path = tmp_path / "modified.tle"
+    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return out_path
+
+
+def test_read_tle_rejects_alpha5_like_id(tmp_path):
+    """satTle2elem() rejects Alpha-5-like catalog IDs in the 5-character TLE field."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1 = lines[1][:2] + "A1053" + lines[1][7:]
+    line2 = lines[2][:2] + "A1053" + lines[2][7:]
+
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1, line2=line2)
+
+    with pytest.raises(ValueError, match="Alpha-5-like"):
+        tleHandling.satTle2elem(tle_path)
+
+
+def test_read_tle_rejects_non_numeric_id_field(tmp_path):
+    """satTle2elem() rejects non-numeric, non-Alpha-5 catalog fields."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1 = lines[1][:2] + "12-53" + lines[1][7:]
+    line2 = lines[2][:2] + "12-53" + lines[2][7:]
+
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1, line2=line2)
+
+    with pytest.raises(ValueError, match="non-numeric"):
+        tleHandling.satTle2elem(tle_path)
+
+
+def test_read_tle_rejects_catalog_overflow(tmp_path):
+    """satTle2elem() rejects likely 6-digit overflow into fixed-width TLE columns."""
+    with open(DATA_DIR / "hypso1.tle", 'r') as file:
+        lines = file.read().splitlines()
+
+    line1_chars = list(lines[1])
+    line2_chars = list(lines[2])
+    line1_chars[7] = '1'
+    line2_chars[7] = '1'
+    line1 = "".join(line1_chars)
+    line2 = "".join(line2_chars)
+
+    tle_path = _write_modified_hypso_tle(tmp_path, line1=line1, line2=line2)
+
+    with pytest.raises(ValueError, match="overflow"):
+        tleHandling.satTle2elem(tle_path)
+
+
+def test_write_tle_6digit_norad_raises():
+    """generateTle() must raise ValueError for catalog numbers >= 100000 (6-digit NORAD IDs assigned after ~July 2026 cannot be represented in TLE format)."""
+    tleData = tleHandling.TleData(oe=oeHypso1, tleEpoch=hypso1tleEpoch)
+    tleData.noradID = 100000
+    with pytest.raises(ValueError, match="100000"):
+        tleHandling.generateTle(tleData)
+
 if __name__ == "__main__":
     # Reading TLE
     test_read_tle(DATA_DIR / "hypso1.tle", EXPECTED_OE_HYPSO)
