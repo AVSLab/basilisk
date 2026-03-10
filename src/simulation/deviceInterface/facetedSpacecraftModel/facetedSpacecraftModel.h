@@ -50,6 +50,7 @@ public:
 private:
     uint64_t numFacets{};  //!< Total number of spacecraft facets
     uint64_t numArticulatedFacets{};  //!< Number of articulated facets
+    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetRequestInMsgs; //!< Pending list of articulated facet input messages
 
     /* Facet input message data */
     std::vector<double> facetAreaList;  //!< [m^2] List of facet areas

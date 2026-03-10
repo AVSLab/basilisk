@@ -18,6 +18,11 @@ messages.
     of the module ``facetElementInMsgs`` correspond to the articulating facets. In addition, the facet articulation
     angle :ref:`HingedRigidBodyMsgPayload` input messages must be set using the ``addArticulatedFacet()`` method.
 
+.. important::
+    User calling of the adder/setter methods is order-independent, meaning the ``setNumTotalFacets()`` method
+    can be called before or after the ``addArticulatedFacet()`` method. The ``setNumTotalFacets()`` method reuses
+    previously added articulated facets if called multiple times.
+
 
 Message Connection Descriptions
 -------------------------------
