@@ -108,6 +108,25 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
  @param callTime [s] Time the method is called
 */
 void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
+    // Stop the simulation if Reset() failed to populate the facet lists
+    if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets ||
+        this->facetElementBodyOutMsgs.size() != this->numFacets ||
+        this->facetAreaList.size() != this->numFacets ||
+        this->facetR_CopB_BList.size() != this->numFacets ||
+        this->facetNHat_BList.size() != this->numFacets ||
+        this->facetRotHat_BList.size() != this->numFacets ||
+        this->facetDiffuseCoeffList.size() != this->numFacets ||
+        this->facetSpecularCoeffList.size() != this->numFacets ||
+        this->facetR_CopF_FList.size() != this->numFacets ||
+        this->facetNHat_FList.size() != this->numFacets ||
+        this->facetRotHat_FList.size() != this->numFacets ||
+        this->facetDcm_F0BList.size() != this->numFacets ||
+        this->facetR_FB_BList.size() != this->numFacets) {
+        this->bskLogger->bskLog(BSK_ERROR,
+                                "FacetedSpacecraftModel: UpdateState() called before successful Reset().");
+        return;
+    }
+
     // Read the articulated facet input messages
     HingedRigidBodyMsgPayload articulatedFacetAngleIn{};
     std::vector<double> articulatedFacetAngleList;
