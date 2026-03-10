@@ -170,12 +170,23 @@ articulatedFacetDataInMsgs input messages.
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
 void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
-    // Safety checks
+    // Safety check
     assert(tmpMsg != nullptr && "addArticulatedFacet() received null msg pointer");
-    assert(this->numArticulatedFacets < this->numFacets && "addArticulatedFacet() called more times than total facets");
 
-    this->numArticulatedFacets++;
-    this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
+    // Store the request regardless of adder/setter call order
+    this->articulatedFacetRequestInMsgs.push_back(tmpMsg->addSubscriber());
+
+    // Keep active input message list in sync when facets are already configured
+    if (this->numFacets > 0) {
+        this->articulatedFacetDataInMsgs = this->articulatedFacetRequestInMsgs;
+
+        // Update number of articulated facets
+        this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
+        if (this->numArticulatedFacets > this->numFacets) {
+            this->bskLogger->bskLog(BSK_ERROR,
+                                    "FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
+        }
+    }
 }
 
 /*! Setter method for the total number of spacecraft facets.
@@ -185,9 +196,7 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     this->numFacets = numFacets;
 
     // Release old output messages if this setter is called multiple times
-    for (auto* msg : this->facetElementBodyOutMsgs) {
-        delete msg;
-    }
+    for (auto* msg : this->facetElementBodyOutMsgs) { delete msg; }
     this->facetElementInMsgs.clear();
     this->facetElementBodyOutMsgs.clear();
     this->facetElementInMsgs.reserve(this->numFacets);
@@ -197,6 +206,14 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
         this->facetElementInMsgs.push_back(ReadFunctor<FacetElementMsgPayload>{});
         this->facetElementBodyOutMsgs.push_back(new Message<FacetElementBodyMsgPayload>());
+    }
+
+    // Set the articulated facet input messages to the pending input message list
+    this->articulatedFacetDataInMsgs = this->articulatedFacetRequestInMsgs;
+    this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
+    if (this->numArticulatedFacets > this->numFacets) {
+        this->bskLogger->bskLog(BSK_ERROR,
+                                "FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
     }
 }
 
