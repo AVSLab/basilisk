@@ -67,7 +67,7 @@ The module extends ``DataNodeBase`` and runs once per simulation step.
 The per-step sequence is:
 
 1. Read ``LinkBudgetMsgPayload`` and all connected storage status messages.
-2. Select one storage partition (largest currently available data in the most recently connected storage unit).
+2. Select one storage target (largest finite partition across all connected storage units; use ``storageLevel`` only when a message has no partition vector).
 3. Select receiver path (forced receiver index or auto mode).
 4. Convert selected CNR and overlap bandwidth into :math:`C/N_0`.
 5. Convert :math:`C/N_0` and requested bit rate into :math:`E_b/N_0`.
@@ -104,10 +104,30 @@ Configurable Parameters
      - 0
      - -
      - Receiver selection: 0=auto, 1=use receiver path 1, 2=use receiver path 2.
+   * - ``removalPolicy``
+     - ``REMOVE_ATTEMPTED`` (0)
+     - -
+     - Storage removal mode: ``REMOVE_ATTEMPTED`` removes delivered+drop-limited bits, ``REMOVE_DELIVERED_ONLY`` removes only successfully delivered bits.
    * - ``requireFullPacket``
      - ``True``
      - bool
      - If ``True``, downlink waits until selected storage has at least one full packet.
+
+Configuration Interface and Validation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The module exposes validated setters in C++/Python:
+
+- ``setBitRateRequest(bitRateRequest)`` with :math:`bitRateRequest \ge 0`
+- ``setPacketSizeBits(packetSizeBits)`` with :math:`packetSizeBits > 0`
+- ``setMaxRetransmissions(maxRetransmissions)`` with :math:`maxRetransmissions \ge 1`
+- ``setReceiverAntenna(receiverAntenna)`` with ``receiverAntenna in {0,1,2}``
+- ``setRemovalPolicy(removalPolicy)`` with ``removalPolicy in {0,1}``
+- ``setRequireFullPacket(requireFullPacket)``
+
+If a setter receives an invalid value, the module rejects it and keeps the last valid value.
+The Python wrapper also maps ``bitRateRequest``, ``packetSizeBits``, ``maxRetransmissions``,
+``receiverAntenna``, ``removalPolicy``, and ``requireFullPacket`` to these validated setter/getter paths.
 
 Receiver Selection and CNR1/CNR2 Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -222,11 +242,21 @@ Final rates:
 .. math::
 
    R_{\mathrm{attempt}} = s\,R_{\mathrm{attempt,pot}}, \quad
-   R_{\mathrm{remove}} = s\,R_{\mathrm{remove,pot}}, \quad
+   R_{\mathrm{remove,modeled}} = s\,R_{\mathrm{remove,pot}}, \quad
    R_{\mathrm{delivered}} = s\,R_{\mathrm{delivered,pot}}, \quad
    R_{\mathrm{dropped}} = s\,R_{\mathrm{dropped,pot}}
 
-The value written to storage through ``nodeDataOutMsg`` is:
+Actual storage removal follows ``removalPolicy``:
+
+.. math::
+
+   R_{\mathrm{remove}} =
+   \begin{cases}
+   R_{\mathrm{remove,modeled}}, & \text{REMOVE\_ATTEMPTED} \\
+   R_{\mathrm{delivered}}, & \text{REMOVE\_DELIVERED\_ONLY}
+   \end{cases}
+
+The value written to storage through ``nodeDataOutMsg`` is then:
 
 .. math::
 
@@ -236,7 +266,7 @@ Output Diagnostics
 ------------------
 The custom output :ref:`DownlinkHandlingMsgPayload` reports:
 
-- link/selection state (``linkActive``, ``receiverIndex``, antenna names)
+- link/selection state (``linkActive``, ``receiverIndex``, antenna names, ``removalPolicy``)
 - physical-layer quality terms (CNR, :math:`C/N_0`, :math:`E_b/N_0`, BER, PER)
 - ARQ reliability terms (success/drop probabilities, expected attempts)
 - rate terms (attempted, removed, delivered, dropped)
@@ -252,6 +282,12 @@ Typical chain:
 3. :ref:`downlinkHandling` converts link quality to effective data transfer and storage removal.
 4. Storage modules consume ``nodeDataOutMsg`` and reduce onboard buffered data.
 
+.. warning::
+
+   Also important integration note:
+   Do not run ``spaceToGroundTransmitter`` and ``downlinkHandling`` as competing downlink removers
+   on the same storage partitions. Pick one downlink path.
+
 This separation is useful for fault modeling: upstream RF degradation (pointing, frequency mismatch,
 atmospheric attenuation, receive-state changes) naturally propagates into BER/PER and delivered data.
 
@@ -263,7 +299,9 @@ Assumptions and Current Limits
 - Any bit error fails the packet.
 - ARQ is expectation-based, not packet-by-packet Monte Carlo.
 - No explicit ACK latency, coding gain, framing overhead, or adaptive coding/modulation.
-- Storage partition selection currently targets the largest partition in the latest connected storage unit.
+- ``REMOVE_DELIVERED_ONLY`` preserves dropped/undelivered bits onboard, but the module still uses an expected-rate ARQ model instead of explicit packet ACK/NACK timelines.
+- Storage target selection prioritizes per-partition values. ``storageLevel`` is only used as fallback for messages that do not provide ``storedData`` entries.
+- ``nodeDataOutMsg`` identifies storage by ``dataName`` only. If multiple linked storage units reuse the selected partition name, downlinkHandling forces removal to zero for that step to avoid ambiguous multi-unit draining. For multi-storage use, keep partition names globally unique across linked storage units.
 
 Unit Test Coverage
 ------------------
@@ -276,22 +314,29 @@ The tests verify:
 - equation parity versus a Python-equivalent BER/PER/ARQ model
 - zero-flow behavior for invalid link inputs
 - retry-cap effects on drop probability and removal/delivery behavior
+- removal-policy behavior (``REMOVE_ATTEMPTED`` vs ``REMOVE_DELIVERED_ONLY``)
 - storage-limited rate capping and drain behavior
 - automatic receiver selection from antenna RX states and CNR values
+- duplicate-storage input rejection
+- storage-target selection across multiple storage status messages
+- ambiguous duplicate partition-name behavior across multiple storage status messages
 
-Usage Snippet
--------------
+User Guide
+----------
+
+Basic setup example:
 
 .. code-block:: python
 
    from Basilisk.simulation import downlinkHandling, simpleStorageUnit
 
    dlh = downlinkHandling.DownlinkHandling()
-   dlh.bitRateRequest = 1.0e5       # bit/s
-   dlh.packetSizeBits = 1024.0      # bit
-   dlh.maxRetransmissions = 8
-   dlh.receiverAntenna = 0          # auto-select valid RX path with highest CNR
-   dlh.requireFullPacket = True
+   dlh.setBitRateRequest(1.0e5)      # [bit/s]
+   dlh.setPacketSizeBits(1024.0)     # [bit]
+   dlh.setMaxRetransmissions(8)      # [-]
+   dlh.setReceiverAntenna(0)         # [-] auto-select valid RX path with highest CNR
+   dlh.setRemovalPolicy(0)           # [-] 0=REMOVE_ATTEMPTED, 1=REMOVE_DELIVERED_ONLY
+   dlh.setRequireFullPacket(True)    # [-]
 
    storage = simpleStorageUnit.SimpleStorageUnit()
    storage.storageCapacity = int(8e9)
