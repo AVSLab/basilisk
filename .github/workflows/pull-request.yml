@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.13"]
+        python: ["3.14"]
     name: Linux (${{ matrix.python }})
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.13"]
+        python: ["3.14"]
     name: Windows (${{ matrix.python }})
     env:
       MPLBACKEND: agg
@@ -90,7 +90,7 @@ jobs:
         conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
         include:
           # An extra Basilisk build to test building without visualization enabled
-          - python: "3.13"
+          - python: "3.14"
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
             conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
             job_suffix: "--vizInterface False"
@@ -129,7 +129,7 @@ jobs:
       - name: Build Basilisk
         uses: ./.github/actions/build
         with:
-          python-version: 3.13
+          python-version: 3.14
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
       - name: Build docs
         uses: ./.github/actions/docs

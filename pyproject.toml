@@ -19,7 +19,7 @@ requires = [
 [project]
 name        = 'bsk'
 dynamic     = ["version", "dependencies"]
-requires-python = ">=3.8, <3.14"
+requires-python = ">=3.8, <3.15"
 
 readme      = "README.md"
 license     = {file = "LICENSE"}
@@ -54,7 +54,7 @@ test = [
 ]
 
 [tool.cibuildwheel]
-build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 skip  = ["*-win32", "cp38-macosx_arm64", "*-musllinux_*"]
 build-verbosity = 1
 test-extras = ["test"]

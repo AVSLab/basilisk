@@ -12,7 +12,7 @@ Software setup
 
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
--  `Python <https://www.python.org/>`__ 3.8 to 3.13.  Version 3.8 is deprecated and will be removed April 2026.
+-  `Python <https://www.python.org/>`__ 3.8 to 3.14.  Version 3.8 is deprecated and will be removed April 2026.
 -  `GCC <https://gcc.gnu.org/>`__
 -  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
    application to be able to pull and manage a copy of Basilisk
