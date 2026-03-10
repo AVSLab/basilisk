@@ -1,0 +1,2 @@
+- Updated :ref:`tleHandling` TLE parsing to fail explicitly on unsupported catalog-ID encodings.
+- Added tests in ``test_readTLE.py`` to validate rejection of unsupported catalog-ID encoding.
