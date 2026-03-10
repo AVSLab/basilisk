@@ -32,6 +32,8 @@ DragDynamicEffector::DragDynamicEffector()
 	this->torqueExternalPntB_B.fill(0.0);
 	this->v_B.fill(0.0);
 	this->v_hat_B.fill(0.0);
+	this->useAtmosphereRelativeVelocity = false;
+	this->planetOmega_N << 0.0, 0.0, OMEGA_EARTH;
 
     return;
 }
@@ -52,6 +54,10 @@ void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
     }
+	if (this->useAtmosphereRelativeVelocity && this->hubPosition == nullptr) {
+    	bskLogger.bskLog(BSK_ERROR,
+                     "dragDynamicEffector requires hub position state when useAtmosphereRelativeVelocity is enabled.");
+	}
 
 }
 
@@ -86,6 +92,10 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 
+	if (this->useAtmosphereRelativeVelocity) {
+		this->hubPosition = states.getStateObject(this->stateNameOfPosition);
+	}
+
 	if (this->densityCorrectionStateName.empty())
 		this->densityCorrection = nullptr;
 	else
@@ -99,8 +109,22 @@ void DragDynamicEffector::updateDragDir(){
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-	this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-	this->v_hat_B = this->v_B / this->v_B.norm();
+    Eigen::Vector3d vRel_N = this->hubVelocity->getState();  // Initializing vRel_N = v_N
+
+    if (this->useAtmosphereRelativeVelocity && this->hubPosition != nullptr) {
+        Eigen::Vector3d r_N = this->hubPosition->getState();
+        Eigen::Vector3d vAtmo_N = this->planetOmega_N.cross(r_N);
+        vRel_N -= vAtmo_N;
+    }
+
+    this->v_B = dcm_BN * vRel_N;
+
+    double vNorm = this->v_B.norm();
+    if (vNorm > 1e-12) {
+        this->v_hat_B = this->v_B / vNorm;
+    } else {
+        this->v_hat_B.setZero();
+    }
 
 	return;
 }
@@ -126,7 +150,12 @@ void DragDynamicEffector::cannonballDrag(){
   	this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->getDensity() * (-1.0)*this->v_hat_B;
+	double vMag = this->v_B.norm();
+	if (vMag <= 1e-12) {
+		return;
+	}
+
+  	this->forceExternal_B = 0.5 * this->coreParams.dragCoeff * pow(vMag, 2.0) * this->coreParams.projectedArea * this->getDensity() * (-1.0)*this->v_hat_B;
   	this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 
   	return;

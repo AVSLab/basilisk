@@ -1,0 +1,1 @@
+- Added optional configurable atmosphere-relative velocity computation to ``dragDynamicEffector`` for improved drag modeling in rotating planetary atmosphere.
