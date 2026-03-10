@@ -60,6 +60,10 @@ public:
     void cannonballDrag();
     void updateDragDir();
     double getDensity();
+    void setUseAtmosphereRelativeVelocity(bool useRelVel);
+    bool getUseAtmosphereRelativeVelocity() const;
+    void setPlanetOmega_N(const Eigen::Vector3d& omega);
+    Eigen::Vector3d getPlanetOmega_N() const;
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
@@ -72,12 +76,12 @@ public:
     Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
     BSKLogger bskLogger;                                   //!< -- BSK Logging
-    Eigen::Vector3d planetOmega_N;                         //!< planetary rotation vector expressed in inertial frame
-    bool useAtmosphereRelativeVelocity;                    //!< enable velocity relative to rotating atmosphere
 
 private:
     AtmoPropsMsgPayload atmoInData;
     StateData* hubPosition = nullptr;
+    bool useAtmosphereRelativeVelocity;
+    Eigen::Vector3d planetOmega_N;
 
 };
 
