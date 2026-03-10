@@ -26,7 +26,7 @@ jobs:
       - name: Build Basilisk
         uses: ./.github/actions/build
         with:
-          python-version: 3.13
+          python-version: 3.14
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
       - name: Build docs
         uses: ./.github/actions/docs
