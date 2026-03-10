@@ -68,8 +68,8 @@ Example setup:
     drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
 
     # Enable atmosphere-relative velocity
-    drag.useAtmosphereRelativeVelocity = True
-    drag.planetOmega_N = [0.0, 0.0, 7.2921159e-5]
+    drag.setUseAtmosphereRelativeVelocity(True)
+    drag.setPlanetOmega_N([0.0, 0.0, 7.2921159e-5])
 
     scObject.addDynamicEffector(drag)
 

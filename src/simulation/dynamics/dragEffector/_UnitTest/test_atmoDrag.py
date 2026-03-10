@@ -127,9 +127,9 @@ def setup_basic_drag_sim(useAtmosphereRelativeVelocity=False, planetOmega=None,
     dragEff.coreParams.projectedArea = projArea
     dragEff.coreParams.dragCoeff = dragCoeff
     dragEff.coreParams.comOffset = [1., 0., 0.]
-    dragEff.useAtmosphereRelativeVelocity = useAtmosphereRelativeVelocity
+    dragEff.setUseAtmosphereRelativeVelocity(useAtmosphereRelativeVelocity)
     if planetOmega is not None:
-        dragEff.planetOmega_N = planetOmega
+        dragEff.setPlanetOmega_N(planetOmega)
 
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
@@ -292,7 +292,7 @@ def test_dragAtmosphereRelativeVelocityResetGuardPosition():
 
     dragEff = dragDynamicEffector.DragDynamicEffector()
     dragEff.ModelTag = "DragEff"
-    dragEff.useAtmosphereRelativeVelocity = True
+    dragEff.setUseAtmosphereRelativeVelocity(True)
     dragEff.coreParams.projectedArea = 10.0
     dragEff.coreParams.dragCoeff = 2.2
 

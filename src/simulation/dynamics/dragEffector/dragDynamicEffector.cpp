@@ -182,3 +182,43 @@ void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 	ReadInputs();
 	return;
 }
+
+/*!
+ * @brief Enables or disables the use of atmosphere-relative velocity for drag computation.
+ * When enabled, the drag force is computed using v_rel = v_sc - (omega_planet x r_sc).
+ * Requires hub position state to be available.
+ * @param useRelVel  true to use atmosphere-relative velocity, false to use inertial velocity
+ */
+void DragDynamicEffector::setUseAtmosphereRelativeVelocity(bool useRelVel)
+{
+    this->useAtmosphereRelativeVelocity = useRelVel;
+}
+
+/*!
+ * @brief Returns whether atmosphere-relative velocity is used in drag computation.
+ * @return true if atmosphere-relative velocity is enabled
+ */
+bool DragDynamicEffector::getUseAtmosphereRelativeVelocity() const
+{
+    return this->useAtmosphereRelativeVelocity;
+}
+
+/*!
+ * @brief Sets the planetary rotation vector expressed in the inertial frame.
+ * Used to compute the atmosphere velocity when useAtmosphereRelativeVelocity is enabled.
+ * For Earth, the default is taken from OMEGA_EARTH in astroConstants.h: [0, 0, 7.2921159e-5] rad/s.
+ * @param omega  Planetary rotation vector [rad/s] in inertial frame N
+ */
+void DragDynamicEffector::setPlanetOmega_N(const Eigen::Vector3d& omega)
+{
+    this->planetOmega_N = omega;
+}
+
+/*!
+ * @brief Returns the planetary rotation vector expressed in the inertial frame.
+ * @return omega_planet [rad/s] in inertial frame N
+ */
+Eigen::Vector3d DragDynamicEffector::getPlanetOmega_N() const
+{
+    return this->planetOmega_N;
+}
