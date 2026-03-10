@@ -140,6 +140,35 @@ similar amount of time to compile the messaging related files.  However, after m
 only this Basilisk module will need to be compiled and the compile times are drastically reduced.
 
 
+Speeding Up Builds with ``sccache``
+------------------------------------
+`sccache <https://github.com/mozilla/sccache>`__ is a compiler cache that caches individual C++ object
+files by content hash.  When source files have not changed, sccache returns the cached object instead of
+invoking the compiler, which can dramatically reduce clean-build times.
+
+Install sccache with your system package manager, for example on macOS::
+
+    brew install sccache
+
+Then set the following environment variables before building::
+
+    export CMAKE_C_COMPILER_LAUNCHER=sccache
+    export CMAKE_CXX_COMPILER_LAUNCHER=sccache
+
+With these set, any build invocation (``python3 conanfile.py``, ``pip install -e .``, etc.) will
+automatically use sccache.  A warm cache reduces a full rebuild to only the linking step plus any
+files that actually changed.
+
+To inspect cache statistics after a build::
+
+    sccache --show-stats
+
+.. note::
+
+    sccache is also enabled automatically in CI via ``CMAKE_C/CXX_COMPILER_LAUNCHER`` environment
+    variables set by the GitHub Actions build workflow.
+
+
 Running Project Tests
 ---------------------
 
