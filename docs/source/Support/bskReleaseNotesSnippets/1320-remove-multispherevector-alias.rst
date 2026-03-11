@@ -1,0 +1,1 @@
+- Removed deprecated ``vizInterface.MultiSphereVector`` support; use ``vizInterface.MultiShapeVector``.
