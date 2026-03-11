@@ -303,6 +303,213 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
         np.testing.assert_allclose(dragDataForce_B[ind,1:4], [0, 0, 0], atol = 1e-11)
         np.testing.assert_allclose(dragTorqueData[ind,1:4], [0, 0, 0], atol = 1e-11)
 
+def checkFacetDragForceRel(dens, area, coeff, facet_dir, sigma_BN, inertial_vel, pos, planetOmega):
+    """Reference facet drag force using atmosphere-relative velocity."""
+    dcm = rbk.MRP2C(sigma_BN)
+    vAtmo = np.cross(planetOmega, pos)
+    vRel = inertial_vel - vAtmo
+    vMag = np.linalg.norm(vRel)
+    if vMag <= 1e-12:
+        return np.zeros(3)
+    vRel_B = dcm.dot(vRel)
+    v_hat_B = vRel_B / vMag
+    projArea = area * facet_dir.dot(v_hat_B)
+    if projArea > 0:
+        return -0.5 * dens * projArea * coeff * vMag**2.0 * v_hat_B
+    return np.zeros(3)
+
+
+def setup_basic_facet_drag_sim(scAreas, scCoeff, B_normals, B_locations,
+                                useAtmosphereRelativeVelocity=False,
+                                planetOmega=None, rN=None, vN=None, sigmaBN=None):
+    """Create a minimal facet drag simulation and return (scSim, newDrag, dataLog, atmoLog, dragLog)."""
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+    simulationTimeStep = macros.sec2nano(5.0)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
+    newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.baseDensity = 1.217
+    newAtmo.scaleHeight = 8500.0
+    newAtmo.planetRadius = 6371.0 * 1000.0
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
+
+    newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+    newDrag.ModelTag = "FacetDrag"
+    newDrag.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
+    newDrag.setUseAtmosphereRelativeVelocity(useAtmosphereRelativeVelocity)
+    if planetOmega is not None:
+        newDrag.setPlanetOmega_N(planetOmega)
+
+    for i in range(len(scAreas)):
+        newDrag.addFacet(scAreas[i], scCoeff[i], B_normals[i], B_locations[i])
+
+    scObject.addDynamicEffector(newDrag)
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+
+    if rN is None:
+        rN = np.array([6371e3 + 200e3, 0.0, 0.0])
+    if vN is None:
+        vN = np.array([0.0, 7.788e3, 0.0])
+    if sigmaBN is None:
+        sigmaBN = np.array([0.0, 0.0, 0.0])
+
+    scObject.hub.r_CN_NInit = rN
+    scObject.hub.v_CN_NInit = vN
+    scObject.hub.sigma_BNInit = sigmaBN
+
+    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, newAtmo)
+    scSim.AddModelToTask(simTaskName, newDrag)
+
+    dataLog = scObject.scStateOutMsg.recorder()
+    atmoLog = newAtmo.envOutMsgs[0].recorder()
+    dragLog = newDrag.logger(["forceExternal_B", "torqueExternalPntB_B"])
+    scSim.AddModelToTask(simTaskName, dataLog)
+    scSim.AddModelToTask(simTaskName, atmoLog)
+    scSim.AddModelToTask(simTaskName, dragLog)
+
+    return scSim, newDrag, dataLog, atmoLog, dragLog
+
+
+def test_facetDragAtmosphereRelativeVelocityDisabled():
+    """Verify facet drag nominal behavior is unchanged when useAtmosphereRelativeVelocity is False."""
+    scAreas = [1.0, 1.0]
+    scCoeff = [2.0, 2.0]
+    B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
+    B_locations = [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]
+    planetOmega = np.array([0.0, 0.0, 7.2921159e-5])
+    rN = np.array([6371e3 + 200e3, 0.0, 0.0])
+    vN = np.array([0.0, 7788.0, 0.0])
+    sigmaBN = np.array([0.0, 0.0, 0.0])
+
+    scSim, _, dataLog, atmoLog, dragLog = setup_basic_facet_drag_sim(
+        scAreas, scCoeff, B_normals, B_locations,
+        useAtmosphereRelativeVelocity=False,
+        planetOmega=planetOmega, rN=rN, vN=vN, sigmaBN=sigmaBN
+    )
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(5.0))
+    scSim.ExecuteSimulation()
+
+    velData = dataLog.v_BN_N
+    attData = dataLog.sigma_BN
+    densData = atmoLog.neutralDensity
+    dragForce = dragLog.forceExternal_B
+
+    def checkFacetDragForce(dens, area, coeff, facet_dir, sigma_BN, inertial_vel):
+        dcm = rbk.MRP2C(sigma_BN)
+        vMag = np.linalg.norm(inertial_vel)
+        v_hat_B = dcm.dot(inertial_vel) / vMag
+        projArea = area * facet_dir.dot(v_hat_B)
+        if projArea > 0:
+            return -0.5 * dens * projArea * coeff * vMag**2.0 * v_hat_B
+        return np.zeros(3)
+
+    refForce = np.zeros(3)
+    for i in range(len(scAreas)):
+        refForce += checkFacetDragForce(densData[-1], scAreas[i], scCoeff[i], B_normals[i], attData[-1], velData[-1])
+
+    np.testing.assert_allclose(dragForce[-1], refForce, atol=1e-6)
+
+
+def test_facetDragAtmosphereRelativeVelocityEnabled():
+    """Verify facet drag uses v_rel = v_sc - omega x r when useAtmosphereRelativeVelocity is True."""
+    scAreas = [1.0, 1.0]
+    scCoeff = [2.0, 2.0]
+    B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
+    B_locations = [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]
+    planetOmega = np.array([0.0, 0.0, 7.2921159e-5])
+    rN = np.array([6371e3 + 200e3, 0.0, 0.0])
+    vN = np.array([0.0, 7788.0, 0.0])
+    sigmaBN = np.array([0.0, 0.0, 0.0])
+
+    scSim, _, dataLog, atmoLog, dragLog = setup_basic_facet_drag_sim(
+        scAreas, scCoeff, B_normals, B_locations,
+        useAtmosphereRelativeVelocity=True,
+        planetOmega=planetOmega, rN=rN, vN=vN, sigmaBN=sigmaBN
+    )
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(5.0))
+    scSim.ExecuteSimulation()
+
+    posData = dataLog.r_BN_N
+    velData = dataLog.v_BN_N
+    attData = dataLog.sigma_BN
+    densData = atmoLog.neutralDensity
+    dragForce = dragLog.forceExternal_B
+
+    refForce = np.zeros(3)
+    for i in range(len(scAreas)):
+        refForce += checkFacetDragForceRel(
+            densData[-1], scAreas[i], scCoeff[i], B_normals[i],
+            attData[-1], velData[-1], posData[-1], planetOmega
+        )
+
+    np.testing.assert_allclose(dragForce[-1], refForce, atol=1e-6)
+
+
+def test_facetDragAtmosphereRelativeVelocityNearZero():
+    """Verify near-zero relative velocity does not produce invalid normalization in facet drag."""
+    scAreas = [1.0, 1.0]
+    scCoeff = [2.0, 2.0]
+    B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
+    B_locations = [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]
+    planetOmega = np.array([0.0, 0.0, 7.2921159e-5])
+    rN = np.array([6371e3 + 200e3, 0.0, 0.0])
+    vAtmo = np.cross(planetOmega, rN)
+    vN = vAtmo + np.array([1e-15, -1e-15, 1e-15])
+    sigmaBN = np.array([0.0, 0.0, 0.0])
+
+    scSim, _, _, _, dragLog = setup_basic_facet_drag_sim(
+        scAreas, scCoeff, B_normals, B_locations,
+        useAtmosphereRelativeVelocity=True,
+        planetOmega=planetOmega, rN=rN, vN=vN, sigmaBN=sigmaBN
+    )
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(5.0))
+    scSim.ExecuteSimulation()
+
+    dragForce = dragLog.forceExternal_B[-1]
+
+    assert np.all(np.isfinite(dragForce))
+    assert np.linalg.norm(dragForce) < 1e-20
+
+
+def test_facetDragAtmosphereRelativeVelocityResetGuardPosition():
+    """Verify Reset emits BSK_ERROR when relative velocity is enabled without a valid position state."""
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, macros.sec2nano(1.0)))
+
+    newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+    newDrag.ModelTag = "FacetDrag"
+    newDrag.setUseAtmosphereRelativeVelocity(True)
+    newDrag.addFacet(1.0, 2.0, np.array([1, 0, 0]), np.array([0.1, 0, 0]))
+
+    # no spacecraft attached, so hub position is never linked
+    scSim.AddModelToTask(simTaskName, newDrag)
+
+    with pytest.raises(Exception):
+        scSim.InitializeSimulation()
+
+
 if __name__=="__main__":
     scAreas = [1.0, 1.0]
     scCoeff = np.array([2.0, 2.0])
@@ -310,3 +517,7 @@ if __name__=="__main__":
     B_locations = [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]
     test_DragCalculation(scAreas, scCoeff, B_normals, B_locations)
     test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations)
+    test_facetDragAtmosphereRelativeVelocityDisabled()
+    test_facetDragAtmosphereRelativeVelocityEnabled()
+    test_facetDragAtmosphereRelativeVelocityNearZero()
+    test_facetDragAtmosphereRelativeVelocityResetGuardPosition()

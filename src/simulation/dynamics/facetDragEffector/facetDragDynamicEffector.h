@@ -32,6 +32,7 @@
 
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/astroConstants.h"
 
 
 
@@ -60,6 +61,13 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
+    void setUseAtmosphereRelativeVelocity(bool useRelVel);
+    bool getUseAtmosphereRelativeVelocity() const;
+    void setPlanetOmega_N(const Eigen::Vector3d& omega);
+    Eigen::Vector3d getPlanetOmega_N() const;
+    double getDensity();
+    void setDensityCorrectionStateName(const std::string& name);
+    std::string getDensityCorrectionStateName() const;
 
 private:
 
@@ -77,7 +85,12 @@ public:
 private:
     AtmoPropsMsgPayload atmoInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
+    StateData* hubPosition = nullptr;
+    bool useAtmosphereRelativeVelocity;
+    Eigen::Vector3d planetOmega_N;
+    std::string densityCorrectionStateName = "";           //!< -- If not '', finds a state with this name to get ``densityCorrection``
+    StateData *densityCorrection;                          //!< -- Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
 
 };
 
-#endif 
+#endif

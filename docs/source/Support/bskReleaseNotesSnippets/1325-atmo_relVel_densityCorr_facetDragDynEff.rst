@@ -1,0 +1,2 @@
+- Added optional configurable atmosphere-relative velocity computation to ``facetDragDynamicEffector`` for improved drag modeling in rotating planetary atmosphere.
+- Added Density Correction State as in ``dragDynamicEffector``.
