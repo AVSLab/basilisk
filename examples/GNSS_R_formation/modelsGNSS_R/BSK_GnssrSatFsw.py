@@ -73,144 +73,119 @@ class StateMachineModule(sysModel.SysModel):
 
 
 class CascadedForceThrusterController(sysModel.SysModel):
-    """Map inertial force commands to attitude reference and single-thruster on-time.
+    """Low-bandwidth cascaded controller for a single body-fixed thruster (+X).
 
-    This module implements a low-bandwidth cascaded controller for an underactuated
-    spacecraft with one fixed body thruster axis (+X).
-
-    Outer loop:
-    - Read ``CmdForceInertialMsgPayload`` from the Hill-frame PD controller.
-    - Apply first-order low-pass filtering.
-    - Sample-and-hold the filtered force vector at a configurable period.
-
-    Inner loop:
-    - Generate ``AttRefMsgPayload`` so body +X points along the held force vector.
-    - Gate thruster firing until pointing is within a configurable angular threshold.
-    - Convert desired force magnitude into a duty on-time over one FSW step.
+    An outer loop filters and sample-and-holds the inertial force command.
+    An inner loop generates an attitude reference that points body +X along
+    the held force, gates thruster firing until the pointing error is small,
+    and converts the force magnitude into a duty-cycle on-time.
     """
 
     def __init__(self, fswModel):
         super().__init__()
         self.ModelTag = f"cascadedForceThrusterController_{fswModel.spacecraftIndex}"
         self.fswModel = fswModel
-        self.this.disown()  # Prevent memory leaks
+        self.this.disown()
 
-        # Low-bandwidth outer-loop settings.
-        self.outerLoopPeriodNanos = mc.min2nano(10.0)  # [ns]
-        self.forceFilterTimeConstant = 600.0  # [s]
+        # Outer-loop settings
+        self.outerLoopPeriodNanos = mc.min2nano(2.0)  # [ns]
+        self.forceFilterTimeConstant = 120.0  # [s]
 
-        # Pointing/fire gate settings.
+        # Pointing / fire gate
         self.minForceToPoint = 5.0e-7  # [N]
         self.maxPointingErrorForFiring = 10.0 * mc.D2R  # [rad]
 
-        # Thruster settings from dynamics configuration.
+        # Thruster
         self.maxThrusterForce = 0.02  # [N]
         self.numThrusters = 1
 
-        # Internal state.
-        self.filteredForceInertial = np.zeros(3)
-        self.heldForceInertial = np.zeros(3)
-        self.holdReferenceSigmaRN = np.zeros(3)
-        self.lastOuterUpdateNanos = 0
-        self.outerLoopInitialized = False
+        # Internal state
+        self._filteredForce = np.zeros(3)
+        self._heldForce = np.zeros(3)
+        self._heldSigmaRN = np.zeros(3)
+        self._lastOuterNanos = 0
+        self._outerInitialized = False
 
-        # Message interfaces are wired by the parent FSW model.
+        # Recorded on first UpdateState call (used by validation to filter data)
+        self.activeStartNanos = None
+
+        # Wired by SetCascadedForceThrusterController
         self.forceCmdInMsg = None
         self.attNavInMsg = None
         self.attRefGatewayMsg = None
         self.thrOnTimeGatewayMsg = None
 
-    @staticmethod
-    def _safe_unit(vec):
-        norm_val = np.linalg.norm(vec)
-        if norm_val < 1.0e-16:
-            return np.zeros(3), 0.0
-        return vec / norm_val, norm_val
-
-    @staticmethod
-    def _orthogonal_reference(axis_x):
-        ref_axis = np.array([0.0, 0.0, 1.0])
-        if np.abs(np.dot(ref_axis, axis_x)) > 0.95:
-            ref_axis = np.array([0.0, 1.0, 0.0])
-        return ref_axis
-
-    def _build_reference_sigma(self, desired_x_inertial):
-        """Build ``sigma_RN`` with body +X aligned to ``desired_x_inertial``."""
-        ref_axis = self._orthogonal_reference(desired_x_inertial)
-        y_axis, _ = self._safe_unit(np.cross(ref_axis, desired_x_inertial))
-        z_axis = np.cross(desired_x_inertial, y_axis)
-        c_rn = np.vstack((desired_x_inertial, y_axis, z_axis))
-        return np.array(rbk.C2MRP(c_rn))
-
-    def _write_attitude_reference(self):
-        att_ref_payload = messaging.AttRefMsgPayload()
-        att_ref_payload.sigma_RN = self.holdReferenceSigmaRN.tolist()
-        att_ref_payload.omega_RN_N = [0.0, 0.0, 0.0]
-        att_ref_payload.domega_RN_N = [0.0, 0.0, 0.0]
-        self.attRefGatewayMsg.write(att_ref_payload)
-
-    def _write_thruster_command(self, on_time_cmd):
-        thr_payload = messaging.THRArrayOnTimeCmdMsgPayload()
-        on_time_array = [0.0] * self.numThrusters
-        on_time_array[0] = float(on_time_cmd)
-        thr_payload.OnTimeRequest = on_time_array
-        self.thrOnTimeGatewayMsg.write(thr_payload)
-
+    # ------------------------------------------------------------------ #
+    #  Basilisk SysModel interface
+    # ------------------------------------------------------------------ #
     def Reset(self, currentSimNanos):
-        self.filteredForceInertial[:] = 0.0
-        self.heldForceInertial[:] = 0.0
-        self.holdReferenceSigmaRN[:] = 0.0
-        self.lastOuterUpdateNanos = int(currentSimNanos)
-        self.outerLoopInitialized = False
-        self._write_attitude_reference()
-        self._write_thruster_command(0.0)
+        self._filteredForce[:] = 0.0
+        self._heldForce[:] = 0.0
+        self._heldSigmaRN[:] = 0.0
+        self._lastOuterNanos = int(currentSimNanos)
+        self._outerInitialized = False
+        self.activeStartNanos = None
 
     def UpdateState(self, currentSimNanos):
-        if self.forceCmdInMsg is None or self.attNavInMsg is None:
-            return
-        if self.attRefGatewayMsg is None or self.thrOnTimeGatewayMsg is None:
-            return
-
-        # Inner-loop step duration equals the FSW task period.
-        dt_sec = self.fswModel.processTasksTimeStep * mc.NANO2SEC  # [s]
-
-        force_msg = self.forceCmdInMsg.read()
-        raw_force = np.array(force_msg.forceRequestInertial)
-
-        # First-order force filter: lower bandwidth than the attitude loop.
-        alpha = np.clip(dt_sec / self.forceFilterTimeConstant, 0.0, 1.0)
-        self.filteredForceInertial = (1.0 - alpha) * self.filteredForceInertial + alpha * raw_force
-
-        if (not self.outerLoopInitialized or
-                int(currentSimNanos) - self.lastOuterUpdateNanos >= self.outerLoopPeriodNanos):
-            self.heldForceInertial = self.filteredForceInertial.copy()
-            held_unit, held_norm = self._safe_unit(self.heldForceInertial)
-            if held_norm >= self.minForceToPoint:
-                self.holdReferenceSigmaRN = self._build_reference_sigma(held_unit)
-            self.lastOuterUpdateNanos = int(currentSimNanos)
-            self.outerLoopInitialized = True
-
-        self._write_attitude_reference()
-
-        # Fire only when +X axis alignment is inside the pointing gate.
-        att_nav = self.attNavInMsg.read()
-        c_bn = np.array(rbk.MRP2C(att_nav.sigma_BN))
-        body_x_inertial = c_bn.transpose().dot(np.array([1.0, 0.0, 0.0]))
-
-        desired_axis, desired_force_mag = self._safe_unit(self.heldForceInertial)
-        if desired_force_mag < self.minForceToPoint:
-            self._write_thruster_command(0.0)
+        if not all([self.forceCmdInMsg, self.attNavInMsg,
+                    self.attRefGatewayMsg, self.thrOnTimeGatewayMsg]):
             return
 
-        alignment_cos = np.dot(body_x_inertial, desired_axis)
-        min_alignment_cos = np.cos(self.maxPointingErrorForFiring)
-        if alignment_cos < min_alignment_cos:
-            self._write_thruster_command(0.0)
-            return
+        if self.activeStartNanos is None:
+            self.activeStartNanos = int(currentSimNanos)
 
-        duty = np.clip(desired_force_mag / self.maxThrusterForce, 0.0, 1.0)
-        on_time_cmd = duty * dt_sec
-        self._write_thruster_command(on_time_cmd)
+        dt = self.fswModel.processTasksTimeStep * mc.NANO2SEC  # [s]
+
+        # --- Low-pass filter the inertial force command ---
+        raw = np.array(self.forceCmdInMsg.read().forceRequestInertial)
+        if not self._outerInitialized:
+            self._filteredForce = raw.copy()  # seed filter on first call
+        else:
+            alpha = min(dt / self.forceFilterTimeConstant, 1.0)
+            self._filteredForce += alpha * (raw - self._filteredForce)
+
+        # --- Outer-loop: sample-and-hold filtered force ---
+        if (not self._outerInitialized
+                or int(currentSimNanos) - self._lastOuterNanos >= self.outerLoopPeriodNanos):
+            self._heldForce = self._filteredForce.copy()
+            mag = np.linalg.norm(self._heldForce)
+            if mag >= self.minForceToPoint:
+                self._heldSigmaRN = self._force_to_sigma(self._heldForce / mag)
+            self._lastOuterNanos = int(currentSimNanos)
+            self._outerInitialized = True
+
+        # --- Publish attitude reference (every step, constant between holds) ---
+        attRef = messaging.AttRefMsgPayload()
+        attRef.sigma_RN = self._heldSigmaRN.tolist()
+        self.attRefGatewayMsg.write(attRef, currentSimNanos)
+
+        # --- Pointing gate & thruster command ---
+        heldMag = np.linalg.norm(self._heldForce)
+        onTime = 0.0  # [s]
+        if heldMag >= self.minForceToPoint:
+            cBN = np.array(rbk.MRP2C(self.attNavInMsg.read().sigma_BN))
+            cosErr = np.dot(cBN[0, :], self._heldForce / heldMag)
+            if cosErr >= np.cos(self.maxPointingErrorForFiring):
+                onTime = min(heldMag / self.maxThrusterForce, 1.0) * dt
+
+        thrCmd = messaging.THRArrayOnTimeCmdMsgPayload()
+        thrCmd.OnTimeRequest = [onTime] + [0.0] * (self.numThrusters - 1)
+        self.thrOnTimeGatewayMsg.write(thrCmd, currentSimNanos)
+
+    # ------------------------------------------------------------------ #
+    #  Internal helpers
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _force_to_sigma(unit_force):
+        """Return MRP ``sigma_RN`` with reference body +X along *unit_force*."""
+        ref = np.array([0.0, 0.0, 1.0])
+        if abs(np.dot(ref, unit_force)) > 0.95:
+            ref = np.array([0.0, 1.0, 0.0])
+        y = np.cross(ref, unit_force)
+        y /= np.linalg.norm(y)
+        z = np.cross(unit_force, y)
+        dcm = np.vstack((unit_force, y, z))
+        return np.array(rbk.C2MRP(dcm))
 
 ########################################################
 #####             Flight Software                  #####
@@ -396,8 +371,8 @@ class BSKFswModels:
         self.simBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.mrpFeedbackRWs, 7)
         self.simBase.AddModelToTask("mrpFeedbackRWsTask" + str(spacecraftIndex), self.rwMotorTorque, 6)
 
+        self.simBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.tamComm, 6)
         self.simBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.mtbMomentumManagement, 5)
-        self.simBase.AddModelToTask("rwMomentumDumpTask" + str(spacecraftIndex), self.tamComm, 5)
 
         self.simBase.AddModelToTask("dataTransferTask" + str(spacecraftIndex), self.svalbardStationPoint, 9)
 
@@ -703,6 +678,7 @@ class BSKFswModels:
                 self.enableTask("cascadedThrusterTask" + str(spacecraftIndex)),
                 self.enableTask("trackingErrorTask" + str(spacecraftIndex)),
                 self.enableTask("mrpFeedbackRWsTask" + str(spacecraftIndex)),
+                self.enableTask("rwMomentumDumpTask" + str(spacecraftIndex)),
                 self.enableTask("stateMachineTask" + str(spacecraftIndex)),
                 setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'ON'),
                 setattr(self.FSWModels[spacecraftIndex], 'cascadedControllerActive', True),
@@ -977,16 +953,18 @@ class BSKFswModels:
             self.simBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg
         )
         self.cascadedForceThrusterController.attRefGatewayMsg = self.attRefMsg
-        self.cascadedForceThrusterController.thrOnTimeGatewayMsg = self.spacecraftReconfig.onTimeOutMsg
+        self.cascadedForceThrusterController.thrOnTimeGatewayMsg = self.thrOnTimeCmdMsg
         self.cascadedForceThrusterController.numThrusters = self.simBase.DynModels[self.spacecraftIndex].numThr
 
         # Match the scenario EPSS-C2 thruster configuration in dynamics.
         self.cascadedForceThrusterController.maxThrusterForce = 0.02  # [N]
 
-        # Keep outer-loop updates slow so attitude slews can settle before the next
-        # force-direction update from the translational controller.
-        self.cascadedForceThrusterController.outerLoopPeriodNanos = mc.min2nano(10.0)  # [ns]
-        self.cascadedForceThrusterController.forceFilterTimeConstant = 600.0  # [s]
+        # Outer-loop period and filter time constant must be short enough that the
+        # additional phase lag at the Hill PD gain-crossover frequency (~2.2e-3 rad/s)
+        # does not erode the 65 deg phase margin of the PD loop.  At tau = T = 120 s
+        # the added lag is ~22 deg, leaving ~43 deg margin (stable, well-damped).
+        self.cascadedForceThrusterController.outerLoopPeriodNanos = mc.min2nano(2.0)  # [ns]
+        self.cascadedForceThrusterController.forceFilterTimeConstant = 120.0  # [s]
         self.cascadedForceThrusterController.maxPointingErrorForFiring = 10.0 * mc.D2R  # [rad]
 
     def setupScanningInstrumentControler(self):
@@ -1325,6 +1303,13 @@ class BSKFswModels:
         self.attRefMsg = messaging.AttRefMsg_C()
         self.attGuidMsg = messaging.AttGuidMsg_C()
 
+        # Thruster on-time gateway: both spacecraftReconfig and the cascaded
+        # controller redirect their outputs here via _addAuthor so the thruster
+        # dynamics always reads from a single source.
+        self.thrOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg_C()
+        messaging.THRArrayOnTimeCmdMsg_C_addAuthor(
+            self.spacecraftReconfig.onTimeOutMsg, self.thrOnTimeCmdMsg)
+
         # Create antenna state message BEFORE zeroGateWayMsgs (default OFF)
         antennaStateData = messaging.AntennaStateMsgPayload()
         antennaStateData.antennaState = simpleAntenna.ANTENNA_OFF
@@ -1336,7 +1321,7 @@ class BSKFswModels:
         self.simBase.DynModels[self.spacecraftIndex].rwStateEffector.rwMotorCmdInMsg.subscribeTo(
             self.rwMotorTorque.rwMotorTorqueOutMsg)
         self.simBase.DynModels[self.spacecraftIndex].thrusterStateEffector.cmdsInMsg.subscribeTo(
-            self.spacecraftReconfig.onTimeOutMsg) #                             TODO what is the "on Time Out Msg"?
+            self.thrOnTimeCmdMsg)
         self.simBase.DynModels[self.spacecraftIndex].mtbEff.mtbCmdInMsg.subscribeTo(
             self.mtbMomentumManagement.mtbCmdOutMsg)
         # Connect antenna state message to dynamics
@@ -1350,7 +1335,7 @@ class BSKFswModels:
 
         # Zero all actuator commands
         self.rwMotorTorque.rwMotorTorqueOutMsg.write(messaging.ArrayMotorTorqueMsgPayload())
-        self.spacecraftReconfig.onTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
+        self.thrOnTimeCmdMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
         self.mtbMomentumManagement.mtbCmdOutMsg.write(messaging.MTBCmdMsgPayload())
         # Zero the Hill-PD force output so stale commands are not applied
         # when switching away from pdStationKeeping mode.
