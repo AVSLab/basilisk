@@ -31,6 +31,7 @@
 %}
 %include "std_string.i"
 %include "swig_conly_data.i"
+%include "swig_eigen.i"
 
 // We add these helper functions on the Python side so that the module
 // itself doesn't depend on any MuJoCo imports.

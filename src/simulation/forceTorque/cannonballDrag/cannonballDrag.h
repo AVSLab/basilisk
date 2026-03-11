@@ -19,7 +19,9 @@
 #ifndef AERODYNAMIC_DRAG_H
 #define AERODYNAMIC_DRAG_H
 
+#include <Eigen/Dense>
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -94,6 +96,22 @@ public:
 
     /** @brief Logger */
     BSKLogger bskLogger;
+
+    /** @brief Enable or disable atmosphere-relative velocity for drag computation. */
+    void setUseAtmosphereRelativeVelocity(bool useRelVel);
+    /** @brief Returns whether atmosphere-relative velocity is enabled. */
+    bool getUseAtmosphereRelativeVelocity() const;
+    /**
+     * @brief Set the planetary rotation vector in the inertial frame [rad/s].
+     * Defaults to Earth's rotation rate. Used when useAtmosphereRelativeVelocity is enabled.
+     */
+    void setPlanetOmega_N(const Eigen::Vector3d& omega);
+    /** @brief Returns the planetary rotation vector in the inertial frame [rad/s]. */
+    Eigen::Vector3d getPlanetOmega_N() const;
+
+private:
+    bool useAtmosphereRelativeVelocity = false;
+    Eigen::Vector3d planetOmega_N{0.0, 0.0, OMEGA_EARTH};
 };
 
 

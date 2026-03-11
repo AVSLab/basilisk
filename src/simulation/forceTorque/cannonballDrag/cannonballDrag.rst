@@ -11,6 +11,13 @@ This module evaluates aerodynamic drag with force magnitude computed as
 
 where :math:`\rho` is the local neutral atmospheric density, :math:`v` is the magnitude of the relative flow velocity at the site, :math:`C_D` is the drag coefficient, and :math:`A` is the projected area. The drag force direction is opposite the relative velocity vector.
 
+By default, drag is computed using the inertial velocity :math:`\mathbf{v}_{SN}`. When the optional atmosphere-relative velocity mode is enabled via ``setUseAtmosphereRelativeVelocity(True)``, the module instead uses
+
+.. math::
+   \mathbf{v}_\text{rel} = \mathbf{v}_{SN} - \boldsymbol{\omega}_\text{planet} \times \mathbf{r}_{SN}
+
+where :math:`\boldsymbol{\omega}_\text{planet}` is the planetary rotation vector expressed in the inertial frame (defaults to Earth's rotation rate along the inertial :math:`\hat{z}` axis). This vector can be overridden via ``setPlanetOmega_N()``.
+
 The force is applied at a specified center-of-pressure location relative to the site frame origin, producing a torque given by
 
 .. math::
@@ -62,7 +69,7 @@ At each update step, the module performs the following operations:
 1. Reads the atmospheric density from ``atmoDensInMsg``.
 2. Reads the drag coefficient, projected area, and center-of-pressure location from ``dragGeometryInMsg``.
 3. Reads the site frame attitude and inertial velocity from ``referenceFrameStateInMsg``.
-4. Transforms the inertial velocity into the site frame using the provided attitude.
+4. Computes the velocity used for drag: if atmosphere-relative mode is enabled, subtracts :math:`\boldsymbol{\omega}_\text{planet} \times \mathbf{r}_{SN}` from the inertial velocity; otherwise uses the inertial velocity directly. Transforms the result into the site frame.
 5. Computes the drag force magnitude and direction in the site frame.
 6. Computes the resulting torque about the site frame origin.
 7. Publishes the force and torque through ``forceOutMsg`` and ``torqueOutMsg`` (and ``forceOutMsgC`` and ``torqueOutMsgC``).

@@ -128,10 +128,107 @@ def test_cannonballDrag():
     npt.assert_allclose(force_S, F_exp_S, rtol=0.0, atol=1e-12)
     npt.assert_allclose(torque_S, T_exp_S, rtol=0.0, atol=1e-12)
 
+def _runCannonballDragAtmoRelVel(useRelVel: bool):
+    """Helper that sets up and runs a single-step CannonballDrag test with or without
+    atmosphere-relative velocity and returns (force_S, torque_S, F_exp_S, T_exp_S)."""
+    dt = 1  # s
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("test")
+    dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
+
+    density = 2.0  # kg/m^3
+    cd = 1.5
+    area = 2.75  # m^2
+    r_CP_S = [1.0, 0.0, 0.0]  # m
+
+    v_SN_N = np.array([0.0, 0.5, 0.0])  # m/s
+    r_SN_N = np.array([7e6, 0.0, 0.0])  # m  (only used when useRelVel=True)
+    sigma_SN = [0.1, 0.2, 0.3]
+    omega_planet = np.array([0.0, 0.0, orbitalMotion.OMEGA_EARTH])
+
+    atmoMsg = messaging.AtmoPropsMsg()
+    atmoMsg.write(messaging.AtmoPropsMsgPayload(neutralDensity=density))
+
+    dragGeometryMsg = messaging.DragGeometryMsg()
+    dragGeometryMsg.write(messaging.DragGeometryMsgPayload(
+        projectedArea=area,
+        dragCoeff=cd,
+        r_CP_S=r_CP_S
+    ))
+
+    siteFrameMsg = messaging.SCStatesMsg()
+    siteFrameMsg.write(messaging.SCStatesMsgPayload(
+        sigma_BN=sigma_SN,
+        v_BN_N=v_SN_N.tolist(),
+        r_BN_N=r_SN_N.tolist()
+    ))
+
+    drag = cannonballDrag.CannonballDrag()
+    drag.dragGeometryInMsg.subscribeTo(dragGeometryMsg)
+    drag.atmoDensInMsg.subscribeTo(atmoMsg)
+    drag.referenceFrameStateInMsg.subscribeTo(siteFrameMsg)
+    drag.setUseAtmosphereRelativeVelocity(useRelVel)
+    if useRelVel:
+        drag.setPlanetOmega_N(omega_planet)
+    scSim.AddModelToTask("test", drag)
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(dt))
+    scSim.ExecuteSimulation()
+
+    force_S = np.array(drag.forceOutMsg.read().force_S)
+    torque_S = np.array(drag.torqueOutMsg.read().torque_S)
+
+    # Expected
+    if useRelVel:
+        v_eff_N = v_SN_N - np.cross(omega_planet, r_SN_N)
+    else:
+        v_eff_N = v_SN_N
+
+    C_BN = np.array(rbk.MRP2C(sigma_SN))
+    v_eff_S = C_BN.dot(v_eff_N)
+    v_mag = np.linalg.norm(v_eff_N)
+    if v_mag <= 1e-12:
+        F_exp_S = np.zeros(3)
+        T_exp_S = np.zeros(3)
+    else:
+        F_mag = 0.5 * density * v_mag**2 * cd * area
+        v_hat_S = v_eff_S / np.linalg.norm(v_eff_S)
+        F_exp_S = -F_mag * v_hat_S
+        T_exp_S = np.cross(r_CP_S, F_exp_S)
+
+    return force_S, torque_S, F_exp_S, T_exp_S
+
+
+def test_cannonballDragAtmoRelVelDisabled():
+    """
+    Verify that when ``useAtmosphereRelativeVelocity`` is False (default), the module
+    computes drag using the inertial velocity and the result matches the analytical
+    cannonball drag formula.
+    """
+    force_S, torque_S, F_exp_S, T_exp_S = _runCannonballDragAtmoRelVel(False)
+    npt.assert_allclose(force_S, F_exp_S, rtol=1e-14, atol=1e-10)
+    npt.assert_allclose(torque_S, T_exp_S, rtol=1e-14, atol=1e-10)
+
+
+def test_cannonballDragAtmoRelVelEnabled():
+    """
+    Verify that when ``useAtmosphereRelativeVelocity`` is True, the module subtracts
+    the planetary rotation contribution ``omega x r`` from the inertial velocity before
+    computing drag, and the result matches the analytical atmosphere-relative drag formula.
+    """
+    force_S, torque_S, F_exp_S, T_exp_S = _runCannonballDragAtmoRelVel(True)
+    npt.assert_allclose(force_S, F_exp_S, rtol=1e-14, atol=1e-10)
+    npt.assert_allclose(torque_S, T_exp_S, rtol=1e-14, atol=1e-10)
+
+
 @pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+@pytest.mark.parametrize("useRelVel", [False, True])
 @pytest.mark.parametrize("orbitCase", ["LPO", "LTO"])
 @pytest.mark.parametrize("planetCase", ["earth", "mars"])
-def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "mars"], showPlots = False):
+def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "mars"],
+               useRelVel: bool, showPlots = False):
     """
     Integration test for ``CannonballDrag`` in an orbital simulation.
 
@@ -152,12 +249,17 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
     density, and drag force history when ``showPlots`` is enabled.
     """
 
-    def cannonballDragBFrame(dragCoeff, density, area, velInertial, sigmaBN):
-        speed = np.linalg.norm(velInertial)
+    def cannonballDragBFrame(dragCoeff, density, area, velInertial, sigmaBN,
+                              posInertial=None, omegaPlanet=None):
+        if useRelVel and posInertial is not None and omegaPlanet is not None:
+            velEff = velInertial - np.cross(omegaPlanet, posInertial)
+        else:
+            velEff = velInertial
+        speed = np.linalg.norm(velEff)
         if speed <= 0.0:
             return np.zeros(3)
 
-        dragDirInertial = -velInertial / speed
+        dragDirInertial = -velEff / speed
         dcmBN = rbk.MRP2C(sigmaBN)
         dragDirBody = dcmBN.dot(dragDirInertial)
 
@@ -232,8 +334,13 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
         )
     )
 
+    omegaPlanet = np.array([0.0, 0.0, 7.292115e-5])  # Earth rotation rate [rad/s]
+
     dragModel = cannonballDrag.CannonballDrag()
     dragModel.ModelTag = "drag"
+    dragModel.setUseAtmosphereRelativeVelocity(useRelVel)
+    if useRelVel:
+        dragModel.setPlanetOmega_N(omegaPlanet)
     scene.AddModelToDynamicsTask(dragModel)
     forceTorqueDrag: mujoco.MJForceTorqueActuator = dragModel.applyTo(mjBody)
     dragModel.atmoDensInMsg.subscribeTo(atmoModel.envOutMsgs[0])
@@ -294,6 +401,8 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
             area=projectedArea,
             velInertial=velocityData[timeIndex, :],
             sigmaBN=attitudeData[timeIndex, :],
+            posInertial=positionData[timeIndex, :],
+            omegaPlanet=omegaPlanet,
         )
 
     npt.assert_allclose(

@@ -18,7 +18,6 @@
  */
 #include "cannonballDrag.h"
 
-#include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 
 void
@@ -44,8 +43,13 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
     sigma_SN = Eigen::Map<const Eigen::Vector3d>(siteStatePayload.sigma_BN);
     const Eigen::Matrix3d dcm_SN = sigma_SN.toRotationMatrix().transpose();
 
-    // inertial velocity of the center of the S frame, expressed in the S frame
-    const auto v_S = dcm_SN*Eigen::Map<const Eigen::Vector3d>(siteStatePayload.v_BN_N);
+    // velocity used for drag: inertial or atmosphere-relative
+    Eigen::Vector3d vRel_N = Eigen::Map<const Eigen::Vector3d>(siteStatePayload.v_BN_N);
+    if (this->useAtmosphereRelativeVelocity) {
+        const Eigen::Map<const Eigen::Vector3d> r_N(siteStatePayload.r_BN_N);
+        vRel_N -= this->planetOmega_N.cross(r_N);
+    }
+    const auto v_S = dcm_SN * vRel_N;
     const auto v = v_S.norm();
 
     const Eigen::Vector3d force_S = -0.5 * cd * area * v * density * v_S;
@@ -63,6 +67,44 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
     TorqueAtSiteMsg_C_write(&torquePayload, &this->torqueOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
+/*!
+ * @brief Enables or disables the use of atmosphere-relative velocity for drag computation.
+ * When enabled, the drag force is computed using v_rel = v_sc - (omega_planet x r_sc).
+ * @param useRelVel  true to use atmosphere-relative velocity, false to use inertial velocity
+ */
+void CannonballDrag::setUseAtmosphereRelativeVelocity(bool useRelVel)
+{
+    this->useAtmosphereRelativeVelocity = useRelVel;
+}
+
+/*!
+ * @brief Returns whether atmosphere-relative velocity is used in drag computation.
+ * @return true if atmosphere-relative velocity is enabled
+ */
+bool CannonballDrag::getUseAtmosphereRelativeVelocity() const
+{
+    return this->useAtmosphereRelativeVelocity;
+}
+
+/*!
+ * @brief Sets the planetary rotation vector expressed in the inertial frame.
+ * Used to compute the atmosphere velocity when useAtmosphereRelativeVelocity is enabled.
+ * For Earth, the default is taken from OMEGA_EARTH in astroConstants.h: [0, 0, 7.2921159e-5] rad/s.
+ * @param omega  Planetary rotation vector [rad/s] in inertial frame N
+ */
+void CannonballDrag::setPlanetOmega_N(const Eigen::Vector3d& omega)
+{
+    this->planetOmega_N = omega;
+}
+
+/*!
+ * @brief Returns the planetary rotation vector expressed in the inertial frame.
+ * @return omega_planet [rad/s] in inertial frame N
+ */
+Eigen::Vector3d CannonballDrag::getPlanetOmega_N() const
+{
+    return this->planetOmega_N;
+}
 
 void CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
 {
