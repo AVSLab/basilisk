@@ -120,12 +120,6 @@ mod.MultiSphereInfo = _DeprecatedWrapper(
     targetName="MultiShapeInfo",
     removalDate="2026/03/07"
 )
-mod.MultiSphereVector = _DeprecatedWrapper(
-    mod.MultiShapeVector,
-    aliasName="MultiSphereVector",
-    targetName="MultiShapeVector",
-    removalDate="2026/03/07"
-)
 
 # when removing, also remove line 1649 that sets settings explicitly in src/utilities/vizSupport.py
 mod.VizSettings = _DeprecatedWrapper(

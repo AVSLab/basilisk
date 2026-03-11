@@ -67,8 +67,6 @@ Illustration of Simulation Results
 #
 
 import os
-import warnings
-
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.architecture import messaging
@@ -76,7 +74,7 @@ from Basilisk.fswAlgorithms import etSphericalControl
 from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport, deprecated)
+                                unitTestSupport, vizSupport)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -326,12 +324,6 @@ def run(show_plots):
             msmDebris.neutralOpacity = 50  # opacity value between 0 and 255
             msmDebrisList.append(msmDebris)
         msmInfoDebris.msmList = vizInterface.MultiShapeVector(msmDebrisList)
-
-        # Check MultiSphere deprecation
-        warnings.simplefilter("ignore", deprecated.BSKDeprecationWarning)
-        vizInterface.MultiSphere().radius = 0
-        vizInterface.MultiSphereInfo()
-        vizInterface.MultiSphereVector()
 
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectServicer, scObjectDebris]
                                                   # , saveFile=fileName
