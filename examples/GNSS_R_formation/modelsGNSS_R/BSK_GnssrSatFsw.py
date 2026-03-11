@@ -40,6 +40,7 @@ from Basilisk.simulation import simpleAntenna
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 #############################################################
 ###############        HELPER FUNCTIONS       ###############
@@ -69,6 +70,147 @@ class StateMachineModule(sysModel.SysModel):
         # Run the state machine every timestep
         if self.fswModel.stateMachine:
             self.fswModel.setModeRequest(currentSimNanos=currentSimNanos)
+
+
+class CascadedForceThrusterController(sysModel.SysModel):
+    """Map inertial force commands to attitude reference and single-thruster on-time.
+
+    This module implements a low-bandwidth cascaded controller for an underactuated
+    spacecraft with one fixed body thruster axis (+X).
+
+    Outer loop:
+    - Read ``CmdForceInertialMsgPayload`` from the Hill-frame PD controller.
+    - Apply first-order low-pass filtering.
+    - Sample-and-hold the filtered force vector at a configurable period.
+
+    Inner loop:
+    - Generate ``AttRefMsgPayload`` so body +X points along the held force vector.
+    - Gate thruster firing until pointing is within a configurable angular threshold.
+    - Convert desired force magnitude into a duty on-time over one FSW step.
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"cascadedForceThrusterController_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()  # Prevent memory leaks
+
+        # Low-bandwidth outer-loop settings.
+        self.outerLoopPeriodNanos = mc.min2nano(10.0)  # [ns]
+        self.forceFilterTimeConstant = 600.0  # [s]
+
+        # Pointing/fire gate settings.
+        self.minForceToPoint = 5.0e-7  # [N]
+        self.maxPointingErrorForFiring = 10.0 * mc.D2R  # [rad]
+
+        # Thruster settings from dynamics configuration.
+        self.maxThrusterForce = 0.02  # [N]
+        self.numThrusters = 1
+
+        # Internal state.
+        self.filteredForceInertial = np.zeros(3)
+        self.heldForceInertial = np.zeros(3)
+        self.holdReferenceSigmaRN = np.zeros(3)
+        self.lastOuterUpdateNanos = 0
+        self.outerLoopInitialized = False
+
+        # Message interfaces are wired by the parent FSW model.
+        self.forceCmdInMsg = None
+        self.attNavInMsg = None
+        self.attRefGatewayMsg = None
+        self.thrOnTimeGatewayMsg = None
+
+    @staticmethod
+    def _safe_unit(vec):
+        norm_val = np.linalg.norm(vec)
+        if norm_val < 1.0e-16:
+            return np.zeros(3), 0.0
+        return vec / norm_val, norm_val
+
+    @staticmethod
+    def _orthogonal_reference(axis_x):
+        ref_axis = np.array([0.0, 0.0, 1.0])
+        if np.abs(np.dot(ref_axis, axis_x)) > 0.95:
+            ref_axis = np.array([0.0, 1.0, 0.0])
+        return ref_axis
+
+    def _build_reference_sigma(self, desired_x_inertial):
+        """Build ``sigma_RN`` with body +X aligned to ``desired_x_inertial``."""
+        ref_axis = self._orthogonal_reference(desired_x_inertial)
+        y_axis, _ = self._safe_unit(np.cross(ref_axis, desired_x_inertial))
+        z_axis = np.cross(desired_x_inertial, y_axis)
+        c_rn = np.vstack((desired_x_inertial, y_axis, z_axis))
+        return np.array(rbk.C2MRP(c_rn))
+
+    def _write_attitude_reference(self):
+        att_ref_payload = messaging.AttRefMsgPayload()
+        att_ref_payload.sigma_RN = self.holdReferenceSigmaRN.tolist()
+        att_ref_payload.omega_RN_N = [0.0, 0.0, 0.0]
+        att_ref_payload.domega_RN_N = [0.0, 0.0, 0.0]
+        self.attRefGatewayMsg.write(att_ref_payload)
+
+    def _write_thruster_command(self, on_time_cmd):
+        thr_payload = messaging.THRArrayOnTimeCmdMsgPayload()
+        on_time_array = [0.0] * self.numThrusters
+        on_time_array[0] = float(on_time_cmd)
+        thr_payload.OnTimeRequest = on_time_array
+        self.thrOnTimeGatewayMsg.write(thr_payload)
+
+    def Reset(self, currentSimNanos):
+        self.filteredForceInertial[:] = 0.0
+        self.heldForceInertial[:] = 0.0
+        self.holdReferenceSigmaRN[:] = 0.0
+        self.lastOuterUpdateNanos = int(currentSimNanos)
+        self.outerLoopInitialized = False
+        self._write_attitude_reference()
+        self._write_thruster_command(0.0)
+
+    def UpdateState(self, currentSimNanos):
+        if self.forceCmdInMsg is None or self.attNavInMsg is None:
+            return
+        if self.attRefGatewayMsg is None or self.thrOnTimeGatewayMsg is None:
+            return
+
+        # Inner-loop step duration equals the FSW task period.
+        dt_sec = self.fswModel.processTasksTimeStep * mc.NANO2SEC  # [s]
+
+        force_msg = self.forceCmdInMsg.read()
+        raw_force = np.array(force_msg.forceRequestInertial)
+
+        # First-order force filter: lower bandwidth than the attitude loop.
+        alpha = np.clip(dt_sec / self.forceFilterTimeConstant, 0.0, 1.0)
+        self.filteredForceInertial = (1.0 - alpha) * self.filteredForceInertial + alpha * raw_force
+
+        if (not self.outerLoopInitialized or
+                int(currentSimNanos) - self.lastOuterUpdateNanos >= self.outerLoopPeriodNanos):
+            self.heldForceInertial = self.filteredForceInertial.copy()
+            held_unit, held_norm = self._safe_unit(self.heldForceInertial)
+            if held_norm >= self.minForceToPoint:
+                self.holdReferenceSigmaRN = self._build_reference_sigma(held_unit)
+            self.lastOuterUpdateNanos = int(currentSimNanos)
+            self.outerLoopInitialized = True
+
+        self._write_attitude_reference()
+
+        # Fire only when +X axis alignment is inside the pointing gate.
+        att_nav = self.attNavInMsg.read()
+        c_bn = np.array(rbk.MRP2C(att_nav.sigma_BN))
+        body_x_inertial = c_bn.transpose().dot(np.array([1.0, 0.0, 0.0]))
+
+        desired_axis, desired_force_mag = self._safe_unit(self.heldForceInertial)
+        if desired_force_mag < self.minForceToPoint:
+            self._write_thruster_command(0.0)
+            return
+
+        alignment_cos = np.dot(body_x_inertial, desired_axis)
+        min_alignment_cos = np.cos(self.maxPointingErrorForFiring)
+        if alignment_cos < min_alignment_cos:
+            self._write_thruster_command(0.0)
+            return
+
+        duty = np.clip(desired_force_mag / self.maxThrusterForce, 0.0, 1.0)
+        on_time_cmd = duty * dt_sec
+        self._write_thruster_command(on_time_cmd)
 
 ########################################################
 #####             Flight Software                  #####
@@ -103,6 +245,7 @@ class BSKFswModels:
         self.verboseMode = False
         self.barycenterChiefSwitched = False
         self.reconfigStableTimeNanos = 0
+        self.cascadedControllerActive = False
 
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = self.simBase.FSWProcessName[spacecraftIndex]
@@ -155,6 +298,10 @@ class BSKFswModels:
         # Hill-frame relative PD station-keeping control
         self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask("hillFrameRelativeControlTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 15)
+
+        # Cascaded station-keeping control for single-axis thruster actuation.
+        self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask("cascadedThrusterTask" + str(spacecraftIndex),
+                                           self.processTasksTimeStep), 14)
 
         # State Machine Task
         self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask("stateMachineTask" + str(spacecraftIndex),
@@ -213,6 +360,8 @@ class BSKFswModels:
         self.hillFrameRelativeControl = hillFrameRelativeControl.HillFrameRelativeControl()
         self.hillFrameRelativeControl.ModelTag = "hillFrameRelativeControl"
 
+        self.cascadedForceThrusterController = CascadedForceThrusterController(self)
+
         self.attGuidanceHillPoint = hillPoint.hillPoint()
         self.attGuidanceHillPoint.ModelTag = "hillPoint"
 
@@ -260,6 +409,8 @@ class BSKFswModels:
         self.simBase.AddModelToTask("meanOEFeedbackTask" + str(spacecraftIndex), self.meanOEFeedback, 10)
 
         self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillFrameRelativeControl, 10)
+
+        self.simBase.AddModelToTask("cascadedThrusterTask" + str(spacecraftIndex), self.cascadedForceThrusterController, 9)
 
         self.simBase.AddModelToTask("scanningInstrumentControllerTask" + str(spacecraftIndex), self.scanningInstrumentController, 8)
 
@@ -549,11 +700,12 @@ class BSKFswModels:
                 setattr(self.FSWModels[spacecraftIndex].trackingError, 'sigma_R0R', [0.0, 0.0, 0.0]),
                 self.FSWModels[spacecraftIndex].updateHillFrameReferenceFromFormationTargets(),
                 self.enableTask("hillFrameRelativeControlTask" + str(spacecraftIndex)),
-                self.enableTask("hillPointTask" + str(spacecraftIndex)),
+                self.enableTask("cascadedThrusterTask" + str(spacecraftIndex)),
                 self.enableTask("trackingErrorTask" + str(spacecraftIndex)),
                 self.enableTask("mrpFeedbackRWsTask" + str(spacecraftIndex)),
                 self.enableTask("stateMachineTask" + str(spacecraftIndex)),
                 setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'ON'),
+                setattr(self.FSWModels[spacecraftIndex], 'cascadedControllerActive', True),
                 self.setAllButCurrentEventActivity(
                     f"initiatePidStationKeeping_{spacecraftIndex}", True, useIndex=True
                 ),
@@ -782,15 +934,13 @@ class BSKFswModels:
         would otherwise cause the achieved formation to drift over multiple orbits.
         Required corrections are typically in the µN–mN range.
 
-        The output ``forceOutMsg`` (``CmdForceInertialMsgPayload``) is fed into the
-        ``extForceHillPd`` ``ExtForceTorque`` effector, which applies the commanded
-        3-DOF inertial force directly to the spacecraft dynamics.  This models an
-        **idealized multi-directional micro-thruster set** (not the physical EPSS C2
-        thruster, which is single-axis).
+        The output ``forceOutMsg`` (``CmdForceInertialMsgPayload``) feeds the
+        cascaded single-thruster controller configured in
+        :meth:`SetCascadedForceThrusterController`.
 
-        See ``SetExtForceOEFeedback`` in ``BSK_GnssrSatDynamics.py`` for the
-        FUTURE IMPROVEMENT note on replacing this with a physically realistic
-        single-thruster cascade.
+        The cascaded controller converts force-direction requests into an
+        attitude reference, waits for attitude alignment, and then sends
+        thruster on-time commands to the physical EPSS C2 thruster.
         """
         self.hillFrameRelativeControl.setMu(self.simBase.get_EnvModel().mu)  # [m^3/s^2]
         self.hillFrameRelativeControl.setK([
@@ -820,11 +970,24 @@ class BSKFswModels:
             self.simBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg
         )
 
-        # Wire to the dedicated Hill-PD effector, keeping the meanOEFeedback
-        # channel (extForceOEFeedback) independent.
-        self.simBase.DynModels[self.spacecraftIndex].extForceHillPd.cmdForceInertialInMsg.subscribeTo(
-            self.hillFrameRelativeControl.forceOutMsg
+    def SetCascadedForceThrusterController(self):
+        """Configure the single-thruster cascaded station-keeping controller."""
+        self.cascadedForceThrusterController.forceCmdInMsg = self.hillFrameRelativeControl.forceOutMsg
+        self.cascadedForceThrusterController.attNavInMsg = (
+            self.simBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg
         )
+        self.cascadedForceThrusterController.attRefGatewayMsg = self.attRefMsg
+        self.cascadedForceThrusterController.thrOnTimeGatewayMsg = self.spacecraftReconfig.onTimeOutMsg
+        self.cascadedForceThrusterController.numThrusters = self.simBase.DynModels[self.spacecraftIndex].numThr
+
+        # Match the scenario EPSS-C2 thruster configuration in dynamics.
+        self.cascadedForceThrusterController.maxThrusterForce = 0.02  # [N]
+
+        # Keep outer-loop updates slow so attitude slews can settle before the next
+        # force-direction update from the translational controller.
+        self.cascadedForceThrusterController.outerLoopPeriodNanos = mc.min2nano(10.0)  # [ns]
+        self.cascadedForceThrusterController.forceFilterTimeConstant = 600.0  # [s]
+        self.cascadedForceThrusterController.maxPointingErrorForFiring = 10.0 * mc.D2R  # [rad]
 
     def setupScanningInstrumentControler(self):
         """
@@ -897,6 +1060,7 @@ class BSKFswModels:
         self.SetHillPointGuidance()
         self.setmeanOEFeedback()
         self.SetHillFrameRelativeControl()
+        self.SetCascadedForceThrusterController()
 
     def switchToLiveBarycenterChief(self, verbose=False):
         """
