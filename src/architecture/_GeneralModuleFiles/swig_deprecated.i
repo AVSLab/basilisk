@@ -76,15 +76,15 @@ aliased within structures.
 
 Usage within .i interface files:
 
-- Renaming 'MultiSphere' to 'MultiShape':
+- Renaming 'OldStruct' to 'NewStruct':
 
 %pythoncode %{
 import sys
 mod = sys.modules[__name__]
-mod.MultiSphere = _DeprecatedWrapper(
-    mod.MultiShape,
-    aliasName="MultiSphere",
-    targetName="MultiShape",
+mod.OldStruct = _DeprecatedWrapper(
+    mod.NewStruct,
+    aliasName="OldStruct",
+    targetName="NewStruct",
     removalDate="2026/02/21"
 )
 protectAllClasses(sys.modules[__name__])
