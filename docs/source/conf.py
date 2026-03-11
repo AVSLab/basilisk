@@ -117,6 +117,13 @@ extensions = [
     'sphinx_copybutton'
 ]
 
+# Use MathJax SVG output instead of CHTML to avoid browser/font-metric
+# rendering artifacts (e.g., vertically offset multi-character symbols).
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+mathjax3_config = {
+    "svg": {"fontCache": "global"}
+}
+
 # filter out terminal prompt text from the code blocks
 copybutton_prompt_text = r"\(\.venv\) \$ |\$ "
 copybutton_prompt_is_regexp = True
