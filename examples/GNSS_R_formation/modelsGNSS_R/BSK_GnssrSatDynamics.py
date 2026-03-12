@@ -456,6 +456,11 @@ class BSKDynamicModels:
         self.SetFuelTank()
         self.SetSimpleNavObject()
         self.SetSimpleMassPropsObject()
+        # Pre-seed vehicleConfigOutMsg so FSW modules that reset before
+        # dynamics (higher-priority FSW process) see a valid massSC.
+        vcSeed = messaging.VehicleConfigMsgPayload()
+        vcSeed.massSC = self.scObject.hub.mHub  # [kg]
+        self.simpleMassPropsObject.vehicleConfigOutMsg.write(vcSeed, 0)
         self.SetSolarPanel(SimBase)
         self.SetPowerSink()
         self.SetSimpleAntenna(SimBase)

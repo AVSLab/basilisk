@@ -991,6 +991,37 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             print(f"[Cascaded validation] SC-{spacecraftIndex}: "
                   "alignment exceeded outer-loop period.")
 
+        # --- Fuel consumption and thruster activity during pdStationKeeping ---
+        fuel_times = self.fuelLog[spacecraftIndex].times()
+        fuel_mass = np.array(self.fuelLog[spacecraftIndex].fuelMass)
+        fuel_mask = fuel_times >= start_nanos
+        if np.any(fuel_mask):
+            fuel_start = fuel_mass[fuel_mask][0]
+            fuel_end = fuel_mass[fuel_mask][-1]
+            delta_fuel = fuel_start - fuel_end
+            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
+                  f"fuel {fuel_start:.6f} -> {fuel_end:.6f} kg, "
+                  f"consumed {delta_fuel*1e3:.3f} mg")
+
+        # Check thruster output (actual thrust from dynamics)
+        if spacecraftIndex < len(self.thrLogs) and len(self.thrLogs[spacecraftIndex]) > 0:
+            thr_times = self.thrLogs[spacecraftIndex][0].times()
+            thr_factor = np.array(self.thrLogs[spacecraftIndex][0].thrustFactor)
+            thr_mask = thr_times >= start_nanos
+            if np.any(thr_mask):
+                active = thr_factor[thr_mask]
+                n_firing = np.sum(active > 0)
+                print(f"[Cascaded validation] SC-{spacecraftIndex}: "
+                      f"thruster active {n_firing}/{len(active)} samples, "
+                      f"max factor {np.max(active):.4f}")
+
+        # On-time statistics
+        firing_on = thr_on[thr_on > 0]
+        if len(firing_on) > 0:
+            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
+                  f"on-time stats: {len(firing_on)} firings, "
+                  f"mean {np.mean(firing_on):.4f} s, max {np.max(firing_on):.4f} s")
+
         return summary
 
 def runScenario(scenario, mode):

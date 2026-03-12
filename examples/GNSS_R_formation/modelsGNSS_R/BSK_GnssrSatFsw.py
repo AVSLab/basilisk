@@ -134,16 +134,11 @@ class CascadedForceThrusterController(sysModel.SysModel):
         # Recorded on first UpdateState call (used by validation to filter data)
         self.activeStartNanos = None
 
-        # C++ output message for thruster on-time commands.
-        # Routed to the thrOnTimeCmdMsg gateway via _addAuthor in setupGatewayMsgs
-        # so that the gateway arbitration picks up our writes (direct .write() on
-        # a _C gateway that already has _addAuthor sources is silently overwritten).
-        self.thrOnTimeCmdOutMsg = messaging.THRArrayOnTimeCmdMsg()
-
         # Wired by SetCascadedForceThrusterController
         self.forceCmdInMsg = None
         self.attNavInMsg = None
         self.attRefGatewayMsg = None
+        self.thrOnTimeGatewayMsg = None
 
     # ------------------------------------------------------------------ #
     #  Basilisk SysModel interface
@@ -158,7 +153,7 @@ class CascadedForceThrusterController(sysModel.SysModel):
 
     def UpdateState(self, currentSimNanos):
         if not all([self.forceCmdInMsg, self.attNavInMsg,
-                    self.attRefGatewayMsg]):
+                    self.attRefGatewayMsg, self.thrOnTimeGatewayMsg]):
             return
 
         if self.activeStartNanos is None:
@@ -200,7 +195,7 @@ class CascadedForceThrusterController(sysModel.SysModel):
 
         thrCmd = messaging.THRArrayOnTimeCmdMsgPayload()
         thrCmd.OnTimeRequest = [onTime] + [0.0] * (self.numThrusters - 1)
-        self.thrOnTimeCmdOutMsg.write(thrCmd, currentSimNanos)
+        self.thrOnTimeGatewayMsg.write(thrCmd, currentSimNanos)
 
     # ------------------------------------------------------------------ #
     #  Internal helpers
@@ -997,6 +992,7 @@ class BSKFswModels:
         self.cascadedForceThrusterController.outerLoopPeriodNanos = mc.min2nano(2.0)  # [ns]
         self.cascadedForceThrusterController.forceFilterTimeConstant = 120.0  # [s]
         self.cascadedForceThrusterController.maxPointingErrorForFiring = 10.0 * mc.D2R  # [rad]
+        self.cascadedForceThrusterController.thrOnTimeGatewayMsg = self.thrOnTimeCmdMsg
 
     def setupScanningInstrumentControler(self):
         """
@@ -1334,14 +1330,13 @@ class BSKFswModels:
         self.attRefMsg = messaging.AttRefMsg_C()
         self.attGuidMsg = messaging.AttGuidMsg_C()
 
-        # Thruster on-time gateway: both spacecraftReconfig and the cascaded
-        # controller redirect their outputs here via _addAuthor so the thruster
-        # dynamics always reads from a single source.
+        # Thruster on-time gateway: spacecraftReconfig redirects its output
+        # here via _addAuthor.  The cascaded controller writes directly to this
+        # gateway during pdStationKeeping (spacecraftReconfig's task is disabled
+        # in that mode, so there is no write conflict).
         self.thrOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg_C()
         messaging.THRArrayOnTimeCmdMsg_C_addAuthor(
             self.spacecraftReconfig.onTimeOutMsg, self.thrOnTimeCmdMsg)
-        messaging.THRArrayOnTimeCmdMsg_C_addAuthor(
-            self.cascadedForceThrusterController.thrOnTimeCmdOutMsg, self.thrOnTimeCmdMsg)
 
         # Create antenna state message BEFORE zeroGateWayMsgs (default OFF)
         antennaStateData = messaging.AntennaStateMsgPayload()
