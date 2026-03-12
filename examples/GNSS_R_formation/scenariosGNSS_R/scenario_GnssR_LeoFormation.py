@@ -147,8 +147,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         self.rwPowerLogs = [[] for _ in range(self.numberSpacecraft)]
         self.fuelLog = []
         self.thrLogs = [[] for _ in range(self.numberSpacecraft)]
-        self.forceCmdLog = []
-        self.thrCmdLog = []
         # Data system logs
         self.instLog = []
         self.dataStorageLog = []
@@ -512,35 +510,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
 
         self.setFormationTargets(self.formation)
 
-    def enable_cascaded_step_test(self, spacecraft_index, start_min=None, duration_min=None, force_inertial=None):
-        """
-        Configure a step force override for the cascaded controller.
-
-        :param int spacecraft_index: Spacecraft index to configure.
-        :param float start_min: Step start time since t=0, in minutes.
-        :param float duration_min: Step duration in minutes.
-        :param force_inertial: Inertial step force vector, in Newtons.
-        :type force_inertial: list[float] or numpy.ndarray
-        """
-        if start_min is None:
-            start_min = 20.0  # [min]
-        if duration_min is None:
-            duration_min = 30.0  # [min]
-        if force_inertial is None:
-            force_inertial = [0.0, 2.0e-3, 0.0]  # [N]
-
-        step_start = macros.min2nano(start_min)  # [ns]
-        step_end = macros.min2nano(start_min + duration_min)  # [ns]
-        force_vec = np.array(force_inertial, dtype=float)
-        if force_vec.shape != (3,):
-            raise ValueError("force_inertial must be a length-3 vector.")
-
-        cascaded = self.FSWModels[spacecraft_index].cascadedForceThrusterController
-        cascaded.enableStepTest = True
-        cascaded.stepStartNanos = int(step_start)
-        cascaded.stepEndNanos = int(step_end)
-        cascaded.stepForceInertial = force_vec  # [N]
-
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
         DynModels = self.get_DynModel()
@@ -673,12 +642,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             for item in range(DynModels[spacecraft].numThr):
                 self.thrLogs[spacecraft].append(DynModels[spacecraft].thrusterStateEffector.thrusterOutMsgs[item].recorder(self.samplingTime))
                 self.AddModelToTask(DynModels[spacecraft].taskName, self.thrLogs[spacecraft][item])
-
-            # log station-keeping force commands and thruster on-time commands
-            self.forceCmdLog.append(FswModels[spacecraft].hillFrameRelativeControl.forceOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.forceCmdLog[spacecraft])
-            self.thrCmdLog.append(FswModels[spacecraft].thrOnTimeCmdMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.thrCmdLog[spacecraft])
 
             # log data system information
             self.instLog.append(DynModels[spacecraft].instrument.nodeDataOutMsg.recorder(self.samplingTime))
@@ -860,169 +823,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # close the plots being saved off to avoid over-writing old and new figures
         plt.clear_all_plots()
 
-        self.validate_cascaded_control(spacecraftIndex)
-
         return figureList
-
-    def validate_cascaded_control(self, spacecraftIndex):
-        """
-        Validate cascaded control timing and thruster gating for one spacecraft.
-
-        Only analyses logged data from the pdStationKeeping phase (i.e. after
-        the cascaded controller's first ``UpdateState`` call).
-
-        :param int spacecraftIndex: Spacecraft index to validate.
-        :returns: Summary metrics or ``None`` when logs are unavailable.
-        :rtype: dict or None
-        """
-        if spacecraftIndex >= len(self.attRefLog):
-            return None
-        if spacecraftIndex >= len(self.snAttLog):
-            return None
-        if spacecraftIndex >= len(self.thrCmdLog):
-            return None
-
-        fsw_model = self.FSWModels[spacecraftIndex]
-        if not fsw_model.cascadedControllerActive:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: cascaded controller not active.")
-            return None
-
-        cascaded = fsw_model.cascadedForceThrusterController
-        start_nanos = cascaded.activeStartNanos
-        if start_nanos is None:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: controller never ran.")
-            return None
-
-        # --- Retrieve and trim data to the pdStationKeeping phase ---
-        all_time_ns = self.attRefLog[spacecraftIndex].times()
-        if len(all_time_ns) == 0:
-            return None
-
-        mask = all_time_ns >= start_nanos
-        time_ns = all_time_ns[mask]
-        if len(time_ns) == 0:
-            return None
-
-        time_sec = time_ns * macros.NANO2SEC  # [s]
-        sigma_rn = np.array(self.attRefLog[spacecraftIndex].sigma_RN)[mask]
-        sigma_bn = np.array(self.snAttLog[spacecraftIndex].sigma_BN)[mask]
-
-        thr_on = np.array(self.thrCmdLog[spacecraftIndex].OnTimeRequest)[mask]
-        if thr_on.ndim == 1:
-            thr_on = thr_on.reshape(-1, 1)
-
-        n_samples = min(len(time_sec), sigma_rn.shape[0], sigma_bn.shape[0], thr_on.shape[0])
-        if n_samples == 0:
-            return None
-
-        time_sec = time_sec[:n_samples]
-        sigma_rn = sigma_rn[:n_samples, :]
-        sigma_bn = sigma_bn[:n_samples, :]
-        thr_on = thr_on[:n_samples, 0]
-
-        # --- Compute body / reference +X axes in inertial frame ---
-        ref_x = np.zeros((n_samples, 3))
-        body_x = np.zeros((n_samples, 3))
-        for idx in range(n_samples):
-            c_rn = np.array(rbk.MRP2C(sigma_rn[idx, :]))
-            c_bn = np.array(rbk.MRP2C(sigma_bn[idx, :]))
-            ref_x[idx, :] = c_rn[0, :]   # first row = ref +X in N
-            body_x[idx, :] = c_bn[0, :]   # first row = body +X in N
-
-        alignment_cos = np.einsum("ij,ij->i", ref_x, body_x)
-        alignment_cos = np.clip(alignment_cos, -1.0, 1.0)
-        alignment_angle = np.arccos(alignment_cos)  # [rad]
-
-        outer_loop_period = cascaded.outerLoopPeriodNanos * macros.NANO2SEC  # [s]
-        gate_rad = float(cascaded.maxPointingErrorForFiring)  # [rad]
-        decay_time = float(fsw_model.decayTime)  # [s]
-
-        thr_fire = thr_on > 0.0
-        gating_violations = np.where(thr_fire & (alignment_angle > gate_rad))[0]
-
-        ref_step_cos = np.einsum("ij,ij->i", ref_x[1:], ref_x[:-1])
-        ref_step_cos = np.clip(ref_step_cos, -1.0, 1.0)
-        ref_step_angle = np.arccos(ref_step_cos)  # [rad]
-        ref_change_threshold = 0.5 * macros.D2R  # [rad]
-        command_updates = np.where(ref_step_angle >= ref_change_threshold)[0] + 1
-
-        align_delays = []
-        fire_delays = []
-        for cmd_idx in command_updates:
-            align_idx = np.where(alignment_angle[cmd_idx:] <= gate_rad)[0]
-            if align_idx.size > 0:
-                align_delays.append(time_sec[cmd_idx + align_idx[0]] - time_sec[cmd_idx])
-            fire_idx = np.where(thr_fire[cmd_idx:])[0]
-            if fire_idx.size > 0:
-                fire_delays.append(time_sec[cmd_idx + fire_idx[0]] - time_sec[cmd_idx])
-
-        max_align_delay = max(align_delays) if align_delays else None
-        max_fire_delay = max(fire_delays) if fire_delays else None
-        mean_align_delay = float(np.mean(align_delays)) if align_delays else None
-        mean_fire_delay = float(np.mean(fire_delays)) if fire_delays else None
-
-        summary = {
-            "outer_loop_period_sec": float(outer_loop_period),
-            "attitude_decay_time_sec": float(decay_time),
-            "command_updates": int(command_updates.size),
-            "gating_violations": int(gating_violations.size),
-            "max_align_delay_sec": max_align_delay,
-            "mean_align_delay_sec": mean_align_delay,
-            "max_fire_delay_sec": max_fire_delay,
-            "mean_fire_delay_sec": mean_fire_delay,
-        }
-
-        print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-              f"outer-loop {outer_loop_period:.1f} s, decay {decay_time:.1f} s, "
-              f"updates {summary['command_updates']}, "
-              f"gating violations {summary['gating_violations']}")
-        if max_align_delay is not None:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  f"max align delay {max_align_delay:.1f} s, "
-                  f"mean align delay {mean_align_delay:.1f} s")
-        if max_fire_delay is not None:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  f"max fire delay {max_fire_delay:.1f} s, "
-                  f"mean fire delay {mean_fire_delay:.1f} s")
-        if summary["gating_violations"] > 0:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  "thruster fired outside pointing gate.")
-        if max_align_delay is not None and max_align_delay > outer_loop_period:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  "alignment exceeded outer-loop period.")
-
-        # --- Fuel consumption and thruster activity during pdStationKeeping ---
-        fuel_times = self.fuelLog[spacecraftIndex].times()
-        fuel_mass = np.array(self.fuelLog[spacecraftIndex].fuelMass)
-        fuel_mask = fuel_times >= start_nanos
-        if np.any(fuel_mask):
-            fuel_start = fuel_mass[fuel_mask][0]
-            fuel_end = fuel_mass[fuel_mask][-1]
-            delta_fuel = fuel_start - fuel_end
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  f"fuel {fuel_start:.6f} -> {fuel_end:.6f} kg, "
-                  f"consumed {delta_fuel*1e3:.3f} mg")
-
-        # Check thruster output (actual thrust from dynamics)
-        if spacecraftIndex < len(self.thrLogs) and len(self.thrLogs[spacecraftIndex]) > 0:
-            thr_times = self.thrLogs[spacecraftIndex][0].times()
-            thr_factor = np.array(self.thrLogs[spacecraftIndex][0].thrustFactor)
-            thr_mask = thr_times >= start_nanos
-            if np.any(thr_mask):
-                active = thr_factor[thr_mask]
-                n_firing = np.sum(active > 0)
-                print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                      f"thruster active {n_firing}/{len(active)} samples, "
-                      f"max factor {np.max(active):.4f}")
-
-        # On-time statistics
-        firing_on = thr_on[thr_on > 0]
-        if len(firing_on) > 0:
-            print(f"[Cascaded validation] SC-{spacecraftIndex}: "
-                  f"on-time stats: {len(firing_on)} firings, "
-                  f"mean {np.mean(firing_on):.4f} s, max {np.max(firing_on):.4f} s")
-
-        return summary
 
 def runScenario(scenario, mode):
     scenario.configure_initial_setup()
@@ -1094,16 +895,6 @@ def runScenario(scenario, mode):
         scenario.ExecuteSimulation()
 
         # =========================================
-        # Phase 4: PD-station keeping
-        # =========================================
-        for i in range(scenario.numberSpacecraft):
-            scenario.FSWModels[i].setModeRequest(modeRequest="pdStationKeeping", verbose=True)
-        simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 2 hours
-        scenario.ConfigureStopTime(simulationTimeManual)
-        scenario.ExecuteSimulation()
-
-        # =========================================
-        # Phase 5: Data transfer
         # =========================================
         for i in range(scenario.numberSpacecraft):
             scenario.FSWModels[i].setModeRequest(modeRequest="dataTransfer", verbose=True)
