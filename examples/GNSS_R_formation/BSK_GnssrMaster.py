@@ -142,7 +142,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the dynamics classes
         for spacecraftIndex in range(self.numberSpacecraft):
             self.DynamicsProcessName.append("DynamicsProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 200))  # Create process
+            self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 100))  # Create process
             self.DynModels.append(dynModel[spacecraftIndex].BSKDynamicModels(self, self.dynRate, spacecraftIndex))
 
     def get_FswModel(self):
@@ -155,7 +155,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # Add the FSW classes
         for spacecraftIndex in range(self.numberSpacecraft):
             self.FSWProcessName.append("FSWProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 100))  # Create process
+            self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 200))  # Create process
             self.FSWModels.append(fswModel[spacecraftIndex].BSKFswModels(self, self.fswRate, spacecraftIndex))
 
     def add_relativeNavigation(self):
