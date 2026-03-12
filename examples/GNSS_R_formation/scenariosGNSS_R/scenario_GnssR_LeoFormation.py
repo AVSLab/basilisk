@@ -895,6 +895,16 @@ def runScenario(scenario, mode):
         scenario.ExecuteSimulation()
 
         # =========================================
+        # Phase 4: PD-station keeping
+        # =========================================
+        for i in range(scenario.numberSpacecraft):
+            scenario.FSWModels[i].setModeRequest(modeRequest="pdStationKeeping", verbose=True)
+        simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 2 hours
+        scenario.ConfigureStopTime(simulationTimeManual)
+        scenario.ExecuteSimulation()
+
+        # =========================================
+        # Phase 5: Data transfer
         # =========================================
         for i in range(scenario.numberSpacecraft):
             scenario.FSWModels[i].setModeRequest(modeRequest="dataTransfer", verbose=True)

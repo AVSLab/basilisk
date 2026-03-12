@@ -537,11 +537,11 @@ class BSKFswModels:
         )
 
         self.simBase.createNewEvent(
-            "initiatePidStationKeeping_" + str(spacecraftIndex),
+            "initiatePdStationKeeping_" + str(spacecraftIndex),
             self.processTasksTimeStep,
             True,
             conditionFunction=lambda self: (
-                self.FSWModels[spacecraftIndex].modeRequest == "pidStationKeeping"
+                self.FSWModels[spacecraftIndex].modeRequest == "pdStationKeeping"
             ),
             actionFunction=lambda self: (
                 self.fswProc[spacecraftIndex].disableAllTasks(),
@@ -555,7 +555,7 @@ class BSKFswModels:
                 self.enableTask("stateMachineTask" + str(spacecraftIndex)),
                 setattr(self.FSWModels[spacecraftIndex], 'stationKeeping', 'ON'),
                 self.setAllButCurrentEventActivity(
-                    f"initiatePidStationKeeping_{spacecraftIndex}", True, useIndex=True
+                    f"initiatePdStationKeeping_{spacecraftIndex}", True, useIndex=True
                 ),
             ),
         )
@@ -1093,7 +1093,7 @@ class BSKFswModels:
                     self.stationKeeping = "ON"
                     self.reconfFormation = False
                 else:
-                    self.modeRequest = "pidStationKeeping"
+                    self.modeRequest = "pdStationKeeping"
                     self.stationKeeping = "ON"
 
             # INITIATE_STATION_KEEPING (Reconfig) -> GNSSR_SENSING
@@ -1107,12 +1107,12 @@ class BSKFswModels:
             elif self.modeRequest == "initiateStationKeeping":
                 self.updateHillFrameReferenceFromFormationTargets()
                 if self.formationErrorWithinTolerance():
-                    self.modeRequest = "pidStationKeeping"
+                    self.modeRequest = "pdStationKeeping"
                     self.stationKeeping = "ON"
                     self.reconfigFormation = False
 
             # PID_STATION_KEEPING -> GNSSR_SENSING
-            elif self.modeRequest == "pidStationKeeping":
+            elif self.modeRequest == "pdStationKeeping":
                 self.updateHillFrameReferenceFromFormationTargets()
                 if (self.reachedLatitude(latLimit=55) and
                     self.timeInMode >= mc.hour2nano(24.0)):
@@ -1127,7 +1127,7 @@ class BSKFswModels:
                     self.stationKeeping = "OFF"
 
             # GNSSR_SENSING or DATA_TRANSFER -> CHARGE_BATTERY
-            elif (self.modeRequest in ["startGnssrSensing", "dataTransfer", "pidStationKeeping"] and
+            elif (self.modeRequest in ["startGnssrSensing", "dataTransfer", "pdStationKeeping"] and
                     not self.batteryLevelAboveThreshold(threshold=0.5)):
                     self.modeRequest = "chargeBattery"
                     self.stationKeeping = "OFF"
@@ -1135,11 +1135,11 @@ class BSKFswModels:
             # DATA_TRANSFER -> PID_STATIONKEEPING at end of comm window
             elif (self.modeRequest == "dataTransfer" and
                     not self.inCommunicationRangeSval()):
-                self.modeRequest = "pidStationKeeping"
+                self.modeRequest = "pdStationKeeping"
                 self.stationKeeping = "ON"
 
             # PID_STATION_KEEPING -> GNSSR_SENSING
-            elif (self.modeRequest == "pidStationKeeping" and
+            elif (self.modeRequest == "pdStationKeeping" and
                 self.reachedLatitude(latLimit=55) and
                 self.timeInMode >= mc.hour2nano(24.0)):
                 self.modeRequest = "startGnssrSensing"
@@ -1189,7 +1189,7 @@ class BSKFswModels:
         self.spacecraftReconfig.onTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
         self.mtbMomentumManagement.mtbCmdOutMsg.write(messaging.MTBCmdMsgPayload())
         # Zero the Hill-PD force output so stale commands are not applied
-        # when switching away from pidStationKeeping mode.
+        # when switching away from pdStationKeeping mode.
         self.hillFrameRelativeControl.forceOutMsg.write(messaging.CmdForceInertialMsgPayload())
         # Turn antenna OFF
         self.antennaStateMsg.write(
