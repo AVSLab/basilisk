@@ -147,6 +147,19 @@ class BSKFswModels:
         self.filteredRelativePositionErrorHill = np.zeros(3)  # [m]
         self.filteredRelativeVelocityErrorHill = np.zeros(3)  # [m/s]
 
+        # Hill-frame PD gains for relative-orbit maintenance.
+        # Keep the documented baseline gains to preserve closed-loop stability.
+        self.hillPdK = [
+            2.0e-6, 0.0, 0.0,
+            0.0, 2.0e-6, 0.0,
+            0.0, 0.0, 2.0e-6,
+        ]  # [1/s^2]
+        self.hillPdP = [
+            2.0e-3, 0.0, 0.0,
+            0.0, 2.0e-3, 0.0,
+            0.0, 0.0, 2.0e-3,
+        ]  # [1/s]
+
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = self.simBase.FSWProcessName[spacecraftIndex]
         self.processTasksTimeStep = mc.sec2nano(fswRate)
@@ -843,16 +856,8 @@ class BSKFswModels:
         single-thruster cascade.
         """
         self.hillFrameRelativeControl.setMu(self.simBase.get_EnvModel().mu)  # [m^3/s^2]
-        self.hillFrameRelativeControl.setK([
-            2.0e-6, 0.0, 0.0,
-            0.0, 2.0e-6, 0.0,
-            0.0, 0.0, 2.0e-6,
-        ])  # [1/s^2]
-        self.hillFrameRelativeControl.setP([
-            2.0e-3, 0.0, 0.0,
-            0.0, 2.0e-3, 0.0,
-            0.0, 0.0, 2.0e-3,
-        ])  # [1/s]
+        self.hillFrameRelativeControl.setK(self.hillPdK)  # [1/s^2]
+        self.hillFrameRelativeControl.setP(self.hillPdP)  # [1/s]
 
         # Default reference is overwritten at runtime by updateHillFrameReferenceFromFormationTargets.
         self.hillFrameRelativeControl.setReferencePosition([0.0, 0.0, 0.0])  # [m]
