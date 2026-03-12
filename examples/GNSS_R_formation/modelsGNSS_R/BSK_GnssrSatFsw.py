@@ -70,6 +70,28 @@ class StateMachineModule(sysModel.SysModel):
         if self.fswModel.stateMachine:
             self.fswModel.setModeRequest(currentSimNanos=currentSimNanos)
 
+
+class HillReferenceUpdaterModule(sysModel.SysModel):
+    """
+    Update Hill-frame PD references every FSW step.
+
+    This keeps the desired relative orbit target synchronized with the chief
+    orbital phase, even when the state machine is disabled (e.g., Manual mode).
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"hillReferenceUpdater_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()  # Prevent memory leaks
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        if self.fswModel.modeRequest in ["pdStationKeeping", "initiateStationKeeping"]:
+            self.fswModel.updateHillFrameReferenceFromFormationTargets()
+
 ########################################################
 #####             Flight Software                  #####
 ########################################################
@@ -103,6 +125,27 @@ class BSKFswModels:
         self.verboseMode = False
         self.barycenterChiefSwitched = False
         self.reconfigStableTimeNanos = 0
+
+        # Outer-loop cascade settings for underactuated single-thruster control.
+        # The outer loop only triggers large-burn reconfiguration when deviations
+        # exceed thresholds, preventing continuous micro-corrections.
+        self.reconfigActivationPositionTolerance = 120.0  # [m]
+        self.reconfigActivationVelocityTolerance = 0.08  # [m/s]
+        self.reconfigActivationPositionToleranceHill = np.array([80.0, 120.0, 80.0])  # [m]
+        self.reconfigActivationVelocityToleranceHill = np.array([0.05, 0.08, 0.05])  # [m/s]
+        self.useAxisWeightedDriftTrigger = True  # [-]
+        self.reconfigLoopMinPeriodNanos = mc.min2nano(30.0)  # [ns]
+        self.outerLoopEvaluationPeriodNanos = mc.sec2nano(120.0)  # [ns]
+        self.lastReconfigTriggerNanos = -self.reconfigLoopMinPeriodNanos  # [ns]
+        self.lastOuterLoopEvalNanos = -self.outerLoopEvaluationPeriodNanos  # [ns]
+        self.reconfigAttitudeControlTime = 400.0  # [s]
+        self.outerLoopFilterTimeConstant = 120.0  # [s]
+        self.outerLoopViolationsRequired = 3  # [-]
+        self.outerLoopViolationCount = 0  # [-]
+        self.filteredRelativePositionError = 0.0  # [m]
+        self.filteredRelativeVelocityError = 0.0  # [m/s]
+        self.filteredRelativePositionErrorHill = np.zeros(3)  # [m]
+        self.filteredRelativeVelocityErrorHill = np.zeros(3)  # [m/s]
 
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = self.simBase.FSWProcessName[spacecraftIndex]
@@ -218,6 +261,7 @@ class BSKFswModels:
 
         # State machine module
         self.stateMachineModule = StateMachineModule(self)
+        self.hillReferenceUpdaterModule = HillReferenceUpdaterModule(self)
 
 #        self.gnssrSensing = gnssrSensing.GnssrSensing()
 #        self.gnssrSensing.ModelTag = "gnssrSensing"
@@ -259,6 +303,8 @@ class BSKFswModels:
 
         self.simBase.AddModelToTask("meanOEFeedbackTask" + str(spacecraftIndex), self.meanOEFeedback, 10)
 
+        # Update target reference before running the PD controller each FSW tick.
+        self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillReferenceUpdaterModule, 11)
         self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillFrameRelativeControl, 10)
 
         self.simBase.AddModelToTask("scanningInstrumentControllerTask" + str(spacecraftIndex), self.scanningInstrumentController, 8)
@@ -607,7 +653,11 @@ class BSKFswModels:
 
     def SetSpacecraftOrbitReconfig(self): #TODO check if this is correct (spacecraft should reconfigure formation in position and attitude)
         """
-        Defines the station keeping module.
+        Defines the underactuated reconfiguration module.
+
+        The module schedules attitude-aligned impulsive burns (typically two or
+        three, depending on geometry), which is the inner cascade used when the
+        outer deviation monitor decides that a reconfiguration is necessary.
         """
         # Provide a zeroed default so chiefTransInMsg is never unlinked at construction time.
         # A zero r/v vector will cause rv2elem to produce invalid orbital elements, making any
@@ -623,7 +673,7 @@ class BSKFswModels:
         self.spacecraftReconfig.vehicleConfigInMsg.subscribeTo(
             self.simBase.DynModels[self.spacecraftIndex].simpleMassPropsObject.vehicleConfigOutMsg)
         self.spacecraftReconfig.mu = self.simBase.EnvModel.mu  # [m^3/s^2]
-        self.spacecraftReconfig.attControlTime = 400  # [s]
+        self.spacecraftReconfig.attControlTime = self.reconfigAttitudeControlTime  # [s]
         messaging.AttRefMsg_C_addAuthor(self.spacecraftReconfig.attRefOutMsg, self.attRefMsg)
 
     def SetAttitudeTrackingError(self):
@@ -1051,6 +1101,46 @@ class BSKFswModels:
 
         return self.reconfigStableTimeNanos >= mc.min2nano(30.0)
 
+    def targetRelativeErrorComponents(self):
+        """
+        Compute current Hill-frame component-wise position/velocity errors.
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]:
+            position error [m] in Hill frame and velocity error [m/s] in Hill frame.
+        """
+        chief_msg = self.hillFrameRelativeControl.chiefTransInMsg()
+        deputy_msg = self.simBase.DynModels[self.spacecraftIndex].simpleNavObject.transOutMsg.read()
+
+        if np.linalg.norm(chief_msg.r_BN_N) < 1.0 or np.linalg.norm(deputy_msg.r_BN_N) < 1.0:
+            return np.array([np.inf, np.inf, np.inf]), np.array([np.inf, np.inf, np.inf])
+
+        chief_r = np.array(chief_msg.r_BN_N)
+        chief_v = np.array(chief_msg.v_BN_N)
+        deputy_r = np.array(deputy_msg.r_BN_N)
+        deputy_v = np.array(deputy_msg.v_BN_N)
+
+        chief_oe = orbitalMotion.rv2elem(self.simBase.get_EnvModel().mu, chief_r, chief_v)
+        target_oed = list(self.spacecraftReconfig.targetClassicOED)
+        ref_pos_h, ref_vel_h = self._formation_target_to_hill_reference(chief_oe, target_oed)
+
+        deputy_pos_h, deputy_vel_h = orbitalMotion.rv2hill(chief_r, chief_v, deputy_r, deputy_v)
+        position_error_h = np.array(deputy_pos_h) - np.array(ref_pos_h)
+        velocity_error_h = np.array(deputy_vel_h) - np.array(ref_vel_h)
+        return position_error_h, velocity_error_h
+
+    def targetRelativeErrorNorms(self):
+        """
+        Compute current Hill-frame position/velocity error magnitudes to target.
+
+        Returns:
+            tuple[float, float]: position error [m], velocity error [m/s].
+        """
+        position_error_h, velocity_error_h = self.targetRelativeErrorComponents()
+        pos_error = np.linalg.norm(position_error_h)
+        vel_error = np.linalg.norm(velocity_error_h)
+        return pos_error, vel_error
+
     def setModeRequest(self, modeRequest=None, verbose=None, currentSimNanos=None):
         """State machine to set the modeRequest variable based on time and conditions"""
         previousMode = self.modeRequest
@@ -1109,12 +1199,66 @@ class BSKFswModels:
                 if self.formationErrorWithinTolerance():
                     self.modeRequest = "pdStationKeeping"
                     self.stationKeeping = "ON"
-                    self.reconfigFormation = False
+                    self.reconfFormation = False
 
             # PID_STATION_KEEPING -> GNSSR_SENSING
             elif self.modeRequest == "pdStationKeeping":
+                # Keep the moving-target Hill reference updated so PD regulates
+                # drift around the desired relative orbit continuously.
                 self.updateHillFrameReferenceFromFormationTargets()
-                if (self.reachedLatitude(latLimit=55) and
+
+                # Evaluate outer-loop trigger at low bandwidth so the attitude/burn
+                # inner loop has enough time to complete without control chatter.
+                if self.flightTime - self.lastOuterLoopEvalNanos >= self.outerLoopEvaluationPeriodNanos:
+                    dt_seconds = (self.flightTime - self.lastOuterLoopEvalNanos) * mc.NANO2SEC
+                    self.lastOuterLoopEvalNanos = self.flightTime
+                    position_error_h, velocity_error_h = self.targetRelativeErrorComponents()
+                    position_error, velocity_error = self.targetRelativeErrorNorms()
+
+                    # First-order low-pass to avoid triggering on short transients.
+                    alpha = dt_seconds / (self.outerLoopFilterTimeConstant + dt_seconds)
+                    self.filteredRelativePositionError = (
+                        (1.0 - alpha) * self.filteredRelativePositionError + alpha * position_error
+                    )
+                    self.filteredRelativeVelocityError = (
+                        (1.0 - alpha) * self.filteredRelativeVelocityError + alpha * velocity_error
+                    )
+
+                    abs_position_error_h = np.abs(position_error_h)
+                    abs_velocity_error_h = np.abs(velocity_error_h)
+                    self.filteredRelativePositionErrorHill = (
+                        (1.0 - alpha) * self.filteredRelativePositionErrorHill + alpha * abs_position_error_h
+                    )
+                    self.filteredRelativeVelocityErrorHill = (
+                        (1.0 - alpha) * self.filteredRelativeVelocityErrorHill + alpha * abs_velocity_error_h
+                    )
+
+                    if self.useAxisWeightedDriftTrigger:
+                        violation_detected = bool(
+                            np.any(self.filteredRelativePositionErrorHill >= self.reconfigActivationPositionToleranceHill)
+                            or np.any(self.filteredRelativeVelocityErrorHill >= self.reconfigActivationVelocityToleranceHill)
+                        )
+                    else:
+                        violation_detected = bool(
+                            self.filteredRelativePositionError >= self.reconfigActivationPositionTolerance
+                            or self.filteredRelativeVelocityError >= self.reconfigActivationVelocityTolerance
+                        )
+
+                    if violation_detected:
+                        self.outerLoopViolationCount += 1
+                    else:
+                        self.outerLoopViolationCount = 0
+
+                    if (self.outerLoopViolationCount >= self.outerLoopViolationsRequired and
+                        self.flightTime - self.lastReconfigTriggerNanos >= self.reconfigLoopMinPeriodNanos):
+                        self.modeRequest = "initiateStationKeeping"
+                        self.stationKeeping = "ON"
+                        self.reconfigStableTimeNanos = 0
+                        self.lastReconfigTriggerNanos = self.flightTime
+                        self.outerLoopViolationCount = 0
+
+                if (self.modeRequest == "pdStationKeeping" and
+                    self.reachedLatitude(latLimit=55) and
                     self.timeInMode >= mc.hour2nano(24.0)):
                     self.modeRequest = "startGnssrSensing"
                     self.stationKeeping = "OFF"
