@@ -72,6 +72,31 @@ class StateMachineModule(sysModel.SysModel):
             self.fswModel.setModeRequest(currentSimNanos=currentSimNanos)
 
 
+class HillReferenceUpdater(sysModel.SysModel):
+    """Update the Hill-frame PD controller reference every timestep.
+
+    For formations defined by differential orbital elements (delta-e, delta-i),
+    the desired relative position in the Hill frame oscillates at the orbital
+    period.  A frozen reference snapshot leads to large spurious PD errors and
+    can destabilise the cascaded single-thruster loop.
+
+    This module recomputes the reference from the current chief argument of
+    latitude so the PD error reflects only *drift* from the target formation.
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"hillReferenceUpdater_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        self.fswModel.updateHillFrameReferenceFromFormationTargets()
+
+
 class CascadedForceThrusterController(sysModel.SysModel):
     """Low-bandwidth cascaded controller for a single body-fixed thruster (+X).
 
@@ -109,11 +134,16 @@ class CascadedForceThrusterController(sysModel.SysModel):
         # Recorded on first UpdateState call (used by validation to filter data)
         self.activeStartNanos = None
 
+        # C++ output message for thruster on-time commands.
+        # Routed to the thrOnTimeCmdMsg gateway via _addAuthor in setupGatewayMsgs
+        # so that the gateway arbitration picks up our writes (direct .write() on
+        # a _C gateway that already has _addAuthor sources is silently overwritten).
+        self.thrOnTimeCmdOutMsg = messaging.THRArrayOnTimeCmdMsg()
+
         # Wired by SetCascadedForceThrusterController
         self.forceCmdInMsg = None
         self.attNavInMsg = None
         self.attRefGatewayMsg = None
-        self.thrOnTimeGatewayMsg = None
 
     # ------------------------------------------------------------------ #
     #  Basilisk SysModel interface
@@ -128,7 +158,7 @@ class CascadedForceThrusterController(sysModel.SysModel):
 
     def UpdateState(self, currentSimNanos):
         if not all([self.forceCmdInMsg, self.attNavInMsg,
-                    self.attRefGatewayMsg, self.thrOnTimeGatewayMsg]):
+                    self.attRefGatewayMsg]):
             return
 
         if self.activeStartNanos is None:
@@ -170,7 +200,7 @@ class CascadedForceThrusterController(sysModel.SysModel):
 
         thrCmd = messaging.THRArrayOnTimeCmdMsgPayload()
         thrCmd.OnTimeRequest = [onTime] + [0.0] * (self.numThrusters - 1)
-        self.thrOnTimeGatewayMsg.write(thrCmd, currentSimNanos)
+        self.thrOnTimeCmdOutMsg.write(thrCmd, currentSimNanos)
 
     # ------------------------------------------------------------------ #
     #  Internal helpers
@@ -340,6 +370,9 @@ class BSKFswModels:
         self.attGuidanceHillPoint = hillPoint.hillPoint()
         self.attGuidanceHillPoint.ModelTag = "hillPoint"
 
+        # Hill-frame reference updater (must run before hillFrameRelativeControl)
+        self.hillReferenceUpdater = HillReferenceUpdater(self)
+
         # State machine module
         self.stateMachineModule = StateMachineModule(self)
 
@@ -383,6 +416,7 @@ class BSKFswModels:
 
         self.simBase.AddModelToTask("meanOEFeedbackTask" + str(spacecraftIndex), self.meanOEFeedback, 10)
 
+        self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillReferenceUpdater, 11)
         self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillFrameRelativeControl, 10)
 
         self.simBase.AddModelToTask("cascadedThrusterTask" + str(spacecraftIndex), self.cascadedForceThrusterController, 9)
@@ -953,10 +987,7 @@ class BSKFswModels:
             self.simBase.DynModels[self.spacecraftIndex].simpleNavObject.attOutMsg
         )
         self.cascadedForceThrusterController.attRefGatewayMsg = self.attRefMsg
-        self.cascadedForceThrusterController.thrOnTimeGatewayMsg = self.thrOnTimeCmdMsg
         self.cascadedForceThrusterController.numThrusters = self.simBase.DynModels[self.spacecraftIndex].numThr
-
-        # Match the scenario EPSS-C2 thruster configuration in dynamics.
         self.cascadedForceThrusterController.maxThrusterForce = 0.02  # [N]
 
         # Outer-loop period and filter time constant must be short enough that the
@@ -1309,6 +1340,8 @@ class BSKFswModels:
         self.thrOnTimeCmdMsg = messaging.THRArrayOnTimeCmdMsg_C()
         messaging.THRArrayOnTimeCmdMsg_C_addAuthor(
             self.spacecraftReconfig.onTimeOutMsg, self.thrOnTimeCmdMsg)
+        messaging.THRArrayOnTimeCmdMsg_C_addAuthor(
+            self.cascadedForceThrusterController.thrOnTimeCmdOutMsg, self.thrOnTimeCmdMsg)
 
         # Create antenna state message BEFORE zeroGateWayMsgs (default OFF)
         antennaStateData = messaging.AntennaStateMsgPayload()
