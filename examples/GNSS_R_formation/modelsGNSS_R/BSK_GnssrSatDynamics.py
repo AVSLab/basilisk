@@ -96,6 +96,7 @@ class BSKDynamicModels:
         SimBase.AddModelToTask(self.taskName, self.transmitter, 99)
         SimBase.AddModelToTask(self.taskName, self.linkBudget, 99)
         SimBase.AddModelToTask(self.taskName, self.extForceOEFeedback, 100)
+        SimBase.AddModelToTask(self.taskName, self.extForceHillPd, 100)
 
         for item in range(self.numRW):
             SimBase.AddModelToTask(self.taskName, self.rwPowerList[item], 100)
@@ -376,16 +377,44 @@ class BSKDynamicModels:
         self.simpleAntennaPower.basePowerNeed = 0.0  # Watt
 
     def SetExtForceOEFeedback(self):
-        """External force effector for OE-feedback station-keeping controllers.
+        """External force effectors for station-keeping controllers.
 
         ``extForceOEFeedback`` is reserved for future OE-feedback controllers.
 
-        Hill-frame PD maintenance forces are now actuated through the physical
-        EPSS C2 thruster via ``CascadedForceThrusterController`` in the FSW.
+        ``extForceHillPd`` is the dedicated command channel for the Hill-frame PD
+        maintenance controller.  It is modelled as an **idealized 3-DOF force
+        actuator** (``ExtForceTorque`` with an arbitrary inertial command force)
+        and does *not* map to the physical EPSS C2 thruster.  This is a valid
+        simplification for the steady-state maintenance role where required forces
+        are tiny (µN–mN) and directions change slowly over the orbit.
+
+        .. note::
+            **FUTURE IMPROVEMENT** – Replace ``extForceHillPd`` with a physically
+            realistic actuation chain that uses the single EPSS C2 thruster:
+
+            1. ``hillFrameRelativeControl`` outputs ``CmdForceInertialMsg``
+               (desired inertial force).
+            2. A new custom ``SysModel`` converts this into an ``AttRefMsg`` that
+               points the spacecraft +X thruster axis toward the commanded force
+               direction.
+            3. The existing attitude loop (``attTrackingError`` + ``mrpFeedback`` +
+               RWs) slews the spacecraft to that attitude.
+            4. Once the pointing error is within a threshold, a firing-gate module
+               (e.g. ``thrFiringRemainder``) converts the commanded force magnitude
+               into a thruster on-time and fires the EPSS C2.
+
+            This cascade handles the attitude-maneuver delay (~400 s) and the
+            unidirectional constraint of the single thruster.  It is suited to the
+            maintenance role where burn directions change slowly (near once-per-orbit
+            rate) so the attitude lag is acceptable.
         """
         self.extForceOEFeedback = extForceTorque.ExtForceTorque()
         self.extForceOEFeedback.ModelTag = "extForceOEFeedback" + str(self.spacecraftIndex)
         self.scObject.addDynamicEffector(self.extForceOEFeedback)
+
+        self.extForceHillPd = extForceTorque.ExtForceTorque()
+        self.extForceHillPd.ModelTag = "extForceHillPd" + str(self.spacecraftIndex)
+        self.scObject.addDynamicEffector(self.extForceHillPd)
 
     def SetLinkBudget(self, SimBase):
         """Sets up the link budget between spacecraft and Svalbard ground antenna."""
@@ -456,11 +485,6 @@ class BSKDynamicModels:
         self.SetFuelTank()
         self.SetSimpleNavObject()
         self.SetSimpleMassPropsObject()
-        # Pre-seed vehicleConfigOutMsg so FSW modules that reset before
-        # dynamics (higher-priority FSW process) see a valid massSC.
-        vcSeed = messaging.VehicleConfigMsgPayload()
-        vcSeed.massSC = self.scObject.hub.mHub  # [kg]
-        self.simpleMassPropsObject.vehicleConfigOutMsg.write(vcSeed, 0)
         self.SetSolarPanel(SimBase)
         self.SetPowerSink()
         self.SetSimpleAntenna(SimBase)
