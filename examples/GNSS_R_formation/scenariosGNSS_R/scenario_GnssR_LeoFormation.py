@@ -158,6 +158,8 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         self.virtualChiefTransLog = None
         self.activeChiefSource = "spacecraft"
         self.chiefSwitchTimeNanos = None
+        self.pdPhaseStartNanos = None
+        self.pdPhaseEndNanos = None
 
         # declare empty containers for orbital elements
         self.oe = []
@@ -664,6 +666,87 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             self.batteryMsgLog.append(DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(self.samplingTime))
             self.AddModelToTask(DynModels[spacecraft].taskName, self.batteryMsgLog[spacecraft])
 
+    def print_thruster_diagnostics(self, pdOnly=False):
+        """Print command-vs-delivery and fuel diagnostics for each spacecraft."""
+        dynModels = self.get_DynModel()
+        fswModels = self.get_FswModel()
+
+        for spacecraftIndex in range(self.numberSpacecraft):
+            if dynModels[spacecraftIndex].numThr < 1:
+                continue
+
+            timeLineSetSec = np.array(self.snTransLog[spacecraftIndex].times()) * macros.NANO2SEC
+            if len(timeLineSetSec) < 1:
+                continue
+
+            cmdOnTime = np.array(self.thrCmdLog[spacecraftIndex].OnTimeRequest)
+            if cmdOnTime.ndim == 1:
+                cmdOnTime = cmdOnTime.reshape((-1, 1))
+            if cmdOnTime.shape[1] == 0:
+                cmdOnTime = np.zeros((len(timeLineSetSec), 1))
+
+            thrustFactor = np.array(self.thrLogs[spacecraftIndex][0].thrustFactor).reshape(-1)
+            fuelMass = np.array(self.fuelLog[spacecraftIndex].fuelMass).reshape(-1)
+
+            commonLen = min(len(timeLineSetSec), len(cmdOnTime), len(thrustFactor), len(fuelMass))
+            if commonLen < 1:
+                continue
+
+            times = timeLineSetSec[:commonLen]
+            cmdPrimary = cmdOnTime[:commonLen, 0]
+            thrustPrimary = thrustFactor[:commonLen]
+            fuelPrimary = fuelMass[:commonLen]
+
+            mask = np.ones(commonLen, dtype=bool)
+            label = "FULL"
+            if pdOnly and self.pdPhaseStartNanos is not None and self.pdPhaseEndNanos is not None:
+                pdStartSec = self.pdPhaseStartNanos * macros.NANO2SEC
+                pdEndSec = self.pdPhaseEndNanos * macros.NANO2SEC
+                mask = (times >= pdStartSec) & (times <= pdEndSec)
+                label = "PD"
+
+            if np.count_nonzero(mask) < 1:
+                print(f"[Thruster Diagnostic] SC{spacecraftIndex} [{label}]: no samples in selected window")
+                continue
+
+            winTimes = times[mask]
+            winCmd = cmdPrimary[mask]
+            winThr = thrustPrimary[mask]
+            winFuel = fuelPrimary[mask]
+
+            sampleDt = 0.0
+            if len(winTimes) > 1:
+                sampleDt = float(np.median(np.diff(winTimes)))
+
+            cmdActive = winCmd > 1.0e-12
+            deliveredActive = winThr > 1.0e-6
+            cmdCount = int(np.count_nonzero(cmdActive))
+            deliveredCount = int(np.count_nonzero(deliveredActive))
+            deliveryRatio = float(deliveredCount / cmdCount) if cmdCount > 0 else 0.0
+            minPositiveCmd = float(np.min(winCmd[cmdActive])) if cmdCount > 0 else 0.0
+            meanPositiveCmd = float(np.mean(winCmd[cmdActive])) if cmdCount > 0 else 0.0
+            cmdDuty = float(np.mean(winCmd / sampleDt)) if sampleDt > 1.0e-12 else 0.0
+            deliveredDuty = float(np.mean(winThr))
+
+            maxThrust = fswModels[spacecraftIndex].cascadeThrusterMaxThrust
+            cmdImpulse = float(np.sum(winCmd) * maxThrust)
+            deliveredImpulse = float(np.sum(winThr) * sampleDt * maxThrust) if sampleDt > 1.0e-12 else 0.0
+            fuelDelta = float(winFuel[-1] - winFuel[0])
+
+            print(f"[Thruster Diagnostic] SC{spacecraftIndex} [{label}]: samples={len(winTimes)}, dt={sampleDt:.3f} s")
+            print(
+                f"[Thruster Diagnostic] SC{spacecraftIndex} [{label}]: cmd_count={cmdCount}, "
+                f"delivered_count={deliveredCount}, delivery_ratio={deliveryRatio:.3f}"
+            )
+            print(
+                f"[Thruster Diagnostic] SC{spacecraftIndex} [{label}]: min_cmd_on={minPositiveCmd:.6f} s, "
+                f"mean_cmd_on={meanPositiveCmd:.6f} s, cmd_duty={cmdDuty:.6f}, delivered_duty={deliveredDuty:.6f}"
+            )
+            print(
+                f"[Thruster Diagnostic] SC{spacecraftIndex} [{label}]: cmd_impulse={cmdImpulse:.6e} N*s, "
+                f"delivered_impulse~={deliveredImpulse:.6e} N*s, fuel_delta={fuelDelta:.6e} kg"
+            )
+
     def pull_outputs(self, showPlots, spacecraftIndex):
         # Process outputs
         DynModels = self.get_DynModel()
@@ -696,11 +779,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             dataThrust.append(self.thrLogs[spacecraftIndex][item].thrustForce_B)
             dataThrustPercentage.append(self.thrLogs[spacecraftIndex][item].thrustFactor)
 
-        # Save commanded on-time for thruster diagnostics.
-        dataThrCmdOnTime = np.array(self.thrCmdLog[spacecraftIndex].OnTimeRequest)
-        if dataThrCmdOnTime.ndim == 1:
-            dataThrCmdOnTime = dataThrCmdOnTime.reshape((-1, 1))
-
         # Save data system information
         dataStorageLevel = self.dataStorageLog[spacecraftIndex].storageLevel
 
@@ -726,37 +804,6 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # Retrieve the time info
         timeLineSetMin = self.snTransLog[spacecraftIndex].times() * macros.NANO2MIN
         timeLineSetSec = self.snTransLog[spacecraftIndex].times() * macros.NANO2SEC
-
-        # Commanded-vs-delivered thruster diagnostics.
-        sample_dt = 0.0
-        if len(timeLineSetSec) > 1:
-            sample_dt = float(np.median(np.diff(timeLineSetSec)))
-        if dataThrCmdOnTime.shape[1] == 0:
-            dataThrCmdOnTime = np.zeros((len(timeLineSetSec), 1))
-        cmd_on_time_primary = dataThrCmdOnTime[:, 0]
-        thrust_factor_primary = np.array(dataThrustPercentage[0]).reshape(-1)
-        common_len = min(len(cmd_on_time_primary), len(thrust_factor_primary), len(timeLineSetSec))
-        cmd_on_time_primary = cmd_on_time_primary[:common_len]
-        thrust_factor_primary = thrust_factor_primary[:common_len]
-        cmd_active = cmd_on_time_primary > 1.0e-12
-        delivered_active = thrust_factor_primary > 1.0e-6
-        cmd_count = int(np.count_nonzero(cmd_active))
-        delivered_count = int(np.count_nonzero(delivered_active))
-        min_positive_cmd = float(np.min(cmd_on_time_primary[cmd_active])) if cmd_count > 0 else 0.0
-        mean_positive_cmd = float(np.mean(cmd_on_time_primary[cmd_active])) if cmd_count > 0 else 0.0
-        cmd_duty = float(np.mean(cmd_on_time_primary / sample_dt)) if sample_dt > 1.0e-12 else 0.0
-        delivered_duty = float(np.mean(thrust_factor_primary))
-        delivery_ratio = float(delivered_count / cmd_count) if cmd_count > 0 else 0.0
-
-        print(f"[Thruster Diagnostic] SC{spacecraftIndex}: samples={len(timeLineSetSec)}, dt={sample_dt:.3f} s")
-        print(
-            f"[Thruster Diagnostic] SC{spacecraftIndex}: cmd_count={cmd_count}, delivered_count={delivered_count}, "
-            f"delivery_ratio={delivery_ratio:.3f}"
-        )
-        print(
-            f"[Thruster Diagnostic] SC{spacecraftIndex}: min_cmd_on={min_positive_cmd:.6f} s, "
-            f"mean_cmd_on={mean_positive_cmd:.6f} s, cmd_duty={cmd_duty:.6f}, delivered_duty={delivered_duty:.6f}"
-        )
 
         # Compute the number of time steps of the simulation
         simLength = len(timeLineSetMin)
@@ -891,6 +938,8 @@ def runScenario(scenario, mode):
         scenario.ExecuteSimulation()
 
     elif mode == "Manual":
+        scenario.pdPhaseStartNanos = None
+        scenario.pdPhaseEndNanos = None
         for i in range(scenario.numberSpacecraft):
             scenario.FSWModels[i].stateMachine = False
         # =========================================
@@ -930,6 +979,7 @@ def runScenario(scenario, mode):
         # Phase 3: Location pointing (EXPAND TO GNSS-R operations)
         # =========================================
         for i in range(scenario.numberSpacecraft):
+            scenario.FSWModels[i].setModeRequest(modeRequest="stopStationKeeping", verbose=True)
             scenario.FSWModels[i].setModeRequest(modeRequest="hillPointing", verbose=True)
         simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 2 hours
         scenario.ConfigureStopTime(simulationTimeManual)
@@ -938,9 +988,11 @@ def runScenario(scenario, mode):
         # =========================================
         # Phase 4: PD-station keeping
         # =========================================
+        scenario.pdPhaseStartNanos = simulationTimeManual
         for i in range(scenario.numberSpacecraft):
             scenario.FSWModels[i].setModeRequest(modeRequest="pdStationKeeping", verbose=True)
         simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 10 hours
+        scenario.pdPhaseEndNanos = simulationTimeManual
         scenario.ConfigureStopTime(simulationTimeManual)
         scenario.ExecuteSimulation()
 
@@ -952,6 +1004,8 @@ def runScenario(scenario, mode):
         simulationTimeManual = macros.hour2nano(5.0) + simulationTimeManual # 5 hours
         scenario.ConfigureStopTime(simulationTimeManual)
         scenario.ExecuteSimulation()
+
+    scenario.print_thruster_diagnostics(pdOnly=True)
 
 def run(showPlots, numberSpacecraft, formation, mode, txConstTleData):
     """
