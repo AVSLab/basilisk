@@ -147,6 +147,7 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         self.rwPowerLogs = [[] for _ in range(self.numberSpacecraft)]
         self.fuelLog = []
         self.thrLogs = [[] for _ in range(self.numberSpacecraft)]
+        self.thrCmdLog = []
         # Data system logs
         self.instLog = []
         self.dataStorageLog = []
@@ -643,6 +644,10 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
                 self.thrLogs[spacecraft].append(DynModels[spacecraft].thrusterStateEffector.thrusterOutMsgs[item].recorder(self.samplingTime))
                 self.AddModelToTask(DynModels[spacecraft].taskName, self.thrLogs[spacecraft][item])
 
+            # Log commanded thruster on-times from the FSW cascade/reconfiguration chain.
+            self.thrCmdLog.append(FswModels[spacecraft].spacecraftReconfig.onTimeOutMsg.recorder(self.samplingTime))
+            self.AddModelToTask(DynModels[spacecraft].taskName, self.thrCmdLog[spacecraft])
+
             # log data system information
             self.instLog.append(DynModels[spacecraft].instrument.nodeDataOutMsg.recorder(self.samplingTime))
             self.dataStorageLog.append(DynModels[spacecraft].dataMonitor.storageUnitDataOutMsg.recorder(self.samplingTime))
@@ -691,6 +696,11 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
             dataThrust.append(self.thrLogs[spacecraftIndex][item].thrustForce_B)
             dataThrustPercentage.append(self.thrLogs[spacecraftIndex][item].thrustFactor)
 
+        # Save commanded on-time for thruster diagnostics.
+        dataThrCmdOnTime = np.array(self.thrCmdLog[spacecraftIndex].OnTimeRequest)
+        if dataThrCmdOnTime.ndim == 1:
+            dataThrCmdOnTime = dataThrCmdOnTime.reshape((-1, 1))
+
         # Save data system information
         dataStorageLevel = self.dataStorageLog[spacecraftIndex].storageLevel
 
@@ -716,6 +726,37 @@ class scenario_StatKeepingAttPointGnssrFormaton(BSKSim, BSKScenario):
         # Retrieve the time info
         timeLineSetMin = self.snTransLog[spacecraftIndex].times() * macros.NANO2MIN
         timeLineSetSec = self.snTransLog[spacecraftIndex].times() * macros.NANO2SEC
+
+        # Commanded-vs-delivered thruster diagnostics.
+        sample_dt = 0.0
+        if len(timeLineSetSec) > 1:
+            sample_dt = float(np.median(np.diff(timeLineSetSec)))
+        if dataThrCmdOnTime.shape[1] == 0:
+            dataThrCmdOnTime = np.zeros((len(timeLineSetSec), 1))
+        cmd_on_time_primary = dataThrCmdOnTime[:, 0]
+        thrust_factor_primary = np.array(dataThrustPercentage[0]).reshape(-1)
+        common_len = min(len(cmd_on_time_primary), len(thrust_factor_primary), len(timeLineSetSec))
+        cmd_on_time_primary = cmd_on_time_primary[:common_len]
+        thrust_factor_primary = thrust_factor_primary[:common_len]
+        cmd_active = cmd_on_time_primary > 1.0e-12
+        delivered_active = thrust_factor_primary > 1.0e-6
+        cmd_count = int(np.count_nonzero(cmd_active))
+        delivered_count = int(np.count_nonzero(delivered_active))
+        min_positive_cmd = float(np.min(cmd_on_time_primary[cmd_active])) if cmd_count > 0 else 0.0
+        mean_positive_cmd = float(np.mean(cmd_on_time_primary[cmd_active])) if cmd_count > 0 else 0.0
+        cmd_duty = float(np.mean(cmd_on_time_primary / sample_dt)) if sample_dt > 1.0e-12 else 0.0
+        delivered_duty = float(np.mean(thrust_factor_primary))
+        delivery_ratio = float(delivered_count / cmd_count) if cmd_count > 0 else 0.0
+
+        print(f"[Thruster Diagnostic] SC{spacecraftIndex}: samples={len(timeLineSetSec)}, dt={sample_dt:.3f} s")
+        print(
+            f"[Thruster Diagnostic] SC{spacecraftIndex}: cmd_count={cmd_count}, delivered_count={delivered_count}, "
+            f"delivery_ratio={delivery_ratio:.3f}"
+        )
+        print(
+            f"[Thruster Diagnostic] SC{spacecraftIndex}: min_cmd_on={min_positive_cmd:.6f} s, "
+            f"mean_cmd_on={mean_positive_cmd:.6f} s, cmd_duty={cmd_duty:.6f}, delivered_duty={delivered_duty:.6f}"
+        )
 
         # Compute the number of time steps of the simulation
         simLength = len(timeLineSetMin)
@@ -899,7 +940,7 @@ def runScenario(scenario, mode):
         # =========================================
         for i in range(scenario.numberSpacecraft):
             scenario.FSWModels[i].setModeRequest(modeRequest="pdStationKeeping", verbose=True)
-        simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 2 hours
+        simulationTimeManual = macros.hour2nano(10.0) + simulationTimeManual # 10 hours
         scenario.ConfigureStopTime(simulationTimeManual)
         scenario.ExecuteSimulation()
 
