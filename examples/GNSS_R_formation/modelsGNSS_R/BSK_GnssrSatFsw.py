@@ -17,6 +17,7 @@
 #
 
 import itertools
+import math
 
 from Basilisk.simulation.albedo import BSK_ERROR
 import numpy as np
@@ -40,6 +41,7 @@ from Basilisk.simulation import simpleAntenna
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 #############################################################
 ###############        HELPER FUNCTIONS       ###############
@@ -91,6 +93,159 @@ class HillReferenceUpdaterModule(sysModel.SysModel):
     def UpdateState(self, currentSimNanos):
         if self.fswModel.modeRequest in ["pdStationKeeping", "initiateStationKeeping"]:
             self.fswModel.updateHillFrameReferenceFromFormationTargets()
+        if (not self.fswModel.stateMachine and
+            self.fswModel.modeRequest == "pdStationKeeping"):
+            # In Manual mode, keep cascade trigger alive even though setModeRequest()
+            # is not called periodically by the state machine task.
+            self.fswModel.evaluateOuterLoopReconfigTrigger(int(currentSimNanos))
+
+
+class PdCascadeOuterModule(sysModel.SysModel):
+    """
+    Outer cascade stage: sample/hold desired inertial force from Hill PD.
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"pdCascadeOuter_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()  # Prevent memory leaks
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        if self.fswModel.modeRequest != "pdStationKeeping":
+            self.fswModel.cascadeForceValid = False
+            self.fswModel.cascadeHeldForce_N = np.zeros(3)
+            self.fswModel.cascadeHeldForceMag = 0.0
+            return
+
+        force_msg = self.fswModel.hillFrameRelativeControl.forceOutMsg.read()
+        force_vec = np.array(force_msg.forceRequestInertial, dtype=float) * self.fswModel.cascadeForceScale
+        force_mag = np.linalg.norm(force_vec)
+
+        if force_mag <= 1.0e-12:
+            self.fswModel.cascadeForceValid = False
+            return
+        if force_mag < self.fswModel.cascadeMinForceForControl:
+            self.fswModel.cascadeForceValid = False
+            return
+
+        self.fswModel.cascadeHeldForce_N = force_vec
+        self.fswModel.cascadeHeldForceMag = force_mag
+        self.fswModel.cascadeForceValid = True
+
+
+class PdCascadeAttitudeModule(sysModel.SysModel):
+    """
+    Middle cascade stage: command attitude so +X thruster axis aligns with held force.
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"pdCascadeAttitude_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()  # Prevent memory leaks
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        if self.fswModel.modeRequest != "pdStationKeeping":
+            return
+        if not self.fswModel.cascadeForceValid:
+            return
+
+        nav_msg = self.fswModel.simBase.DynModels[self.fswModel.spacecraftIndex].simpleNavObject.transOutMsg.read()
+        force_hat_n = self.fswModel.cascadeHeldForce_N / self.fswModel.cascadeHeldForceMag
+
+        # Use chief orbital angular momentum to define a consistent roll frame.
+        r_n = np.array(nav_msg.r_BN_N, dtype=float)
+        v_n = np.array(nav_msg.v_BN_N, dtype=float)
+        h_n = np.cross(r_n, v_n)
+        h_norm = np.linalg.norm(h_n)
+        if h_norm < 1.0e-12:
+            return
+        h_hat_n = h_n / h_norm
+
+        b1_n = force_hat_n
+        b2_n = np.cross(h_hat_n, b1_n)
+        b2_norm = np.linalg.norm(b2_n)
+        if b2_norm < 1.0e-12:
+            # Fallback for near-collinear cases.
+            ref_n = np.array([0.0, 1.0, 0.0])
+            b2_n = np.cross(ref_n, b1_n)
+            b2_norm = np.linalg.norm(b2_n)
+            if b2_norm < 1.0e-12:
+                return
+        b2_n = b2_n / b2_norm
+        b3_n = np.cross(b1_n, b2_n)
+
+        dcm_bn = np.vstack((b1_n, b2_n, b3_n))
+        sigma_rn = rbk.C2MRP(dcm_bn)
+
+        att_ref_payload = messaging.AttRefMsgPayload()
+        att_ref_payload.sigma_RN = sigma_rn.tolist()
+        att_ref_payload.omega_RN_N = [0.0, 0.0, 0.0]
+        att_ref_payload.domega_RN_N = [0.0, 0.0, 0.0]
+        self.fswModel.attRefMsg.write(att_ref_payload)
+
+
+class PdCascadeThrusterModule(sysModel.SysModel):
+    """
+    Inner cascade stage: fire thruster only when attitude is sufficiently aligned.
+    """
+
+    def __init__(self, fswModel):
+        super().__init__()
+        self.ModelTag = f"pdCascadeThruster_{fswModel.spacecraftIndex}"
+        self.fswModel = fswModel
+        self.this.disown()  # Prevent memory leaks
+
+    def Reset(self, currentSimNanos):
+        pass
+
+    def UpdateState(self, currentSimNanos):
+        cmd_payload = messaging.THRArrayOnTimeCmdMsgPayload()
+        num_thr = self.fswModel.simBase.DynModels[self.fswModel.spacecraftIndex].numThr
+        cmd_payload.OnTimeRequest = [0.0] * num_thr
+
+        if self.fswModel.modeRequest != "pdStationKeeping":
+            self.fswModel.cascadeImpulseRemainder = 0.0
+            self.fswModel.spacecraftReconfig.onTimeOutMsg.write(cmd_payload)
+            return
+        if not self.fswModel.cascadeForceValid:
+            self.fswModel.spacecraftReconfig.onTimeOutMsg.write(cmd_payload)
+            return
+
+        att_nav = self.fswModel.simBase.DynModels[self.fswModel.spacecraftIndex].simpleNavObject.attOutMsg.read()
+        dcm_bn = rbk.MRP2C(np.array(att_nav.sigma_BN))
+        b1_n = dcm_bn.transpose().dot(np.array([1.0, 0.0, 0.0]))
+        force_hat_n = self.fswModel.cascadeHeldForce_N / self.fswModel.cascadeHeldForceMag
+        alignment = float(np.dot(b1_n, force_hat_n))
+
+        if alignment >= np.cos(self.fswModel.cascadeThrusterPointingTolerance):
+            desired_impulse = self.fswModel.cascadeHeldForceMag * self.fswModel.cascadeThrusterLoopPeriod
+            total_impulse = desired_impulse + self.fswModel.cascadeImpulseRemainder
+            on_time_full = total_impulse / self.fswModel.cascadeThrusterMaxThrust
+
+            # Quantize to a deliverable pulse width to avoid spending impulse
+            # on sub-step commands that the actuator cannot realize.
+            effective_min_on_time = max(
+                self.fswModel.cascadeThrusterMinOnTime,
+                self.fswModel.cascadeThrusterTimeQuantum,
+            )
+            if on_time_full >= effective_min_on_time:
+                on_time_quantized = math.floor(on_time_full / effective_min_on_time) * effective_min_on_time
+                on_time_cmd = min(on_time_quantized, self.fswModel.cascadeThrusterLoopPeriod)
+                cmd_payload.OnTimeRequest = [on_time_cmd] * num_thr
+                used_impulse = on_time_cmd * self.fswModel.cascadeThrusterMaxThrust
+                self.fswModel.cascadeImpulseRemainder = max(0.0, total_impulse - used_impulse)
+            else:
+                self.fswModel.cascadeImpulseRemainder = total_impulse
+
+        self.fswModel.spacecraftReconfig.onTimeOutMsg.write(cmd_payload)
 
 ########################################################
 #####             Flight Software                  #####
@@ -146,6 +301,22 @@ class BSKFswModels:
         self.filteredRelativeVelocityError = 0.0  # [m/s]
         self.filteredRelativePositionErrorHill = np.zeros(3)  # [m]
         self.filteredRelativeVelocityErrorHill = np.zeros(3)  # [m/s]
+
+        # Multi-rate cascaded controller settings for PD-to-thruster conversion.
+        self.useIdealHillForceActuator = False  # [-]
+        self.cascadeOuterLoopPeriod = 10.0  # [s]
+        self.cascadeAttitudeLoopPeriod = 1.0  # [s]
+        self.cascadeThrusterLoopPeriod = 1.0  # [s]
+        self.cascadeThrusterPointingTolerance = np.deg2rad(8.0)  # [rad]
+        self.cascadeThrusterMaxThrust = 0.02  # [N]
+        self.cascadeMinForceForControl = 0.0  # [N]
+        self.cascadeThrusterMinOnTime = 0.05  # [s]
+        self.cascadeThrusterTimeQuantum = 1.0  # [s]
+        self.cascadeForceScale = 25.0  # [-]
+        self.cascadeHeldForce_N = np.zeros(3)  # [N]
+        self.cascadeHeldForceMag = 0.0  # [N]
+        self.cascadeForceValid = False  # [-]
+        self.cascadeImpulseRemainder = 0.0  # [N*s]
 
         # Hill-frame PD gains for relative-orbit maintenance.
         # Keep the documented baseline gains to preserve closed-loop stability.
@@ -212,6 +383,17 @@ class BSKFswModels:
         self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask("hillFrameRelativeControlTask" + str(spacecraftIndex),
                                                                        self.processTasksTimeStep), 15)
 
+        # Cascaded single-thruster station-keeping tasks (multi-rate layers).
+        self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask(
+            "pdCascadeOuterTask" + str(spacecraftIndex),
+            mc.sec2nano(self.cascadeOuterLoopPeriod)), 14)
+        self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask(
+            "pdCascadeAttitudeTask" + str(spacecraftIndex),
+            mc.sec2nano(self.cascadeAttitudeLoopPeriod)), 13)
+        self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask(
+            "pdCascadeThrusterTask" + str(spacecraftIndex),
+            mc.sec2nano(self.cascadeThrusterLoopPeriod)), 12)
+
         # State Machine Task
         self.simBase.fswProc[spacecraftIndex].addTask(self.simBase.CreateNewTask("stateMachineTask" + str(spacecraftIndex),
                                                                           self.processTasksTimeStep), 25)
@@ -275,6 +457,9 @@ class BSKFswModels:
         # State machine module
         self.stateMachineModule = StateMachineModule(self)
         self.hillReferenceUpdaterModule = HillReferenceUpdaterModule(self)
+        self.pdCascadeOuterModule = PdCascadeOuterModule(self)
+        self.pdCascadeAttitudeModule = PdCascadeAttitudeModule(self)
+        self.pdCascadeThrusterModule = PdCascadeThrusterModule(self)
 
 #        self.gnssrSensing = gnssrSensing.GnssrSensing()
 #        self.gnssrSensing.ModelTag = "gnssrSensing"
@@ -319,6 +504,9 @@ class BSKFswModels:
         # Update target reference before running the PD controller each FSW tick.
         self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillReferenceUpdaterModule, 11)
         self.simBase.AddModelToTask("hillFrameRelativeControlTask" + str(spacecraftIndex), self.hillFrameRelativeControl, 10)
+        self.simBase.AddModelToTask("pdCascadeOuterTask" + str(spacecraftIndex), self.pdCascadeOuterModule, 10)
+        self.simBase.AddModelToTask("pdCascadeAttitudeTask" + str(spacecraftIndex), self.pdCascadeAttitudeModule, 10)
+        self.simBase.AddModelToTask("pdCascadeThrusterTask" + str(spacecraftIndex), self.pdCascadeThrusterModule, 10)
 
         self.simBase.AddModelToTask("scanningInstrumentControllerTask" + str(spacecraftIndex), self.scanningInstrumentController, 8)
 
@@ -608,7 +796,9 @@ class BSKFswModels:
                 setattr(self.FSWModels[spacecraftIndex].trackingError, 'sigma_R0R', [0.0, 0.0, 0.0]),
                 self.FSWModels[spacecraftIndex].updateHillFrameReferenceFromFormationTargets(),
                 self.enableTask("hillFrameRelativeControlTask" + str(spacecraftIndex)),
-                self.enableTask("hillPointTask" + str(spacecraftIndex)),
+                self.enableTask("pdCascadeOuterTask" + str(spacecraftIndex)),
+                self.enableTask("pdCascadeAttitudeTask" + str(spacecraftIndex)),
+                self.enableTask("pdCascadeThrusterTask" + str(spacecraftIndex)),
                 self.enableTask("trackingErrorTask" + str(spacecraftIndex)),
                 self.enableTask("mrpFeedbackRWsTask" + str(spacecraftIndex)),
                 self.enableTask("stateMachineTask" + str(spacecraftIndex)),
@@ -877,9 +1067,10 @@ class BSKFswModels:
 
         # Wire to the dedicated Hill-PD effector, keeping the meanOEFeedback
         # channel (extForceOEFeedback) independent.
-        self.simBase.DynModels[self.spacecraftIndex].extForceHillPd.cmdForceInertialInMsg.subscribeTo(
-            self.hillFrameRelativeControl.forceOutMsg
-        )
+        if self.useIdealHillForceActuator:
+            self.simBase.DynModels[self.spacecraftIndex].extForceHillPd.cmdForceInertialInMsg.subscribeTo(
+                self.hillFrameRelativeControl.forceOutMsg
+            )
 
     def setupScanningInstrumentControler(self):
         """
@@ -1146,6 +1337,80 @@ class BSKFswModels:
         vel_error = np.linalg.norm(velocity_error_h)
         return pos_error, vel_error
 
+    def evaluateOuterLoopReconfigTrigger(self, currentSimNanos):
+        """
+        Evaluate low-bandwidth drift trigger and switch to reconfiguration if needed.
+
+        Args:
+            currentSimNanos (int): current simulation time [ns]
+
+        Returns:
+            bool: True when a reconfiguration trigger is issued, else False.
+        """
+        if self.modeRequest != "pdStationKeeping":
+            return False
+
+        if currentSimNanos - self.lastOuterLoopEvalNanos < self.outerLoopEvaluationPeriodNanos:
+            return False
+
+        dt_seconds = (currentSimNanos - self.lastOuterLoopEvalNanos) * mc.NANO2SEC
+        self.lastOuterLoopEvalNanos = currentSimNanos
+
+        position_error_h, velocity_error_h = self.targetRelativeErrorComponents()
+        position_error, velocity_error = self.targetRelativeErrorNorms()
+
+        # First-order low-pass to avoid triggering on short transients.
+        alpha = dt_seconds / (self.outerLoopFilterTimeConstant + dt_seconds)
+        self.filteredRelativePositionError = (
+            (1.0 - alpha) * self.filteredRelativePositionError + alpha * position_error
+        )
+        self.filteredRelativeVelocityError = (
+            (1.0 - alpha) * self.filteredRelativeVelocityError + alpha * velocity_error
+        )
+
+        abs_position_error_h = np.abs(position_error_h)
+        abs_velocity_error_h = np.abs(velocity_error_h)
+        self.filteredRelativePositionErrorHill = (
+            (1.0 - alpha) * self.filteredRelativePositionErrorHill + alpha * abs_position_error_h
+        )
+        self.filteredRelativeVelocityErrorHill = (
+            (1.0 - alpha) * self.filteredRelativeVelocityErrorHill + alpha * abs_velocity_error_h
+        )
+
+        if self.useAxisWeightedDriftTrigger:
+            violation_detected = bool(
+                np.any(self.filteredRelativePositionErrorHill >= self.reconfigActivationPositionToleranceHill)
+                or np.any(self.filteredRelativeVelocityErrorHill >= self.reconfigActivationVelocityToleranceHill)
+            )
+        else:
+            violation_detected = bool(
+                self.filteredRelativePositionError >= self.reconfigActivationPositionTolerance
+                or self.filteredRelativeVelocityError >= self.reconfigActivationVelocityTolerance
+            )
+
+        if violation_detected:
+            self.outerLoopViolationCount += 1
+        else:
+            self.outerLoopViolationCount = 0
+
+        if (self.outerLoopViolationCount >= self.outerLoopViolationsRequired and
+            currentSimNanos - self.lastReconfigTriggerNanos >= self.reconfigLoopMinPeriodNanos):
+            if self.verboseMode:
+                print(
+                    f" SC-{self.spacecraftIndex}: cascade trigger -> initiateStationKeeping "
+                    f"at {format_sim_time(currentSimNanos)} | "
+                    f"|dr|={self.filteredRelativePositionError:.2f} m, "
+                    f"|dv|={self.filteredRelativeVelocityError:.4f} m/s"
+                )
+            self.modeRequest = "initiateStationKeeping"
+            self.stationKeeping = "ON"
+            self.reconfigStableTimeNanos = 0
+            self.lastReconfigTriggerNanos = currentSimNanos
+            self.outerLoopViolationCount = 0
+            return True
+
+        return False
+
     def setModeRequest(self, modeRequest=None, verbose=None, currentSimNanos=None):
         """State machine to set the modeRequest variable based on time and conditions"""
         previousMode = self.modeRequest
@@ -1214,53 +1479,7 @@ class BSKFswModels:
 
                 # Evaluate outer-loop trigger at low bandwidth so the attitude/burn
                 # inner loop has enough time to complete without control chatter.
-                if self.flightTime - self.lastOuterLoopEvalNanos >= self.outerLoopEvaluationPeriodNanos:
-                    dt_seconds = (self.flightTime - self.lastOuterLoopEvalNanos) * mc.NANO2SEC
-                    self.lastOuterLoopEvalNanos = self.flightTime
-                    position_error_h, velocity_error_h = self.targetRelativeErrorComponents()
-                    position_error, velocity_error = self.targetRelativeErrorNorms()
-
-                    # First-order low-pass to avoid triggering on short transients.
-                    alpha = dt_seconds / (self.outerLoopFilterTimeConstant + dt_seconds)
-                    self.filteredRelativePositionError = (
-                        (1.0 - alpha) * self.filteredRelativePositionError + alpha * position_error
-                    )
-                    self.filteredRelativeVelocityError = (
-                        (1.0 - alpha) * self.filteredRelativeVelocityError + alpha * velocity_error
-                    )
-
-                    abs_position_error_h = np.abs(position_error_h)
-                    abs_velocity_error_h = np.abs(velocity_error_h)
-                    self.filteredRelativePositionErrorHill = (
-                        (1.0 - alpha) * self.filteredRelativePositionErrorHill + alpha * abs_position_error_h
-                    )
-                    self.filteredRelativeVelocityErrorHill = (
-                        (1.0 - alpha) * self.filteredRelativeVelocityErrorHill + alpha * abs_velocity_error_h
-                    )
-
-                    if self.useAxisWeightedDriftTrigger:
-                        violation_detected = bool(
-                            np.any(self.filteredRelativePositionErrorHill >= self.reconfigActivationPositionToleranceHill)
-                            or np.any(self.filteredRelativeVelocityErrorHill >= self.reconfigActivationVelocityToleranceHill)
-                        )
-                    else:
-                        violation_detected = bool(
-                            self.filteredRelativePositionError >= self.reconfigActivationPositionTolerance
-                            or self.filteredRelativeVelocityError >= self.reconfigActivationVelocityTolerance
-                        )
-
-                    if violation_detected:
-                        self.outerLoopViolationCount += 1
-                    else:
-                        self.outerLoopViolationCount = 0
-
-                    if (self.outerLoopViolationCount >= self.outerLoopViolationsRequired and
-                        self.flightTime - self.lastReconfigTriggerNanos >= self.reconfigLoopMinPeriodNanos):
-                        self.modeRequest = "initiateStationKeeping"
-                        self.stationKeeping = "ON"
-                        self.reconfigStableTimeNanos = 0
-                        self.lastReconfigTriggerNanos = self.flightTime
-                        self.outerLoopViolationCount = 0
+                self.evaluateOuterLoopReconfigTrigger(self.flightTime)
 
                 if (self.modeRequest == "pdStationKeeping" and
                     self.reachedLatitude(latLimit=55) and
