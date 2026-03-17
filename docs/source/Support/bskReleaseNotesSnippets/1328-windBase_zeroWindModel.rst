@@ -1,0 +1,1 @@
+- Added :ref:`windBase` abstract base class and :ref:`zeroWindModel` concrete implementation. The base class now handles co-rotating atmosphere calculations, while the zero wind model represents conditions with no additional wind perturbations beyond atmospheric co-rotation.
