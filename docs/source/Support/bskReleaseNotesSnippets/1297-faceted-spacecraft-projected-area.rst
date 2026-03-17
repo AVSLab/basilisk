@@ -1,0 +1,1 @@
+- Added a new :ref:`facetedSpacecraftProjectedArea` module to compute the per-facet and total projected area of a faceted spacecraft model using a provided heading direction vector. The module supports three heading configuration options: direct general heading, Sun direction heading, and spacecraft inertial velocity heading.
