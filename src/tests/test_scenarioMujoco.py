@@ -48,6 +48,10 @@ SCENARIO_FILES = [
     if filename.startswith("scenario") and filename.endswith(".py")
 ]
 
+SCENARIO_RUN_KWARGS = {
+    "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.075, "runTime": 270.0},
+}
+
 sys.path.append(SCENARIO_FOLDER)
 
 
@@ -56,7 +60,8 @@ sys.path.append(SCENARIO_FOLDER)
 @pytest.mark.scenarioTest
 def test_scenarios(scenario: str):
     module = importlib.import_module(scenario)
-    figureList = module.run()  # Every mujoco scenario should have a run function
+    kwargs = SCENARIO_RUN_KWARGS.get(scenario, {})
+    figureList = module.run(**kwargs)  # Every mujoco scenario should have a run function
     if figureList is None:
         return
 
