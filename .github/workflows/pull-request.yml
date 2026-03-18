@@ -19,17 +19,13 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     needs: pre-commit
-    strategy:
-      fail-fast: false
-      matrix:
-        python: ["3.14"]
-    name: Linux (${{ matrix.python }})
+    name: Linux (MAX Python)
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python }}
+          python-version: 3.14
           conan-args: --opNav True --mujoco True --mujocoReplay True
       - name: Pytest
         working-directory: src
@@ -45,11 +41,7 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 105
     needs: pre-commit
-    strategy:
-      fail-fast: false
-      matrix:
-        python: ["3.14"]
-    name: Windows (${{ matrix.python }})
+    name: Windows (MAX Python)
     env:
       MPLBACKEND: agg
     steps:
@@ -57,7 +49,7 @@ jobs:
       - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
-          python-version: ${{ matrix.python }}
+          python-version: 3.14
           conan-args: --opNav True --mujoco True --mujocoReplay True
       - name: Pytest
         shell: pwsh
@@ -82,6 +74,7 @@ jobs:
       fail-fast: false
       matrix:
         job_suffix: [""]
+        python_label: ["MIN Python"]
         python: ["3.8"]
         pytest_flags:
           [
@@ -91,6 +84,7 @@ jobs:
         include:
           # An extra Basilisk build to test building without visualization enabled
           - python: "3.14"
+            python_label: "MAX Python"
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
             conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
             job_suffix: "--vizInterface False"
@@ -98,12 +92,13 @@ jobs:
           # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
           # test matrix.
           - python: "3.8"
+            python_label: "MIN Python"
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v -p no:pytest_forbid_skips
         exclude:
           - python: "3.8"
             pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v'
 
-    name: macOS (${{ matrix.python }}) ${{ matrix.job_suffix }}
+    name: macOS (${{ matrix.python_label }}) ${{ matrix.job_suffix }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/data-cache
