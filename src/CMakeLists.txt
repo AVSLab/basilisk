@@ -26,9 +26,9 @@ include(bskTargetExcludeBuildOptions)
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
 
-# check for deprecated python 3.8
+# enforce minimum supported Python version
 if(Python3_VERSION VERSION_LESS "3.9")
-    message(WARNING "You are using Python ${Python3_VERSION}, but support for Python < 3.9 is deprecated and will be removed in April 2026.")
+    message(FATAL_ERROR "Basilisk requires Python 3.9 or newer, but found Python ${Python3_VERSION}.")
 endif()
 
 # Find SWIG early (no version requirement yet)
@@ -668,7 +668,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 
-if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
+if(WIN32)
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"

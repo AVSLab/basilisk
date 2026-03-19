@@ -24,7 +24,7 @@
 # because it runs the PEP-517 frontend, so it may not be available here at all.
 # So instead, we check it indirectly by ensuring that setuptools is an
 # acceptable version. See https://github.com/pypa/pip/issues/6264
-from importlib.metadata import version  # Supported on Python 3.8+
+from importlib.metadata import version
 setuptools_version = version('setuptools')
 if int(setuptools_version.split(".")[0]) < 64:
     raise RuntimeError(f"setuptools>=64 is required to install Basilisk, but found setuptools=={setuptools_version}. " \

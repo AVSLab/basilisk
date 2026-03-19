@@ -75,7 +75,7 @@ jobs:
       matrix:
         job_suffix: [""]
         python_label: ["MIN Python"]
-        python: ["3.8"]
+        python: ["3.9"]
         pytest_flags:
           [
             '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v',
@@ -88,15 +88,6 @@ jobs:
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
             conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
             job_suffix: "--vizInterface False"
-          # Python 3.8 cannot run all tests.
-          # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
-          # test matrix.
-          - python: "3.8"
-            python_label: "MIN Python"
-            pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v -p no:pytest_forbid_skips
-        exclude:
-          - python: "3.8"
-            pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v'
 
     name: macOS (${{ matrix.python_label }}) ${{ matrix.job_suffix }}
     steps:
