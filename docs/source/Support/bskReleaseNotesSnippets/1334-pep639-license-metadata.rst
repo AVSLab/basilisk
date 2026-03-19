@@ -1,0 +1,1 @@
+- Updated Python packaging metadata to use the PEP 639 license fields and require a newer setuptools version that supports them.
