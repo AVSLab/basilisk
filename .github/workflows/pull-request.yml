@@ -50,7 +50,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True --mujocoReplay True
+          conan-args: --opNav True --mujoco True --mujocoReplay True --generator Ninja
       - name: Pytest
         shell: pwsh
         working-directory: src

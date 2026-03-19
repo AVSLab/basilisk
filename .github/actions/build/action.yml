@@ -42,6 +42,11 @@ runs:
           pip install -r requirements.txt -r requirements_dev.txt
         fi
 
+    - name: Install Ninja
+      if: ${{ runner.os == 'Windows' }}
+      shell: bash
+      run: pip install ninja
+
     - name: Setup sccache
       uses: mozilla/sccache-action@v0.0.9
 
@@ -51,6 +56,9 @@ runs:
         echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
         echo "CMAKE_C_COMPILER_LAUNCHER=sccache" >> $GITHUB_ENV
         echo "CMAKE_CXX_COMPILER_LAUNCHER=sccache" >> $GITHUB_ENV
+        if [[ "${{ runner.os }}" == 'Windows' ]]; then
+          echo "CMAKE_BUILD_PARALLEL_LEVEL=$(python -c 'import os; print(os.cpu_count() or 1)')" >> $GITHUB_ENV
+        fi
 
     - name: Cache Conan
       uses: actions/cache@v4
