@@ -25,10 +25,22 @@
 # So instead, we check it indirectly by ensuring that setuptools is an
 # acceptable version. See https://github.com/pypa/pip/issues/6264
 from importlib.metadata import version
+import re
 setuptools_version = version('setuptools')
-if int(setuptools_version.split(".")[0]) < 64:
-    raise RuntimeError(f"setuptools>=64 is required to install Basilisk, but found setuptools=={setuptools_version}. " \
-                       f"This can happen on old versions of pip. Please upgrade with `pip install --upgrade \"pip>=22.3\"`.")
+
+
+def _parse_version_prefix(raw_version: str) -> tuple[int, ...]:
+    match = re.match(r"^(\d+)(?:\.(\d+))?(?:\.(\d+))?", raw_version)
+    if match is None:
+        raise RuntimeError(f"Could not parse setuptools version '{raw_version}'.")
+    return tuple(int(part) if part is not None else 0 for part in match.groups())
+
+
+if _parse_version_prefix(setuptools_version) < (77, 0, 3):
+    raise RuntimeError(
+        f"setuptools>=77.0.3 is required to install Basilisk, but found setuptools=={setuptools_version}. "
+        f"This can happen on old versions of pip. Please upgrade with `pip install --upgrade \"pip>=22.3\"`."
+    )
 #-------------------------------------------------------------------------------
 
 
