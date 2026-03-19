@@ -13,8 +13,7 @@ Software setup
 
 In order to run Basilisk, the following software will be necessary:
 
--  `Python <https://www.python.org/downloads/windows/>`__ 3.8 to 3.14.
-   Version 3.8 is deprecated and will be removed April 2026.
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.9 to 3.14.
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Default compiler is Visual Studios 17 2022
 -  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
@@ -69,8 +68,8 @@ For more information on how to configure the path Variable on Windows see this
 `help <https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/>`__ link.
 Example added path formats::
 
-   PYTHON_INCLUDE = C:\Program Files\Python37\include
-   PYTHON_LIB = C:\Program Files\Python37\libs\python37.lib
+   PYTHON_INCLUDE = C:\Program Files\Python314\include
+   PYTHON_LIB = C:\Program Files\Python314\libs\python314.lib
 
 .. note::
 
