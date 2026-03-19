@@ -8,7 +8,7 @@ Setup On macOS
 ==============
 
 These instruction outline how to install Basilisk (BSK) on a clean version of macOS.
-Basilisk requires the use of Python 3.9 to 3.14.
+Basilisk requires the use of Python 3.9 to 3.14.   Version 3.9 is deprecated and will be removed March 2027.
 
 The following python package dependencies are automatically checked and installed in the steps below.
 

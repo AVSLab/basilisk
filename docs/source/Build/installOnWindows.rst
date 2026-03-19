@@ -14,6 +14,7 @@ Software setup
 In order to run Basilisk, the following software will be necessary:
 
 -  `Python <https://www.python.org/downloads/windows/>`__ 3.9 to 3.14.
+   Version 3.9 is deprecated and will be removed March 2027.
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Default compiler is Visual Studios 17 2022
 -  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
