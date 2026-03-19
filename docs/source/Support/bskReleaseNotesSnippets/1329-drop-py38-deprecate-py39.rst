@@ -1,0 +1,1 @@
+- Removed Python 3.8 support from the build and CI configuration, and marked Python 3.9 support as deprecated for removal after March 2027.
