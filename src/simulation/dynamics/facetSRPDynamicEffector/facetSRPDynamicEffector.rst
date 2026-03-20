@@ -24,6 +24,9 @@ provides information on what this message is used for.
     * - sunInMsg
       - :ref:`SpicePlanetStateMsgPayload`
       - Input msg for the Sun state information
+    * - sunEclipseInMsg
+      - :ref:`EclipseMsgPayload`
+      - (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight)
     * - articulatedFacetDataInMsgs
       - :ref:`HingedRigidBodyMsgPayload`
       - (Optional) Input msg vector containing the current articulated facet angles
@@ -232,6 +235,10 @@ The following steps are required to set up the ``facetSRPDynamicEffector`` modul
 #. Connect the Sun's ephemeris message to the SRP module::
 
     SRPEffector.sunInMsg.subscribeTo(sunMsg)
+
+#. Optionally, connect an eclipse message to account for shadow conditions. If connected, the computed SRP force and torque are scaled by the illumination factor (0.0 = full shadow, 1.0 = full sunlight)::
+
+    SRPEffector.sunEclipseInMsg.subscribeTo(eclipseMsg)
 
 #. Add the SRP dynamic effector to the spacecraft::
 

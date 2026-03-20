@@ -43,6 +43,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
+%include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
+struct EclipseMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

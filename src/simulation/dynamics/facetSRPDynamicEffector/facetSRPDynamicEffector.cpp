@@ -34,6 +34,8 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
+    // Default to full sunlight if no eclipse message is connected
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information.
@@ -93,6 +95,12 @@ void FacetSRPDynamicEffector::ReadMessages() {
         sunMsgBuffer = sunInMsg.zeroMsgPayload;
         sunMsgBuffer = this->sunInMsg();
         this->r_SN_N = cArray2EigenVector3d(sunMsgBuffer.PositionVector);
+    }
+
+    // Read the optional sun eclipse message, defaulting to full sunlight
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
+    if (this->sunEclipseInMsg.isLinked() && this->sunEclipseInMsg.isWritten()) {
+        this->sunVisibilityFactor = this->sunEclipseInMsg();
     }
 
     // Read the facet articulation angle data
@@ -196,6 +204,10 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             totalSRPTorquePntB_B = totalSRPTorquePntB_B + facetSRPTorquePntB_B;
         }
     }
+
+    // Scale the total force and torque by the sun visibility factor
+    totalSRPForcePntB_B = totalSRPForcePntB_B * this->sunVisibilityFactor.illuminationFactor;
+    totalSRPTorquePntB_B = totalSRPTorquePntB_B * this->sunVisibilityFactor.illuminationFactor;
 
     // Update the force and torque vectors in the dynamic effector base class
     this->forceExternal_B = totalSRPForcePntB_B;
