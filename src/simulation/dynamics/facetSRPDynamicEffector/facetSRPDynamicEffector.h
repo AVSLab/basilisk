@@ -28,6 +28,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -66,12 +67,14 @@ public:
     void ReadMessages();                                                                 //!< Method to read input messages
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;                                      //!< (optional) Sun eclipse input message
 
 private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
     std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components
     FacetedSRPSpacecraftGeometryData scGeometry;                                         //!< Spacecraft facet data structure
+    EclipseMsgPayload sunVisibilityFactor{};                                               //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     Eigen::Vector3d r_SN_N;                                                              //!< [m] Sun inertial position vector
     StateData *hubPosition = nullptr;                                                    //!< [m] Hub inertial position vector
     StateData *hubSigma = nullptr;                                                       //!< Hub MRP inertial attitude
