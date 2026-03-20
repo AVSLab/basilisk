@@ -41,10 +41,11 @@ from Basilisk.simulation import facetSRPDynamicEffector
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
-# Vary the articulated facet initial angles
+# Vary the articulated facet initial angles and eclipse illumination factor
 @pytest.mark.parametrize("facetRotAngle1", [macros.D2R * -10.4, macros.D2R * 45.2, macros.D2R * 90.0, macros.D2R * 180.0])
 @pytest.mark.parametrize("facetRotAngle2", [macros.D2R * -28.0, macros.D2R * 45.2, macros.D2R * -90.0, macros.D2R * 180.0])
-def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
+@pytest.mark.parametrize("eclipseIlluminationFactor", [1.0, 0.5, 0.0])
+def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2, eclipseIlluminationFactor):
     r"""
     **Verification Test Description**
 
@@ -61,6 +62,7 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
         show_plots (bool): (True) Show plots, (False) Do not show plots
         facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
         facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
+        eclipseIlluminationFactor (double): Eclipse illumination factor (0.0 = full shadow, 1.0 = full sunlight)
     """
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -120,6 +122,12 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     srpEffector.setNumFacets(numFacets)
     srpEffector.setNumArticulatedFacets(numArticulatedFacets)
     srpEffector.sunInMsg.subscribeTo(sunMsg)
+
+    # Create the eclipse message and subscribe if the illumination factor is not full sunlight
+    eclipseMsgData = messaging.EclipseMsgPayload()
+    eclipseMsgData.illuminationFactor = eclipseIlluminationFactor
+    eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
+    srpEffector.sunEclipseInMsg.subscribeTo(eclipseMsg)
     srpEffector.addArticulatedFacet(facetRotAngle1Message)
     srpEffector.addArticulatedFacet(facetRotAngle1Message)
     srpEffector.addArticulatedFacet(facetRotAngle2Message)
@@ -284,6 +292,10 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
         srpForce_BTruth += srpForce_BFacet
         srpTorque_BTruth += srpTorque_BFacet
 
+    # Scale the truth values by the eclipse illumination factor
+    srpForce_BTruth *= eclipseIlluminationFactor
+    srpTorque_BTruth *= eclipseIlluminationFactor
+
     for idx in range(3):
         np.testing.assert_allclose(srpForce_BSim[-1, idx],
                                    srpForce_BTruth[idx],
@@ -357,4 +369,5 @@ if __name__=="__main__":
         True,  # show plots
         macros.D2R * -10.0,  # [rad] facetRotAngle1
         macros.D2R * 45.0,  # [rad] facetRotAngle2
+        1.0,  # eclipseIlluminationFactor (1.0 = full sunlight)
     )
