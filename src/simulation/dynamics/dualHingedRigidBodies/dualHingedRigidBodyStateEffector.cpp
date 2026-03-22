@@ -159,9 +159,15 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 
 void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
+    if (segment != 1 && segment != 2) {
+        bskLogger.bskLog(BSK_ERROR, "DualHingedRigidBodyStateEffector: segment must be either 1 or 2.");
+        return;
+    }
+
     this->assignStateParamNames<DynamicEffector *>(newDynamicEffector, segment);
 
     this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectorSegments.push_back(segment);
 }
 
 void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
@@ -276,14 +282,16 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     Eigen::Vector3d attBodyForce_S2 = Eigen::Vector3d::Zero();
     Eigen::Vector3d attBodyTorquePntS2_S2 = Eigen::Vector3d::Zero();
     std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    int dynIdx = 0;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++, dynIdx++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTime, double(0.0));
-        if ((*dynIt)->getPropName_inertialPosition() == this->nameOfInertialPositionProperty1) {
+        int segment = this->dynEffectorSegments[dynIdx];
+        if (segment == 1) {
             attBodyForce_S1 += (*dynIt)->forceExternal_B; // Parent is S1 not B
             attBodyTorquePntS1_S1 += (*dynIt)->torqueExternalPntB_B;
-        } else if ((*dynIt)->getPropName_inertialPosition() == this->nameOfInertialPositionProperty2) {
+        } else if (segment == 2) {
             attBodyForce_S2 += (*dynIt)->forceExternal_B; // Parent is S2 not B
             attBodyTorquePntS2_S2 += (*dynIt)->torqueExternalPntB_B;
         }
@@ -291,14 +299,15 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
 
     // - Define gravity terms
     // Eigen::Vector3d gravTorquePan1PntH1_P = -this->d1 * this->sHat11_P.cross((this->mass1+this->mass2) * g_P); // Since each panel has its own boudrey this must include the mass of panel 2 (but the forces and ts of 2 are not included in p1s portion)
-    Eigen::Vector3d gravTorquePan1PntH1_P = -this->d1 * this->sHat11_P.cross((this->mass1) * g_P); 
+    Eigen::Vector3d gravTorquePan1PntH1_P = -this->d1 * this->sHat11_P.cross((this->mass1) * g_P);
     Eigen::Vector3d gravForcePan2_P = this->mass2 * g_P;
     Eigen::Vector3d gravTorquePan2PntH2_P = -this->d2 * this->sHat21_P.cross(this->mass2 * g_P);
 
     // - Sum of forces and torques
-    Eigen::Vector3d externalForcePan2_P = gravForcePan2_P + (this->dcm_S2P.transpose() * attBodyForce_S2);
-    Eigen::Vector3d externalTorquePan1PntS1_P = gravTorquePan1PntH1_P + (this->dcm_S1P.transpose() * attBodyTorquePntS1_S1);
-    Eigen::Vector3d externalTorquePan2PntS2_P = (this->dcm_S2P.transpose() * attBodyTorquePntS2_S2);
+    Eigen::Vector3d externalForcePan1_P = this->dcm_S1P.transpose() * attBodyForce_S1;
+    Eigen::Vector3d externalForcePan2_P = this->dcm_S2P.transpose() * attBodyForce_S2;
+    Eigen::Vector3d externalTorquePan1PntS1_P = this->dcm_S1P.transpose() * attBodyTorquePntS1_S1;
+    Eigen::Vector3d externalTorquePan2PntS2_P = this->dcm_S2P.transpose() * attBodyTorquePntS2_S2;
 
     // - Define omegaBN_S
     this->omega_BN_B = omega_BN_B;
@@ -331,7 +340,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->vectorVDHRB(0) =
       -(this->IPntS1_S1(0, 0) - this->IPntS1_S1(2, 2)) * this->omega_PN_S1(2) * this->omega_PN_S1(0) + this->u1 -
       this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->k2 * this->theta2 + this->c2 * this->theta2Dot +
-      (this->sHat12_P.dot(externalTorquePan1PntS1_P) + (this->sHat12_P.dot(externalTorquePan2PntS2_P)) + (this->l1 * this->sHat13_P.dot(externalForcePan2_P))) -
+      (this->sHat12_P.dot(gravTorquePan1PntH1_P + externalTorquePan1PntS1_P) + (this->sHat12_P.dot(externalTorquePan2PntS2_P)) +
+       (this->l1 * this->sHat13_P.dot(gravForcePan2_P + externalForcePan2_P))) -
       this->mass1 * this->d1 * this->sHat13_P.transpose() *
         (2 * this->omegaTildePNLoc_P * this->rPrimeS1P_P +
          this->omegaTildePNLoc_P * this->omegaTildePNLoc_P * this->r_S1P_P) -
@@ -343,7 +353,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
 
     this->vectorVDHRB(1) =
       -(this->IPntS2_S2(0, 0) - this->IPntS2_S2(2, 2)) * this->omega_PN_S2(2) * this->omega_PN_S2(0) + this->u2 -
-      this->k2 * this->theta2 - this->c2 * this->theta2Dot + this->sHat22_P.dot(externalTorquePan2PntS2_P) -
+      this->k2 * this->theta2 - this->c2 * this->theta2Dot +
+      this->sHat22_P.dot(gravTorquePan2PntH2_P + externalTorquePan2PntS2_P) -
       this->mass2 * this->d2 * this->sHat23_P.transpose() *
         (2 * this->omegaTildePNLoc_P * this->rPrimeS2P_P +
          this->omegaTildePNLoc_P * this->omegaTildePNLoc_P * this->r_S2P_P +
@@ -366,7 +377,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
                               (this->mass1 * this->d1 * this->sHat13_P + this->mass2 * this->l1 * this->sHat13_P +
                                this->mass2 * this->d2 * this->sHat23_P) *
                                 this->matrixEDHRB.row(0) * this->vectorVDHRB +
-                              this->mass2 * this->d2 * this->sHat23_P * this->matrixEDHRB.row(1) * this->vectorVDHRB);
+                              this->mass2 * this->d2 * this->sHat23_P * this->matrixEDHRB.row(1) * this->vectorVDHRB) +
+                            externalForcePan1_P + externalForcePan2_P;
 
     // - Define rotational matrice contributions (Eq 96 in paper)
 
@@ -542,9 +554,8 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     // inertial angular velocities
     Eigen::Vector3d omega_PN_P;
     omega_PN_P = this->omega_BN_B;
-    *this->omega_SN_S[0] = this->dcm_S1P * ( omega_PN_P + this->theta1Dot*this->sHat12_P);
-    *this->omega_SN_S[1] = this->dcm_S1P * ( omega_PN_P + this->theta2Dot*this->sHat22_P); 
-    // ??? *this->omega_SN_S[1] = this->dcm_S2P * (omega_PN_P + this->theta1Dot*this->sHat12_P + this->theta2Dot*this->sHat22_P);
+    *this->omega_SN_S[0] = this->dcm_S1P * (omega_PN_P + this->theta1Dot*this->sHat12_P);
+    *this->omega_SN_S[1] = this->dcm_S2P * (omega_PN_P + this->theta1Dot*this->sHat12_P + this->theta2Dot*this->sHat22_P);
 
 
     // inertial position vectors
@@ -553,10 +564,11 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     this->r_SN_N[0] = Eigen::Vector3d(dcm_NP * this->r_S1P_P) + r_PN_N;//done
     this->r_SN_N[1] = Eigen::Vector3d(dcm_NP * this->r_S2P_P) + r_PN_N;//done
 
-    Eigen::Vector3d r_H1N_N_val = Eigen::Vector3d(dcm_NP * this->r_H1P_P);
+    Eigen::Vector3d r_H1N_N_val = r_PN_N + Eigen::Vector3d(dcm_NP * this->r_H1P_P);
+    Eigen::Vector3d r_H2N_N_val = r_PN_N + Eigen::Vector3d(dcm_NP * this->r_H2P_P);
 
-    *this->r_HN_N[0] = r_H1N_N_val; //done
-    *this->r_HN_N[1] = Eigen::Vector3d(r_H1N_N_val - this->l1*this->sHat11_P); //done
+    *this->r_HN_N[0] = r_H1N_N_val;
+    *this->r_HN_N[1] = r_H2N_N_val;
 
     // inertial velocity vectors
     Eigen::Vector3d v_PN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty);
