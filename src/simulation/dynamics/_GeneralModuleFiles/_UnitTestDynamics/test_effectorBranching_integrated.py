@@ -381,7 +381,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     # Continue to check state effector EOMs using pure force & torque
     if dynamicEffector != "extForceTorque":
         return
-    
+
     print("here3")
 
     # Grab conservation quantities to compare against
@@ -389,7 +389,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
     print("here4")
 
-    # Grab effector's inertial position.   
+    # Grab effector's inertial position.
     if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
         r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
         for i in range(len(inertialPropLog.sigma_BN)):
@@ -520,7 +520,7 @@ def getStateEffInertialPropName(segment, stateEff, propType):
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
-    elif segment == 3: 
+    elif segment == 3:
         try:
             propName = stateEff.ModelTag + "Inertial" + propType + "1_3"
             print("propName= ", propName)
@@ -840,7 +840,7 @@ def setup_hingedRigidBodyStateEffector():
 
     return(hingedBody, stateEffProps)
 
-def setup_hingedRigidBodyNDOF(): 
+def setup_hingedRigidBodyNDOF():
     hingedBodyEffector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
     numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 hinged bodies here
     massSubPanel = 100.0 / numberOfSegments
@@ -851,7 +851,7 @@ def setup_hingedRigidBodyNDOF():
     mr_ScB_B = np.zeros(3)
     hingedBodyEffector.r_HB_B = [-2,0,0]
 
-    
+
     r_hinge_B = np.asarray(hingedBodyEffector.r_HB_B, dtype=float).reshape(3,)
 
     # r_hinge_B = np.array(hingedBodyEffector.r_HB_B)
@@ -865,7 +865,7 @@ def setup_hingedRigidBodyNDOF():
                                    [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
                                    [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]]
         hingedPanel.d = 1.0
-        d = np.array([hingedPanel.d,0,0])    
+        d = np.array([hingedPanel.d,0,0])
         hingedPanel.thetaInit = (2.0 * macros.D2R)
         hingedPanel.thetaDotInit = (-0.5 * macros.D2R)
         hingedPanel.k = 10
@@ -876,15 +876,14 @@ def setup_hingedRigidBodyNDOF():
         # print("r_HB_B: ", hingedBodyEffector.r_HB_B)
         # print("d shape: ", d.shape)
         # print("_____________________________________________________")
-        
+
         # COM of current panel
         r_ScB_B = np.array(r_hinge_B) + dcm_SB.transpose() @ d
 
         # Advance hinge to next panel
         r_hinge_B += dcm_SB.transpose() @ (2 * d)
-        
-        #how to update? for just one panel instead of 2?
-        dcm_SB = rbk.PRV2C(hingedPanel.thetaInit * np.array(hingedPanel.sHat_S)) @ dcm_SB  
+
+        dcm_SB = rbk.PRV2C(hingedPanel.thetaInit * np.array(hingedPanel.sHat2_B)) @ dcm_SB   # sHat1_B may be wrong, it doesnt recognize sHat_S but idk why
 
         # Compute COM offset contribution, to be divided by the hub mass
         r_SB_B = np.asarray(hingedPanel.r_SB_B, dtype=float).reshape(3,) # this fixes the shape error but not sure if its right
@@ -897,7 +896,7 @@ def setup_hingedRigidBodyNDOF():
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = r_ScB_B - hingedPanel.r_SB_B #???
     stateEffProps.r_PcP_P = hingedPanel.r_SB_B #???
-    stateEffProps.inertialPropLogName = "nHingedBodyConfigLogOutMsgs" # error has to do with this 
+    stateEffProps.inertialPropLogName = "nHingedBodyConfigLogOutMsgs" # error has to do with this
 
     return(hingedBodyEffector, stateEffProps)
 
