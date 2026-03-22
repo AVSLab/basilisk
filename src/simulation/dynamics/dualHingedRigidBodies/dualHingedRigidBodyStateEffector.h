@@ -97,6 +97,7 @@ public:
     std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
     std::vector<Message<SCStatesMsgPayload>*> dualHingedRigidBodyConfigLogOutMsgs; //!< panel state config log message vector for all panels
     std::vector<DynamicEffector*> dynEffectors;           //!< Vector of dynamic effectors attached
+    std::vector<int> dynEffectorSegments;                 //!< Segment index for each attached dynamic effector
 
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
@@ -144,8 +145,8 @@ private:
     std::vector<Eigen::Vector3d> r_SN_N;           //!< [m] position vector of hinge CM S relative to inertial frame
     std::vector<Eigen::Vector3d> v_SN_N;           //!< [m/so inertial velocity vector of S relative to inertial frame
 
-    std::vector<Eigen::MatrixXd*> r_HN_N;     //!< [m] position vector of hinge CM S relative to inertial frame
-    std::vector<Eigen::MatrixXd*> v_HN_N;     //!< [m/s] inertial velocity vector of S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> r_HN_N;     //!< [m] position vector of hinge point H relative to inertial frame
+    std::vector<Eigen::MatrixXd*> v_HN_N;     //!< [m/s] inertial velocity vector of H relative to inertial frame
 
     // ???? sigma_SN stay the same?
     std::vector<Eigen::MatrixXd*> sigma_SN;   //!< -- MRP attitude of panel frame S relative to inertial frame
