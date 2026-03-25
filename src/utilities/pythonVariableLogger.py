@@ -59,6 +59,9 @@ class PythonVariableLogger(sysModel.SysModel):
         """
         super().__init__()
 
+        if min_log_period < 0:
+            raise ValueError("min_log_period must be greater than or equal to 0")
+
         self.logging_functions = logging_functions
 
         self.min_log_period = min_log_period

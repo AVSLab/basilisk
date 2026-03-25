@@ -73,3 +73,11 @@ def test_python_variable_logger_reset_restarts_logging_at_reset_time() -> None:
 
     np.testing.assert_array_equal(logger.times(), np.array([35, 45]))
     np.testing.assert_array_equal(logger.value, np.array([35, 45]))
+
+
+def test_python_variable_logger_rejects_negative_min_log_period() -> None:
+    """Ensure invalid negative minimum log periods fail fast."""
+    with pytest.raises(ValueError, match="min_log_period"):
+        PythonVariableLogger({
+            "value": lambda current_sim_nanos: current_sim_nanos,
+        }, min_log_period=-1)
