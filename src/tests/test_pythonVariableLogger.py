@@ -55,3 +55,21 @@ def test_python_variable_logger_getattr_handles_missing_storage() -> None:
 
     with pytest.raises(AttributeError, match="missing"):
         getattr(logger, "missing")
+
+
+def test_python_variable_logger_reset_restarts_logging_at_reset_time() -> None:
+    """Ensure ``Reset`` resumes the log schedule from the reset timestamp."""
+    logger = PythonVariableLogger({
+        "value": lambda current_sim_nanos: current_sim_nanos,
+    }, min_log_period=10)
+
+    logger.UpdateState(0)
+    logger.UpdateState(10)
+
+    logger.Reset(35)
+    logger.UpdateState(35)
+    logger.UpdateState(40)
+    logger.UpdateState(45)
+
+    np.testing.assert_array_equal(logger.times(), np.array([35, 45]))
+    np.testing.assert_array_equal(logger.value, np.array([35, 45]))

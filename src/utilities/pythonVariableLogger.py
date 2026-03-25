@@ -76,6 +76,7 @@ class PythonVariableLogger(sysModel.SysModel):
 
     def Reset(self, CurrentSimNanos):
         self.clear()
+        self._next_update_time = CurrentSimNanos
         return super().Reset(CurrentSimNanos)
 
     def UpdateState(self, CurrentSimNanos):
