@@ -1,4 +1,5 @@
-from typing import Callable, Any, Sequence, Union, Dict
+import keyword
+from typing import Callable, Any, Dict
 
 import numpy as np
 
@@ -26,7 +27,7 @@ class PythonVariableLogger(sysModel.SysModel):
         timesSquared = log.a
         timesCubed   = log.b
     """
-    def __new__(cls, logging_functions: Dict[str, LoggingFunction], min_log_period: int=0):
+    def __new__(cls, logging_functions: Dict[str, LoggingFunction], min_log_period: int = 0):
         # Generate an instance specific class that has properties for each logging function
         # NOTE: properties must be set on the class, not the instance itself
         properties = {
@@ -34,6 +35,7 @@ class PythonVariableLogger(sysModel.SysModel):
                     lambda self, name=name: np.array(self._variables[name])
                 )
                 for name in logging_functions
+                if name.isidentifier() and not keyword.iskeyword(name) and not hasattr(cls, name)
         }
         dyncls = type('PythonVariableLoggerDynamic', (cls, ), properties)
 
@@ -92,3 +94,24 @@ class PythonVariableLogger(sysModel.SysModel):
 
             self._next_update_time += self.min_log_period
         return super().UpdateState(CurrentSimNanos)
+
+    def __getattr__(self, name: str) -> Any:
+        """Return logged data for attributes that are not explicit class members.
+
+        This fallback supports logger names that cannot be exposed safely as Python
+        properties, such as invalid identifiers or names that would shadow an
+        existing class attribute.
+        """
+        try:
+            variables = object.__getattribute__(self, "_variables")
+        except AttributeError as err:
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '{name}'"
+            ) from err
+
+        if name in variables:
+            return np.array(variables[name])
+
+        raise AttributeError(
+            f"Logger is not logging '{name}'. Must be one of: {', '.join(variables)}"
+        )
