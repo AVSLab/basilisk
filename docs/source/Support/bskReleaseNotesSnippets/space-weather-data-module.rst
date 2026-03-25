@@ -1,0 +1,1 @@
+- Added a new :ref:`spaceWeatherData` C++ module that loads CelesTrak space-weather CSV data and publishes the 23-message weather set required by :ref:`msisAtmosphere`.
