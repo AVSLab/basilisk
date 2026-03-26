@@ -38,15 +38,28 @@ def test_python_variable_logger_getattr_returns_logged_values() -> None:
 
 
 def test_python_variable_logger_getattr_keeps_times_method_available() -> None:
-    """Ensure a logged ``times`` field does not shadow the logger time accessor."""
+    """Ensure a logged ``times`` field keeps both access paths available."""
     logger = PythonVariableLogger({
         "times": lambda current_sim_nanos: current_sim_nanos,
     })
 
     logger.UpdateState(3)
 
+    assert callable(getattr(logger, "times"))
     np.testing.assert_array_equal(logger.times(), np.array([3]))
-    np.testing.assert_array_equal(logger.__getattr__("times"), np.array([3]))
+    np.testing.assert_array_equal(logger["times"], np.array([3]))
+
+
+def test_python_variable_logger_getitem_returns_logged_values() -> None:
+    """Ensure indexed access works for names without generated properties."""
+    logger = PythonVariableLogger({
+        "theta-dot": lambda current_sim_nanos: current_sim_nanos,
+    })
+
+    logger.UpdateState(5)
+    logger.UpdateState(8)
+
+    np.testing.assert_array_equal(logger["theta-dot"], np.array([5, 8]))
 
 
 def test_python_variable_logger_getattr_handles_missing_storage() -> None:
@@ -55,6 +68,16 @@ def test_python_variable_logger_getattr_handles_missing_storage() -> None:
 
     with pytest.raises(AttributeError, match="missing"):
         getattr(logger, "missing")
+
+
+def test_python_variable_logger_getitem_rejects_unknown_variable() -> None:
+    """Ensure indexed access fails cleanly for names that are not being logged."""
+    logger = PythonVariableLogger({
+        "value": lambda current_sim_nanos: current_sim_nanos,
+    })
+
+    with pytest.raises(KeyError, match="missing"):
+        logger["missing"]
 
 
 def test_python_variable_logger_reset_restarts_logging_at_reset_time() -> None:
