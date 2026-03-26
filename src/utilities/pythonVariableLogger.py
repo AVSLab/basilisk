@@ -77,6 +77,39 @@ class PythonVariableLogger(sysModel.SysModel):
         """Retrieve the times when the data was logged"""
         return np.array(self._times)
 
+    def _get_logged_variable(self, name: str) -> np.ndarray:
+        """Return the logged samples for ``name``.
+
+        :param name: Logged variable name.
+        :return: Logged samples for ``name``.
+        :raises AttributeError: If the internal storage is unavailable.
+        :raises KeyError: If ``name`` is not being logged.
+        """
+        try:
+            variables = object.__getattribute__(self, "_variables")
+        except AttributeError as err:
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '{name}'"
+            ) from err
+
+        if name in variables:
+            return np.array(variables[name])
+
+        raise KeyError(
+            f"Logger is not logging '{name}'. Must be one of: {', '.join(variables)}"
+        )
+
+    def __getitem__(self, name: str) -> np.ndarray:
+        """Return logged samples for any stored variable name.
+
+        This accessor supports names that cannot be exposed as attributes,
+        including invalid identifiers and keys that collide with class members.
+
+        :param name: Logged variable name.
+        :return: Logged samples for ``name``.
+        """
+        return self._get_logged_variable(name)
+
     def Reset(self, CurrentSimNanos):
         self.clear()
         self._next_update_time = CurrentSimNanos
@@ -102,20 +135,11 @@ class PythonVariableLogger(sysModel.SysModel):
     def __getattr__(self, name: str) -> Any:
         """Return logged data for attributes that are not explicit class members.
 
-        This fallback supports logger names that cannot be exposed safely as Python
-        properties, such as invalid identifiers or names that would shadow an
-        existing class attribute.
+        This fallback supports logger names that cannot be exposed safely as
+        Python properties, such as invalid identifiers. Use ``logger[name]``
+        for logged names that collide with existing class attributes.
         """
         try:
-            variables = object.__getattribute__(self, "_variables")
-        except AttributeError as err:
-            raise AttributeError(
-                f"'{type(self).__name__}' object has no attribute '{name}'"
-            ) from err
-
-        if name in variables:
-            return np.array(variables[name])
-
-        raise AttributeError(
-            f"Logger is not logging '{name}'. Must be one of: {', '.join(variables)}"
-        )
+            return self._get_logged_variable(name)
+        except KeyError as err:
+            raise AttributeError(err.args[0]) from err
