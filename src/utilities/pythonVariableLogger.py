@@ -8,15 +8,15 @@ from Basilisk.architecture import sysModel
 LoggingFunction = Callable[[int], Any]
 
 class PythonVariableLogger(sysModel.SysModel):
-    """This a Python Module that will call one or multiple functions
-    and store their results. After the simulation is over, these
+    """This Python module calls one or multiple functions
+    and stores their results. After the simulation is over, these
     values can be retrieved.
 
     This object is built with a dictionary of functions, and the
     results can be retrieved from the object using the keys of
     this dictionary::
 
-        log = VariableLogger({
+        log = PythonVariableLogger({
             "a": lambda CurrentSimNanos: CurrentSimNanos**2,
             "b": lambda CurrentSimNanos: CurrentSimNanos**3,
         })
