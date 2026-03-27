@@ -87,7 +87,9 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
     }
 
     // Read input messages
-    this->readInputMessages();
+    if (!this->readInputMessages()) {
+        return;
+    }
 
     // Compute the projected area for all facets
     this->totalProjectedArea = 0.0;
@@ -104,8 +106,10 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
     this->writeOutputMessages(callTime);
 }
 
-/*! This method reads the module input messages. The current body heading vector is updated in this method. */
-void FacetedSpacecraftProjectedArea::readInputMessages() {
+/*! This method reads the module input messages and updates the current body heading vector. The method returns a
+    boolean indicating whether reading the input messages was successful.
+ */
+bool FacetedSpacecraftProjectedArea::readInputMessages() {
     // Set body heading vector default to zero
     this->bodyHeadingVec_B.setZero();
 
@@ -114,7 +118,7 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
         if (!this->spacecraftStateInMsg.isWritten()) {
             this->bskLogger->bskLog(BSK_ERROR,
                                     "FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
-            return;
+            return false;
         }
 
         SCStatesMsgPayload spacecraftStateIn{};
@@ -128,7 +132,7 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
             if (!this->sunStateInMsg.isWritten()) {
                 this->bskLogger->bskLog(BSK_ERROR,
                                         "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
-                return;
+                return false;
             }
 
             SpicePlanetStateMsgPayload sunStateIn{};
@@ -144,7 +148,7 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
             } else {
                 this->bskLogger->bskLog(BSK_ERROR,
                                         "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
-                return;
+                return false;
             }
         } else {
             // Option 2: Spacecraft velocity heading (Application: drag)
@@ -156,14 +160,14 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
             } else {
                 this->bskLogger->bskLog(BSK_ERROR,
                                         "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
-                return;
+                return false;
             }
         }
     } else if (this->bodyHeadingInMsg.isLinked()) {
         if (!this->bodyHeadingInMsg.isWritten()) {
             this->bskLogger->bskLog(BSK_ERROR,
                                     "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
-            return;
+            return false;
         }
         // Option 3: Direct heading
         BodyHeadingMsgPayload bodyHeadingIn{};
@@ -172,7 +176,7 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
     } else {
         this->bskLogger->bskLog(BSK_ERROR,
                                 "FacetedSpacecraftProjectedArea: Input message error. Cannot subscribe multiple direction vectors to the module.");
-        return;
+        return false;
     }
 
     // Read the articulated facet input messages
@@ -182,8 +186,14 @@ void FacetedSpacecraftProjectedArea::readInputMessages() {
             facetElementBodyIn = this->facetElementBodyInMsgs[idx]();
             this->facetAreaList[idx] = facetElementBodyIn.area;
             this->facetNHat_BList[idx] = cArray2EigenVector3d(facetElementBodyIn.nHat_B);
+        } else {
+            this->bskLogger->bskLog(BSK_ERROR,
+                                    "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
+            return false;
         }
     }
+
+    return true;  // Reading input messages was successful
 }
 
 /*! Method to write module output messages.
