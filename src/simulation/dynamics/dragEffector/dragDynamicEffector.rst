@@ -36,42 +36,39 @@ Example setup:
 
     scObject.addDynamicEffector(drag)
 
-Atmosphere Relative Velocity
------------------------------
-The drag computation can optionally use the spacecraft velocity relative to a rotating atmosphere instead of the inertial spacecraft velocity. This is useful for modeling atmospheric drag in Low Earth Orbit, where the atmosphere approximately co-rotates with the Earth.
-
-If ``useAtmosphereRelativeVelocity`` is enabled, the drag model computes
+Wind Velocity Input
+--------------------
+When ``windVelInMsg`` is linked to a :ref:`windBase`-derived module (e.g. :ref:`zeroWindModel`),
+the drag model subtracts the air velocity ``v_air_N`` from the spacecraft inertial velocity before
+computing drag, yielding the atmosphere-relative velocity:
 
 .. math::
 
-    \mathbf{v}_{rel} = \mathbf{v}_{sc} - (\boldsymbol{\omega}_{planet} \times \mathbf{r}_{sc})
+    \mathbf{v}_{rel} = \mathbf{v}_{sc} - \mathbf{v}_{air}
 
-where
-
-- :math:`\mathbf{v}_{sc}` is the spacecraft inertial velocity
-- :math:`\mathbf{r}_{sc}` is the spacecraft inertial position
-- :math:`\boldsymbol{\omega}_{planet}` is the planetary rotation vector
-
-For Earth simulations, the planetary rotation rate is automatically taken from ``OMEGA_EARTH`` in ``astroConstants.h``.
-For other bodies it can be configured through ``planetOmega_N``.
-
-If ``useAtmosphereRelativeVelocity`` is left disabled (default), the drag model uses the spacecraft inertial velocity directly.
+If ``windVelInMsg`` is not linked, the inertial spacecraft velocity is used directly.
 
 Example setup:
 
 .. code-block:: python
 
     drag = dragDynamicEffector.DragDynamicEffector()
-
     drag.coreParams.dragCoeff = 2.2
     drag.coreParams.projectedArea = 10.0
     drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
 
-    # Enable atmosphere-relative velocity
-    drag.setUseAtmosphereRelativeVelocity(True)
-    drag.setPlanetOmega_N([0.0, 0.0, 7.2921159e-5])
+    # Optional: link a wind model for atmosphere-relative velocity
+    drag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     scObject.addDynamicEffector(drag)
+
+Input Message Timing
+---------------------
+Both ``atmoDensInMsg`` and ``windVelInMsg`` are refreshed only during ``UpdateState()``.
+Because ``Spacecraft::computeForceTorque()`` calls dynamic effectors before the atmosphere
+and wind models receive their next ``UpdateState()``, the drag computation always uses
+the values from the previous time step (zero-initialized on the first step).
+Both inputs are therefore treated as **piecewise-constant** over each integration step.
 
 Message Connection Descriptions
 -------------------------------
@@ -89,3 +86,7 @@ provides information on what this message is used for.
     * - atmoDensInMsg
       - :ref:`AtmoPropsMsgPayload`
       - atmospheric density input message
+    * - windVelInMsg
+      - :ref:`WindMsgPayload`
+      - (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the
+        spacecraft inertial velocity to obtain the atmosphere-relative velocity

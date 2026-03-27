@@ -17,7 +17,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Test the validity of a simple exponential atmosphere model.
+# Purpose:  Test the drag dynamic effector, including inertial and atmosphere-relative velocity modes.
 # Author:   Andrew Harris
 # Creation Date:  Jan 18, 2017
 #
@@ -25,15 +25,16 @@
 import inspect
 import math
 import os
-import pytest
 
 import matplotlib.pyplot as plt
 import numpy as np
 # print dir(exponentialAtmosphere)
+from Basilisk.architecture import messaging
 from Basilisk.simulation import dragDynamicEffector
 from Basilisk.simulation import exponentialAtmosphere, simpleNav
 # import simulation related support
 from Basilisk.simulation import spacecraft
+from Basilisk.simulation import zeroWindModel
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -58,26 +59,15 @@ def test_scenarioDragOrbit():
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     earthCase = "Earth"
-    marsCase = "Mars"
     orb1 = "LPO"
-    orb2 = "LTO"
     showVal = False
     testResults = []
     testMessage = []
     [leoResults, leoMessages] = run(
             showVal, orb1, earthCase)
-    #[gtoResults, gtoMessages] = run(
-    #    showVal, orb2, earthCase)
-    #[lmoResults, lmoMessages] = run(
-        #showVal, orb1, marsCase)
-    #[mtoResults, mtoMessages] = run(
-        #showVal, orb2, marsCase)
 
-    testResults = leoResults#+gtoResults#+lmoResults+mtoResults
+    testResults = leoResults
     testMessage.append(leoMessages)
-    #testMessage.append(gtoMessages)
-    ##testMessage.append(lmoMessages)
-    #testMessage.append(mtoMessages)
 
     assert testResults < 1, testMessage
 
@@ -94,23 +84,9 @@ def cannonballDragComp(dragCoeff, dens, area, vel, att):
     return dragForce
 
 
-def cannonballDragCompRel(dragCoeff, dens, area, vel, pos, att, planetOmega):
-    vAtmo = np.cross(planetOmega, pos)
-    vRel = vel - vAtmo
-    vMag = np.linalg.norm(vRel)
-    if vMag <= 1e-12:
-        return np.zeros(3), vRel, np.zeros(3)
-
-    dragDir_N = -vRel / vMag
-    dcm_BN = RigidBodyKinematics.MRP2C(att)
-    dragDir_B = dcm_BN.dot(dragDir_N)
-    dragForce = 0.5 * dragCoeff * dens * area * vMag**2.0 * dragDir_B
-    return dragForce, vRel, dragDir_B
-
-
-def setup_basic_drag_sim(useAtmosphereRelativeVelocity=False, planetOmega=None,
-                         rN=None, vN=None, sigmaBN=None, density=1.0e-12,
-                         dragCoeff=2.2, projArea=10.0):
+def setup_basic_drag_sim(rN=None, vN=None, sigmaBN=None,
+                         dragCoeff=2.2,  # [-]
+                         projArea=10.0):  # [m^2]
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
@@ -126,16 +102,13 @@ def setup_basic_drag_sim(useAtmosphereRelativeVelocity=False, planetOmega=None,
     dragEff.ModelTag = "DragEff"
     dragEff.coreParams.projectedArea = projArea
     dragEff.coreParams.dragCoeff = dragCoeff
-    dragEff.coreParams.comOffset = [1., 0., 0.]
-    dragEff.setUseAtmosphereRelativeVelocity(useAtmosphereRelativeVelocity)
-    if planetOmega is not None:
-        dragEff.setPlanetOmega_N(planetOmega)
+    dragEff.coreParams.comOffset = [1., 0., 0.]  # [m]
 
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
-    newAtmo.baseDensity = 1.217
-    newAtmo.scaleHeight = 8500.0
-    newAtmo.planetRadius = 6371.0 * 1000.0
+    newAtmo.baseDensity = 1.217  # [kg/m^3]
+    newAtmo.scaleHeight = 8500.0  # [m]
+    newAtmo.planetRadius = 6371.0 * 1000.0  # [m]
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     scObject.addDynamicEffector(dragEff)
@@ -147,15 +120,15 @@ def setup_basic_drag_sim(useAtmosphereRelativeVelocity=False, planetOmega=None,
     dragEff.atmoDensInMsg.subscribeTo(newAtmo.envOutMsgs[0])
 
     if rN is None:
-        rN = np.array([7000e3, 0.0, 0.0])
+        rN = np.array([7000e3, 0.0, 0.0])  # [m]
     if vN is None:
-        vN = np.array([0.0, 7500.0, 0.0])
+        vN = np.array([0.0, 7500.0, 0.0])  # [m/s]
     if sigmaBN is None:
-        sigmaBN = np.array([0.0, 0.0, 0.0])
+        sigmaBN = np.array([0.0, 0.0, 0.0])  # [-] MRP
 
-    scObject.hub.r_CN_NInit = rN
-    scObject.hub.v_CN_NInit = vN
-    scObject.hub.sigma_BNInit = sigmaBN
+    scObject.hub.r_CN_NInit = rN  # [m]
+    scObject.hub.v_CN_NInit = vN  # [m/s]
+    scObject.hub.sigma_BNInit = sigmaBN  # [-] MRP
 
     dataLog = scObject.scStateOutMsg.recorder()
     atmoLog = newAtmo.envOutMsgs[0].recorder()
@@ -167,25 +140,20 @@ def setup_basic_drag_sim(useAtmosphereRelativeVelocity=False, planetOmega=None,
     return scSim, scObject, dragEff, dataLog, atmoLog, dragLog
 
 
-def test_dragAtmosphereRelativeVelocityDisabled():
-    """Verify nominal drag behavior is unchanged when useAtmosphereRelativeVelocity is False."""
-    rN = np.array([7000e3, 0.0, 0.0])
-    vN = np.array([0.0, 7600.0, 0.0])
-    sigmaBN = np.array([0.0, 0.0, 0.0])
+def test_dragInertialVelocity():
+    """Verify drag uses inertial velocity when no wind message is linked."""
+    rN = np.array([7000e3, 0.0, 0.0])  # [m]
+    vN = np.array([0.0, 7600.0, 0.0])  # [m/s]
+    sigmaBN = np.array([0.0, 0.0, 0.0])  # [-] MRP
 
     scSim, _, dragEff, dataLog, atmoLog, dragLog = setup_basic_drag_sim(
-        useAtmosphereRelativeVelocity=False,
-        planetOmega=np.array([0.0, 0.0, 7.2921159e-5]),
-        rN=rN,
-        vN=vN,
-        sigmaBN=sigmaBN
+        rN=rN, vN=vN, sigmaBN=sigmaBN
     )
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(1.0))
     scSim.ExecuteSimulation()
 
-    posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
     densData = atmoLog.neutralDensity
@@ -201,107 +169,6 @@ def test_dragAtmosphereRelativeVelocityDisabled():
     )
 
     assert unitTestSupport.isArrayEqual(dragForce[-1, :], refForce, 3, accuracy)
-
-
-def test_dragAtmosphereRelativeVelocityEnabled():
-    """Verify drag uses v_rel = v_sc - omega x r when enabled."""
-    rN = np.array([7000e3, 0.0, 0.0])
-    vN = np.array([0.0, 7600.0, 0.0])
-    sigmaBN = np.array([0.0, 0.0, 0.0])
-    planetOmega = np.array([0.0, 0.0, 7.2921159e-5])
-
-    scSim, _, dragEff, dataLog, atmoLog, dragLog = setup_basic_drag_sim(
-        useAtmosphereRelativeVelocity=True,
-        planetOmega=planetOmega,
-        rN=rN,
-        vN=vN,
-        sigmaBN=sigmaBN
-    )
-
-    scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(1.0))
-    scSim.ExecuteSimulation()
-
-    posData = dataLog.r_BN_N
-    velData = dataLog.v_BN_N
-    attData = dataLog.sigma_BN
-    densData = atmoLog.neutralDensity
-    dragForce = dragLog.forceExternal_B
-
-    refForce, _, _ = cannonballDragCompRel(
-        dragEff.coreParams.dragCoeff,
-        densData[-1],
-        dragEff.coreParams.projectedArea,
-        velData[-1],
-        posData[-1],
-        attData[-1],
-        planetOmega
-    )
-
-    accuracy = 1e-13
-    assert unitTestSupport.isArrayEqual(dragForce[-1, :], refForce, 3, accuracy)
-
-
-def test_dragAtmosphereRelativeVelocityPositionStateOptional():
-    """Verify position state is only required when atmosphere-relative velocity is enabled."""
-
-    scSim, _, _, _, _, _ = setup_basic_drag_sim(
-        useAtmosphereRelativeVelocity=False
-    )
-    scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(1.0))
-    scSim.ExecuteSimulation()
-
-    assert True
-
-
-def test_dragAtmosphereRelativeVelocityNearZero():
-    """Verify near-zero relative velocity does not produce invalid normalization behavior."""
-    rN = np.array([7000e3, 0.0, 0.0])
-    planetOmega = np.array([0.0, 0.0, 7.2921159e-5])
-    vAtmo = np.cross(planetOmega, rN)
-    vN = vAtmo + np.array([1e-15, -1e-15, 1e-15])
-    sigmaBN = np.array([0.0, 0.0, 0.0])
-
-    scSim, _, _, _, _, dragLog = setup_basic_drag_sim(
-        useAtmosphereRelativeVelocity=True,
-        planetOmega=planetOmega,
-        rN=rN,
-        vN=vN,
-        sigmaBN=sigmaBN
-    )
-
-    scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(1.0))
-    scSim.ExecuteSimulation()
-
-    dragForce = dragLog.forceExternal_B[-1, :]
-
-    assert np.all(np.isfinite(dragForce))
-    assert np.linalg.norm(dragForce) < 1e-20
-
-
-def test_dragAtmosphereRelativeVelocityResetGuardPosition():
-    """Verify Reset emits BSK_ERROR when relative velocity is enabled without a valid position state."""
-    simTaskName = "simTask"
-    simProcessName = "simProcess"
-
-    scSim = SimulationBaseClass.SimBaseClass()
-    dynProcess = scSim.CreateNewProcess(simProcessName)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, macros.sec2nano(1.0)))
-
-    dragEff = dragDynamicEffector.DragDynamicEffector()
-    dragEff.ModelTag = "DragEff"
-    dragEff.setUseAtmosphereRelativeVelocity(True)
-    dragEff.coreParams.projectedArea = 10.0
-    dragEff.coreParams.dragCoeff = 2.2
-
-    # no spacecraft attached here on purpose, so hub position is never linked
-
-    scSim.AddModelToTask(simTaskName, dragEff)
-
-    with pytest.raises(Exception):
-        scSim.InitializeSimulation()
 
 
 def run(show_plots, orbitCase, planetCase):
@@ -331,8 +198,8 @@ def run(show_plots, orbitCase, planetCase):
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
-    projArea = 10.0  # Set drag area in m^2
-    dragCoeff = 2.2  # Set drag ceofficient
+    projArea = 10.0  # [m^2]
+    dragCoeff = 2.2  # [-]
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
@@ -340,7 +207,7 @@ def run(show_plots, orbitCase, planetCase):
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
-    dragEffector.coreParams.comOffset = [1., 0., 0.]
+    dragEffector.coreParams.comOffset = [1., 0., 0.]  # [m]
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
@@ -374,7 +241,7 @@ def run(show_plots, orbitCase, planetCase):
     elif planetCase == "Mars":
         planet = gravFactory.createMars()
         planet.isCentralBody = True          # ensure this is the central gravitational body
-    mu = planet.mu
+    mu = planet.mu  # [m^3/s^2]
     # attach gravity model to spacecraft
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
@@ -383,44 +250,44 @@ def run(show_plots, orbitCase, planetCase):
     oe = orbitalMotion.ClassicElements()
 
     if planetCase == "Earth":
-        r_eq = 6371*1000.0
-        refBaseDens = 1.217
-        refScaleHeight = 8500.0
+        r_eq = 6371*1000.0  # [m]
+        refBaseDens = 1.217  # [kg/m^3]
+        refScaleHeight = 8500.0  # [m]
 
     elif planetCase == "Mars":
-        refBaseDens = 0.020
-        refScaleHeight = 11100.0
-        r_eq = 3389.5 * 1000.0
+        refBaseDens = 0.020  # [kg/m^3]
+        refScaleHeight = 11100.0  # [m]
+        r_eq = 3389.5 * 1000.0  # [m]
     else:
         return 1, "Test failed- did not initialize planets."
     if orbitCase == "LPO":
-        orbAltMin = 300.0*1000.0
+        orbAltMin = 300.0*1000.0  # [m]
         orbAltMax = orbAltMin
     elif orbitCase == "LTO":
-        orbAltMin = 300*1000.0
-        orbAltMax = 800.0 * 1000.0
+        orbAltMin = 300*1000.0  # [m]
+        orbAltMax = 800.0 * 1000.0  # [m]
 
     newAtmo.planetRadius = r_eq
     newAtmo.scaleHeight = refScaleHeight
     newAtmo.baseDensity = refBaseDens
 
-    rMin = r_eq + orbAltMin
-    rMax = r_eq + orbAltMax
-    oe.a = (rMin+rMax)/2.0
-    oe.e = 1.0 - rMin/oe.a
-    oe.i = 0.0*macros.D2R
+    rMin = r_eq + orbAltMin  # [m]
+    rMax = r_eq + orbAltMax  # [m]
+    oe.a = (rMin+rMax)/2.0  # [m]
+    oe.e = 1.0 - rMin/oe.a  # [-]
+    oe.i = 0.0*macros.D2R  # [rad]
 
-    oe.Omega = 0.0*macros.D2R
-    oe.omega = 0.0*macros.D2R
-    oe.f     = 0.0*macros.D2R
+    oe.Omega = 0.0*macros.D2R  # [rad]
+    oe.omega = 0.0*macros.D2R  # [rad]
+    oe.f     = 0.0*macros.D2R  # [rad]
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
                                                 # with circular or equatorial orbit, some angles are
                                                 # arbitrary
 
     # set the simulation time
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu/oe.a/oe.a/oe.a)  # [rad/s]
+    P = 2.*np.pi/n  # [s]
 
     simulationTime = macros.sec2nano(1*P)
 
@@ -441,8 +308,8 @@ def run(show_plots, orbitCase, planetCase):
     #
     #   initialize Spacecraft States with initialization variables
     #
-    scObject.hub.r_CN_NInit = rN  # m - r_CN_N
-    scObject.hub.v_CN_NInit = vN  # m - v_CN_N
+    scObject.hub.r_CN_NInit = rN  # [m]
+    scObject.hub.v_CN_NInit = vN  # [m/s]
 
     #
     #   initialize Simulation
@@ -470,7 +337,7 @@ def run(show_plots, orbitCase, planetCase):
     endInd = dragForce.shape[0]
 
     refDragForce = np.zeros([endInd,3])
-    refDensData = np.zeros([endInd,1])
+    #refDensData = np.zeros([endInd,1])
     accuracy = 1e-13
     # print planetCase
     # print orbitCase
@@ -541,8 +408,8 @@ def run(show_plots, orbitCase, planetCase):
                  ,'--'
                  , color='#555555'
                  )
-        plt.xlabel('$i_e$ Cord. [km]')
-        plt.ylabel('$i_p$ Cord. [km]')
+        plt.xlabel('$i_e$ Coord. [km]')
+        plt.ylabel('$i_p$ Coord. [km]')
         plt.grid()
 
         plt.figure()
@@ -579,6 +446,138 @@ def run(show_plots, orbitCase, planetCase):
 
     return testFailCount, testMessages
 
+def test_drag_wind_velocity_automatic_usage():
+    """Verify drag initializes and runs without error when no wind message is linked."""
+    # Create a simple simulation
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("dynamics")
+    simulationTimeStep = macros.sec2nano(1.0)
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", simulationTimeStep))
+
+    # Create spacecraft
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraft"
+
+    # Create atmosphere model
+    atmoModel = exponentialAtmosphere.ExponentialAtmosphere()
+    atmoModel.ModelTag = "atmosphere"
+    atmoModel.baseDensity = 1.217  # [kg/m^3]
+    atmoModel.scaleHeight = 8500.0  # [m]
+    atmoModel.planetRadius = 6371e3  # [m]
+
+    # Add spacecraft to atmosphere model
+    atmoModel.addSpacecraftToModel(scObject.scStateOutMsg)
+
+    # Create drag effector
+    dragEff = dragDynamicEffector.DragDynamicEffector()
+    dragEff.ModelTag = "drag"
+    dragEff.coreParams.projectedArea = 1.0  # [m^2]
+    dragEff.coreParams.dragCoeff = 2.2  # [-]
+
+    # Link atmosphere
+    dragEff.atmoDensInMsg.subscribeTo(atmoModel.envOutMsgs[0])
+
+    # Add to spacecraft
+    scObject.addDynamicEffector(dragEff)
+
+    # Setup basic orbit
+    rN = np.array([7000e3, 0.0, 0.0])  # [m]
+    vN = np.array([0.0, 7600.0, 0.0])  # [m/s]
+    sigmaBN = np.array([0.0, 0.0, 0.0])  # [-] MRP
+
+    scObject.hub.r_CN_NInit = rN  # [m]
+    scObject.hub.v_CN_NInit = vN  # [m/s]
+    scObject.hub.sigma_BNInit = sigmaBN  # [-] MRP
+
+    # Add models to simulation
+    scSim.AddModelToTask("dynamicsTask", scObject)
+    scSim.AddModelToTask("dynamicsTask", atmoModel)
+    scSim.AddModelToTask("dynamicsTask", dragEff)
+
+    # InitializeSimulation calls Reset internally; should not raise without wind message
+    scSim.InitializeSimulation()
+
+
+def test_drag_wind_velocity_with_wind_message():
+    """Verify drag uses atmosphere-relative velocity when wind message is linked.
+
+    Two simulation steps are needed: step 1 populates windInData via UpdateState/ReadInputs;
+    step 2's computeForceTorque uses that cached wind velocity.
+    The force at step 2 is compared against cannonballDragComp using step-1 cached
+    density/wind and step-2 velocity/attitude.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("dynamics")
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.0)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraft"
+
+    atmoModel = exponentialAtmosphere.ExponentialAtmosphere()
+    atmoModel.ModelTag = "atmosphere"
+    atmoModel.baseDensity = 1.217  # [kg/m^3]
+    atmoModel.scaleHeight = 8500.0  # [m]
+    atmoModel.planetRadius = 6371e3  # [m]
+    atmoModel.addSpacecraftToModel(scObject.scStateOutMsg)
+
+    windModel = zeroWindModel.ZeroWindModel()
+    windModel.ModelTag = "wind"
+    windModel.addSpacecraftToModel(scObject.scStateOutMsg)
+    planetStateMsg = messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload())
+    windModel.planetPosInMsg.subscribeTo(planetStateMsg)
+    omega_earth = np.array([0.0, 0.0, orbitalMotion.OMEGA_EARTH])  # [rad/s]
+    windModel.setPlanetOmega_N(omega_earth)
+
+    dragEff = dragDynamicEffector.DragDynamicEffector()
+    dragEff.ModelTag = "drag"
+    dragEff.coreParams.projectedArea = 1.0  # [m^2]
+    dragEff.coreParams.dragCoeff = 2.2  # [-]
+    dragEff.atmoDensInMsg.subscribeTo(atmoModel.envOutMsgs[0])
+    dragEff.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
+    scObject.addDynamicEffector(dragEff)
+
+    scObject.hub.r_CN_NInit = np.array([7000e3, 0.0, 0.0])  # [m]
+    scObject.hub.v_CN_NInit = np.array([0.0, 7600.0, 0.0])  # [m/s]
+    scObject.hub.sigma_BNInit = np.array([0.0, 0.0, 0.0])  # [-] MRP
+
+    scSim.AddModelToTask("dynamicsTask", scObject)
+    scSim.AddModelToTask("dynamicsTask", atmoModel)
+    scSim.AddModelToTask("dynamicsTask", windModel)
+    scSim.AddModelToTask("dynamicsTask", dragEff)
+
+    scSim.InitializeSimulation()
+
+    windLog = windModel.envOutMsgs[0].recorder()
+    scStateLog = scObject.scStateOutMsg.recorder()
+    atmoLog = atmoModel.envOutMsgs[0].recorder()
+    dragLog = dragEff.logger("forceExternal_B")
+    scSim.AddModelToTask("dynamicsTask", windLog)
+    scSim.AddModelToTask("dynamicsTask", scStateLog)
+    scSim.AddModelToTask("dynamicsTask", atmoLog)
+    scSim.AddModelToTask("dynamicsTask", dragLog)
+
+    # 2 steps: step 1 loads wind/atmo into cache; step 2 uses cache in computeForceTorque
+    scSim.ConfigureStopTime(macros.sec2nano(2.0))
+    scSim.ExecuteSimulation()
+
+    # Force at step 2 uses cached step-1 wind/density with step-2 velocity/attitude
+    dens_step1 = atmoLog.neutralDensity[0]
+    wind_step1 = np.array(windLog.v_air_N[0])
+    v_step2 = np.array(scStateLog.v_BN_N[-1])
+    sigma_step2 = np.array(scStateLog.sigma_BN[-1])
+    drag_force = np.array(dragLog.forceExternal_B[-1])
+
+    refForce = cannonballDragComp(
+        dragEff.coreParams.dragCoeff,
+        dens_step1,
+        dragEff.coreParams.projectedArea,
+        v_step2 - wind_step1,
+        sigma_step2
+    )
+    np.testing.assert_allclose(drag_force, refForce, atol=1e-10)
+
+
     # close the plots being saved off to avoid over-writing old and new figures
+
 if __name__ == '__main__':
     run(True,"LPO","Earth")

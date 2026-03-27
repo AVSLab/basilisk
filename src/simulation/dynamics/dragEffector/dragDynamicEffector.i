@@ -43,6 +43,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 struct AtmoPropsMsg_C;
+%include "architecture/msgPayloadDefC/WindMsgPayload.h"
+struct WindMsg_C;
 
 %pythoncode %{
 import sys
