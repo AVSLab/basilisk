@@ -28,6 +28,8 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
     this->torqueExternalPntB_B.fill(0.0);
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
+    this->atmoInData = {};  // Initialize atmosphere data to zero
+    this->windInData = {};  // Initialize wind data to zero
 	this->numFacets = 0;
 	return;
 }
@@ -59,15 +61,22 @@ void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 
-/*! This method is used to read the incoming density message and update the internal density/
-atmospheric data.
+/*! This method is used to read the incoming density message and wind velocity message (if linked)
+and update the internal density/atmospheric data.
 
  */
 bool FacetDragDynamicEffector::ReadInputs()
 {
     bool dataGood;
-    this->atmoInData = this->atmoDensInMsg();
     dataGood = this->atmoDensInMsg.isWritten();
+    if (dataGood) {
+        this->atmoInData = this->atmoDensInMsg();
+    }
+    if (this->windVelInMsg.isLinked() && this->windVelInMsg.isWritten()) {
+        this->windInData = this->windVelInMsg();
+    } else {
+        this->windInData = {};
+    }
     return(dataGood);
 }
 
@@ -98,14 +107,29 @@ void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
+ * It accounts for wind velocity if the wind message is linked.
 */
 void FacetDragDynamicEffector::updateDragDir(){
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-    this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-    this->v_hat_B = this->v_B / this->v_B.norm();
+    Eigen::Vector3d v_BN_N = this->hubVelocity->getState();
+
+    if (this->windVelInMsg.isLinked()) {
+        Eigen::Map<Eigen::Vector3d> v_air_N(this->windInData.v_air_N);
+        Eigen::Vector3d v_B_air_N = v_BN_N - v_air_N;
+        this->v_B = dcm_BN * v_B_air_N;
+    } else {
+        this->v_B = dcm_BN * v_BN_N;
+    }
+
+    double vNorm = this->v_B.norm();
+    if (vNorm > 1e-12) {  // [m/s]
+        this->v_hat_B = this->v_B / vNorm;
+    } else {
+        this->v_hat_B.setZero();
+    }
 
     return;
 }
@@ -125,11 +149,16 @@ void FacetDragDynamicEffector::plateDrag(){
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
+	double vMag = this->v_B.norm();
+	if (vMag <= 1e-12) {  // [m/s]
+		return;
+	}
+
 	for(size_t i = 0; i < this->numFacets; i++){
 	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
 		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
 		if(projectedArea > 0.0){
-			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+			facetDragForce = 0.5 * pow(vMag, 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->getDensity() * (-1.0)*this->v_hat_B;
 			facetDragTorque = (-1)*facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
 			totalDragForce = totalDragForce + facetDragForce;
 			totalDragTorque = totalDragTorque + facetDragTorque;
@@ -160,4 +189,11 @@ void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 	return;
+}
+
+/** This method obtains the density from the input data
+ */
+double FacetDragDynamicEffector::getDensity()
+{
+	return this->atmoInData.neutralDensity;
 }

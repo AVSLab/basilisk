@@ -28,6 +28,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/WindMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -65,19 +66,22 @@ private:
 
     void plateDrag();
     void updateDragDir();
+    double getDensity();
 public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
+    ReadFunctor<WindMsgPayload> windVelInMsg;       //!< wind velocity input message
     StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                        //!< class variable
+    Eigen::Vector3d v_B;                            //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is linked, else relative to inertial frame N)
+    Eigen::Vector3d v_hat_B;                        //!< -- Drag force direction in the body frame
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
 private:
     AtmoPropsMsgPayload atmoInData;
+    WindMsgPayload windInData;
     SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
 
 };
 
-#endif 
+#endif
