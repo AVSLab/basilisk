@@ -26,6 +26,12 @@ deorbit. This is achieved using the :ref:`exponentialAtmosphere` or :ref:`msisAt
 :ref:`dragDynamicEffector` dynamics module. The simulation is executed until the altitude falls below some threshold,
 using a terminal event handler.
 
+An optional wind model (:ref:`zeroWindModel`) can be enabled via the ``useWind`` argument (default: ``False``).
+When active, SPICE is loaded with the default ``IAU_EARTH`` frame and drag is computed against the
+atmosphere-relative velocity rather than the inertial spacecraft velocity.  This is a more accurate treatment
+for scenarios where Earth's rotation is relevant, but adds a SPICE dependency.  When ``useWind=False``, the
+inertial spacecraft velocity is used directly, which is the conventional approximation for simple deorbit studies.
+
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioDragDeorbit.py
@@ -71,6 +77,24 @@ The drag model will calculate zero drag unless it is passed atmospheric conditio
 the drag model::
 
     dragEffector.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
+
+Optionally (``useWind=True``), a :ref:`zeroWindModel` can be linked so drag is computed against the
+atmosphere-relative velocity.  SPICE is loaded with the default ``IAU_EARTH`` frame so that
+``J20002Pfix_dot`` is populated; :ref:`windBase` reads those derivatives to derive the Earth rotation
+rate, giving a physically consistent co-rotation::
+
+    spiceObject = gravFactory.createSpiceInterface(
+        time="2020 MAY 21 18:28:03 (UTC)",
+    )
+    spiceObject.zeroBase = "Earth"
+    scSim.AddModelToTask(simTaskName, spiceObject, -1)
+
+    windModel = zeroWindModel.ZeroWindModel()
+    windModel.ModelTag = "ZeroWind"
+    windModel.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
+    windModel.addSpacecraftToModel(scObject.scStateOutMsg)
+    scSim.AddModelToTask(simTaskName, windModel)
+    dragEffector.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
 Illustration of Simulation Results
 ----------------------------------
@@ -142,6 +166,7 @@ from Basilisk.simulation import (
     exponentialAtmosphere,
     msisAtmosphere,
     spacecraft,
+    zeroWindModel,
 )
 from Basilisk.utilities import (
     SimulationBaseClass,
@@ -157,7 +182,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
+def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential", useWind=False):
     """
     Initialize a satellite with drag and propagate until it falls below a deorbit altitude. Note that an excessively
     low deorbit_alt can lead to intersection with the Earth prior to deorbit being detected, causing some terms to blow
@@ -168,6 +193,8 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
         initialAlt (float): Starting altitude in km
         deorbitAlt (float): Terminal altitude in km
         model (str): ["exponential", "msis"]
+        useWind (bool): If True, link a :ref:`zeroWindModel` so drag is computed against the atmosphere-relative
+            velocity.  If False (default), the inertial spacecraft velocity is used directly.
 
     Returns:
         Dictionary of figure handles
@@ -237,6 +264,25 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     planet = gravFactory.createEarth()
     mu = planet.mu
     gravFactory.addBodiesTo(scObject)
+
+    # Optionally link a zero-wind model so drag is computed against the atmosphere-relative velocity.
+    # SPICE is loaded with the default IAU_EARTH frame so that J20002Pfix_dot is populated and
+    # WindBase can derive the true Earth rotation rate from it, keeping the co-rotation consistent
+    # with the actual planet orientation.  Omitting this (useWind=False) falls back to using the
+    # inertial spacecraft velocity directly.
+    if useWind:
+        spiceObject = gravFactory.createSpiceInterface(
+            time="2020 MAY 21 18:28:03 (UTC)",
+        )
+        spiceObject.zeroBase = "Earth"
+        scSim.AddModelToTask(simTaskName, spiceObject, -1)
+
+        windModel = zeroWindModel.ZeroWindModel()
+        windModel.ModelTag = "ZeroWind"
+        windModel.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
+        windModel.addSpacecraftToModel(scObject.scStateOutMsg)
+        scSim.AddModelToTask(simTaskName, windModel)
+        dragEffector.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     # Set up a circular orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -383,5 +429,6 @@ if __name__ == "__main__":
         show_plots=True,
         initialAlt=250,
         deorbitAlt=100,
-        model="msis"   # "msis", "exponential"
+        model="msis",   # "msis", "exponential"
+        useWind=False
     )
