@@ -1,0 +1,1 @@
+- Added support for :ref:`FacetDragDynamicEffector` to attach to state effectors.

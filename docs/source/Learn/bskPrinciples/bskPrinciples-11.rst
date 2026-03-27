@@ -164,6 +164,7 @@ special case of prescribed effector branching explained in :ref:`prescribedMotio
           <th class="rotate"><span class="rotate-inner">Thruster State Effector</span></th>
           <th class="rotate"><span class="rotate-inner">Constraint Effector</span></th>
           <th class="rotate"><span class="rotate-inner">Drag Effector</span></th>
+          <th class="rotate"><span class="rotate-inner">Facet Drag Effector</span></th>
           <th class="rotate"><span class="rotate-inner">External Force Torque</span></th>
           <th class="rotate"><span class="rotate-inner">SRP Effector</span></th>
           <th class="rotate"><span class="rotate-inner">Fuel Tank Effector</span></th>
@@ -185,63 +186,63 @@ special case of prescribed effector branching explained in :ref:`prescribedMotio
             <span class="rotate-inner">Parent Effectors</span>
           </td>
           <td class="label">Spinning Bodies 1DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td><td class="green"></td>
           <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Spinning Bodies 2DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td><td class="green"></td>
           <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Spinning Bodies NDOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td><td class="green"></td>
           <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Hinged Rigid Bodies</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td><td class="green"></td>
           <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Dual Hinged Rigid Bodies</td>
-          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">N Hinged Rigid Bodies</td>
-          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Linear Translating Bodies 1DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td><td class="green"></td>
           <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Linear Translating Bodies NDOF</td>
-          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
         <tr>
           <td class="label">Prescribed Motion</td>
-          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
+          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
           <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
           <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
           <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
