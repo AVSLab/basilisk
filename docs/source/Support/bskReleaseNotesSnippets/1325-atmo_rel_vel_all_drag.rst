@@ -1,0 +1,2 @@
+- ``dragDynamicEffector``, ``facetDragDynamicEffector``, and ``cannonballDrag`` now accept an optional ``windVelInMsg`` (:ref:`WindMsgPayload`) to compute atmosphere-relative drag velocity; supersedes the former ``useAtmosphereRelativeVelocity``/``planetOmega_N`` flags.
+- Updated :ref:`scenarioDragDeorbit`, :ref:`scenarioDragRendezvous`, :ref:`scenarioAerocapture`, and :ref:`scenarioStochasticDragSpacecraft` to illustrate optional use of wind velocity input.

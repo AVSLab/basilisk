@@ -60,19 +60,19 @@ def test_cannonballDrag():
     tolerance.
     """
     ...
-    dt = 1 # s
+    dt = 1  # [s]
 
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess("test")
     dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
 
-    density = 2 # kg/m^3
-    cd = 1.5
-    area = 2.75 # m^2
-    r_CP_S = [1, 0, 0] # m
+    density = 2  # [kg/m^3]
+    cd = 1.5  # [-]
+    area = 2.75  # [m^2]
+    r_CP_S = [1, 0, 0]  # [m]
 
-    v_SN_N = [0, 0.5, 0] # m/s
-    sigma_SN = [0.1, 0.2, 0.3]
+    v_SN_N = [0, 0.5, 0]  # [m/s]
+    sigma_SN = [0.1, 0.2, 0.3]  # [-] MRP
 
     atmoMsg = messaging.AtmoPropsMsg()
     atmoMsg.write(messaging.AtmoPropsMsgPayload(neutralDensity=density))
@@ -115,7 +115,7 @@ def test_cannonballDrag():
     C_BN = np.array(rbk.MRP2C(sigma_SN))  # maps N components to B=S components
     v_S = C_BN.dot(v_SN_N)
     v_mag = np.linalg.norm(v_SN_N)  # drag magnitude depends on speed, frame invariant
-    if v_mag <= 1e-12:
+    if v_mag <= 1e-12:  # [m/s]
         F_exp_S = np.zeros(3)
         T_exp_S = np.zeros(3)
     else:
@@ -192,7 +192,7 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
 
     planetData = simIncludeGravBody.BODY_DATA[planetCase]
     gravitationalParameter = planetData.mu
-    planetRadius = planetData.radEquator
+    planetRadius = planetData.radEquator  # [m]
 
     gravityModel = NBodyGravity.NBodyGravity()
     gravityModel.ModelTag = "gravity"
@@ -204,11 +204,11 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
     gravityModel.addGravityTarget(bodyName, mjBody)
 
     if planetCase == "earth":
-        baseDensity = 1.217
-        scaleHeight = 8500.0
+        baseDensity = 1.217  # [kg/m^3]
+        scaleHeight = 8500.0  # [m]
     else:
-        baseDensity = 0.020
-        scaleHeight = 11100.0
+        baseDensity = 0.020  # [kg/m^3]
+        scaleHeight = 11100.0  # [m]
 
     atmoModel = exponentialAtmosphere.ExponentialAtmosphere()
     atmoModel.ModelTag = "ExpAtmo"
@@ -220,15 +220,15 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
     comStateMsg = mjBody.getCenterOfMass().stateOutMsg
     atmoModel.addSpacecraftToModel(comStateMsg)
 
-    projectedArea = 10.0
-    dragCoeff = 2.2
+    projectedArea = 10.0  # [m^2]
+    dragCoeff = 2.2  # [-]
 
     dragGeometryMsg = messaging.DragGeometryMsg()
     dragGeometryMsg.write(
         messaging.DragGeometryMsgPayload(
             projectedArea=projectedArea,
             dragCoeff=dragCoeff,
-            r_CP_S=[1.0, 0.0, 0.0],
+            r_CP_S=[1.0, 0.0, 0.0],  # [m]
         )
     )
 
@@ -240,25 +240,25 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
     dragModel.dragGeometryInMsg.subscribeTo(dragGeometryMsg)
 
     if orbitCase == "LPO":
-        orbAltMin = 300e3 # m
+        orbAltMin = 300e3  # [m]
         orbAltMax = orbAltMin
     elif orbitCase == "LTO":
-        orbAltMin = 300e3 # m
-        orbAltMax = 800e3 # m
+        orbAltMin = 300e3  # [m]
+        orbAltMax = 800e3  # [m]
 
     rMin = planetRadius + orbAltMin
     rMax = planetRadius + orbAltMax
 
     elements = orbitalMotion.ClassicElements()
     elements.a = (rMin+rMax)/2.0
-    elements.e = 1.0 - rMin/elements.a
-    elements.i = 0.0
-    elements.Omega = 0.0
-    elements.omega = 0.0
-    elements.f = 0.0
+    elements.e = 1.0 - rMin/elements.a  # [-]
+    elements.i = 0.0  # [rad]
+    elements.Omega = 0.0  # [rad]
+    elements.omega = 0.0  # [rad]
+    elements.f = 0.0  # [rad]
 
-    meanMotion = np.sqrt(gravitationalParameter / elements.a**3)
-    orbitPeriod = 2.0 * np.pi / meanMotion
+    meanMotion = np.sqrt(gravitationalParameter / elements.a**3)  # [rad/s]
+    orbitPeriod = 2.0 * np.pi / meanMotion  # [s]
     finalTimeNanos = macros.sec2nano(orbitPeriod)
 
     stateRecorder = comStateMsg.recorder()
@@ -417,6 +417,66 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
         plt.title("Drag force vs reference")
 
         plt.show()
+
+
+
+def test_cannonballDragAtmosphereRelativeVelocityWhenWindLinked():
+    """Test that drag uses atmosphere-relative velocity when wind message is linked.
+
+    Uses a static wind message to guarantee isWritten()=True when the drag model runs,
+    avoiding any task-ordering timing dependency.
+    """
+    dt = 1  # [s]
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("test")
+    dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
+
+    density = 1.2   # [kg/m^3]
+    cd = 2.2        # [-]
+    area = 1.0      # [m^2]
+    r_CP_S = [0.0, 0.0, 0.0]  # [m]
+
+    v_SN_N = [0.0, 7600.0, 0.0]   # [m/s]
+    sigma_SN = [0.0, 0.0, 0.0]    # [-] MRP
+    v_air_N = [0.0, 510.44, 0.0]  # [m/s] known co-rotation wind velocity
+
+    atmoMsg = messaging.AtmoPropsMsg()
+    atmoMsg.write(messaging.AtmoPropsMsgPayload(neutralDensity=density))
+
+    dragGeometryMsg = messaging.DragGeometryMsg()
+    dragGeometryMsg.write(messaging.DragGeometryMsgPayload(
+        projectedArea=area, dragCoeff=cd, r_CP_S=r_CP_S
+    ))
+
+    siteFrameMsg = messaging.SCStatesMsg()
+    siteFrameMsg.write(messaging.SCStatesMsgPayload(
+        sigma_BN=sigma_SN, v_BN_N=v_SN_N
+    ))
+
+    windMsg = messaging.WindMsg()
+    windMsg.write(messaging.WindMsgPayload(v_air_N=v_air_N))
+
+    drag = cannonballDrag.CannonballDrag()
+    drag.dragGeometryInMsg.subscribeTo(dragGeometryMsg)
+    drag.atmoDensInMsg.subscribeTo(atmoMsg)
+    drag.referenceFrameStateInMsg.subscribeTo(siteFrameMsg)
+    drag.windVelInMsg.subscribeTo(windMsg)
+    scSim.AddModelToTask("test", drag)
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(dt))
+    scSim.ExecuteSimulation()
+
+    force_S = drag.forceOutMsg.read().force_S
+
+    # Expected: drag uses v_rel = v_SN_N - v_air_N
+    C_SN = np.array(rbk.MRP2C(sigma_SN))  # identity since sigma=[0,0,0]
+    v_rel_S = C_SN.dot(np.array(v_SN_N) - np.array(v_air_N))
+    v_mag = np.linalg.norm(v_rel_S)
+    F_exp_S = -0.5 * density * v_mag**2 * cd * area * (v_rel_S / v_mag)
+
+    npt.assert_allclose(force_S, F_exp_S, rtol=0.0, atol=1e-12)
 
 
 if __name__ == "__main__":

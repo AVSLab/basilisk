@@ -28,8 +28,10 @@
 #include "architecture/msgPayloadDefC/ForceAtSiteMsgPayload.h"
 #include "architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/WindMsgPayload.h"
 #include "cMsgCInterface/ForceAtSiteMsg_C.h"
 #include "cMsgCInterface/TorqueAtSiteMsg_C.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 /**
  * @brief Aerodynamic drag model that computes force and torque at a MuJoCo site.
@@ -60,6 +62,7 @@ public:
     /**
      * @brief Advance the model and publish outputs.
      * @param CurrentSimNanos Current simulation time in nanoseconds.
+     * @note If windVelInMsg is linked, wind velocity is used to compute relative velocity.
      */
     void UpdateState(uint64_t CurrentSimNanos) override;
 
@@ -76,6 +79,9 @@ public:
 
     /** @brief Atmospheric properties input. */
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;
+
+    /** @brief Wind velocity input. */
+    ReadFunctor<WindMsgPayload> windVelInMsg;
 
     /** @brief State of the reference frame . */
     ReadFunctor<SCStatesMsgPayload> referenceFrameStateInMsg;

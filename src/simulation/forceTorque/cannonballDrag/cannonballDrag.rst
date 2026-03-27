@@ -40,6 +40,10 @@ Message Interfaces
       - :ref:`SCStatesMsgPayload`
       - Input message providing the inertial state of the site reference frame, including ``sigma_BN`` (MRPs for
         site frame attitude relative to inertial) and ``v_BN_N`` (inertial velocity of the site frame origin).
+    * - windVelInMsg
+      - :ref:`WindMsgPayload`
+      - (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the site frame
+        inertial velocity before computing the drag force, yielding the atmosphere-relative velocity.
     * - forceOutMsg
       - :ref:`ForceAtSiteMsgPayload`
       - Output message containing aerodynamic drag force expressed in the site reference frame.
@@ -62,12 +66,30 @@ At each update step, the module performs the following operations:
 1. Reads the atmospheric density from ``atmoDensInMsg``.
 2. Reads the drag coefficient, projected area, and center-of-pressure location from ``dragGeometryInMsg``.
 3. Reads the site frame attitude and inertial velocity from ``referenceFrameStateInMsg``.
-4. Transforms the inertial velocity into the site frame using the provided attitude.
-5. Computes the drag force magnitude and direction in the site frame.
-6. Computes the resulting torque about the site frame origin.
-7. Publishes the force and torque through ``forceOutMsg`` and ``torqueOutMsg`` (and ``forceOutMsgC`` and ``torqueOutMsgC``).
+4. Computes the relative velocity: if ``windVelInMsg`` is linked, subtracts ``v_air_N`` from the inertial
+   velocity; otherwise uses the inertial velocity directly.
+5. Transforms the relative velocity into the site frame using the provided attitude.
+6. Computes the drag force magnitude and direction in the site frame.
+7. Computes the resulting torque about the site frame origin.
+8. Publishes the force and torque through ``forceOutMsg`` and ``torqueOutMsg`` (and ``forceOutMsgC`` and ``torqueOutMsgC``).
 
 The model assumes quasi-steady aerodynamics and does not account for lift, shadowing, free-molecular effects, or flow angular rates.
+
+Usage Example
+-------------
+The following example demonstrates how to configure the ``CannonballDrag`` module:
+
+.. code-block:: python
+
+    # Create cannonball drag module
+    cannonball = CannonballDrag()
+    cannonball.ModelTag = "cannonball_drag"
+
+    # Connect input messages
+    cannonball.dragGeometryInMsg.subscribeTo(dragGeometryMsg)
+    cannonball.atmoDensInMsg.subscribeTo(atmoPropsMsg)
+    cannonball.referenceFrameStateInMsg.subscribeTo(siteStateMsg)
+    cannonball.windVelInMsg.subscribeTo(windMsg)  # Optional
 
 Verification and Testing
 ------------------------

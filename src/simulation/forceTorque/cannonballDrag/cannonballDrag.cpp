@@ -31,7 +31,7 @@ CannonballDrag::SelfInit()
 void
 CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
 {
-    const double density = this->atmoDensInMsg().neutralDensity;
+    double density = this->atmoDensInMsg().neutralDensity;
 
     const auto geomPayload = this->dragGeometryInMsg();
     const double cd = geomPayload.dragCoeff;
@@ -44,8 +44,18 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
     sigma_SN = Eigen::Map<const Eigen::Vector3d>(siteStatePayload.sigma_BN);
     const Eigen::Matrix3d dcm_SN = sigma_SN.toRotationMatrix().transpose();
 
+    Eigen::Map<const Eigen::Vector3d> v_BN_N(siteStatePayload.v_BN_N);
+
     // inertial velocity of the center of the S frame, expressed in the S frame
-    const auto v_S = dcm_SN*Eigen::Map<const Eigen::Vector3d>(siteStatePayload.v_BN_N);
+    Eigen::Vector3d v_S;
+    if (this->windVelInMsg.isLinked()) {
+        const auto windPayload = this->windVelInMsg();
+        Eigen::Map<const Eigen::Vector3d> v_air_N(windPayload.v_air_N);
+        Eigen::Vector3d v_B_air_N = v_BN_N - v_air_N;
+        v_S = dcm_SN * v_B_air_N;
+    } else {
+        v_S = dcm_SN * v_BN_N;
+    }
     const auto v = v_S.norm();
 
     const Eigen::Vector3d force_S = -0.5 * cd * area * v * density * v_S;

@@ -146,6 +146,8 @@ struct SCStatesMsg_C;
 struct ForceAtSiteMsg_C;
 %include "architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.h"
 struct TorqueAtSiteMsg_C;
+%include "architecture/msgPayloadDefC/WindMsgPayload.h"
+struct WindMsg_C;
 
 %pythoncode %{
 import sys
