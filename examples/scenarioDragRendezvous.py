@@ -85,6 +85,7 @@ from Basilisk.simulation import (
     facetDragDynamicEffector,
     simpleNav,
     exponentialAtmosphere,
+    zeroWindModel,
 )
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
@@ -255,7 +256,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
 
 
 def drag_simulator(
-    altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False
+    altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False, useWind=False
 ):
     """
     Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
@@ -265,6 +266,11 @@ def drag_simulator(
     Args:
         altOffset - double - deputy altitude offset from the chief ('x' hill direction), meters
         trueAnomOffset - double - deputy true anomaly difference from the chief ('y' direction), degrees
+        densMultiplier - double - multiplicative scale factor applied to the exponential atmosphere base density
+        ctrlType (str): Control law type; ``'lqr'`` for static LQR or ``'dtv'`` for desensitized time-varying gain
+        useJ2 (bool): If True, include J2 spherical harmonic gravity perturbation
+        useWind (bool): If True, link a ``ZeroWindModel`` via SPICE so drag is computed against the
+            atmosphere-relative velocity.  If False (default), the inertial spacecraft velocity is used directly.
     """
 
     startTime = time.time()
@@ -340,6 +346,22 @@ def drag_simulator(
     depDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
     atmosphere.addSpacecraftToModel(chiefSc.scStateOutMsg)
     chiefDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
+
+    if useWind:
+        spiceObject = gravFactory.createSpiceInterface(
+            time="2020 MAY 21 18:28:03 (UTC)",
+        )
+        spiceObject.zeroBase = "Earth"
+        scSim.AddModelToTask(dynTaskName, spiceObject, 999)
+
+        windModel = zeroWindModel.ZeroWindModel()
+        windModel.ModelTag = "ZeroWind"
+        windModel.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
+        windModel.addSpacecraftToModel(depSc.scStateOutMsg)
+        windModel.addSpacecraftToModel(chiefSc.scStateOutMsg)
+        scSim.AddModelToTask(dynTaskName, windModel, 919)
+        depDrag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
+        chiefDrag.windVelInMsg.subscribeTo(windModel.envOutMsgs[1])
 
     #   Add all dynamics stuff to dynamics task
     scSim.AddModelToTask(dynTaskName, atmosphere, 920)
@@ -470,10 +492,10 @@ def drag_simulator(
 
 
 def run(
-    show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False
+    show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False, useWind=False
 ):
     results = drag_simulator(
-        altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, useJ2=useJ2
+        altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, useJ2=useJ2, useWind=useWind
     )
 
     timeData = results["dynTimeData"]
@@ -598,4 +620,5 @@ if __name__ == "__main__":
         1,  #    Density multiplier (nondimensional)
         ctrlType="lqr",
         useJ2=False,
+        useWind=False,
     )

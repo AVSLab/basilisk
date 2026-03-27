@@ -72,6 +72,7 @@ from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import dragDynamicEffector
 from Basilisk.simulation import meanRevertingNoiseStateEffector
+from Basilisk.simulation import zeroWindModel
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -80,13 +81,16 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-def run(showPlots: bool = False, rngSeed: Optional[int] = None):
+def run(showPlots: bool = False, rngSeed: Optional[int] = None, useWind: bool = False):
     """
     Run the spacecraft-based stochastic drag scenario.
 
     Args:
         showPlots: If True, display figures.
         rngSeed: Optional stochastic integrator seed for reproducibility.
+        useWind (bool): If True, link a ``ZeroWindModel`` via SPICE so drag is computed against
+            the atmosphere-relative velocity.  If False (default), the inertial spacecraft
+            velocity is used directly.
     Returns:
         Dict of matplotlib figure handles.
     """
@@ -158,6 +162,20 @@ def run(showPlots: bool = False, rngSeed: Optional[int] = None):
     drag.densityCorrectionStateName = stochasticAtmo.getStateName()
     scObject.addDynamicEffector(drag)
     scSim.AddModelToTask(simTaskName, drag)
+
+    if useWind:
+        spiceObject = gravFactory.createSpiceInterface(
+            time="2020 MAY 21 18:28:03 (UTC)",
+        )
+        spiceObject.zeroBase = "Earth"
+        scSim.AddModelToTask(simTaskName, spiceObject, -1)
+
+        windModel = zeroWindModel.ZeroWindModel()
+        windModel.ModelTag = "ZeroWind"
+        windModel.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
+        windModel.addSpacecraftToModel(scObject.scStateOutMsg)
+        scSim.AddModelToTask(simTaskName, windModel)
+        drag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     # Recorders
     stateRecorder = scObject.scStateOutMsg.recorder()
@@ -247,4 +265,4 @@ def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, oe
 
 
 if __name__ == "__main__":
-    run(True)
+    run(True, useWind = False)

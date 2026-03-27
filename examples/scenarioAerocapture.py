@@ -86,6 +86,7 @@ import numpy as np
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.simulation import dragDynamicEffector
+from Basilisk.simulation import zeroWindModel
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
@@ -155,13 +156,16 @@ def sph2rv(xxsph):
     return rvec_N, uvec_N
 
 
-def run(show_plots, planetCase):
+def run(show_plots, planetCase, useWind=False):
     """
     The scenarios can be run with the followings setups parameters:
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        planetCase (string): Specify if a `Mars` or `Earth` arrival is simulated
+        planetCase (string): Specify if a ``Mars`` or ``Earth`` arrival is simulated
+        useWind (bool): If True and ``planetCase == 'Earth'``, link a ``ZeroWindModel`` via SPICE
+            so drag is computed against the atmosphere-relative velocity.  If False (default),
+            or for Mars, the inertial spacecraft velocity is used directly.
 
     """
 
@@ -254,6 +258,20 @@ def run(show_plots, planetCase):
 
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
+
+    if useWind and planetCase == "Earth":
+        spiceObject = gravFactory.createSpiceInterface(
+            time="2020 MAY 21 18:28:03 (UTC)",
+        )
+        spiceObject.zeroBase = "Earth"
+        scSim.AddModelToTask(simTaskName, spiceObject, -1)
+
+        windModel = zeroWindModel.ZeroWindModel()
+        windModel.ModelTag = "ZeroWind"
+        windModel.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
+        windModel.addSpacecraftToModel(scObject.scStateOutMsg)
+        scSim.AddModelToTask(simTaskName, windModel)
+        dragEffector.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     if planetCase == "Earth":
         r = 6503 * 1000
@@ -398,4 +416,4 @@ def run(show_plots, planetCase):
 
 
 if __name__ == "__main__":
-    run(True, "Mars")  # planet arrival case, can be Earth or Mars
+    run(True, "Mars", False)  # planet arrival case, can be Earth or Mars
