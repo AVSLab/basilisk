@@ -75,8 +75,7 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
             return;
         }
 
-        FacetElementMsgPayload facetElementIn{};
-        facetElementIn = this->facetElementInMsgs[idx]();
+        FacetElementMsgPayload facetElementIn = this->facetElementInMsgs[idx]();
 
         // Save facet data to lists
         this->facetAreaList.push_back(facetElementIn.area);
@@ -128,7 +127,6 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
     }
 
     // Read the articulated facet input messages
-    HingedRigidBodyMsgPayload articulatedFacetAngleIn{};
     std::vector<double> articulatedFacetAngleList;
     for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
         if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
