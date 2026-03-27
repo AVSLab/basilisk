@@ -39,7 +39,7 @@ public:
     ~FacetedSpacecraftProjectedArea() override;  //!< Destructor
     void Reset(uint64_t callTime) override;  //!< Reset method
     void UpdateState(uint64_t callTime) override;  //!< Update method
-    void readInputMessages(); //!< Method to read input messages
+    bool readInputMessages(); //!< Method to read input messages
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
     void setNumFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
     const uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
