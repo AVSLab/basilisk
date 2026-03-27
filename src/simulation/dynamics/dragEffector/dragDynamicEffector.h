@@ -28,12 +28,12 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/WindMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/astroConstants.h"
 
 
 
@@ -60,30 +60,25 @@ public:
     void cannonballDrag();
     void updateDragDir();
     double getDensity();
-    void setUseAtmosphereRelativeVelocity(bool useRelVel);
-    bool getUseAtmosphereRelativeVelocity() const;
-    void setPlanetOmega_N(const Eigen::Vector3d& omega);
-    Eigen::Vector3d getPlanetOmega_N() const;
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
+    ReadFunctor<WindMsgPayload> windVelInMsg;              //!< -- message used to read wind velocity inputs
     std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     std::string densityCorrectionStateName = "";           //!< -- If not '', finds a state with this name to get ``densityCorrection``
     StateData *densityCorrection;                          //!< -- Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
-    Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
+    Eigen::Vector3d v_B;                                   //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is linked, else relative to inertial frame N)
+    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the body frame
     BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 private:
     AtmoPropsMsgPayload atmoInData;
-    StateData* hubPosition = nullptr;
-    bool useAtmosphereRelativeVelocity;
-    Eigen::Vector3d planetOmega_N;
+    WindMsgPayload windInData;
 
 };
 
 
-#endif /* THRUSTER_DYNAMIC_EFFECTOR_H */
+#endif /* DRAG_DYNAMIC_EFFECTOR_H */

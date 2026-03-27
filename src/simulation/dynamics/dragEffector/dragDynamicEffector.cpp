@@ -17,10 +17,7 @@
 
  */
 
-#include <iostream>
 #include "dragDynamicEffector.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 
 DragDynamicEffector::DragDynamicEffector()
 {
@@ -32,8 +29,8 @@ DragDynamicEffector::DragDynamicEffector()
 	this->torqueExternalPntB_B.fill(0.0);
 	this->v_B.fill(0.0);
 	this->v_hat_B.fill(0.0);
-	this->useAtmosphereRelativeVelocity = false;
-	this->planetOmega_N << 0.0, 0.0, OMEGA_EARTH;
+    this->atmoInData = {};  // Initialize atmosphere data to zero
+    this->windInData = {};  // Initialize wind data to zero
 
     return;
 }
@@ -54,11 +51,6 @@ void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
     }
-	if (this->useAtmosphereRelativeVelocity && this->hubPosition == nullptr) {
-    	bskLogger.bskLog(BSK_ERROR,
-                     "dragDynamicEffector requires hub position state when useAtmosphereRelativeVelocity is enabled.");
-	}
-
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
@@ -70,15 +62,22 @@ void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 
-/*! This method is used to read the incoming density message and update the internal density/
-atmospheric data.
+/*! This method is used to read the incoming density message and wind velocity message (if linked)
+and update the internal density/atmospheric data.
 
  */
 bool DragDynamicEffector::ReadInputs()
 {
 	bool dataGood;
-    this->atmoInData = this->atmoDensInMsg();
-    dataGood = this->atmoDensInMsg.isWritten();
+	dataGood = this->atmoDensInMsg.isWritten();
+	if (dataGood) {
+		this->atmoInData = this->atmoDensInMsg();
+	}
+	if (this->windVelInMsg.isLinked() && this->windVelInMsg.isWritten()) {
+		this->windInData = this->windVelInMsg();
+	} else {
+		this->windInData = {};
+	}
 	return(dataGood);
 }
 
@@ -92,10 +91,6 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 
-	if (this->useAtmosphereRelativeVelocity) {
-		this->hubPosition = states.getStateObject(this->stateNameOfPosition);
-	}
-
 	if (this->densityCorrectionStateName.empty())
 		this->densityCorrection = nullptr;
 	else
@@ -103,24 +98,25 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
+ * It accounts for wind velocity if the wind message is linked.
 */
 void DragDynamicEffector::updateDragDir(){
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-    Eigen::Vector3d vRel_N = this->hubVelocity->getState();  // Initializing vRel_N = v_N
+    Eigen::Vector3d v_BN_N = this->hubVelocity->getState();
 
-    if (this->useAtmosphereRelativeVelocity && this->hubPosition != nullptr) {
-        Eigen::Vector3d r_N = this->hubPosition->getState();
-        Eigen::Vector3d vAtmo_N = this->planetOmega_N.cross(r_N);
-        vRel_N -= vAtmo_N;
+    if (this->windVelInMsg.isLinked()) {
+        Eigen::Map<Eigen::Vector3d> v_air_N(this->windInData.v_air_N);
+        Eigen::Vector3d v_B_air_N = v_BN_N - v_air_N;
+        this->v_B = dcm_BN * v_B_air_N;
+    } else {
+        this->v_B = dcm_BN * v_BN_N;
     }
 
-    this->v_B = dcm_BN * vRel_N;
-
     double vNorm = this->v_B.norm();
-    if (vNorm > 1e-12) {
+    if (vNorm > 1e-12) {  // [m/s]
         this->v_hat_B = this->v_B / vNorm;
     } else {
         this->v_hat_B.setZero();
@@ -142,7 +138,7 @@ double DragDynamicEffector::getDensity()
 	return density;
 }
 
-/*! This method implements a simple "cannnonball" (attitude-independent) drag model.
+/*! This method implements a simple "cannonball" (attitude-independent) drag model.
 */
 void DragDynamicEffector::cannonballDrag(){
   	//! Begin method steps
@@ -151,7 +147,7 @@ void DragDynamicEffector::cannonballDrag(){
     this->torqueExternalPntB_B.setZero();
 
 	double vMag = this->v_B.norm();
-	if (vMag <= 1e-12) {
+	if (vMag <= 1e-12) {  // [m/s]
 		return;
 	}
 
@@ -181,44 +177,4 @@ void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 	return;
-}
-
-/*!
- * @brief Enables or disables the use of atmosphere-relative velocity for drag computation.
- * When enabled, the drag force is computed using v_rel = v_sc - (omega_planet x r_sc).
- * Requires hub position state to be available.
- * @param useRelVel  true to use atmosphere-relative velocity, false to use inertial velocity
- */
-void DragDynamicEffector::setUseAtmosphereRelativeVelocity(bool useRelVel)
-{
-    this->useAtmosphereRelativeVelocity = useRelVel;
-}
-
-/*!
- * @brief Returns whether atmosphere-relative velocity is used in drag computation.
- * @return true if atmosphere-relative velocity is enabled
- */
-bool DragDynamicEffector::getUseAtmosphereRelativeVelocity() const
-{
-    return this->useAtmosphereRelativeVelocity;
-}
-
-/*!
- * @brief Sets the planetary rotation vector expressed in the inertial frame.
- * Used to compute the atmosphere velocity when useAtmosphereRelativeVelocity is enabled.
- * For Earth, the default is taken from OMEGA_EARTH in astroConstants.h: [0, 0, 7.2921159e-5] rad/s.
- * @param omega  Planetary rotation vector [rad/s] in inertial frame N
- */
-void DragDynamicEffector::setPlanetOmega_N(const Eigen::Vector3d& omega)
-{
-    this->planetOmega_N = omega;
-}
-
-/*!
- * @brief Returns the planetary rotation vector expressed in the inertial frame.
- * @return omega_planet [rad/s] in inertial frame N
- */
-Eigen::Vector3d DragDynamicEffector::getPlanetOmega_N() const
-{
-    return this->planetOmega_N;
 }
