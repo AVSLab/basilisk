@@ -1,0 +1,5 @@
+- Added :ref:`stripLocation` to support the strip imaging mode.
+- Updated :ref:`locationPointing` to include the new strip imaging mode.
+- Added new tests in ``test_locationPointing.py`` to verify the new strip imaging mode.
+- Created new message :ref:`StripStateMsgPayload` to interface :ref:`locationPointing` with the new :ref:`stripLocation`.
+- Added the scenario :ref:`scenarioStripImaging` showing how to perform strip imaging tasks.
