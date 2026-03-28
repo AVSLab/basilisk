@@ -329,7 +329,7 @@ class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
         self.magnitude = []
 
     def generate(self, sim=None):
-        rndAngles = np.zeros((3, 1))
+        rndAngles = np.zeros(3)
         for i in range(3):
             rndAngles[i] = (self.bounds[1] - self.bounds[0]) * np.random.random() + self.bounds[0]
         dispMRP = rbk.euler3232MRP(rndAngles)
