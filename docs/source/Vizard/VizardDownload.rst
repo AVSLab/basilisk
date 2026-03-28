@@ -22,9 +22,8 @@ Install the program in the typical Applications folder or Desktop.
 
 .. warning::
 
-    The newer version of Linux use a new GUI library that is not supported by the
-    Vizard File Browser plug-in currently.  If you can't select files to open in the GUI
-    then use the ``loadFile`` command line option discussed in :ref:`vizardCommandLine`
+    Starting with Vizard 2.4 the atmosphere shaders and HD textures are now separated from the released binary and
+    can be downloaded below.
 
 The following optional downloads contain models for a range space objects that are too large to
 include in the main Vizard binary. You download the desired binaries for the platform you are using
@@ -62,6 +61,11 @@ Download the platform specific bundles file, unzip it, and move the contents to 
       -
       -
       -
+    * - HD Materials
+      - Includes the high-fidelity atmosphere shader, nice ring shader, and Milkyway Skybox
+      - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/Vizard_HD_Materials_macOS.zip>`
+      - :download:`Linux<https://hanspeterschaub.info/bskFiles/Assets/Vizard_HD_Materials_Linux.zip>`
+      - :download:`Windows<https://hanspeterschaub.info/bskFiles/Assets/Vizard_HD_Materials_Windows.zip>`
     * - :ref:`assetAsteroids`
       - Asteroid model package including high fidelity models of Bennu, Ryugu, Itokawa, as well as some
         generic asteroid models
