@@ -139,7 +139,7 @@ class LinearTranslationNDOFStateEffector: public StateEffector, public SysModel 
 public:
 
     LinearTranslationNDOFStateEffector();         //!< -- Constructor
-    ~LinearTranslationNDOFStateEffector() final;  //!< -- Destructor
+    ~LinearTranslationNDOFStateEffector() override;  //!< -- Destructor
 
     std::vector<Message<LinearTranslationRigidBodyMsgPayload>*> translatingBodyOutMsgs;       //!< vector of state output messages
     std::vector<Message<SCStatesMsgPayload>*> translatingBodyConfigLogOutMsgs;                //!< vector of translating body state config log messages
