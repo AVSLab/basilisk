@@ -1,0 +1,2 @@
+- Added an ``examples`` optional dependency set so users can install example-only Python packages with ``pip install "bsk[examples]"`` or ``pip install -e ".[examples]"``.
+- Added a matching ``python conanfile.py --examples True`` build option for source checkouts, with example dependencies enabled by default and ``--examples False`` available to skip them.
