@@ -12,7 +12,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/pre-commit
 
   build-linux:
@@ -21,7 +21,7 @@ jobs:
     needs: pre-commit
     name: Linux (MAX Python)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
@@ -45,7 +45,7 @@ jobs:
     env:
       MPLBACKEND: agg
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
@@ -91,7 +91,7 @@ jobs:
 
     name: macOS (${{ matrix.python_label }}) ${{ matrix.job_suffix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
       - uses: ./.github/actions/build
         with:
@@ -110,7 +110,7 @@ jobs:
   docs:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
       - name: Build Basilisk
         uses: ./.github/actions/build

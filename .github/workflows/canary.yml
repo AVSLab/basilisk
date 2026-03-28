@@ -20,9 +20,9 @@ jobs:
         python-version: ["3.14"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Capture initial package versions
@@ -59,7 +59,7 @@ jobs:
           is-canary: true
       - name: Upload package version logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-versions
           path: |
