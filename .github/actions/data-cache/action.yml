@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: echo "period=$(date +'%Y')-$(( 10#$(date +'%W') / 2 ))" >> $GITHUB_OUTPUT
     - name: Cache bsk support data
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ github.workspace }}/.bsk-cache
         key: bsk-support-data-${{ runner.os }}-${{ steps.date.outputs.period }}-${{ hashFiles('src/utilities/supportDataTools/dataFetcher.py') }}
