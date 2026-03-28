@@ -51,6 +51,7 @@ SCENARIO_FILES = [
 SCENARIO_RUN_KWARGS = {
     "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.075, "runTime": 270.0},
 }
+OPTIONAL_EXAMPLE_DEPENDENCIES = {"scipy"}
 
 sys.path.append(SCENARIO_FOLDER)
 
@@ -59,7 +60,15 @@ sys.path.append(SCENARIO_FOLDER)
 @pytest.mark.parametrize("scenario", SCENARIO_FILES)
 @pytest.mark.scenarioTest
 def test_scenarios(scenario: str):
-    module = importlib.import_module(scenario)
+    try:
+        module = importlib.import_module(scenario)
+    except ModuleNotFoundError as exc:
+        if exc.name in OPTIONAL_EXAMPLE_DEPENDENCIES:
+            pytest.skip(
+                f"Scenario '{scenario}' requires optional example dependency "
+                f"'{exc.name}'. Install Basilisk with `pip install -e .[examples]`."
+            )
+        raise
     kwargs = SCENARIO_RUN_KWARGS.get(scenario, {})
     figureList = module.run(**kwargs)  # Every mujoco scenario should have a run function
     if figureList is None:

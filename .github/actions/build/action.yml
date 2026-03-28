@@ -88,8 +88,8 @@ runs:
         CONAN_ARGS: ${{ inputs.conan-args }}
       run: |
         if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
-          pip install --no-build-isolation --no-deps -e . -v
+          pip install --no-build-isolation --no-deps -e ".[examples]" -v
         else
-          pip install --no-build-isolation -e . -v
+          pip install --no-build-isolation -e ".[examples]" -v
         fi
         bskLargeData
