@@ -29,6 +29,10 @@ The simplest usage is::
 This command compiles and installs Basilisk into the user's current Python environment. Note that the optional ``-v`` flag is
 added to display verbose compilation messages, otherwise it can look like the installation process is stuck.
 
+If you also want the optional Python dependencies used by example scripts, use::
+
+    pip install -v ".[examples]"
+
 Build options (as passed to ``conanfile.py`` and described in :ref:`configureBuild`) can be provided using the
 ``CONAN_ARGS`` environment variable::
 
@@ -82,9 +86,17 @@ using::
 
     pip install Basilisk*.tar.gz
 
+To include the optional example dependencies in this case, use::
+
+    pip install "Basilisk*.tar.gz[examples]"
+
 The following command is used to both download the code and compile Basilisk with pip::
 
     pip install git+https://github.com/AVSLab/basilisk.git
+
+To include the optional example dependencies directly from GitHub, use::
+
+    pip install "git+https://github.com/AVSLab/basilisk.git#egg=bsk[examples]"
 
 
 For Maintainers: Overview of Implementation

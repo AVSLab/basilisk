@@ -25,6 +25,12 @@ package from PyPI. Run:
 
    pip install bsk
 
+If you also want the optional Python packages used by example scripts, install:
+
+.. code-block:: bash
+
+   pip install "bsk[examples]"
+
 Or, if using `uv <https://docs.astral.sh/uv/>`_ (a modern Python package manager):
 
 .. code-block:: bash

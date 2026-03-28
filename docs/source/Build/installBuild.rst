@@ -100,6 +100,11 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ dependencies
+    * - ``examples``
+      - Boolean
+      - True
+      - Installs the optional Python dependencies used by Basilisk example scripts, such as ``scipy``.
+        Disable this flag if you want a leaner clone-based install and do not need the example-only Python packages.
     * - ``mujocoReplay``
       - Boolean
       - False
@@ -117,6 +122,10 @@ clean distribution folder, and that is built right away, you could use::
     python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
 
 The ``buildProject`` argument here is optional as its default value is ``True``.
+Likewise, the ``examples`` argument is optional as its default value is ``True``.
+To skip the optional example Python packages during the clone-based install, use::
+
+    python3 conanfile.py --examples False
 
 .. warning::
 
