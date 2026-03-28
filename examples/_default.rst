@@ -68,6 +68,7 @@ Attitude Guidance
    Layered spiral attitude guidance <scenarioInertialSpiral>
    Constrained Attitude Maneuver Guidance <scenarioAttitudeConstrainedManeuver>
    Performing Sweeping Maneuvers <scenarioSweepingSpacecraft>
+   Earth Strip Imaging Tasks <scenarioStripImaging>
 
 
 
