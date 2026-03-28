@@ -63,7 +63,7 @@ runs:
     - name: Cache Conan
       uses: actions/cache@v5
       with:
-        path: ${{ env.HOME }}/.conan2
+        path: ~/.conan2
         key: >-
           conan-${{ runner.os }}-py${{ inputs.python-version }}-
           ${{ hashFiles('conan.lock','conanfile.*','**/conanfile.*','CMakeLists.txt','**/*.cmake') }}
