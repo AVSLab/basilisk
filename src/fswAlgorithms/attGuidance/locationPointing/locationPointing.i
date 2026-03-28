@@ -39,6 +39,8 @@ struct NavTransMsg_C;
 struct NavAttMsg_C;
 %include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
 struct GroundStateMsg_C;
+%include "architecture/msgPayloadDefC/StripStateMsgPayload.h"
+struct StripStateMsg_C;
 %include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
 struct AttGuidMsg_C;
 %include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
