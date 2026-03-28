@@ -38,6 +38,7 @@ bskModuleOptionsBool = {
     "opNav": [[True, False], False],
     "vizInterface": [[True, False], True],
     "mujoco": [[True, False], False],
+    "examples": [[True, False], True],
     "buildProject": [[True, False], True],
     "pyPkgCanary": [[True, False], False],
     "recorderPropertyRollback": [[True, False], False],
@@ -410,9 +411,12 @@ class BasiliskConan(ConanFile):
         # "managePipEnvironment" option). Otherwise, it is not necessary.
         add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "../"]
 
+        if self.options.get_safe("examples"):
+            add_basilisk_module_command[-1] = "../[examples]"
+
         if self.options.get_safe("allOptPkg"):
             # Install the optional requirements as well
-            add_basilisk_module_command[-1] = ".[optional]"
+            add_basilisk_module_command[-1] = "../[optional]"
 
         if not is_running_virtual_env() and self.options.get_safe("autoKey") != 's':
             add_basilisk_module_command.append("--user")
