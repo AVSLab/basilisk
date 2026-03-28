@@ -66,6 +66,11 @@ test = [
   "pytest-error-for-skips",
   "pytest",
 ]
+examples = [
+  'scipy==1.13.1; python_version < "3.10"',
+  'scipy==1.15.3; python_version >= "3.10" and python_version < "3.11"',
+  'scipy==1.17.1; python_version >= "3.11"',
+]
 
 [tool.cibuildwheel]
 build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]

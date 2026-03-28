@@ -16,7 +16,14 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
-from scipy.optimize import minimize
+
+try:
+    from scipy.optimize import minimize
+except ImportError as exc:
+    raise ImportError(
+        "The MuJoCo thruster-arm example requires the optional example "
+        "dependencies. Install Basilisk with `pip install -e .[examples]`."
+    ) from exc
 
 from Basilisk.architecture import messaging, sysModel
 from Basilisk.utilities import RigidBodyKinematics as rbk
