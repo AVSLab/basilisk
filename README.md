@@ -27,6 +27,12 @@ This installs the latest stable version with all standard features
 (e.g. optical navigation and MuJoCo). See the [install](docs/source/Install.rst)
 docs for supported platforms and additional details about the wheels.
 
+If you also want the optional Python dependencies used by example scripts, install:
+
+```bash
+pip install "bsk[examples]"
+```
+
 #### Build from Source
 
 If you need to use external C++ modules or want to customize the build, follow
