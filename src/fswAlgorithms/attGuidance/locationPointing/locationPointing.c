@@ -57,6 +57,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
     }
     int numInMsgs = GroundStateMsg_C_isLinked(&configData->locationInMsg)
+                    + StripStateMsg_C_isLinked(&configData->locationstripInMsg)
                     + EphemerisMsg_C_isLinked(&configData->celBodyInMsg)
                     + NavTransMsg_C_isLinked(&configData->scTargetInMsg);
 
@@ -68,6 +69,14 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
     }
 
     configData->init = 1;
+
+    /* set default alignment threshold if not provided by user */
+    if (configData->alignmentThreshold <= 0.0) {
+        configData->alignmentThreshold = 0.1;
+    }
+    if (configData->stripInertialSpeedThreshold <= 0.0) {
+        configData->stripInertialSpeedThreshold = 1e-12;
+    }
 
     v3SetZero(configData->sigma_BR_old);
     configData->time_old = callTime;
@@ -89,6 +98,25 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
         }
         v3Normalize(configData->eHat180_B, configData->eHat180_B);
     }
+
+    /* check cHat_B when strip imaging is used */
+    if (StripStateMsg_C_isLinked(&configData->locationstripInMsg)) {
+        if (v3Norm(configData->cHat_B) < 0.1) {
+            char info[MAX_LOGGING_LENGTH];
+            sprintf(info, "locationPointing: vector cHat_B is not setup as a unit vector [%f, %f, %f]",
+                          configData->cHat_B[0], configData->cHat_B[1], configData->cHat_B[2]);
+            _bskLog(configData->bskLogger, BSK_ERROR, info);
+        } else {
+            v3Normalize(configData->cHat_B, configData->cHat_B);    /* ensure that this vector is a unit vector */
+            double dotPHatCHat = fabs(v3Dot(configData->pHat_B, configData->cHat_B));
+            if (dotPHatCHat > 1e-6) {
+                char info[MAX_LOGGING_LENGTH];
+                sprintf(info, "locationPointing: cHat_B is not perpendicular to pHat_B (dot product = %e). "
+                              "These vectors must be orthogonal for strip imaging.", dotPHatCHat);
+                _bskLog(configData->bskLogger, BSK_ERROR, info);
+            }
+        }
+    }
 }
 
 
@@ -104,6 +132,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     NavAttMsgPayload scAttInMsgBuffer;  //!< local copy of input message buffer
     NavTransMsgPayload scTransInMsgBuffer;  //!< local copy of input message buffer
     GroundStateMsgPayload locationInMsgBuffer;  //!< local copy of location input message buffer
+    StripStateMsgPayload locationstripInMsgBuffer;  //!< local copy of strip state input message buffer
     EphemerisMsgPayload celBodyInMsgBuffer; //!< local copy of celestial body input message buffer
     NavTransMsgPayload scTargetInMsgBuffer;  //!< local copy of input message buffer of target spacecraft
     AttGuidMsgPayload attGuidOutMsgBuffer;  //!< local copy of guidance output message buffer
@@ -114,38 +143,61 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double rHat_LS_B[3];                /*!< unit vector of location w.r.t spacecraft CoM in body frame */
     double eHat_B[3];                   /*!< --- Eigen Axis */
     double dcmBN[3][3];                 /*!< inertial spacecraft orientation DCM */
+    double dcmBN_update[3][3];          /*!< inertial reference spacecraft orientation DCM after pointing at the target  */
     double phi;                         /*!< principal angle between pHat and heading to location */
     double sigmaDot_BR[3];              /*!< time derivative of sigma_BR*/
     double sigma_BR[3];                 /*!< MRP of B relative to R */
     double sigma_RB[3];                 /*!< MRP of R relative to B */
+    double sigma_RN[3];                 /*!< MRP of R relative to N */
     double omega_RN_B[3];               /*!< angular velocity of the R frame w.r.t the B frame in B frame components */
     double difference[3];
     double time_diff;                   /*!< module update time */
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
     double dum1;
     double r_TN_N[3];                   /*!< [m] inertial target location */
+    double v_TP_N[3];                   /*!< [m/s] inertial target velocity */
+    double v_TP_B[3];                   /*!< [m/s] v_TP_N in the reference body frame to point at the target */
     double boreRate_B[3];               /*!< [rad/s] rotation rate about target direction */
-
+    bool imagingStrip;                  /*!< bool indicating if we are imaging a strip or not*/
+    double v_perp[3];                   /*!< Perpendicular vector to v_TP_B in the plane perpendicular to pHat_B*/
+    double dotProd2;                    /*!< dot product between cHat_B and v_perp  */
+    double angle;                       /*!< [rad] angle between cHat_B and v_perp  */
+    double sigma_R2R[3];                /*!< MRP of R2 (reference after pointing at the target and being perpendicular to the strip) relative to R (reference after only pointing at the target) */
+    double sigma_R2N[3];                /*!< MRP of R2 relative to N */
+    double sigma_N2R[3];
+    double sigma_BR2[3];                /*!< MRP of B relative to R2 */
+    double sigma_R2B[3];                /*!< MRP of R2 relative to B */
+    double sigma_NB[3];
+    double neg_sigma_R2N[3];
+    double r_TP_B[3];
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
     attRefOutMsgBuffer = AttRefMsg_C_zeroMsgPayload();
 
-    // read in the input messages
+    // read the input messages
     scAttInMsgBuffer = NavAttMsg_C_read(&configData->scAttInMsg);
     scTransInMsgBuffer = NavTransMsg_C_read(&configData->scTransInMsg);
     if (GroundStateMsg_C_isLinked(&configData->locationInMsg)) {
         locationInMsgBuffer = GroundStateMsg_C_read(&configData->locationInMsg);
         v3Copy(locationInMsgBuffer.r_LN_N, r_TN_N);
+        imagingStrip=false;
+    }
+    else if (StripStateMsg_C_isLinked(&configData->locationstripInMsg)) {
+        locationstripInMsgBuffer = StripStateMsg_C_read(&configData->locationstripInMsg);
+        v3Copy(locationstripInMsgBuffer.r_LN_N, r_TN_N);
+        v3Copy(locationstripInMsgBuffer.v_LP_N, v_TP_N);
+        imagingStrip=true;
     }
     else if (EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
         celBodyInMsgBuffer = EphemerisMsg_C_read(&configData->celBodyInMsg);
         v3Copy(celBodyInMsgBuffer.r_BdyZero_N, r_TN_N);
+        imagingStrip=false;
     } else {
         scTargetInMsgBuffer = NavTransMsg_C_read(&configData->scTargetInMsg);
         v3Copy(scTargetInMsgBuffer.r_BN_N, r_TN_N);
+        imagingStrip=false;
     }
-
-    /* calculate r_LS_N*/
+    /* calculate r_LS_N */
     v3Subtract(r_TN_N, scTransInMsgBuffer.r_BN_N, r_LS_N);
 
     /* principle rotation angle to point pHat at location */
@@ -173,11 +225,76 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         v3Normalize(eHat_B, eHat_B);
         v3Scale(-tan(phi / 4.), eHat_B, sigma_BR);
     }
-    v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
 
-    // compute sigma_RN
+    /* Compute the final reference attitude sigma_RN to only point at the target location */
     v3Scale(-1.0, sigma_BR, sigma_RB);
-    addMRP(scAttInMsgBuffer.sigma_BN, sigma_RB, attRefOutMsgBuffer.sigma_RN);
+    addMRP(scAttInMsgBuffer.sigma_BN, sigma_RB, sigma_RN);
+
+    /* In case we are not imaging a strip, we have the final reference attitude sigma_RN and the final attitude tracking error sigma_BR */
+    if (!imagingStrip){
+        v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
+        v3Copy(sigma_RN, attRefOutMsgBuffer.sigma_RN);
+    }
+    /* In case we are imaging a strip, we need to perform an extra rotation to image perpendicularly to the scanning direction */
+    else{
+          if (v3Norm(v_TP_N) <= configData->stripInertialSpeedThreshold) {
+            /* Strip direction is undefined for zero inertial target velocity.
+               Fall back to pure location pointing reference. */
+            v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
+            v3Copy(sigma_RN, attRefOutMsgBuffer.sigma_RN);
+        } else {
+        //Step 1 : Compute the reference scanning line direction
+        MRP2C(sigma_RN, dcmBN_update);
+        v3Normalize(v_TP_N, v_TP_N);
+        m33MultV3(dcmBN_update, v_TP_N, v_TP_B);
+        v3Normalize(v_TP_B, v_TP_B);
+        v3Cross(configData->pHat_B, v_TP_B, v_perp);
+        if (v3Norm(v_perp) < configData->alignmentThreshold) {
+            /* Special case where v_TP_B and pHat_B are colinear or almost colinear.
+               In that case v_perp is either not defined or unstable (90 degrees shifts).
+               No extra rotation performed. */
+            v3Copy(sigma_BR, attGuidOutMsgBuffer.sigma_BR);
+            v3Copy(sigma_RN, attRefOutMsgBuffer.sigma_RN);
+        } else {
+            v3Normalize(v_perp, v_perp);
+
+            // Step 2 : Choose the v_perp sign that minimizes the rotation angle.
+            // Both +v_perp and -v_perp are valid scanning directions (both perpendicular
+            // to the strip velocity). Pick the one closer to cHat_B
+            if (v3Dot(configData->cHat_B, v_perp) < 0.0) {
+                v3Scale(-1.0, v_perp, v_perp);
+            }
+
+            // Step 3 : Compute sigma_R2R to align cHat_B with v_perp
+            dotProd2 = v3Dot(configData->cHat_B, v_perp);
+            if (fabs(dotProd2) > 1.0) {
+                dotProd2 = dotProd2 / fabs(dotProd2);
+            }
+            angle = safeAcos(dotProd2);
+            /* calculate sigma_R2R */
+            if (angle < configData->smallAngle) {
+                /* cHat_B and v_perp are essentially aligned.  Set rotation to zero. */
+                v3SetZero(sigma_R2R);
+            } else {
+                double eHat_R2R[3]; // CHat_B and v_perp are not aligned
+                v3Cross(configData->cHat_B, v_perp, eHat_R2R);
+                v3Normalize(eHat_R2R, eHat_R2R);
+                v3Scale(tan(angle / 4.), eHat_R2R, sigma_R2R);
+            }
+
+            //Step 4 : Compute the final reference attitude sigma_R2N to point at the target location and image perpendicularly to the strip */
+            addMRP(sigma_RN, sigma_R2R, sigma_R2N);
+            v3Copy(sigma_R2N, attRefOutMsgBuffer.sigma_RN);
+
+            //Step 5 : Compute the final attitude tracking error sigma_BR2
+            subMRP(scAttInMsgBuffer.sigma_BN,sigma_R2N,sigma_BR2);
+            v3Copy(sigma_BR2, attGuidOutMsgBuffer.sigma_BR);
+
+            //Step 6 : sigma_BR takes the value of sigma_BR2 to make it compatible with the computation of d(sigma_BR)/dt
+            v3Copy(sigma_BR2, sigma_BR);
+        }
+        }
+    }
 
     /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
     if (configData->init < 1) {
@@ -199,7 +316,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
         configData->init -= 1;
     }
 
-    if (configData->useBoresightRateDamping) {
+    if (configData->useBoresightRateDamping && !imagingStrip) {
         v3Scale(v3Dot(scAttInMsgBuffer.omega_BN_B, rHat_LS_B), rHat_LS_B, boreRate_B);
         v3Add(attGuidOutMsgBuffer.omega_BR_B, boreRate_B, attGuidOutMsgBuffer.omega_BR_B);
     }
