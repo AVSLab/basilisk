@@ -33,6 +33,9 @@ import os
 import shutil
 import sys
 import pytest
+import json
+import ast
+import numpy as np
 
 # Check if Bokeh is available
 bokeh_spec = importlib.util.find_spec("bokeh")
@@ -80,3 +83,62 @@ def test_scenarioBskMcScenarios(show_plots):
         shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")
 
     assert testFailCount < 1, testMessages
+
+def test_dispersionApplicationMc():
+    testMessages = []
+
+    scene_plt_dispersions = importlib.import_module('scenarioBskSimAttFeedbackMC')
+
+    try:
+        figureList = scene_plt_dispersions.run(False, recordSimParams=True)
+
+    except Exception as err:
+        testFailCount += 1
+        testMessages.append(f"Error in {'scenarioBskSimAttFeedbackMC'}: {str(err)}")
+
+    # check path existence
+    assert os.path.exists(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")
+
+    # define file paths
+    dispPath = os.path.join(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/run0.json")
+    attrPath = os.path.join(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/run0attributes.json")
+
+    with open(dispPath, 'r') as f:
+        dispData = json.load(f)
+    with open(attrPath, 'r') as f:
+        attrData = json.load(f)
+
+    # check if keys are identical
+    dispDataKeys = set(dispData.keys())
+    attrDataKeys = set(attrData.keys())
+
+    assert dispDataKeys == attrDataKeys, "Key sets differ"
+
+    for key in dispDataKeys:
+
+        dispVal = ast.literal_eval(dispData[key])
+
+        if type(dispVal) == list:
+            arrayDisp = np.array(dispVal).flatten()
+            attrVal = ast.literal_eval(attrData[key])
+            arrayAttr = np.array(attrVal).flatten()
+
+            np.testing.assert_allclose(
+                arrayAttr,
+                arrayDisp,
+                atol=1e-12,
+                err_msg=f"Numerical mismatch for parameter: {key} in the first simulation run"
+            )
+
+        else:
+            dispVal = dispData[key]
+            attrVal = attrData[key]
+
+            assert dispVal == attrVal, (
+                f"Mismatch for parameter: {key} in the first simulation run. "
+                f"Expected: '{dispVal}', Found: '{attrVal}'"
+            )
+
+    # Clean up
+    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"):
+        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")

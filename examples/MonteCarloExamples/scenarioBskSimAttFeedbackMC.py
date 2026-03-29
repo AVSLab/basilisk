@@ -103,7 +103,7 @@ import scenario_AttFeedback
 sNavTransName = "sNavTransMsg"
 attGuidName = "attGuidMsg"
 
-def run(show_plots):
+def run(show_plots, recordSimParams=False):
     """This function is called by the py.test environment."""
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
@@ -112,7 +112,7 @@ def run(show_plots):
     monteCarlo = Controller()
     monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
     monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
-    monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
+    monteCarlo.setExecutionCount(3)  # Required: Number of MCs to run
 
     monteCarlo.setArchiveDir(path + "/scenarioBskSimAttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
@@ -144,6 +144,7 @@ def run(show_plots):
     retentionPolicy.addMessageLog(attGuidName, ["sigma_BR", "omega_BR_B"])
     retentionPolicy.setDataCallback(displayPlots)
     monteCarlo.addRetentionPolicy(retentionPolicy)
+    monteCarlo.setRecordSimParams(recordSimParams)
 
     failures = monteCarlo.executeSimulations()
 
