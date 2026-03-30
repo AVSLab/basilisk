@@ -223,6 +223,15 @@ Related Publications
 
 .. toctree::
    :maxdepth: 1
+   :caption: BSK_SDK:
+   :includehidden:
+
+   Overview <Plugins/overview>
+   Install <Plugins/installing>
+   Writing a Plugin <Plugins/writing>
+
+.. toctree::
+   :maxdepth: 1
    :caption: Vizard:
 
    Vizard/Vizard

@@ -14,6 +14,15 @@ Motivation
     An example external folder with custom Basilisk modules and message definitions can be downloaded :download:`here </../../docs/source/Build/External.zip>`.
 
 
+.. note::
+
+    The recommended modern approach for custom modules is :ref:`Plugins<bskPlugins>`.
+    Plugins compile independently as their own Python wheels so no Basilisk
+    source checkout or full recompile is required. Additionally, plugins
+    can be distributed as wheels making distribution via ``pip install`` easier.
+    External modules are still supported for users who want custom code folded
+    directly into a from-source Basilisk build.
+
 It is preferred that the user not put their own modules inside the official Basilisk folder unless this module is intended to be pushed back to the repository.  This keeps the official Basilisk folder free from local customizations and thus easier to keep up to date.  With Basilisk 2.0 and onwards the user has the ability to create modules which are not included in basilisk repository.  The new build system allows a single folder containing custom BSK modules to be included into a single Basilisk build. This document outlines how this is done.  The resulting build product will contain both the official Basilisk modules as well as modules available within this external folder.
 
 .. note::
