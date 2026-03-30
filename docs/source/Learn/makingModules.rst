@@ -6,7 +6,14 @@ Basics of Writing Basilisk Modules
 
 .. sidebar:: Making New Modules
 
-    You should build your own Basilisk modules outside of the primary Basilisk source folder.  This keeps your Basilisk source folder free of local customizations that interfere with upgrading the simulation framework.  The only exception is if you are planning on pushing the module back to the primary Basilisk source itself.  Instructions on how to create modules outside of the main source folder are found at :ref:`buildExtModules`.
+    You should build your own Basilisk modules outside of the primary Basilisk source folder.  This keeps your Basilisk source folder free of local customizations that interfere with upgrading the simulation framework.  The only exception is if you are planning on pushing the module back to the primary Basilisk source itself.
+
+    **Recommended:** Build your module as a :ref:`bskPlugins` — a
+    self-contained Python wheel that compiles independently without
+    recompiling all of Basilisk and can be shared via ``pip install``.
+
+    The older :ref:`buildExtModules` approach is still supported for
+    users who need modules folded directly into a from-source Basilisk build.
 
 This chapter covers the basics of designing Basilisk modules, as well as how to write a module using C++, C or Python.  As always with code documentation, it is never complete and always work-in-progress.
 
@@ -32,5 +39,3 @@ The following pages cover the primary tasks required to make a Basilisk module. 
    makingModules/makingDraftModule
    makingModules/makingModules-5
    makingModules/advancedTopics
-
-
