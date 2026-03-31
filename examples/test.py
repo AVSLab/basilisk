@@ -148,7 +148,7 @@ def run(planetCase, DOF, deorbitAlt):
 
     # All panels are identical exept for location
     if DOF == "1":
-        panelMass = 10
+        panelMass = 25
     else:
         panelMass = 50
     I_realistic = (1/12) * panelMass * (3.0**2 + 2.0**2)
@@ -394,8 +394,10 @@ def run(planetCase, DOF, deorbitAlt):
     if DOF == "1":
         panel1_center_B = vec3(panel1.r_HB_B) - panel1.d * e1_B
         panel3_center_B = vec3(panel3.r_HB_B) - panel3.d * e1_B
-        panel2_center_S = np.zeros(3)
-        panel4_center_S = np.zeros(3)
+        # When drag is attached directly to a hinged panel, the facet location is
+        # expressed from the hinge origin in the panel frame, not from the panel COM.
+        panel2_center_S = np.array([-panel2.d, 0.0, 0.0])
+        panel4_center_S = np.array([-panel4.d, 0.0, 0.0])
     elif DOF == "2":
         panel1_seg1_center_B = vec3(panel2DOF_1.r_H1B_B) - panel2DOF_1.d1 * e1_B
         panel1_seg2_center_B = vec3(panel2DOF_1.r_H1B_B) - (panel2DOF_1.l1 + panel2DOF_1.d2) * e1_B
@@ -892,8 +894,8 @@ def run(planetCase, DOF, deorbitAlt):
     plt.figure(8)
     fig = plt.gcf()
     ax = fig.gca()
-    plt.plot(dataLog1.times()*macros.NANO2MIN, a1/1e3, label="Drag on hub only")
-    plt.plot(dataLog2.times()*macros.NANO2MIN, a2/1e3, label="Drag on hub and panel")
+    plt.plot(dataLog1.times()*macros.NANO2MIN, a1/1e3, color='#aa0000', label="Drag on hub only")
+    plt.plot(dataLog2.times()*macros.NANO2MIN, a2/1e3, color="#1436F6", label="Drag on hub and panel")
     plt.legend(loc='lower left')
     plt.xlabel('Time [min]')
     plt.ylabel('Semimajor axis [km]')
@@ -904,8 +906,8 @@ def run(planetCase, DOF, deorbitAlt):
     plt.figure(9)
     fig = plt.gcf()
     ax = fig.gca()
-    plt.plot(dataLog1.times()*macros.NANO2MIN, period1, label="Drag on hub only")
-    plt.plot(dataLog2.times()*macros.NANO2MIN, period2, label="Drag on hub and panel")
+    plt.plot(dataLog1.times()*macros.NANO2MIN, period1, color='#aa0000', label="Drag on hub only")
+    plt.plot(dataLog2.times()*macros.NANO2MIN, period2, color="#1436F6", label="Drag on hub and panel")
     plt.legend(loc='lower left')
     plt.xlabel('Time [min]')
     plt.ylabel('Period [s]') # check units !!!!
@@ -940,8 +942,8 @@ def run(planetCase, DOF, deorbitAlt):
     ax = fig.gca()
     plt.plot(p1Log.times()*macros.NANO2MIN, panel1thetaLog, color='#aa0000', label="Drag on hub only (+x)")
     plt.plot(p3Log.times()*macros.NANO2MIN, panel3thetaLog, color='#aa0000', linestyle='--', label="Drag on hub only (-x)")
-    plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaLog, color='#008800', label="Drag on hub and panels (+x)")
-    plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaLog, color='#008800', linestyle='--', label="Drag on hub and panels (-x)")
+    plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaLog, color="#1436F6", label="Drag on hub and panels (+x)")
+    plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaLog, color="#1436F6", linestyle='--', label="Drag on hub and panels (-x)")
     plt.legend(loc='lower left')
     plt.xlabel('Time [min]')
     plt.ylabel('Panel Angle [deg]')
@@ -958,7 +960,7 @@ def run(planetCase, DOF, deorbitAlt):
         plt.plot(p6Log.times()*macros.NANO2MIN, panel6thetaLog, linestyle='--', label="Panel3 H2")
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
-        plt.ylabel('SC1 Panel Angles [deg]')
+        plt.ylabel('Panel Angles (RED SC) [deg]')
         plt.grid()
         pltName = fileName + "13" + planetCase
         # figureList[pltName] = plt.figure(13)
@@ -971,21 +973,21 @@ def run(planetCase, DOF, deorbitAlt):
         plt.plot(p8Log.times()*macros.NANO2MIN, panel8thetaLog, linestyle='--', label="Panel4 H2")
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
-        plt.ylabel('SC2 Panel Angles [deg]')
+        plt.ylabel('Panel Angles (BLUE SC) [deg]')
         plt.grid()
         pltName = fileName + "14" + planetCase
         # figureList[pltName] = plt.figure(14)
 
         # 2DOF hinge rates for all panels
         plt.figure(15)
-        plt.plot(p1Log.times()*macros.NANO2MIN, panel1thetaDotLog, label="SC1 Panel1 H1Dot")
-        plt.plot(p3Log.times()*macros.NANO2MIN, panel3thetaDotLog, label="SC2 Panel2 H1Dot")
-        plt.plot(p5Log.times()*macros.NANO2MIN, panel5thetaDotLog, label="SC1 Panel3 H1Dot")
-        plt.plot(p7Log.times()*macros.NANO2MIN, panel7thetaDotLog, label="SC2 Panel4 H1Dot")
-        plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaDotLog, linestyle='--', label="SC1 Panel1 H2Dot")
-        plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaDotLog, linestyle='--', label="SC2 Panel2 H2Dot")
-        plt.plot(p6Log.times()*macros.NANO2MIN, panel6thetaDotLog, linestyle='--', label="SC1 Panel3 H2Dot")
-        plt.plot(p8Log.times()*macros.NANO2MIN, panel8thetaDotLog, linestyle='--', label="SC2 Panel4 H2Dot")
+        plt.plot(p1Log.times()*macros.NANO2MIN, panel1thetaDotLog, label="Red SC Panel1 H1Dot")
+        plt.plot(p3Log.times()*macros.NANO2MIN, panel3thetaDotLog, label="Blue SC Panel2 H1Dot")
+        plt.plot(p5Log.times()*macros.NANO2MIN, panel5thetaDotLog, label="Red SC Panel3 H1Dot")
+        plt.plot(p7Log.times()*macros.NANO2MIN, panel7thetaDotLog, label="Blue SC Panel4 H1Dot")
+        plt.plot(p2Log.times()*macros.NANO2MIN, panel2thetaDotLog, linestyle='--', label="Red SC Panel1 H2Dot")
+        plt.plot(p4Log.times()*macros.NANO2MIN, panel4thetaDotLog, linestyle='--', label="Blue SC Panel2 H2Dot")
+        plt.plot(p6Log.times()*macros.NANO2MIN, panel6thetaDotLog, linestyle='--', label="Red SC Panel3 H2Dot")
+        plt.plot(p8Log.times()*macros.NANO2MIN, panel8thetaDotLog, linestyle='--', label="Blue SC Panel4 H2Dot")
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
         plt.ylabel('Hinge Rate [deg/s]')
@@ -1012,4 +1014,4 @@ def run(planetCase, DOF, deorbitAlt):
 # close the plots being saved off to avoid over-writing old and new figures
 # All frames are alligned at the start of the sim (theta=0 and dcm_HB is an identity matrix)
 if __name__ == '__main__':
-    run('Earth', '1', deorbitAlt=90)      # planet arrival case, can be Earth or Mars
+    run('Earth', '2', deorbitAlt=90)      # planet arrival case, can be Earth or Mars
