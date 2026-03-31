@@ -231,6 +231,11 @@ Related Publications
    Writing a Plugin <Plugins/writing>
 
 .. toctree::
+   :caption: BSK_RL:
+
+   Documentation <https://avslab.github.io/bsk_rl/>
+
+.. toctree::
    :maxdepth: 1
    :caption: Vizard:
 
