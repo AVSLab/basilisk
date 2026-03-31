@@ -17,7 +17,7 @@ write the module itself.  This page covers only the plugin-specific
 packaging: the project layout, ``CMakeLists.txt``, and ``pyproject.toml``.
 
 A complete working example is in the
-`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/main/examples/custom-atm-plugin>`_.
+`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-plugin>`_.
 
 Prerequisites
 -------------
