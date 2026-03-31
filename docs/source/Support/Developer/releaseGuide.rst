@@ -136,3 +136,21 @@ Where to make changes
      created. Release branches must remain stable and focused on fixes only.
    - Cherry-picks should be small, focused, and preferably reference the original
      commit hash in the message.
+
+Releasing the BSK SDK
+---------------------
+The `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_ package vendors the Basilisk
+SDK headers and runtime for plugin authors. Its version is kept in sync with
+Basilisk, so a new BSK release requires a corresponding SDK release.
+
+CI automatically checks out the Basilisk submodule at the tag matching the
+version string in ``pyproject.toml``, so no manual submodule update is needed.
+The only manual steps are:
+
+#. On a branch of develop, update the ``version`` field in ``pyproject.toml``
+   to match the new BSK release (e.g. ``2.X.Y``).
+#. Open a PR merging the updated ``pyproject.toml`` into ``develop`` on the
+   ``bsk-sdk`` repo. The PR CI workflow will test the SDK wheel build.
+#. Merge ``develop`` into ``master``.
+#. Push the matching tag ``v2.X.Y`` to ``master`` to trigger the wheel build
+   and PyPI publish via GitHub Actions.

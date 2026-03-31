@@ -144,7 +144,7 @@ Quick Start
 
 .. code-block:: cmake
 
-    cmake_minimum_required(VERSION 3.18)
+    cmake_minimum_required(VERSION 3.26)
     project(my_plugin LANGUAGES C CXX)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module NumPy)
@@ -185,7 +185,7 @@ Quick Start
     sim.AddModelToTask("task", mod)
 
 A complete working example is provided in the
-`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/develop/examples/custom-atm-plugin>`_.
+`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-plugin>`_.
 
 Version Compatibility
 ---------------------

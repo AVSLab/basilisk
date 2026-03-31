@@ -38,15 +38,26 @@ automatically.  Once installed, use it like any built-in Basilisk module:
 Version Compatibility
 ---------------------
 
-A plugin wheel is compiled against a specific Basilisk version.  Always
-install matching versions to avoid ABI incompatibilities:
+A plugin wheel is compiled against a specific Basilisk version.  The plugin's
+own version number is controlled by the plugin developer and does not need to
+match Basilisk's version.  What matters is that the wheel was built against the
+same BSK headers as the Basilisk release you have installed.
+
+Always verify you have the correct Basilisk version before installing a plugin.
+The plugin's documentation should state which Basilisk version it targets:
 
 .. code-block:: bash
 
-    pip install "bsk==2.9.1" "my-plugin==2.9.1"
+    pip install "bsk==2.9.1" "my-plugin"
 
-If the versions do not match, the plugin's CMake build will error with a
-clear message telling you which versions to align.
+If the installed Basilisk version does not match what the plugin was compiled
+against, CMake will error at configure time with an error message.
+
+.. note::
+   A plugin built with ``bsk-sdk==2.X.Y`` only works with Basilisk ``2.X.Y``.
+   Upgrading Basilisk means rebuilding the plugin against the matching SDK
+   version. We are exploring ways to make version compatibility easier in the
+   future.
 
 Installing the SDK (for plugin authors)
 ----------------------------------------
