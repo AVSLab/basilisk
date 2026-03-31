@@ -70,7 +70,7 @@ pip install pre-commit
 ```
 Verify pre-commit is installed with:
 ```
-$ pre-commit --version
+pre-commit --version
 pre-commit 3.6.2
 ```
 
@@ -79,7 +79,7 @@ If you are using python virtual environments, you may need to activate your envi
 Next, change your current directory to be the Basilisk repo folder.  Then run ```pre-commit install --hook-type pre-commit --hook-type commit-msg``` to set up the git hook scripts.
 You must run this inside of the repo folder and the associated files will only be installed inside that repository.
 ```
-$ pre-commit install --hook-type pre-commit --hook-type commit-msg
+pre-commit install --hook-type pre-commit --hook-type commit-msg
 pre-commit installed at .git/hooks/pre-commit
 pre-commit installed at .git/hooks/commit-msg
 ```
@@ -95,7 +95,7 @@ installing and using `pre-commit`), you can
 manually run pre-commit on specific files you have edited. Use the
 command:
 ```
-$ pre-commit run --files <file>
+pre-commit run --files <file>
 ```
 Note that you must run this command inside the directory containing
 the file you are running `pre-commit` on.
@@ -122,7 +122,7 @@ For more information is available on the [clang-format](https://clang.llvm.org/d
 * You must ```pip install clang-format``` to use ClangFormat through the command line.
 * Use the command
   ```
-  $ clang-format -i {file name(s)} -style=file
+  clang-format -i {file name(s)} -style=file
   ```
   where:
      * ```-i``` makes the suggested changes to the file, otherwise they will be outputted to the cli
