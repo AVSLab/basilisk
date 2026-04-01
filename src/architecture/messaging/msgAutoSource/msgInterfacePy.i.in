@@ -21,6 +21,10 @@
 %template(DoubleVector) std::vector<double, std::allocator<double>>;
 %template(StringVector) std::vector<std::string, std::allocator<std::string>>;
 
+%typemap(out) uintptr_t {{
+    $result = PyLong_FromUnsignedLongLong((unsigned long long)$1);
+}}
+
 %include "architecture/utilities/macroDefinitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
