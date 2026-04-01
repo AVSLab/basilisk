@@ -180,6 +180,16 @@ public:
 
     //! Recorder method description
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
+
+    //! Return the address of the internal payloadPointer member
+    uintptr_t getPayloadPtrAddress() const {
+        return reinterpret_cast<uintptr_t>(&payloadPointer);
+    }
+
+    //! Return the address of the internal initialized flag
+    uintptr_t getLinkedAddress() const {
+        return reinterpret_cast<uintptr_t>(&initialized);
+    }
 };
 
 /*! Write Functor */
@@ -238,6 +248,12 @@ public:
 
     //! Return the memory size of the payload, be careful about dynamically sized things
     uint64_t getPayloadSize() {return sizeof(messageType);};
+
+    //! Return the raw address of the message payload struct
+    uintptr_t getPayloadAddress() { return reinterpret_cast<uintptr_t>(&payload); }
+
+    //! Return the raw address of the message header struct
+    uintptr_t getHeaderAddress()  { return reinterpret_cast<uintptr_t>(&header);  }
 };
 
 
