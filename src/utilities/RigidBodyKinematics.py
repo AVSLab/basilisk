@@ -664,7 +664,7 @@ def BinvEP(q):
 
     		w = 2 [B(Q)]^(-1) dQ/dt
     """
-    B = np.zeros([3, 4])
+    B = np.zeros((3, 4))
     B[0, 0] = -q[1]
     B[0, 1] = q[0]
     B[0, 2] = q[3]
@@ -697,7 +697,7 @@ def BinvEuler121(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = c2
     B[0, 1] = 0
     B[0, 2] = 1
@@ -727,7 +727,7 @@ def BinvEuler123(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = c2 * c3
     B[0, 1] = s3
     B[0, 2] = 0
@@ -757,7 +757,7 @@ def BinvEuler131(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = c2
     B[0, 1] = 0
     B[0, 2] = 1
@@ -787,7 +787,7 @@ def BinvEuler132(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = c2 * c3
     B[0, 1] = -s3
     B[0, 2] = 0
@@ -817,7 +817,7 @@ def BinvEuler212(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = s2 * s3
     B[0, 1] = c3
     B[0, 2] = 0
@@ -847,7 +847,7 @@ def BinvEuler213(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = c2 * s3
     B[0, 1] = c3
     B[0, 2] = 0
@@ -877,7 +877,7 @@ def BinvEuler231(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = s2
     B[0, 1] = 0
     B[0, 2] = 1
@@ -907,7 +907,7 @@ def BinvEuler232(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = s2 * c3
     B[0, 1] = -s3
     B[0, 2] = 0
@@ -937,7 +937,7 @@ def BinvEuler312(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = -c2 * s3
     B[0, 1] = c3
     B[0, 2] = 0
@@ -967,7 +967,7 @@ def BinvEuler313(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = s2 * s3
     B[0, 1] = c3
     B[0, 2] = 0
@@ -997,7 +997,7 @@ def BinvEuler321(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = -s2
     B[0, 1] = 0
     B[0, 2] = 1
@@ -1027,7 +1027,7 @@ def BinvEuler323(q):
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = -s2 * c3
     B[0, 1] = s3
     B[0, 2] = 0
@@ -1052,7 +1052,7 @@ def BinvGibbs(q):
     		w = 2 [B(Q)]^(-1) dQ/dt
     """
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = 1
     B[0, 1] = q[2]
     B[0, 2] = -q[1]
@@ -1079,7 +1079,7 @@ def BinvMRP(q):
     """
 
     s2 = np.dot(q, q)
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = 1 - s2 + 2 * q[0] * q[0]
     B[0, 1] = 2 * (q[0] * q[1] + q[2])
     B[0, 2] = 2 * (q[0] * q[2] - q[1])
@@ -1109,7 +1109,7 @@ def BinvPRV(q):
     c1 = (1 - math.cos(p)) / p / p
     c2 = (p - math.sin(p)) / p / p / p
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2])
     B[0, 1] = c1 * q[2] + c2 * q[0] * q[1]
     B[0, 2] = -c1 * q[1] + c2 * q[0] * q[2]
@@ -1134,7 +1134,7 @@ def BmatEP(q):
     		dQ/dt = 1/2 [B(Q)] w
     """
 
-    B = np.zeros([4, 3])
+    B = np.zeros((4, 3))
     B[0, 0] = -q[1]
     B[0, 1] = -q[2]
     B[0, 2] = -q[3]
@@ -1166,7 +1166,7 @@ def BmatEuler121(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = 0
     B[0, 1] = s3
@@ -1197,7 +1197,7 @@ def BmatEuler123(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = c3
     B[0, 1] = -s3
@@ -1228,7 +1228,7 @@ def BmatEuler131(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = 0
     B[0, 1] = -c3
@@ -1259,7 +1259,7 @@ def BmatEuler132(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = c3
     B[0, 1] = 0
@@ -1290,7 +1290,7 @@ def BmatEuler212(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = s3
     B[0, 1] = 0
@@ -1321,7 +1321,7 @@ def BmatEuler213(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = s3
     B[0, 1] = c3
@@ -1352,7 +1352,7 @@ def BmatEuler231(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = 0
     B[0, 1] = c3
@@ -1383,7 +1383,7 @@ def BmatEuler232(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = c3
     B[0, 1] = 0
@@ -1414,7 +1414,7 @@ def BmatEuler312(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = -s3
     B[0, 1] = 0
@@ -1445,7 +1445,7 @@ def BmatEuler313(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = s3
     B[0, 1] = c3
@@ -1476,7 +1476,7 @@ def BmatEuler321(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = 0
     B[0, 1] = s3
@@ -1507,7 +1507,7 @@ def BmatEuler323(q):
     c2 = math.cos(q[1])
     s3 = math.sin(q[2])
     c3 = math.cos(q[2])
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
 
     B[0, 0] = -c3
     B[0, 1] = s3
@@ -1534,7 +1534,7 @@ def BmatGibbs(q):
     		dQ/dt = 1/2 [B(Q)] w
     """
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = 1 + q[0] * q[0]
     B[0, 1] = q[0] * q[1] - q[2]
     B[0, 2] = q[0] * q[2] + q[1]
@@ -1559,7 +1559,7 @@ def BmatMRP(q):
     		dQ/dt = 1/4 [B(Q)] w
     """
 
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     s2 = np.dot(q, q)
     B[0, 0] = 1 - s2 + 2 * q[0] * q[0]
     B[0, 1] = 2 * (q[0] * q[1] - q[2])
@@ -1585,7 +1585,7 @@ def BdotmatMRP(q, dq):
     	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
     """
 
-    Bdot = np.zeros([3, 3])
+    Bdot = np.zeros((3, 3))
     s = -2 * np.dot(q, dq)
     Bdot[0, 0] = s + 4 * (q[0] * dq[0])
     Bdot[0, 1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1])
@@ -1613,7 +1613,7 @@ def BmatPRV(q):
 
     p = np.linalg.norm(q)
     c = 1 / p / p * (1 - p / 2 / math.tan(p / 2))
-    B = np.zeros([3, 3])
+    B = np.zeros((3, 3))
     B[0, 0] = 1 - c * (q[1] * q[1] + q[2] * q[2])
     B[0, 1] = -q[2] / 2 + c * (q[0] * q[1])
     B[0, 2] = q[1] / 2 + c * (q[0] * q[2])
@@ -1847,7 +1847,7 @@ def dMRP2Omega(q, dq):
         W = 4 [B(Q)]^(-1) dQ
     """
 
-    return 4 * np.matmul(BinvMRP(q), dq)
+    return 4 * np.dot(BinvMRP(q), dq)
 
 
 def ddMRP(q, dq, w, dw):
@@ -1925,7 +1925,7 @@ def gibbs2C(q):
     q3 = q[2]
     qm = np.linalg.norm(q)
     d1 = qm * qm
-    C = np.zeros([3, 3])
+    C = np.zeros((3, 3))
     C[0, 0] = 1 + 2 * q1 * q1 - d1
     C[0, 1] = 2 * (q1 * q2 + q3)
     C[0, 2] = 2 * (q1 * q3 - q2)
@@ -2359,10 +2359,9 @@ def PRV2C(q):
         Direction cosine (rotation) matrix.
     """
 
-    q = np.asarray(q, dtype=float).reshape(3)
     angle = np.linalg.norm(q)
 
-    if np.isclose(angle, 0.0):
+    if angle < 1e-12:
         # No rotation -> identity matrix
         return np.eye(3)
 
@@ -2895,7 +2894,7 @@ def EP2C(q):
     q1 = q[1]
     q2 = q[2]
     q3 = q[3]
-    C = np.zeros([3, 3])
+    C = np.zeros((3, 3))
     C[0, 0] = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3
     C[0, 1] = 2 * (q1 * q2 + q0 * q3)
     C[0, 2] = 2 * (q1 * q3 - q0 * q2)
