@@ -475,11 +475,13 @@ class TestUnresolvableTypes:
         assert f["size_bytes"] == 8
 
     def test_unknown_typename_in_target_raises(self, hfile):
-        """A completely undefined type name in the target file triggers a ``ValueError``.
+        """A completely undefined type name triggers ``ValueError`` to prevent silent corruption.
 
-        ``_check_diagnostics`` fires on ``"unknown type name"`` diagnostics originating
-        in the target file itself, so the parser raises rather than silently emitting
-        unknown fields.
+        libclang silently maps unknown type names to ``int``, which would corrupt field
+        sizes and types.  ``_checkDiagnostics`` intercepts this specific diagnostic when
+        it originates in the target file itself and raises rather than letting wrong
+        metadata through.  This is the only diagnostic the parser treats as fatal;
+        general malformed-header detection is out of scope.
         """
         p = hfile("typedef struct { NonExistentType x; int ok; } M;")
         with pytest.raises(ValueError, match="Unresolvable field types"):
