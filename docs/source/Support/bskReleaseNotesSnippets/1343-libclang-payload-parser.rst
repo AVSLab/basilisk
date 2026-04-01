@@ -1,0 +1,2 @@
+- Replaced SWIG XML-based message payload struct parsing with a libclang-backed metadata pipeline that generates JSON for `*Payload.h` definitions.
+- Improved generated payload Python bindings with typed keyword-only constructors, typed properties, and a `__fields__` classmethod derived from header metadata.
