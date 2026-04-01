@@ -48,16 +48,35 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %pythoncode %{{
 import numpy as np
 %}};
+{extraShadowFeature}
 %include "{baseDir}/{type}Payload.h"
 {extraContent}
 INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
 %template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
 %template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
 %template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;
+{extraPythonContent}
 %pythoncode %{{
 if "{type}" == "EclipseMsg":
     from . import _{type}Payload as _m
     from Basilisk.utilities import deprecated
+
+    # ----- __init__ alias: accept illuminationFactor as synonym for shadowFactor -----
+    _orig_init = {type}Payload.__init__
+
+    def _init_with_alias(self, *, illuminationFactor=..., shadowFactor=..., **kwargs):
+        if shadowFactor is not ...:
+            deprecated.deprecationWarn(
+                "EclipseMsgPayload(shadowFactor=...)",
+                "2026/12/31",
+                "Use EclipseMsgPayload(illuminationFactor=...) instead.",
+            )
+            illuminationFactor = shadowFactor
+        _orig_init(self, **kwargs)
+        if illuminationFactor is not ...:
+            _m.{type}Payload_shadowFactor_set(self, illuminationFactor)
+
+    {type}Payload.__init__ = _init_with_alias
 
     # ----- Payload aliasing -----
     def _get_illum(self):
