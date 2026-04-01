@@ -48,12 +48,14 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %pythoncode %{{
 import numpy as np
 %}};
+{extraShadowFeature}
 %include "{baseDir}/{type}Payload.h"
 {extraContent}
 INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
 %template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
 %template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
 %template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;
+{extraPythonContent}
 %pythoncode %{{
 if "{type}" == "EclipseMsg":
     from . import _{type}Payload as _m

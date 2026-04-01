@@ -1,7 +1,5 @@
+import json
 import sys
-import re
-from typing import Optional, Tuple, Callable, List
-import xml.etree.ElementTree as ET
 
 # Maps numeric C/C++ types to numpy dtype enum names
 C_TYPE_TO_NPY_ENUM = {
@@ -64,274 +62,283 @@ C_TYPE_TO_NPY_ENUM = {
     "long double": "NPY_LONGDOUBLE",
 }
 
-def cleanSwigType(cppType: str) -> str:
-    """
-    Cleans and normalizes a C++ template type string extracted from SWIG-generated XML,
-    restoring valid syntax and formatting for use in generated C++ or Python bindings.
+# Integer C types (maps to Python int)
+_INT_CTYPES = {
+    "int8_t", "int16_t", "int32_t", "int64_t",
+    "short", "short int", "signed short", "signed short int",
+    "int", "signed int",
+    "long", "long int", "signed long", "signed long int",
+    "long long", "long long int", "signed long long", "signed long long int",
+    "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+    "unsigned short", "unsigned short int",
+    "unsigned", "unsigned int",
+    "unsigned long", "unsigned long int",
+    "unsigned long long", "unsigned long long int",
+    "intptr_t", "uintptr_t", "ptrdiff_t", "ssize_t", "size_t",
+}
 
-    This function removes redundant parentheses and correctly reconstructs:
-    - Nested template structures (e.g., std::vector<std::pair<int, float>>)
-    - Function signatures within std::function (e.g., std::function<void(int)>)
-    - Multi-word C++ types (e.g., unsigned long long, const float&)
-    - Pointer and reference types (e.g., T*, T&, T&&)
-    - Fixed-size C-style arrays (e.g., int[10], const float(&)[3])
+# Floating-point C types (maps to Python float)
+_FLOAT_CTYPES = {
+    "float16", "half", "float", "float32",
+    "double", "float64", "long double",
+}
+
+
+def _fieldToMacro(field: dict, structName: str, rollback: bool) -> str:
+    """
+    Convert one JSON field descriptor into the appropriate RECORDER_PROPERTY macro line.
+
+    Macro selection:
+      - Numeric scalar  -> RECORDER_PROPERTY_NUMERIC_0
+      - Numeric 1-D array -> RECORDER_PROPERTY_NUMERIC_1
+      - Numeric 2-D array -> RECORDER_PROPERTY_NUMERIC_2
+      - Everything else   -> RECORDER_PROPERTY  (skipped when rollback is True)
+    """
+    kind = field["kind"]
+    name = field["name"]
+
+    if kind == "primitive":
+        ctype = field["ctype"]
+        if ctype in C_TYPE_TO_NPY_ENUM:
+            npy = C_TYPE_TO_NPY_ENUM[ctype]
+            return f"RECORDER_PROPERTY_NUMERIC_0({structName}, {name}, {ctype}, {npy});\n"
+        if not rollback:
+            return f"RECORDER_PROPERTY({structName}, {name}, ({ctype}));\n"
+
+    elif kind == "pointer":
+        if not rollback:
+            return f"RECORDER_PROPERTY({structName}, {name}, ({field['ctype']}));\n"
+
+    elif kind == "array":
+        shape     = field["shape"]
+        nDims     = len(shape)
+        elem      = field["element"]
+        # Primitive/pointer/unknown elements carry "ctype"; struct/enum elements
+        # carry "typeName" instead.  Fall back gracefully.
+        elemCtype = elem.get("ctype") or elem.get("typeName", "")
+        if elemCtype in C_TYPE_TO_NPY_ENUM and nDims < 3:
+            npy = C_TYPE_TO_NPY_ENUM[elemCtype]
+            return f"RECORDER_PROPERTY_NUMERIC_{nDims}({structName}, {name}, {elemCtype}, {npy});\n"
+        if not rollback:
+            dims = "".join(f"[{d}]" for d in shape)
+            return f"RECORDER_PROPERTY({structName}, {name}, ({elemCtype}{dims}));\n"
+
+    elif kind in ("struct", "enum"):
+        if not rollback:
+            typeName = field.get("typeName") or field.get("ctype", "")
+            return f"RECORDER_PROPERTY({structName}, {name}, ({typeName}));\n"
+
+    elif kind == "unknown":
+        if not rollback:
+            ctype = field.get("ctype", "")
+            if ctype:
+                return f"RECORDER_PROPERTY({structName}, {name}, ({ctype}));\n"
+
+    return ""
+
+
+def parseMetaJson(meta: dict, targetStructName: str, recorderPropertyRollback: bool) -> str:
+    """
+    Emit RECORDER_PROPERTY macros for all struct fields described in *meta*.
 
     Parameters:
-        cppType (str): The raw type string from SWIG XML, possibly containing spurious
-                       parentheses and HTML-escaped characters (&lt;, &gt;).
+        meta (dict): Parsed JSON metadata produced by generatePayloadMetaJson.py.
+        targetStructName (str): Name of the payload (e.g. 'MTBMsgPayload').
+        recorderPropertyRollback (bool): If True, non-numeric fields are omitted
+            (recovering the legacy output format).
 
     Returns:
-        str: A cleaned-up and properly formatted C++ type string.
+        str: macro declarations to be pasted into msgInterfacePy.i.in
     """
-    import html
-    import re
+    return "".join(
+        _fieldToMacro(field, targetStructName, recorderPropertyRollback)
+        for field in meta.get("fields", [])
+    )
 
-    # Decode any XML-escaped characters (e.g., &lt; to <)
-    cppType = html.unescape(cppType)
 
-    # Tokenize while preserving C++ symbols
-    tokens = re.findall(r'\w+::|::|\w+|<|>|,|\(|\)|\[|\]|\*|&|&&|\S', cppType)
+def _fieldRwTypes(field: dict) -> tuple[str, str] | None:
+    """
+    Return the (read_type, write_type) Python type annotation strings for *field*,
+    or None if the field has no meaningful Python type annotation.
 
-    def stripParensIfWrapped(typeStr: str) -> str:
-        """
-        Remove surrounding parentheses if they are redundant and balanced.
+    read_type  is used as the @property getter return annotation.
+    write_type is used as the @property setter parameter annotation and as the
+               __init__ keyword-argument annotation.
 
-        Args:
-            typeStr: A potentially parenthesized type string
+    Arrays use asymmetric types: List[T] for reads, Sequence[T] for writes.
+    """
+    kind = field["kind"]
 
-        Returns:
-            str: The string with parentheses removed if they are unnecessary
-        """
-        typeStr = typeStr.strip()
-        if typeStr.startswith('(') and typeStr.endswith(')'):
-            depth = 0
-            for i, ch in enumerate(typeStr):
-                if ch == '(':
-                    depth += 1
-                elif ch == ')':
-                    depth -= 1
-                    # If we close early, parentheses are internal – keep them
-                    if depth == 0 and i != len(typeStr) - 1:
-                        return typeStr
-            return typeStr[1:-1].strip()
-        return typeStr
+    if kind == "primitive":
+        ctype = field["ctype"].split(" /*")[0].strip()
+        if ctype == "bool":
+            return ("bool", "bool")
+        if ctype in _INT_CTYPES:
+            return ("int", "int")
+        if ctype in _FLOAT_CTYPES:
+            return ("float", "float")
+        return None
 
-    def isWord(token: str) -> bool:
-        """Return True if the token is a C++ identifier (e.g., 'int', 'const')"""
-        return re.fullmatch(r'\w+', token) is not None
+    if kind == "array":
+        elemCtype = field["element"].get("ctype", "")
+        if elemCtype in _INT_CTYPES:
+            return ("List[int]", "Sequence[int]")
+        if elemCtype in _FLOAT_CTYPES:
+            return ("List[float]", "Sequence[float]")
+        return None
 
-    def parseType(index: int) -> Tuple[str, int]:
-        """
-        Recursively parses a C++ type expression from tokens.
+    if kind == "enum":
+        return ("int", "int")
 
-        Args:
-            index: Current token index
+    if kind == "struct":
+        typeName = field.get("typeName") or field.get("ctype", "")
+        return (f'"{typeName}"', f'"{typeName}"') if typeName else None
 
-        Returns:
-            tuple:
-                str: parsed type string
-                int: next token index
-        """
-        parts = []
-        while index < len(tokens):
-            token = tokens[index]
+    return None  # pointer, unknown
 
-            if token == '<':
-                index += 1
-                inner, index = parseBracketBlock(index, '<', '>', parseType)
-                parts.append(f"<{inner}>")
 
-            elif token == '(':
-                index += 1
-                inner, index = parseBracketBlock(index, '(', ')', parseType)
-                parts.append(f"({inner})")
+def _shapeStr(shape: list[int]) -> str:
+    """Format an array shape as a Python tuple literal string."""
+    if len(shape) == 1:
+        return f"({shape[0]},)"
+    return "(" + ", ".join(str(d) for d in shape) + ")"
 
-            elif token in [')', '>']:
-                break
 
-            elif token == ',':
-                index += 1
-                break
+def _generateShadowInit(meta: dict, payloadType: str) -> str:
+    """
+    Generate a ``%feature("shadow")`` block that replaces the SWIG-generated
+    constructor with a typed, keyword-only ``__init__``.
 
+    Must be emitted BEFORE ``%include "...Payload.h"`` so SWIG sees it when
+    it parses the struct declaration.
+    """
+    fields = meta.get("fields", [])
+    mod = f"_{payloadType}"
+    sortedFields = sorted(fields, key=lambda f: f["name"])
+
+    lines = [f'%feature("shadow") {payloadType}::{payloadType}() %{{']
+
+    # --- signature ---
+    paramParts = []
+    for f in sortedFields:
+        rw = _fieldRwTypes(f)
+        if rw:
+            paramParts.append(f"{f['name']}: {rw[1]} = ...")
+        else:
+            paramParts.append(f"{f['name']} = ...")
+
+    if paramParts:
+        paramsStr = (",\n" + " " * 13).join(paramParts)
+        lines.append(f"def __init__(self, *,")
+        lines.append(f"             {paramsStr}) -> None:")
+    else:
+        lines.append("def __init__(self) -> None:")
+
+    # --- docstring ---
+    docLines = []
+    for f in sortedFields:
+        rw = _fieldRwTypes(f)
+        c  = f.get("comment", "").strip()
+        if rw:
+            t = rw[1]
+            if f["kind"] == "array":
+                shapeInfo = f", shape {_shapeStr(f['shape'])}"
+                docLines.append(f"        {f['name']} ({t}): {c + shapeInfo if c else 'shape ' + _shapeStr(f['shape'])}")
             else:
-                # Add space only between adjacent words
-                if parts:
-                    prev = parts[-1]
-                    if isWord(prev) and isWord(token):
-                        parts.append(' ')
-                parts.append(token)
-                index += 1
+                docLines.append(f"        {f['name']} ({t}){': ' + c if c else ''}")
+        else:
+            docLines.append(f"        {f['name']}{': ' + c if c else ''}")
 
-        return ''.join(parts), index
+    lines.append('    """Constructs a new payload, zero\'d by default.')
+    lines.append("")
+    lines.append("    Keyword arguments can be passed to initialize the fields of this payload.")
+    if docLines:
+        lines.append("")
+        lines.append("    Args:")
+        lines.extend(docLines)
+    lines.append('    """')
 
-    def parseBracketBlock(index: int, openSym: str, closeSym: str,
-                          parseFunc: Callable[[int], Tuple[str, int]]) -> Tuple[str, int]:
-        """
-        Parses a bracketed block like <...> or (...) or [...] with nested content.
+    # --- body ---
+    lines.append(f"    {mod}.{payloadType}_swiginit(")
+    lines.append(f"        self, {mod}.new_{payloadType}())")
+    for f in sortedFields:
+        n = f["name"]
+        lines.append(f"    if {n} is not ...:")
+        lines.append(f"        self.{n} = {n}")
 
-        Args:
-            index: Current token index (after the opening symbol)
-            openSym: Opening symbol, e.g. '<'
-            closeSym: Closing symbol, e.g. '>'
-            parseFunc: Recursive parse function (e.g., parseType)
+    lines.append("%}")
+    lines.append("")
 
-        Returns:
-            tuple:
-                str: parsed type string
-                int: next token in
-        """
-        items: List[str] = []
-        while index < len(tokens):
-            if tokens[index] == closeSym:
-                cleaned = [stripParensIfWrapped(i) for i in items]
-                return ', '.join(cleaned), index + 1
-            elif tokens[index] == ',':
-                index += 1  # skip separator
-            else:
-                item, index = parseFunc(index)
-                items.append(item)
-        return ', '.join(items), index
+    return "\n".join(lines)
 
-    cleaned, _ = parseType(0)
-    return cleaned.strip()
 
-def parseSwigDecl(decl: str):
+def _generateExtendBlock(meta: dict, payloadType: str) -> str:
     """
-    Parses a SWIG `decl` string and converts it into components of a C++ declarator.
+    Generate a SWIG ``%extend PayloadType { %pythoncode %{ ... %} }`` block
+    that augments the SWIG-generated proxy class with:
 
-    SWIG represents C++ type modifiers (pointers, references, arrays, functions) using a dot-delimited
-    postfix syntax attached to the base type. This function interprets those tokens and produces
-    the corresponding C++-style declarator suffix elements.
-
-    SWIG encoding conventions:
-      - `p.`       : pointer (adds a `*`)
-      - `r.`       : reference (adds a `&`)
-      - `a(N).`    : fixed-size array of N elements (adds `[N]`)
-      - `f().`     : function type (currently ignored by this parser)
-
-    Modifier order is postfix but applies from inside-out:
-        Example: `a(3).p.` means "pointer to array of 3" -> `*[3]`
-                 `p.a(3).` means "array of 3 pointers" -> `[3]*`
-
-    Parameters:
-        decl (str): The SWIG-encoded declarator string. Examples:
-                    - "p."       -> pointer
-                    - "r."       -> reference
-                    - "a(5)."    -> array of 5 elements
-                    - "a(2).a(2).p.p." -> pointer to pointer to 2x2 array
-
-    Returns:
-        tuple:
-            pointerPart (str): a string of '*' characters for pointer depth (e.g., '**')
-            referencePart (str): '&' if this is a reference, else ''
-            arrayParts (list[str]): array dimensions as strings, ordered from outermost to innermost.
-                                    For example, ['2', '3'] for `a(2).a(3).` means `[2][3]`.
-
-    Example:
-        >>> parseSwigDecl("a(3).p.")
-        ('*', '', ['3'])      # pointer to array of 3 -> '*[3]'
-
-        >>> parseSwigDecl("p.a(3).")
-        ('*', '', ['3'])      # array of 3 pointers -> '[3]*'
-
-        >>> parseSwigDecl("p.p.a(2).a(2).r.")
-        ('**', '&', ['2', '2'])  # reference to pointer to pointer to 2x2 array
+    - Typed ``@property`` descriptors (getter -> List/scalar, setter ← Sequence/scalar)
+      with field descriptions as docstrings.  Fields that carry neither a type
+      annotation nor a comment are left as-is (SWIG's ``_swig_property``).
+    - A typed ``__init__`` that accepts keyword arguments for all annotatable fields.
+    - A precomputed ``__fields__`` classmethod returning an alphabetically sorted
+      tuple of all field names (replacing the inspect.getmembers scan).
     """
-    pointerPart = ''
-    referencePart = ''
-    arrayParts = []
+    fields = meta.get("fields", [])
+    mod = f"_{payloadType}"
+    sortedFields = sorted(fields, key=lambda f: f["name"])
 
-    # Match each declarator component
-    tokens = re.findall(r'(a\([^)]+\)|p\.|r\.|f\(\)\.)', decl)
+    lines = [f"%extend {payloadType} {{", "%pythoncode %{"]
 
-    for token in tokens:
-        if token.startswith('a('):
-            # Array: a(N) -> N
-            size = re.match(r'a\(([^)]+)\)', token).group(1)
-            arrayParts.append(size)
-        elif token == 'p.':
-            pointerPart += '*'
-        elif token == 'r.':
-            referencePart = '&'  # References appear after pointer
-        # Note: We skip f(). (function pointer) for now
+    # --- @property descriptors ---
+    for f in sortedFields:
+        name    = f["name"]
+        comment = f.get("comment", "").strip()
+        rw      = _fieldRwTypes(f)
 
-    return pointerPart, referencePart, arrayParts
+        if rw is None and not comment:
+            continue  # nothing to add, leave SWIG's _swig_property intact
 
-def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool, recorderPropertyRollback: bool):
-    """
-    Parses a SWIG-generated XML file and emits RECORDER_PROPERTY macros
-    for all struct/class member fields.
+        readT, writeT = rw if rw else (None, None)
 
-    Parameters:
-        xmlPath (str): Path to the XML file generated with `swig -xml`
-        targetStructName (str): Name of the payload (e.g. `MTBMsgPayload`).
-        cpp (bool): whether this is a C++ payload (we need to be extra
-            careful with the type since it might be templated.)
-        recorderPropertyRollback (bool): If true, non-numeric properties
-            are not given a special RECORDER_PROPERTY macro, thus recovering
-            the legacy output format for these fields.
+        if f["kind"] == "array":
+            doc = f"{comment}, shape {_shapeStr(f['shape'])}" if comment \
+                  else f"shape {_shapeStr(f['shape'])}"
+        else:
+            doc = comment
 
-    Returns:
-        str: macro declarations to be pasted into `msgInterfacePy.i.in`
-    """
-    result = ""
+        retAnn = f" -> {readT}" if readT else ""
+        valAnn = f": {writeT}" if writeT else ""
 
-    tree = ET.parse(xmlPath)
-    root = tree.getroot()
+        lines.append(f"    @property")
+        lines.append(f"    def {name}(self){retAnn}:")
+        if doc:
+            lines.append(f'        """{doc}"""')
+        lines.append(f"        return {mod}.{payloadType}_{name}_get(self)")
+        lines.append(f"    @{name}.setter")
+        lines.append(f"    def {name}(self, value{valAnn}) -> None:")
+        lines.append(f"        {mod}.{payloadType}_{name}_set(self, value)")
+        lines.append("")
 
-    # Iterate over all classes (C++ classes and structs)
-    for classNode in root.findall(".//class"):
-        classAttrs = extractAttributeMap(classNode.find("attributelist"))
-        structName = classAttrs.get("name") or classAttrs.get("tdname")
-        if structName != targetStructName:
-            continue
+    # --- __fields__ ---
+    if not sortedFields:
+        namesTuple = "()"
+    elif len(sortedFields) == 1:
+        namesTuple = f"({sortedFields[0]['name']!r},)"
+    else:
+        namesTuple = "(" + ", ".join(repr(f["name"]) for f in sortedFields) + ")"
 
-        # Each field appears as a <cdecl> child with ismember="1"
-        for cdecl in classNode.findall("cdecl"):
-            fieldAttrs = extractAttributeMap(cdecl.find("attributelist"))
-            if fieldAttrs.get("ismember") != "1":
-                continue  # Skip non-member declarations
+    lines.append("    @classmethod")
+    lines.append("    def __fields__(cls) -> tuple:")
+    lines.append('        """Returns a tuple with all the payload\'s field names (alphabetical)."""')
+    lines.append(f"        return {namesTuple}")
+    lines.append("")
+    lines.append("%}")
+    lines.append("}")
+    lines.append("")
 
-            fieldName = fieldAttrs.get("name")
-            baseType = fieldAttrs.get("type")
-            decl = fieldAttrs.get("decl", "")
+    return "\n".join(lines)
 
-            if not fieldName or not baseType:
-                continue
-
-            if cpp:
-                baseType = cleanSwigType(baseType)
-
-            typePointerPart, typeReferencePart, typeArrayParts = parseSwigDecl(decl)
-            typeWithPointerRef = f"{baseType}{typePointerPart}{typeReferencePart}"
-
-            if typeWithPointerRef in C_TYPE_TO_NPY_ENUM and len(typeArrayParts) < 3:
-                npyType = C_TYPE_TO_NPY_ENUM[typeWithPointerRef]
-                macroName = f"RECORDER_PROPERTY_NUMERIC_{len(typeArrayParts)}"
-                result += f"{macroName}({targetStructName}, {fieldName}, {typeWithPointerRef}, {npyType});\n"
-            elif not recorderPropertyRollback:
-                fullType = f"{typeWithPointerRef}{''.join(f'[{i}]' for i in typeArrayParts)}"
-                result += f"RECORDER_PROPERTY({targetStructName}, {fieldName}, ({fullType}));\n"
-
-    return result
-
-def extractAttributeMap(attributeListNode: Optional[ET.Element]):
-    """
-    Converts an <attributelist> XML node into a Python dict.
-
-    Parameters:
-        attributeListNode (Element | None): The <attributelist> element
-
-    Returns:
-        dict[str, str]: Mapping of attribute name -> value
-    """
-    if attributeListNode is None:
-        return {}
-    return {
-        attr.attrib['name']: attr.attrib['value']
-        for attr in attributeListNode.findall("attribute")
-        if 'name' in attr.attrib and 'value' in attr.attrib
-    }
 
 if __name__ == "__main__":
     moduleOutputPath = sys.argv[1]
@@ -340,7 +347,7 @@ if __name__ == "__main__":
     structType = payloadTypeName.split('Payload')[0]
     baseDir = sys.argv[4]
     generateCInfo = sys.argv[5] == 'True'
-    xmlWrapPath = sys.argv[6]
+    metaJsonPath = sys.argv[6]
     recorderPropertyRollback = bool(int(sys.argv[7]))
 
     with open('msgInterfacePy.i.in', 'r') as f:
@@ -349,9 +356,19 @@ if __name__ == "__main__":
     with open('cMsgCInterfacePy.i.in', 'r') as f:
         swigCTemplateData = f.read()
 
-    extraContent = parseSwigXml(xmlWrapPath, payloadTypeName, not generateCInfo, recorderPropertyRollback)
+    with open(metaJsonPath) as f:
+        meta = json.load(f)
+
+    extraContent = parseMetaJson(meta, payloadTypeName, recorderPropertyRollback)
+    extraPythonContent = _generateExtendBlock(meta, payloadTypeName)
+    extraShadowFeature = _generateShadowInit(meta, payloadTypeName)
 
     with open(moduleOutputPath, 'w') as moduleFileOut:
-        moduleFileOut.write(swigTemplateData.format(type=structType, baseDir=baseDir, extraContent=extraContent))
-        if(generateCInfo):
+        moduleFileOut.write(swigTemplateData.format(
+            type=structType, baseDir=baseDir,
+            extraContent=extraContent,
+            extraPythonContent=extraPythonContent,
+            extraShadowFeature=extraShadowFeature,
+        ))
+        if generateCInfo:
             moduleFileOut.write(swigCTemplateData.format(type=structType))
