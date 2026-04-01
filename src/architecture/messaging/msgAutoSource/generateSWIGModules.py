@@ -84,6 +84,48 @@ _FLOAT_CTYPES = {
 }
 
 
+# Maps C type strings (from the 'ctype' field in the metadata JSON) to numpy
+# dtype strings.  Pointer fields always map to uint64 (pointer-width on LP64).
+# Enum fields are not in this table - they are inferred from size_bytes instead.
+_C_TYPE_TO_NPY_DTYPE: dict[str, str] = {
+    "bool":  "bool_",  "_Bool": "bool_",
+    "char":  "int8",   "signed char":  "int8",    "unsigned char":  "uint8",
+    "int8_t": "int8",
+    "short": "int16",  "short int": "int16",   "signed short": "int16",
+    "signed short int": "int16",   "int16_t": "int16",
+    "int": "int32",    "signed int": "int32",  "int32_t": "int32",
+    "long": "int64",   "long int": "int64",    "signed long": "int64",
+    "signed long int": "int64",
+    "long long": "int64",    "long long int": "int64",
+    "signed long long": "int64",   "signed long long int": "int64",  "int64_t": "int64",
+    "uint8_t": "uint8",
+    "unsigned short": "uint16",    "unsigned short int": "uint16",   "uint16_t": "uint16",
+    "unsigned": "uint32",  "unsigned int": "uint32",   "uint32_t": "uint32",
+    "unsigned long": "uint64",     "unsigned long int": "uint64",
+    "unsigned long long": "uint64", "unsigned long long int": "uint64", "uint64_t": "uint64",
+    "intptr_t": "int64",   "ptrdiff_t": "int64",  "ssize_t": "int64",
+    "uintptr_t": "uint64", "size_t": "uint64",
+    "float16": "float16",  "half": "float16",
+    "float": "float32",    "float32": "float32",
+    "double": "float64",   "float64": "float64",
+    "long double": "float128",
+}
+
+_ENUM_SIZE_TO_NPY_DTYPE: dict[int, str] = {1: "int8", 2: "int16", 4: "int32", 8: "int64"}
+
+
+def _inferNumpyDtype(field: dict) -> str | None:
+    """Infer the numpy dtype string for *field* from its C-level metadata."""
+    kind = field["kind"]
+    if kind == "primitive":
+        return _C_TYPE_TO_NPY_DTYPE.get(field["ctype"])
+    if kind == "pointer":
+        return "uint64"
+    if kind == "enum":
+        return _ENUM_SIZE_TO_NPY_DTYPE.get(field.get("size_bytes"))
+    return None
+
+
 def _fieldToMacro(field: dict, structName: str, rollback: bool) -> str:
     """
     Convert one JSON field descriptor into the appropriate RECORDER_PROPERTY macro line.
@@ -202,6 +244,53 @@ def _shapeStr(shape: list[int]) -> str:
     if len(shape) == 1:
         return f"({shape[0]},)"
     return "(" + ", ".join(str(d) for d in shape) + ")"
+
+
+def _fieldToDtypeExpr(field: dict) -> str:
+    """
+    Return a Python expression string for the numpy dtype of *field*.
+    Only called for complete structs (no unknown fields); pointer fields map to uint64.
+    """
+    kind = field["kind"]
+    if kind in ("primitive", "enum", "pointer"):
+        dtype = _inferNumpyDtype(field)
+        if dtype is None:
+            raise ValueError(
+                f"Cannot infer numpy dtype for {kind!r} field {field.get('name')!r} "
+                f"with ctype={field.get('ctype')!r}, size={field.get('size_bytes')}. "
+                f"Add the ctype to _C_TYPE_TO_NPY_DTYPE in generateSWIGModules.py."
+            )
+        return f"np.dtype('{dtype}')"
+    if kind == "array":
+        shape = field["shape"]
+        elem  = field["element"]
+        if elem.get("ctype") == "char":           # char[N] → fixed-length byte string
+            return f"np.dtype('S{shape[0]}')"
+        elemExpr = _fieldToDtypeExpr(elem)
+        shapeStr = ", ".join(str(d) for d in shape)
+        return f"np.dtype(({elemExpr}, ({shapeStr},)))"
+    if kind == "struct":
+        return _buildDtypeExpr(field["fields"], field["size_bytes"])
+    raise ValueError(f"unexpected field kind {kind!r}")
+
+
+def _buildDtypeExpr(fields: list, size_bytes: int) -> str:
+    """
+    Return a Python expression string for np.dtype({...}) using explicit offsets
+    so the result matches the C struct layout exactly, including implicit padding.
+    """
+    names   = ", ".join(repr(f["name"])         for f in fields)
+    formats = ", ".join(_fieldToDtypeExpr(f) for f in fields)
+    offsets = ", ".join(str(f["offset_bytes"])  for f in fields)
+    ind = "        "
+    return (
+        f"np.dtype({{\n"
+        f"{ind}    'names':   [{names}],\n"
+        f"{ind}    'formats': [{formats}],\n"
+        f"{ind}    'offsets': [{offsets}],\n"
+        f"{ind}    'itemsize': {size_bytes},\n"
+        f"{ind}}})"
+    )
 
 
 def _generateShadowInit(meta: dict, payloadType: str) -> str:
@@ -332,6 +421,13 @@ def _generateExtendBlock(meta: dict, payloadType: str) -> str:
     lines.append("    def __fields__(cls) -> tuple:")
     lines.append('        """Returns a tuple with all the payload\'s field names (alphabetical)."""')
     lines.append(f"        return {namesTuple}")
+    lines.append("")
+
+    # --- __dtype__ ---
+    if meta.get("complete", True):
+        lines.append(f"    __dtype__ = {_buildDtypeExpr(meta['fields'], meta['size_bytes'])}")
+    else:
+        lines.append("    __dtype__ = None")
     lines.append("")
     lines.append("%}")
     lines.append("}")
