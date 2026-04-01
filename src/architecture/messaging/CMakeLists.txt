@@ -6,18 +6,33 @@ function(generate_messages searchDir generateCCode)
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
     "../${searchDir}/*Payload.h" "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
 
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/xmlWrap)
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/cMsgMeta)
+
+  # Determine C vs C++ language flag for libclang
+  if("${searchDir}" STREQUAL "msgPayloadDefC")
+    set(CLANG_LANG_FLAG "c")
+  else()
+    set(CLANG_LANG_FLAG "c++")
+  endif()
 
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
 
-    set(SWIG_XML_OUTPUT "${CMAKE_BINARY_DIR}/autoSource/xmlWrap/${TARGET_NAME}.xml")
+    set(MSG_META_OUTPUT "${CMAKE_BINARY_DIR}/autoSource/cMsgMeta/${TARGET_NAME}.json")
     add_custom_command(
-      OUTPUT ${SWIG_XML_OUTPUT}
-      COMMAND ${SWIG_EXECUTABLE} -c++ -xml -module dummy -o ${SWIG_XML_OUTPUT} ${msgFile}
-      DEPENDS ${msgFile}
+      OUTPUT ${MSG_META_OUTPUT}
+      COMMAND ${Python3_EXECUTABLE}
+              msgAutoSource/generatePayloadMetaJson.py
+              ${msgFile}
+              ${TARGET_NAME}
+              ${MSG_META_OUTPUT}
+              --
+              -x ${CLANG_LANG_FLAG}
+              -I${CMAKE_CURRENT_SOURCE_DIR}/../
+              -I${CMAKE_CURRENT_SOURCE_DIR}/../../
+      DEPENDS ${msgFile} msgAutoSource/generatePayloadMetaJson.py
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/"
-      COMMENT "Generating SWIG XML from ${msgFile}"
+      COMMENT "Generating metadata JSON from ${msgFile}"
       VERBATIM
     )
 
@@ -26,8 +41,8 @@ function(generate_messages searchDir generateCCode)
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
-              ${generateCCode} ${SWIG_XML_OUTPUT} ${RECORDER_PROPERTY_ROLLBACK}
-      DEPENDS ${msgFile} ${SWIG_XML_OUTPUT}
+              ${generateCCode} ${MSG_META_OUTPUT} ${RECORDER_PROPERTY_ROLLBACK}
+      DEPENDS ${msgFile} ${MSG_META_OUTPUT} msgAutoSource/generateSWIGModules.py msgAutoSource/msgInterfacePy.i.in
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
     set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
 
@@ -54,7 +69,7 @@ function(generate_messages searchDir generateCCode)
       ${TARGET_NAME}
       LANGUAGE "python"
       TYPE MODULE
-      SOURCES ${COMP_OUT_NAME} OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/" # _wrap.c/.cxx file
+      SOURCES ${COMP_OUT_NAME} OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
               OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
 
     add_dependencies(${TARGET_NAME} swigtrick)
