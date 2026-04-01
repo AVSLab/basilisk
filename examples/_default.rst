@@ -46,8 +46,10 @@ Attitude Regulation Control
    :maxdepth: 1
 
    Inertial Attitude Pointing <scenarioAttitudeFeedback>
+   Inertial Attitude Pointing with Numba FSW <scenarioAttitudeFeedbackNumba>
    Using Separate Task Group for Control <scenarioAttitudeFeedback2T>
    Basic Attitude Pointing in Deep Space <scenarioAttitudePointing>
+   Basic Attitude Pointing in Deep Space with Numba Control <scenarioAttitudePointingNumba>
    Complex Attitude Pointing in Deep Space <scenarioAttitudeFeedbackNoEarth>
    Sun-Pointing Constraint Violation in Space <scenarioAttitudeConstraintViolation>
    Inertial Pointing with Spice prescribed translational motion <scenarioSpiceSpacecraft>
@@ -454,6 +456,7 @@ Advanced Simulation Options
    Setting Type of Integrator <scenarioIntegrators>
    Using a Variable Time Step Integrator <scenarioVariableTimeStepIntegrators>
    Comparison of different integrators <scenarioIntegratorsComparison>
+   Benchmark Numba Models <scenarioBenchmarkNumba>
    Using a Python BSK Module Inherited from SysModel Class <scenarioAttitudePointingPy>
    Changing the bskLog Verbosity from Python <scenarioBskLog>
 

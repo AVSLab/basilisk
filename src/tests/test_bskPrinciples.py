@@ -55,6 +55,9 @@ files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.p
 @pytest.mark.scenarioTest
 def test_scenarioBskPrinciples(show_plots, bskScript):
 
+    if bskScript == "making-numbaModules.py":
+        pytest.importorskip("numba")
+
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
