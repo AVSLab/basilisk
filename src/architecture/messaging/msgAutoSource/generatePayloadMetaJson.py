@@ -26,6 +26,13 @@ Usage (API):
     from generatePayloadMetaJson import parseStruct
     meta = parseStruct("MyMsg.h", "MyMsgPayload", compiler_args=["-I./include"])
     # meta is a plain dict, ready for json.dumps()
+
+Design assumptions
+------------------
+Input headers are assumed to be valid, compilable C/C++.  The script makes no
+attempt to detect or report general compilation errors; malformed input produces
+undefined output.  Compilation errors will surface when the header is built by
+the normal CMake toolchain.
 """
 
 from __future__ import annotations
@@ -153,10 +160,14 @@ _NUMERIC_TYPEKINDS: frozenset = frozenset({
 
 def _checkDiagnostics(diagnostics, header_path: str) -> None:
     """
-    Raise for 'unknown type name' errors in the target file only.
+    Guard against libclang's silent int-substitution for unknown type names.
 
-    Missing system headers, errors in transitively included files, and
-    warnings are all ignored, they do not affect struct layout.
+    When a type name is completely absent from the translation unit, libclang
+    maps it to ``int``, silently corrupting field sizes and types.  This
+    function raises ``ValueError`` only for that specific diagnostic, and only
+    when it originates in the target header (not in transitively included
+    files).  It is NOT a general malformed-header validator; all other errors
+    and warnings are intentionally ignored.
     """
     realPath = os.path.realpath(header_path)
     fatal = [
