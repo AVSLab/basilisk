@@ -33,6 +33,19 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "std_string.i"
 %include "swig_conly_data.i"
+
+/* Convert std::map<int, const char*> (BSKLogger::logLevelMap) to a Python dict */
+%typemap(out) std::map<int, const char*> {
+    $result = PyDict_New();
+    for (const auto& kv : $1) {
+        PyObject* key = PyLong_FromLong(kv.first);
+        PyObject* val = PyUnicode_FromString(kv.second ? kv.second : "");
+        PyDict_SetItem($result, key, val);
+        Py_DECREF(key);
+        Py_DECREF(val);
+    }
+}
+
 %include "architecture/utilities/bskLogging.h"
 
 /* Director support for the C++ SysModel base */
@@ -83,8 +96,13 @@ class SysModelMixin:
         for base in cls.mro()[1:]:
             if base is object:
                 continue
-            # Heuristic: SWIG proxy types have __swig_destroy__ or similar
-            if hasattr(base, "__swig_destroy__"):
+            # Heuristic: SWIG proxy types define __swig_destroy__ in their own
+            # __dict__ (not merely inherited).  Pure-Python wrappers that happen
+            # to subclass a SWIG proxy will inherit __swig_destroy__ but must
+            # not be mistaken for C++ proxy classes, because their __dict__
+            # contains Python-only methods (e.g. UpdateStateImpl in NumbaModel)
+            # that must not be wrapped by logError.
+            if "__swig_destroy__" in base.__dict__:
                 cppBases.append(base)
 
         if not cppBases:
