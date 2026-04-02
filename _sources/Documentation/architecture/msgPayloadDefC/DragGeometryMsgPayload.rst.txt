@@ -1,0 +1,8 @@
+.. _DragGeometryMsgPayload:
+
+DragGeometryMsgPayload
+==============================
+
+.. autodoxygenfile:: DragGeometryMsgPayload.h
+   :project: msgPayloadDefC
+

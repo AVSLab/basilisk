@@ -1,0 +1,8 @@
+.. _JointArrayStateMsgPayload:
+
+JointArrayStateMsgPayload
+=================================
+
+.. autodoxygenfile:: JointArrayStateMsgPayload.h
+   :project: msgPayloadDefCpp
+

@@ -1,0 +1,8 @@
+.. _ConstDynEffectorMsgPayload:
+
+ConstDynEffectorMsgPayload
+==================================
+
+.. autodoxygenfile:: ConstDynEffectorMsgPayload.h
+   :project: msgPayloadDefC
+

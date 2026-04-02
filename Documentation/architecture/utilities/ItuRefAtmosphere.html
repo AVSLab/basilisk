@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ItuRefAtmosphere &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="astroConstants" href="astroConstants.html" />
+    <link rel="prev" title="BSpline" href="BSpline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ItuRefAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="brightnessTemperatureSolarSystem.html">brightnessTemperatureSolarSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haslamBackgroundRadiation.html">haslamBackgroundRadiation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">ItuRefAtmosphere</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/ItuRefAtmosphere.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="iturefatmosphere">
+<span id="id1"></span><h1>ItuRefAtmosphere<a class="headerlink" href="#iturefatmosphere" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413ItuAtmosphere">
+<span id="_CPPv313ItuAtmosphere"></span><span id="_CPPv213ItuAtmosphere"></span><span id="ItuAtmosphere"></span><span class="target" id="class_itu_atmosphere"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ItuAtmosphere</span></span></span><a class="headerlink" href="#_CPPv413ItuAtmosphere" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;ItuRefAtmosphere.h&gt;</em></div>
+<p>ITU-R P.835-2 Reference Standard Atmosphere Implementation. </p>
+<p>This class implements the mean annual global reference atmosphere as specified in ITU-R P.835-2 recommendation for calculating gaseous attenuation along Earth-space paths. The class precomputes atmospheric properties at initialization and provides lookup values at runtime. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere13ItuAtmosphereEv">
+<span id="_CPPv3N13ItuAtmosphere13ItuAtmosphereEv"></span><span id="_CPPv2N13ItuAtmosphere13ItuAtmosphereEv"></span><span id="ItuAtmosphere::ItuAtmosphere"></span><span class="target" id="class_itu_atmosphere_1a46e609165d1786a0568136c762d381fc"></span><span class="sig-name descname"><span class="n"><span class="pre">ItuAtmosphere</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere13ItuAtmosphereEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphereD0Ev">
+<span id="_CPPv3N13ItuAtmosphereD0Ev"></span><span id="_CPPv2N13ItuAtmosphereD0Ev"></span><span id="ItuAtmosphere::~ItuAtmosphere"></span><span class="target" id="class_itu_atmosphere_1a844d5c33e1b76bed473861d39841835c"></span><span class="sig-name descname"><span class="n"><span class="pre">~ItuAtmosphere</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphereD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere10getTempISAEd">
+<span id="_CPPv3N13ItuAtmosphere10getTempISAEd"></span><span id="_CPPv2N13ItuAtmosphere10getTempISAEd"></span><span id="ItuAtmosphere::getTempISA__double"></span><span class="target" id="class_itu_atmosphere_1a95a04d25db9c3b44dc3f6b2023ee1035"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTempISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere10getTempISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Static methods for accessing atmospheric temperature during runtime. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Temperature in [K] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere10getPresISAEd">
+<span id="_CPPv3N13ItuAtmosphere10getPresISAEd"></span><span id="_CPPv2N13ItuAtmosphere10getPresISAEd"></span><span id="ItuAtmosphere::getPresISA__double"></span><span class="target" id="class_itu_atmosphere_1a2de2c48e5c59286cfdcc32e7918cd196"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPresISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere10getPresISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Static methods for accessing atmospheric pressure during runtime. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pressure in [hPa] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere21getWaterVapDensityISAEd">
+<span id="_CPPv3N13ItuAtmosphere21getWaterVapDensityISAEd"></span><span id="_CPPv2N13ItuAtmosphere21getWaterVapDensityISAEd"></span><span id="ItuAtmosphere::getWaterVapDensityISA__double"></span><span class="target" id="class_itu_atmosphere_1a3c2e50cb3203ef0cb0203f25c7860e11"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWaterVapDensityISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere21getWaterVapDensityISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Static methods for accessing atmospheric water vapor density during runtime. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Water vapor density in [g/m3] </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13ItuAtmosphere14findLayerIndexEd">
+<span id="_CPPv3NK13ItuAtmosphere14findLayerIndexEd"></span><span id="_CPPv2NK13ItuAtmosphere14findLayerIndexEd"></span><span id="ItuAtmosphere::findLayerIndex__doubleC"></span><span class="target" id="class_itu_atmosphere_1a9f2faa2382d827ea21abfd97d4c09087"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">findLayerIndex</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude_m</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13ItuAtmosphere14findLayerIndexEd" title="Link to this definition"></a><br /></dt>
+<dd><p>find the layer index for a given altitude </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude_m</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Layer index </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13ItuAtmosphere15geometricHeightEd">
+<span id="_CPPv3NK13ItuAtmosphere15geometricHeightEd"></span><span id="_CPPv2NK13ItuAtmosphere15geometricHeightEd"></span><span id="ItuAtmosphere::geometricHeight__doubleC"></span><span class="target" id="class_itu_atmosphere_1a6574eae86dd056b039873a667caa8aab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">geometricHeight</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude_m</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13ItuAtmosphere15geometricHeightEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Calculate geometric height from altitude. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude_m</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Geometric height in [km] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13ItuAtmosphere11calcTempISAEd">
+<span id="_CPPv3NK13ItuAtmosphere11calcTempISAEd"></span><span id="_CPPv2NK13ItuAtmosphere11calcTempISAEd"></span><span id="ItuAtmosphere::calcTempISA__doubleC"></span><span class="target" id="class_itu_atmosphere_1a362d781bde1aea3c7e188ab386b10d34"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcTempISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude_m</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13ItuAtmosphere11calcTempISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Calculate the ISA temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude_m</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Temperature in [K] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13ItuAtmosphere11calcPresISAEd">
+<span id="_CPPv3NK13ItuAtmosphere11calcPresISAEd"></span><span id="_CPPv2NK13ItuAtmosphere11calcPresISAEd"></span><span id="ItuAtmosphere::calcPresISA__doubleC"></span><span class="target" id="class_itu_atmosphere_1a02c96f8c32c5ca0bae5fe422a63c246d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcPresISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude_m</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13ItuAtmosphere11calcPresISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Calculate the ISA pressure. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude_m</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pressure in [hPa] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13ItuAtmosphere22calcWaterVapDensityISAEd">
+<span id="_CPPv3NK13ItuAtmosphere22calcWaterVapDensityISAEd"></span><span id="_CPPv2NK13ItuAtmosphere22calcWaterVapDensityISAEd"></span><span id="ItuAtmosphere::calcWaterVapDensityISA__doubleC"></span><span class="target" id="class_itu_atmosphere_1a670018c813ac93e790dc8c2ea7b8cdf7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcWaterVapDensityISA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">altitude_m</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13ItuAtmosphere22calcWaterVapDensityISAEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Calculate the ISA water vapor density. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>altitude_m</strong> – Altitude in [m] </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Water vapor density in [g/m3] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere13ItuAtmosphereERK13ItuAtmosphere">
+<span id="_CPPv3N13ItuAtmosphere13ItuAtmosphereERK13ItuAtmosphere"></span><span id="_CPPv2N13ItuAtmosphere13ItuAtmosphereERK13ItuAtmosphere"></span><span id="ItuAtmosphere::ItuAtmosphere__ItuAtmosphereCR"></span><span class="target" id="class_itu_atmosphere_1a2275fb1c3aee2f7e95594e41829a3c6f"></span><span class="sig-name descname"><span class="n"><span class="pre">ItuAtmosphere</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N13ItuAtmosphere13ItuAtmosphereERK13ItuAtmosphere" title="ItuAtmosphere::ItuAtmosphere"><span class="n"><span class="pre">ItuAtmosphere</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere13ItuAtmosphereERK13ItuAtmosphere" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphereaSERK13ItuAtmosphere">
+<span id="_CPPv3N13ItuAtmosphereaSERK13ItuAtmosphere"></span><span id="_CPPv2N13ItuAtmosphereaSERK13ItuAtmosphere"></span><span id="ItuAtmosphere::assign-operator__ItuAtmosphereCR"></span><span class="target" id="class_itu_atmosphere_1ab21ea40ac0c8cb8a1d8dab4757bae2c3"></span><a class="reference internal" href="#_CPPv413ItuAtmosphere" title="ItuAtmosphere"><span class="n"><span class="pre">ItuAtmosphere</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413ItuAtmosphere" title="ItuAtmosphere"><span class="n"><span class="pre">ItuAtmosphere</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphereaSERK13ItuAtmosphere" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-functions">Private Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere8instanceEv">
+<span id="_CPPv3N13ItuAtmosphere8instanceEv"></span><span id="_CPPv2N13ItuAtmosphere8instanceEv"></span><span id="ItuAtmosphere::instance"></span><span class="target" id="class_itu_atmosphere_1a19a9f56437a9fbec145b4cddd467d7fd"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413ItuAtmosphere" title="ItuAtmosphere"><span class="n"><span class="pre">ItuAtmosphere</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">instance</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere8instanceEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere15itu_press_constE">
+<span id="_CPPv3N13ItuAtmosphere15itu_press_constE"></span><span id="_CPPv2N13ItuAtmosphere15itu_press_constE"></span><span id="ItuAtmosphere::itu_press_const__double"></span><span class="target" id="class_itu_atmosphere_1ae276082ef03d8bd7b84e601d6ad1ee89"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">itu_press_const</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">34.1632</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere15itu_press_constE" title="Link to this definition"></a><br /></dt>
+<dd><p>Pressure constant for barometric formula [K/km] derived from g * M / R where: R = ‘gas constant’ -&gt; 8.31446[J/(mol*K)] M = ‘molar mass of air’ -&gt; 28.9645[g/mol] g = “gravity” -&gt; 9.80665[m/s2] Source: ITU-R P.835-7. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere10NUM_LAYERSE">
+<span id="_CPPv3N13ItuAtmosphere10NUM_LAYERSE"></span><span id="_CPPv2N13ItuAtmosphere10NUM_LAYERSE"></span><span id="ItuAtmosphere::NUM_LAYERS__s"></span><span class="target" id="class_itu_atmosphere_1a448a8906efe220964038837f8054b904"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NUM_LAYERS</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">8</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere10NUM_LAYERSE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of atmospheric layers in the reference atmosphere; Source: ITU-R P.835-7, Table 1. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere15ATMOSPHERE_DATAE">
+<span id="_CPPv3N13ItuAtmosphere15ATMOSPHERE_DATAE"></span><span id="_CPPv2N13ItuAtmosphere15ATMOSPHERE_DATAE"></span><span id="ItuAtmosphere::ATMOSPHERE_DATA__AtmosphereLayerA"></span><span class="target" id="class_itu_atmosphere_1ae5631d784a0deeb29b00f10962cfb7f5"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N13ItuAtmosphere15AtmosphereLayerE" title="ItuAtmosphere::AtmosphereLayer"><span class="n"><span class="pre">AtmosphereLayer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ATMOSPHERE_DATA</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#_CPPv4N13ItuAtmosphere10NUM_LAYERSE" title="ItuAtmosphere::NUM_LAYERS"><span class="n"><span class="pre">NUM_LAYERS</span></span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">6.5</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">11.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">20.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">32.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2.8</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">47.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">51.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">2.8</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">71.0e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">2.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">84.852e3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere15ATMOSPHERE_DATAE" title="Link to this definition"></a><br /></dt>
+<dd><p>Mean annual global reference atmosphere layer data Source: ITU-R P.835-7, Table 1. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere2T0E">
+<span id="_CPPv3N13ItuAtmosphere2T0E"></span><span id="_CPPv2N13ItuAtmosphere2T0E"></span><span id="ItuAtmosphere::T0__double"></span><span class="target" id="class_itu_atmosphere_1a4dcf8d50758f356c3fbffecbc8b49fc5"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">288.15</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere2T0E" title="Link to this definition"></a><br /></dt>
+<dd><p>Ground-level standard conditions (ITU-R P.835-7). </p>
+<p>Standard temperature at sea level [K] (eq. 5) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere2P0E">
+<span id="_CPPv3N13ItuAtmosphere2P0E"></span><span id="_CPPv2N13ItuAtmosphere2P0E"></span><span id="ItuAtmosphere::P0__double"></span><span class="target" id="class_itu_atmosphere_1a82fe1113a080043c42462965ba6ddc11"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1013.25</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere2P0E" title="Link to this definition"></a><br /></dt>
+<dd><p>Standard pressure at sea level [hPa] (eq. 5). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere4rho0E">
+<span id="_CPPv3N13ItuAtmosphere4rho0E"></span><span id="_CPPv2N13ItuAtmosphere4rho0E"></span><span id="ItuAtmosphere::rho0__double"></span><span class="target" id="class_itu_atmosphere_1aac92db5729cbdbe013a204668e15e306"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rho0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">7.5</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere4rho0E" title="Link to this definition"></a><br /></dt>
+<dd><p>Standard water vapor density at sea level [g/m³] (eq. 7). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere8h0_waterE">
+<span id="_CPPv3N13ItuAtmosphere8h0_waterE"></span><span id="_CPPv2N13ItuAtmosphere8h0_waterE"></span><span id="ItuAtmosphere::h0_water__double"></span><span class="target" id="class_itu_atmosphere_1a353ec85f43a72f2f26a8a27127f39949"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h0_water</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.0</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere8h0_waterE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scale heights for exponential profiles. </p>
+<p>[km] Water vapor scale height (ITU-R P.835-7 eq 6) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere11R_EARTH_ITUE">
+<span id="_CPPv3N13ItuAtmosphere11R_EARTH_ITUE"></span><span id="_CPPv2N13ItuAtmosphere11R_EARTH_ITUE"></span><span id="ItuAtmosphere::R_EARTH_ITU__double"></span><span class="target" id="class_itu_atmosphere_1a949617e53fde2c70ced442a0db42fac7"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R_EARTH_ITU</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">6356.766</span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere11R_EARTH_ITUE" title="Link to this definition"></a><br /></dt>
+<dd><p>[km] Earth’s radius for ITU atmosphere calculations </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere15AtmosphereLayerE">
+<span id="_CPPv3N13ItuAtmosphere15AtmosphereLayerE"></span><span id="_CPPv2N13ItuAtmosphere15AtmosphereLayerE"></span><span id="ItuAtmosphere::AtmosphereLayer"></span><span class="target" id="struct_itu_atmosphere_1_1_atmosphere_layer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AtmosphereLayer</span></span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere15AtmosphereLayerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Atmosphere layer structure for piecewise temperature profile Defines layer boundaries and temperature gradients per source: ITU-R P.835-7. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere15AtmosphereLayer1hE">
+<span id="_CPPv3N13ItuAtmosphere15AtmosphereLayer1hE"></span><span id="_CPPv2N13ItuAtmosphere15AtmosphereLayer1hE"></span><span id="ItuAtmosphere::AtmosphereLayer::h__double"></span><span class="target" id="struct_itu_atmosphere_1_1_atmosphere_layer_1aca1cb9a35ec52ffe37dfb6eac216c8db"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h</span></span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere15AtmosphereLayer1hE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13ItuAtmosphere15AtmosphereLayer5dT_dhE">
+<span id="_CPPv3N13ItuAtmosphere15AtmosphereLayer5dT_dhE"></span><span id="_CPPv2N13ItuAtmosphere15AtmosphereLayer5dT_dhE"></span><span id="ItuAtmosphere::AtmosphereLayer::dT_dh__double"></span><span class="target" id="struct_itu_atmosphere_1_1_atmosphere_layer_1a46591b05e9d4e203dbe2be0c1035f8b4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dT_dh</span></span></span><a class="headerlink" href="#_CPPv4N13ItuAtmosphere15AtmosphereLayer5dT_dhE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BSpline.html" class="btn btn-neutral float-left" title="BSpline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="astroConstants.html" class="btn btn-neutral float-right" title="astroConstants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: cannonballDrag &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="cannonballDrag" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">forceTorque</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">cannonballDrag</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">forceTorque</a></li>
+          <li class="breadcrumb-item"><a href="index.html">cannonballDrag</a></li>
+      <li class="breadcrumb-item active">Module: cannonballDrag</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/forceTorque/cannonballDrag/cannonballDrag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cannonballdrag">
+<span id="cannonballdrag"></span><h1>Module: cannonballDrag<a class="headerlink" href="#module-cannonballdrag" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CannonballDrag</span></code> module computes quasi-steady aerodynamic drag force and the associated torque acting at a site fixed on a body. It outputs force and torque expressed in a site-fixed reference frame. The model follows the classical cannonball drag formulation and is intended for low-fidelity aerodynamic disturbance modeling.</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>This module evaluates aerodynamic drag with force magnitude computed as</p>
+<div class="math notranslate nohighlight">
+\[F = \tfrac{1}{2} \rho v^2 C_D A\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho\)</span> is the local neutral atmospheric density, <span class="math notranslate nohighlight">\(v\)</span> is the magnitude of the relative flow velocity at the site, <span class="math notranslate nohighlight">\(C_D\)</span> is the drag coefficient, and <span class="math notranslate nohighlight">\(A\)</span> is the projected area. The drag force direction is opposite the relative velocity vector.</p>
+<p>The force is applied at a specified center-of-pressure location relative to the site frame origin, producing a torque given by</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{\tau} = \mathbf{r}_{CP/S} \times \mathbf{F}\]</div>
+<p>Both force and torque are expressed in the site-fixed reference frame.</p>
+</section>
+<section id="message-interfaces">
+<h2>Message Interfaces<a class="headerlink" href="#message-interfaces" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dragGeometryInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/DragGeometryMsgPayload.html#draggeometrymsgpayload"><span class="std std-ref">DragGeometryMsgPayload</span></a></p></td>
+<td><p>Input message providing the aerodynamic geometry parameters: <code class="docutils literal notranslate"><span class="pre">dragCoeff</span></code> (<span class="math notranslate nohighlight">\(C_D\)</span>),
+<code class="docutils literal notranslate"><span class="pre">projectedArea</span></code> (<span class="math notranslate nohighlight">\(A\)</span>), and <code class="docutils literal notranslate"><span class="pre">r_CP_S</span></code> (center-of-pressure vector relative to the site frame origin,
+expressed in the site frame).</p></td>
+</tr>
+<tr class="row-odd"><td><p>atmoDensInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#atmopropsmsgpayload"><span class="std std-ref">AtmoPropsMsgPayload</span></a></p></td>
+<td><p>Input message providing local atmospheric properties at the site location, including <code class="docutils literal notranslate"><span class="pre">neutralDensity</span></code>
+(<span class="math notranslate nohighlight">\(\rho\)</span>).</p></td>
+</tr>
+<tr class="row-even"><td><p>referenceFrameStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Input message providing the inertial state of the site reference frame, including <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code> (MRPs for
+site frame attitude relative to inertial) and <code class="docutils literal notranslate"><span class="pre">v_BN_N</span></code> (inertial velocity of the site frame origin).</p></td>
+</tr>
+<tr class="row-odd"><td><p>windVelInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/WindMsgPayload.html#windmsgpayload"><span class="std std-ref">WindMsgPayload</span></a></p></td>
+<td><p>(optional) wind velocity input message; when linked, <code class="docutils literal notranslate"><span class="pre">v_air_N</span></code> is subtracted from the site frame
+inertial velocity before computing the drag force, yielding the atmosphere-relative velocity.</p></td>
+</tr>
+<tr class="row-even"><td><p>forceOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#forceatsitemsgpayload"><span class="std std-ref">ForceAtSiteMsgPayload</span></a></p></td>
+<td><p>Output message containing aerodynamic drag force expressed in the site reference frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p>forceOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#forceatsitemsgpayload"><span class="std std-ref">ForceAtSiteMsgPayload</span></a></p></td>
+<td><p>Output message containing aerodynamic drag force expressed in the site reference frame (C-wrapped output).</p></td>
+</tr>
+<tr class="row-even"><td><p>torqueOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.html#torqueatsitemsgpayload"><span class="std std-ref">TorqueAtSiteMsgPayload</span></a></p></td>
+<td><p>Output message containing aerodynamic torque about the site frame origin, expressed in the site reference
+frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p>torqueOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.html#torqueatsitemsgpayload"><span class="std std-ref">TorqueAtSiteMsgPayload</span></a></p></td>
+<td><p>Output message containing aerodynamic torque about the site frame origin, expressed in the site reference
+frame (C-wrapped output).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each update step, the module performs the following operations:</p>
+<ol class="arabic simple">
+<li><p>Reads the atmospheric density from <code class="docutils literal notranslate"><span class="pre">atmoDensInMsg</span></code>.</p></li>
+<li><p>Reads the drag coefficient, projected area, and center-of-pressure location from <code class="docutils literal notranslate"><span class="pre">dragGeometryInMsg</span></code>.</p></li>
+<li><p>Reads the site frame attitude and inertial velocity from <code class="docutils literal notranslate"><span class="pre">referenceFrameStateInMsg</span></code>.</p></li>
+<li><p>Computes the relative velocity: if <code class="docutils literal notranslate"><span class="pre">windVelInMsg</span></code> is linked, subtracts <code class="docutils literal notranslate"><span class="pre">v_air_N</span></code> from the inertial
+velocity; otherwise uses the inertial velocity directly.</p></li>
+<li><p>Transforms the relative velocity into the site frame using the provided attitude.</p></li>
+<li><p>Computes the drag force magnitude and direction in the site frame.</p></li>
+<li><p>Computes the resulting torque about the site frame origin.</p></li>
+<li><p>Publishes the force and torque through <code class="docutils literal notranslate"><span class="pre">forceOutMsg</span></code> and <code class="docutils literal notranslate"><span class="pre">torqueOutMsg</span></code> (and <code class="docutils literal notranslate"><span class="pre">forceOutMsgC</span></code> and <code class="docutils literal notranslate"><span class="pre">torqueOutMsgC</span></code>).</p></li>
+</ol>
+<p>The model assumes quasi-steady aerodynamics and does not account for lift, shadowing, free-molecular effects, or flow angular rates.</p>
+</section>
+<section id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Link to this heading"></a></h2>
+<p>The following example demonstrates how to configure the <code class="docutils literal notranslate"><span class="pre">CannonballDrag</span></code> module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create cannonball drag module</span>
+<span class="n">cannonball</span> <span class="o">=</span> <span class="n">CannonballDrag</span><span class="p">()</span>
+<span class="n">cannonball</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cannonball_drag&quot;</span>
+
+<span class="c1"># Connect input messages</span>
+<span class="n">cannonball</span><span class="o">.</span><span class="n">dragGeometryInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">dragGeometryMsg</span><span class="p">)</span>
+<span class="n">cannonball</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmoPropsMsg</span><span class="p">)</span>
+<span class="n">cannonball</span><span class="o">.</span><span class="n">referenceFrameStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">siteStateMsg</span><span class="p">)</span>
+<span class="n">cannonball</span><span class="o">.</span><span class="n">windVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">windMsg</span><span class="p">)</span>  <span class="c1"># Optional</span>
+</pre></div>
+</div>
+</section>
+<section id="verification-and-testing">
+<h2>Verification and Testing<a class="headerlink" href="#verification-and-testing" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CannonballDrag</span></code> module is verified through automated unit and integration tests that exercise both isolated force computation and coupled orbital dynamics behavior.</p>
+<p>A unit-level test initializes the module with prescribed atmospheric density, drag geometry, site attitude, and inertial velocity. The resulting force and torque outputs are compared against analytically computed reference values obtained by explicitly rotating the inertial velocity into the site frame and applying the cannonball drag equations. The test passes if the force and torque vectors match the reference solutions within numerical tolerance.</p>
+<p>An integration-level test embeds the module in a MuJoCo-based orbital simulation with gravity and an exponential atmosphere model. The spacecraft is propagated over one orbital period, and the drag force output is compared at each time step against an independent reference implementation of the same drag law evaluated using the recorded state and atmospheric density. Successful verification requires agreement between the module output and the reference drag force history to within prescribed tolerances.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414CannonballDrag">
+<span id="_CPPv314CannonballDrag"></span><span id="_CPPv214CannonballDrag"></span><span id="CannonballDrag"></span><span class="target" id="class_cannonball_drag"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CannonballDrag</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv414CannonballDrag" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;cannonballDrag.h&gt;</em></div>
+<p>Aerodynamic drag model that computes force and torque at a MuJoCo site. </p>
+<p>Updates a force and a torque to represent quasi-steady aerodynamic drag acting at a site fixed on a body. The model reads:<ul class="simple">
+<li><p>Geometry: drag coefficient and projected reference area.</p></li>
+<li><p>Atmosphere: neutral density.</p></li>
+<li><p>Reference frame state: position, velocity, and attitude of the site frame.</p></li>
+</ul>
+</p>
+<p>Force direction is opposite the relative flow. Magnitude follows <span class="math notranslate nohighlight">\( F = \tfrac{1}{2}\rho\,v^2 C_D A \)</span>. Torque is <span class="math notranslate nohighlight">\( \tau = r_{CP/S} \times F \)</span> in the site frame.</p>
+<p>The force and torque output in <code class="docutils literal notranslate"><a class="reference internal" href="#class_cannonball_drag_1a8174e67ad611282c21516d8e87dbfed2"><span class="std std-ref"><span class="pre">forceOutMsg</span></span></a></code> and <code class="docutils literal notranslate"><a class="reference internal" href="#class_cannonball_drag_1a6d3a30e1b06be2837731414ce7fbda33"><span class="std std-ref"><span class="pre">torqueOutMsg</span></span></a></code> are given in the site reference frame whose state is given in <code class="docutils literal notranslate"><a class="reference internal" href="#class_cannonball_drag_1a89f507288f8f477c2a57a67994d48ddd"><span class="std std-ref"><span class="pre">referenceFrameStateInMsg</span></span></a></code>.</p>
+<p>Frames and notation:<ul class="simple">
+<li><p>N: inertial.</p></li>
+<li><p>S: site-fixed reference frame where outputs are expressed. </p></li>
+</ul>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag8SelfInitEv">
+<span id="_CPPv3N14CannonballDrag8SelfInitEv"></span><span id="_CPPv2N14CannonballDrag8SelfInitEv"></span><span id="CannonballDrag::SelfInit"></span><span class="target" id="class_cannonball_drag_1afff58634e5fd773f7d4fe99bc9f59baa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes the C output messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag11UpdateStateE8uint64_t">
+<span id="_CPPv3N14CannonballDrag11UpdateStateE8uint64_t"></span><span id="_CPPv2N14CannonballDrag11UpdateStateE8uint64_t"></span><span id="CannonballDrag::UpdateState__uint64_t"></span><span class="target" id="class_cannonball_drag_1ac5de39c941c205b0efd301d15f020417"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Advance the model and publish outputs. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If windVelInMsg is linked, wind velocity is used to compute relative velocity. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag5ResetE8uint64_t">
+<span id="_CPPv3N14CannonballDrag5ResetE8uint64_t"></span><span id="_CPPv2N14CannonballDrag5ResetE8uint64_t"></span><span id="CannonballDrag::Reset__uint64_t"></span><span class="target" id="class_cannonball_drag_1aaa76e24e0c930c5add38ceb3c869a9d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Validate all input messages are linked. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag17dragGeometryInMsgE">
+<span id="_CPPv3N14CannonballDrag17dragGeometryInMsgE"></span><span id="_CPPv2N14CannonballDrag17dragGeometryInMsgE"></span><span id="CannonballDrag::dragGeometryInMsg__ReadFunctor:DragGeometryMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a2f6d92963f83b9b2a1a2fa25065825dc"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DragGeometryMsgPayload.html#_CPPv422DragGeometryMsgPayload" title="DragGeometryMsgPayload"><span class="n"><span class="pre">DragGeometryMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dragGeometryInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag17dragGeometryInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Geometry input. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag13atmoDensInMsgE">
+<span id="_CPPv3N14CannonballDrag13atmoDensInMsgE"></span><span id="_CPPv2N14CannonballDrag13atmoDensInMsgE"></span><span id="CannonballDrag::atmoDensInMsg__ReadFunctor:AtmoPropsMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a73c9b6c1369ae6349f35c4247ac3c704"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmoDensInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag13atmoDensInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Atmospheric properties input. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag12windVelInMsgE">
+<span id="_CPPv3N14CannonballDrag12windVelInMsgE"></span><span id="_CPPv2N14CannonballDrag12windVelInMsgE"></span><span id="CannonballDrag::windVelInMsg__ReadFunctor:WindMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a394e3147f874f62e799a1f1d9fc88e2c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/WindMsgPayload.html#_CPPv414WindMsgPayload" title="WindMsgPayload"><span class="n"><span class="pre">WindMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">windVelInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag12windVelInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Wind velocity input. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag24referenceFrameStateInMsgE">
+<span id="_CPPv3N14CannonballDrag24referenceFrameStateInMsgE"></span><span id="_CPPv2N14CannonballDrag24referenceFrameStateInMsgE"></span><span id="CannonballDrag::referenceFrameStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a89f507288f8f477c2a57a67994d48ddd"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">referenceFrameStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag24referenceFrameStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>State of the reference frame . </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag11forceOutMsgE">
+<span id="_CPPv3N14CannonballDrag11forceOutMsgE"></span><span id="_CPPv2N14CannonballDrag11forceOutMsgE"></span><span id="CannonballDrag::forceOutMsg__Message:ForceAtSiteMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a8174e67ad611282c21516d8e87dbfed2"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#_CPPv421ForceAtSiteMsgPayload" title="ForceAtSiteMsgPayload"><span class="n"><span class="pre">ForceAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag11forceOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output force at the site in the site reference frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag12forceOutMsgCE">
+<span id="_CPPv3N14CannonballDrag12forceOutMsgCE"></span><span id="_CPPv2N14CannonballDrag12forceOutMsgCE"></span><span id="CannonballDrag::forceOutMsgC__ForceAtSiteMsg_C"></span><span class="target" id="class_cannonball_drag_1a9b22c0eb28ea3833c24ed462aa215f67"></span><span class="n"><span class="pre">ForceAtSiteMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag12forceOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output force at the site in the site reference frame (C message). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag12torqueOutMsgE">
+<span id="_CPPv3N14CannonballDrag12torqueOutMsgE"></span><span id="_CPPv2N14CannonballDrag12torqueOutMsgE"></span><span id="CannonballDrag::torqueOutMsg__Message:TorqueAtSiteMsgPayload:"></span><span class="target" id="class_cannonball_drag_1a6d3a30e1b06be2837731414ce7fbda33"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.html#_CPPv422TorqueAtSiteMsgPayload" title="TorqueAtSiteMsgPayload"><span class="n"><span class="pre">TorqueAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag12torqueOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output torque in the site reference frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag13torqueOutMsgCE">
+<span id="_CPPv3N14CannonballDrag13torqueOutMsgCE"></span><span id="_CPPv2N14CannonballDrag13torqueOutMsgCE"></span><span id="CannonballDrag::torqueOutMsgC__TorqueAtSiteMsg_C"></span><span class="target" id="class_cannonball_drag_1a8fe25a7c2829f8991d57b2aaf9718d5a"></span><span class="n"><span class="pre">TorqueAtSiteMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag13torqueOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output torque in the site reference frame (C message). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14CannonballDrag9bskLoggerE">
+<span id="_CPPv3N14CannonballDrag9bskLoggerE"></span><span id="_CPPv2N14CannonballDrag9bskLoggerE"></span><span id="CannonballDrag::bskLogger__BSKLogger"></span><span class="target" id="class_cannonball_drag_1af6ee51072b13c05d986ca034cbaac545"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14CannonballDrag9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logger. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="cannonballDrag" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

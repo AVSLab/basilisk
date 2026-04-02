@@ -1,0 +1,852 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_unitStripLocation &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_unitStripLocation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_unitStripLocation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">stripLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">bskName</span> <span class="o">=</span> <span class="s1">&#39;Basilisk&#39;</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bskName</span><span class="p">)</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_range_degenerate_strip">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_range_degenerate_strip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_range_degenerate_strip</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests stripLocation with a degenerate strip (start == end):</span>
+
+<span class="sd">    1. Computes range correctly by evaluating slantRange;</span>
+<span class="sd">    2. Tests whether elevation is correctly evaluated;</span>
+<span class="sd">    3. Tests whether range limits impact access;</span>
+<span class="sd">    4. Tests whether multiple spacecraft are supported in parallel.</span>
+
+<span class="sd">    This is the stripLocation equivalent of the groundLocation test_range test,</span>
+<span class="sd">    verifying that a strip with identical start and end points behaves</span>
+<span class="sd">    like a single ground location.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># Create a strip target with start == end</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">100e3</span>  <span class="c1"># meters</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">80.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># stationary</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># Write out mock spacecraft position messages</span>
+    <span class="n">sc1_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">100e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># SC1 directly overhead, in range</span>
+    <span class="n">sc1Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_message</span><span class="p">)</span>
+
+    <span class="n">sc2_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc2_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">101e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># SC2 out of range</span>
+    <span class="n">sc2Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc2_message</span><span class="p">)</span>
+
+    <span class="n">sc3_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span> <span class="c1"># SC3 is inside the altitude limit,  but outside the visibility cone</span>
+    <span class="n">sc3_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">11.</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">sc3Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc3_message</span><span class="p">)</span>
+
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1Msg</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc2Msg</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc3Msg</span><span class="p">)</span>
+
+    <span class="c1"># Log the access indicator</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog0</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataLog1</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataLog2</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog0</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog2</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Get the logged data</span>
+    <span class="n">sc1_access</span> <span class="o">=</span> <span class="n">dataLog0</span><span class="o">.</span><span class="n">hasAccess</span>
+    <span class="n">sc1_slant</span> <span class="o">=</span> <span class="n">dataLog0</span><span class="o">.</span><span class="n">slantRange</span>
+    <span class="n">sc1_elevation</span> <span class="o">=</span> <span class="n">dataLog0</span><span class="o">.</span><span class="n">elevation</span>
+
+    <span class="n">sc2_access</span> <span class="o">=</span> <span class="n">dataLog1</span><span class="o">.</span><span class="n">hasAccess</span>
+    <span class="n">sc2_slant</span> <span class="o">=</span> <span class="n">dataLog1</span><span class="o">.</span><span class="n">slantRange</span>
+    <span class="n">sc2_elevation</span> <span class="o">=</span> <span class="n">dataLog1</span><span class="o">.</span><span class="n">elevation</span>
+
+    <span class="n">sc3_access</span> <span class="o">=</span> <span class="n">dataLog2</span><span class="o">.</span><span class="n">hasAccess</span>
+    <span class="n">sc3_slant</span> <span class="o">=</span> <span class="n">dataLog2</span><span class="o">.</span><span class="n">slantRange</span>
+    <span class="n">sc3_elevation</span> <span class="o">=</span> <span class="n">dataLog2</span><span class="o">.</span><span class="n">elevation</span>
+
+    <span class="c1"># Compare to expected values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">ref_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100e3</span><span class="p">,</span> <span class="mf">101e3</span><span class="p">,</span> <span class="mf">100e3</span><span class="p">]</span>
+    <span class="n">ref_elevation</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">79.</span><span class="p">)]</span>
+    <span class="n">ref_access</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">test_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_slant</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc2_slant</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc3_slant</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">test_elevation</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_elevation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc2_elevation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc3_elevation</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">test_access</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_access</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc2_access</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sc3_access</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">range_worked</span> <span class="o">=</span> <span class="n">test_ranges</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_ranges</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">elevation_worked</span> <span class="o">=</span> <span class="n">test_elevation</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_elevation</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">access_worked</span> <span class="o">=</span> <span class="n">test_access</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_access</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">range_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Range check failed: </span><span class="si">{</span><span class="n">test_ranges</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_ranges</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">elevation_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Elevation check failed: </span><span class="si">{</span><span class="n">test_elevation</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_elevation</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">access_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Access check failed: </span><span class="si">{</span><span class="n">test_access</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_access</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_rotation_degenerate_strip">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_rotation_degenerate_strip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rotation_degenerate_strip</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests whether stripLocation correctly accounts for planet rotation:</span>
+
+<span class="sd">    1. Computes the current strip location based on the initial position and the rotation</span>
+<span class="sd">       state of the planet it is attached to.</span>
+
+<span class="sd">    A strip at (0, 10deg) with the planet rotated by -10deg around z should appear</span>
+<span class="sd">    at (0, 0) in inertial space, directly beneath a spacecraft on the x-axis.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">simTime</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># Create a degenerate strip at (0, 10deg)</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">200e3</span>  <span class="c1"># meters</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># Write out mock planet rotation and spacecraft position messages</span>
+    <span class="n">sc1_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mf">90e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_message</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+
+    <span class="c1"># Rotate planet by -10 deg so the (0, 10deg) ground point aligns with inertial x-axis</span>
+    <span class="n">planet_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planet_message</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">planetMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planet_message</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+
+    <span class="c1"># Log the access indicator</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Get the logged data</span>
+    <span class="n">sc1_access</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">hasAccess</span>
+    <span class="n">sc1_slant</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">slantRange</span>
+    <span class="n">sc1_elevation</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">elevation</span>
+
+    <span class="c1"># Compare to expected values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">ref_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="mf">90e3</span><span class="p">]</span>
+    <span class="n">ref_elevation</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">)]</span>
+    <span class="n">ref_access</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">test_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_slant</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">test_elevation</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_elevation</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">test_access</span> <span class="o">=</span> <span class="p">[</span><span class="n">sc1_access</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">range_worked</span> <span class="o">=</span> <span class="n">test_ranges</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_ranges</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">elevation_worked</span> <span class="o">=</span> <span class="n">test_elevation</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_elevation</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">access_worked</span> <span class="o">=</span> <span class="n">test_access</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ref_access</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">range_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Range check failed: </span><span class="si">{</span><span class="n">test_ranges</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_ranges</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">elevation_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Elevation check failed: </span><span class="si">{</span><span class="n">test_elevation</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_elevation</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">access_worked</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Access check failed: </span><span class="si">{</span><span class="n">test_access</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">ref_access</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_strip_target_motion">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_strip_target_motion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_strip_target_motion</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests that the strip target position moves along the great-circle arc</span>
+<span class="sd">    from start to end as time progresses (No pre-imaging is considered in this test):</span>
+
+<span class="sd">    1. Verifies that the target position at the midpoint of the traversal</span>
+<span class="sd">       matches the expected SLERP interpolation on the sphere.</span>
+<span class="sd">    2. Verifies that the target starts at the start point and finishes at the end point.</span>
+<span class="sd">    3. Verifies that a spacecraft placed above the midpoint sees ~90deg elevation</span>
+<span class="sd">       when the target arrives there.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">totalTimeSec</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTimeSec</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># planet radius in meters</span>
+
+    <span class="c1"># Create a strip from (lat=0, lon=0) to (lat=0, lon=90deg) on the equator</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># unlimited range</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+
+    <span class="c1"># Set acquisition speed so traversal takes exactly totalTimeSec seconds</span>
+    <span class="n">strip_length</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">R</span>  <span class="c1"># 90-degree arc length</span>
+    <span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">strip_length</span> <span class="o">/</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTimeSec</span><span class="p">)</span>  <span class="c1"># m/ns</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">acquisitionSpeed</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">preImagingTime</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># Place SC above the midpoint (lon=45deg on the equator)</span>
+    <span class="n">midpoint_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.</span><span class="p">)),</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">sc_altitude</span> <span class="o">=</span> <span class="mf">200e3</span>  <span class="c1"># meters</span>
+    <span class="n">sc1_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">sc_altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">midpoint_dir</span>
+    <span class="n">sc1Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_message</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1Msg</span><span class="p">)</span>
+
+    <span class="c1"># Log strip state and access at every simulation step</span>
+    <span class="n">stateLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">accessLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stateLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">accessLog</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># --- Check target positions at key time points ---</span>
+    <span class="n">r_LP_N_logged</span> <span class="o">=</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">r_LP_N</span>
+    <span class="n">pos_accuracy</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># 1 meter tolerance</span>
+
+    <span class="c1"># At t=0s (index 0): target should be at start (lon=0) -&gt; PCPF = [R, 0, 0]</span>
+    <span class="n">expected_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">R</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">start_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_start</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">start_error</span> <span class="o">&lt;</span> <span class="n">pos_accuracy</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Target position error at start: </span><span class="si">{</span><span class="n">start_error</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> m (expected &lt; </span><span class="si">{</span><span class="n">pos_accuracy</span><span class="si">}</span><span class="s2"> m)&quot;</span>
+
+    <span class="c1"># At t=5s (index 5): target should be at midpoint (lon=45) -&gt; [R/sqrt(2), R/sqrt(2), 0]</span>
+    <span class="n">expected_mid</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">midpoint_dir</span>
+    <span class="n">mid_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_mid</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">mid_error</span> <span class="o">&lt;</span> <span class="n">pos_accuracy</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Target position error at midpoint: </span><span class="si">{</span><span class="n">mid_error</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> m (expected &lt; </span><span class="si">{</span><span class="n">pos_accuracy</span><span class="si">}</span><span class="s2"> m)&quot;</span>
+
+    <span class="c1"># At t=10s (index 10): target should be at end (lon=90) -&gt; [0, R, 0]</span>
+    <span class="n">expected_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">end_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_end</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">end_error</span> <span class="o">&lt;</span> <span class="n">pos_accuracy</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Target position error at end: </span><span class="si">{</span><span class="n">end_error</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> m (expected &lt; </span><span class="si">{</span><span class="n">pos_accuracy</span><span class="si">}</span><span class="s2"> m)&quot;</span>
+
+    <span class="c1"># At midpoint, SC should be directly overhead -&gt; elevation ~ 90 deg</span>
+    <span class="n">elevation_at_midpoint</span> <span class="o">=</span> <span class="n">accessLog</span><span class="o">.</span><span class="n">elevation</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">elevation_at_midpoint</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">),</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">0.01</span><span class="p">),</span> \
+        <span class="sa">f</span><span class="s2">&quot;Elevation at midpoint should be ~90 deg, got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">elevation_at_midpoint</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> deg&quot;</span>
+
+    <span class="c1"># SC above the midpoint should have access when the target is at the midpoint</span>
+    <span class="k">assert</span> <span class="n">accessLog</span><span class="o">.</span><span class="n">hasAccess</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;SC should have access when target is at midpoint&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_pre_imaging_blocks_access">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_pre_imaging_blocks_access">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_pre_imaging_blocks_access</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests that access is blocked during the pre-imaging phase:</span>
+
+<span class="sd">    1. A strip target with preImagingTime &gt; 0 should deny access</span>
+<span class="sd">       during the initial pre-imaging period, even if the spacecraft</span>
+<span class="sd">       is geometrically visible.</span>
+<span class="sd">    2. After the pre-imaging time has elapsed, access should be granted</span>
+<span class="sd">       if the elevation/range criteria are met.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">totalTimeSec</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTimeSec</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+
+    <span class="c1"># Create a stationary strip (start == end) with non-zero preImagingTime</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># unlimited</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># stationary</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">preImagingTime</span> <span class="o">=</span> <span class="mf">5.0e9</span>  <span class="c1"># 5 seconds in nanoseconds</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># Place SC directly overhead</span>
+    <span class="n">sc1_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">R</span> <span class="o">+</span> <span class="mf">100e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">sc1Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_message</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1Msg</span><span class="p">)</span>
+
+    <span class="c1"># Log access at every step</span>
+    <span class="n">accessLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">accessLog</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">access</span> <span class="o">=</span> <span class="n">accessLog</span><span class="o">.</span><span class="n">hasAccess</span>
+
+    <span class="c1"># During pre-imaging (t=0s to t=4s): duration &lt; preImagingTime -&gt; no access</span>
+    <span class="c1"># At t=0: duration_strip_imaging = 0 &lt; 5e9 -&gt; access = 0</span>
+    <span class="c1"># At t=4: duration_strip_imaging = 4e9 &lt; 5e9 -&gt; access = 0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>  <span class="c1"># indices 0..4 correspond to t=0s..t=4s</span>
+        <span class="k">assert</span> <span class="n">access</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;Access should be blocked at t=</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">s (pre-imaging), got </span><span class="si">{</span><span class="n">access</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># After pre-imaging (t &gt;= 5s): duration &gt;= preImagingTime -&gt; access granted</span>
+    <span class="c1"># At t=5: duration_strip_imaging = 5e9 &gt;= 5e9 -&gt; access = 1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>  <span class="c1"># indices 5..10 correspond to t=5s..t=10s</span>
+        <span class="k">assert</span> <span class="n">access</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;Access should be granted at t=</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">s (post pre-imaging), got </span><span class="si">{</span><span class="n">access</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_strip_velocity_output">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_strip_velocity_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_strip_velocity_output</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests that the strip state output message correctly reports the</span>
+<span class="sd">    velocity of the moving target along the strip:</span>
+
+<span class="sd">    1. For a non-degenerate strip, velocity magnitude should equal the acquisition speed.</span>
+<span class="sd">    2. The velocity vector should be perpendicular to the position vector</span>
+<span class="sd">       (tangent to the sphere).</span>
+<span class="sd">    3. The velocity vector should lie in the great-circle plane defined by the</span>
+<span class="sd">       strip start and end points (i.e. perpendicular to the orbit normal).</span>
+<span class="sd">    4. The velocity vector should be oriented in the direction of motion</span>
+<span class="sd">       (from start toward end), verified by checking that r x v is parallel</span>
+<span class="sd">       to the orbit normal.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">totalTimeSec</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTimeSec</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+
+    <span class="c1"># Create a moving strip from (lat=0, lon=0) to (lat=0, lon=90)</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+
+    <span class="n">strip_length</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">R</span>
+    <span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">strip_length</span> <span class="o">/</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalTimeSec</span><span class="p">)</span>  <span class="c1"># m/ns</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">acquisitionSpeed</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">preImagingTime</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># Need at least one spacecraft for the module to function</span>
+    <span class="n">sc1_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_message</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">R</span> <span class="o">+</span> <span class="mf">200e3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">sc1Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_message</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1Msg</span><span class="p">)</span>
+
+    <span class="c1"># Log the strip state</span>
+    <span class="n">stateLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stateLog</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">v_LP_N_logged</span> <span class="o">=</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">v_LP_N</span>
+    <span class="n">r_LP_N_logged</span> <span class="o">=</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">r_LP_N</span>
+
+    <span class="c1"># Compute the orbit-plane normal from the strip endpoints</span>
+    <span class="c1"># Start: (lat=0, lon=0)  -&gt; R * [1, 0, 0]</span>
+    <span class="c1"># End:   (lat=0, lon=90) -&gt; R * [0, 1, 0]</span>
+    <span class="n">r_start</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">r_end</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">orbit_normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span><span class="p">)</span>
+    <span class="n">orbit_normal</span> <span class="o">=</span> <span class="n">orbit_normal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">orbit_normal</span><span class="p">)</span>  <span class="c1"># [0, 0, 1]</span>
+
+    <span class="c1"># Check at several time indices (skip index 0 which is before motion starts)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v_LP_N_logged</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">r_LP_N_logged</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">r_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># 1. Velocity magnitude should equal acquisitionSpeed (in m/ns), convert to m/s for comparison</span>
+        <span class="k">assert</span> <span class="n">v_mag</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">acquisitionSpeed</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">),</span> \
+            <span class="sa">f</span><span class="s2">&quot;[idx=</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">] Velocity magnitude </span><span class="si">{</span><span class="n">v_mag</span><span class="si">}</span><span class="s2"> doesn&#39;t match acquisition speed </span><span class="si">{</span><span class="n">acquisitionSpeed</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1e9</span><span class="si">}</span><span class="s2"> (m/s)&quot;</span>
+
+        <span class="c1"># 2. Velocity should be perpendicular to the position vector</span>
+        <span class="n">dot_rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_mag</span> <span class="o">*</span> <span class="n">v_mag</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dot_rv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;[idx=</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">] Velocity should be perpendicular to position, dot product = </span><span class="si">{</span><span class="n">dot_rv</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 3. Velocity should lie in the great-circle (orbit) plane:</span>
+        <span class="c1">#    v . n_orbit ≈ 0</span>
+        <span class="n">dot_vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">orbit_normal</span><span class="p">)</span> <span class="o">/</span> <span class="n">v_mag</span>
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dot_vn</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;[idx=</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">] Velocity should lie in the orbit plane, v · n = </span><span class="si">{</span><span class="n">dot_vn</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 4. Velocity should be oriented in the direction of motion:</span>
+        <span class="c1">#    r x v should be parallel to orbit_normal (same sign)</span>
+        <span class="n">rxv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">rxv_hat</span> <span class="o">=</span> <span class="n">rxv</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rxv</span><span class="p">)</span>
+        <span class="n">dot_direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rxv_hat</span><span class="p">,</span> <span class="n">orbit_normal</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">dot_direction</span> <span class="o">&gt;</span> <span class="mf">0.99</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;[idx=</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">] Velocity should point in direction of motion (start-&gt;end), &quot;</span> \
+            <span class="sa">f</span><span class="s2">&quot;(r x v) · n = </span><span class="si">{</span><span class="n">dot_direction</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_new_start_pre_imaging">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_new_start_pre_imaging">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_new_start_pre_imaging</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests that ``newpstart()`` correctly extends the strip backward so that</span>
+<span class="sd">    the target reaches the *original* start point after exactly</span>
+<span class="sd">    ``preImagingTime`` seconds of travel:</span>
+
+<span class="sd">    1. Verifies that at t=0 the target position equals the extended</span>
+<span class="sd">       (new) start point, which sits ``preImagingTime * speed``</span>
+<span class="sd">       arc-length behind the original start along the great circle.</span>
+<span class="sd">    2. Verifies that at t=preImagingTime the target arrives at the</span>
+<span class="sd">       original start point (lat=0, lon=0).</span>
+<span class="sd">    3. Verifies that at the end of the updated traversal the target</span>
+<span class="sd">       reaches the original end point (lat=0, lon=90°).</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># planet radius in metres</span>
+
+    <span class="c1"># ---- strip geometry ----</span>
+    <span class="c1"># Original strip along the equator from lon=0 to lon=90 deg</span>
+    <span class="n">lat_start</span><span class="p">,</span> <span class="n">lon_start</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span>
+    <span class="n">lat_end</span><span class="p">,</span> <span class="n">lon_end</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">90.</span>
+    <span class="n">theta_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon_end</span> <span class="o">-</span> <span class="n">lon_start</span><span class="p">)</span>          <span class="c1"># 90 deg arc</span>
+    <span class="n">strip_length_orig</span> <span class="o">=</span> <span class="n">theta_orig</span> <span class="o">*</span> <span class="n">R</span>                     <span class="c1"># original arc length</span>
+
+    <span class="c1"># Speeds chosen so the *original* strip takes 10 s to traverse</span>
+    <span class="n">totalOriginalTimeSec</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">strip_length_orig</span> <span class="o">/</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">totalOriginalTimeSec</span><span class="p">)</span>  <span class="c1"># m / ns</span>
+
+    <span class="c1"># Pre-imaging time = 2 s  ⇒  target is extended 2 s of travel behind start</span>
+    <span class="n">pre_imaging_sec</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">pre_imaging_ns</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">pre_imaging_sec</span><span class="p">)</span>
+
+    <span class="c1"># Expected arc-length behind the original start</span>
+    <span class="n">arc_behind</span> <span class="o">=</span> <span class="n">acquisitionSpeed</span> <span class="o">*</span> <span class="n">pre_imaging_ns</span>        <span class="c1"># metres</span>
+    <span class="n">angle_behind</span> <span class="o">=</span> <span class="n">arc_behind</span> <span class="o">/</span> <span class="n">R</span>                          <span class="c1"># radians (≈ 18 deg)</span>
+
+    <span class="c1"># Expected new start position: lon = -angle_behind on the equator</span>
+    <span class="n">expected_new_start</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">angle_behind</span><span class="p">),</span>
+                                        <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">angle_behind</span><span class="p">),</span>
+                                        <span class="mf">0.</span><span class="p">])</span>
+
+    <span class="c1"># Expected time to traverse the *updated* strip</span>
+    <span class="c1"># Updated arc covers (theta_orig + angle_behind) radians</span>
+    <span class="n">theta_updated</span> <span class="o">=</span> <span class="n">theta_orig</span> <span class="o">+</span> <span class="n">angle_behind</span>
+    <span class="n">totalUpdatedTimeSec</span> <span class="o">=</span> <span class="p">(</span><span class="n">theta_updated</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">acquisitionSpeed</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">)</span>  <span class="c1"># seconds</span>
+
+    <span class="c1"># Run sim long enough to cover the extended strip</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">totalUpdatedTimeSec</span><span class="p">))</span>
+
+    <span class="c1"># ---- module setup ----</span>
+    <span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTargetNewStart&quot;</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat_start</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon_start</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat_end</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon_end</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="n">acquisitionSpeed</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">preImagingTime</span> <span class="o">=</span> <span class="n">pre_imaging_ns</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+
+    <span class="c1"># A spacecraft is needed to drive the module (placed arbitrarily)</span>
+    <span class="n">sc_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc_msg</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">200e3</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc_msg</span><span class="p">)</span>
+    <span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+
+    <span class="c1"># Log strip state at every step</span>
+    <span class="n">stateLog</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stateLog</span><span class="p">)</span>
+
+    <span class="c1"># ---- run ----</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># ---- assertions ----</span>
+    <span class="n">r_LP_N_logged</span> <span class="o">=</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">r_LP_N</span>
+    <span class="n">pos_tol</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># 1 metre tolerance</span>
+
+    <span class="c1"># 1) At t = 0 s (index 0): target should be at the *new* start (lon ≈ -18 deg)</span>
+    <span class="n">new_start_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_new_start</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">new_start_error</span> <span class="o">&lt;</span> <span class="n">pos_tol</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;New start position error: </span><span class="si">{</span><span class="n">new_start_error</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> m (tol </span><span class="si">{</span><span class="n">pos_tol</span><span class="si">}</span><span class="s2"> m). &quot;</span> \
+        <span class="sa">f</span><span class="s2">&quot;Expected lon ≈ </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="o">-</span><span class="n">angle_behind</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> deg&quot;</span>
+
+    <span class="c1"># 2) At t = pre_imaging_sec (index = pre_imaging_sec / dt): target should be</span>
+    <span class="c1">#    at the *original* start (lat=0, lon=0) -&gt; PCPF [R, 0, 0]</span>
+    <span class="n">idx_orig_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pre_imaging_sec</span> <span class="o">/</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">expected_orig_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">R</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">orig_start_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="n">idx_orig_start</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_orig_start</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">orig_start_error</span> <span class="o">&lt;</span> <span class="n">pos_tol</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Target should be at original start at t=</span><span class="si">{</span><span class="n">pre_imaging_sec</span><span class="si">}</span><span class="s2">s, &quot;</span> \
+        <span class="sa">f</span><span class="s2">&quot;error = </span><span class="si">{</span><span class="n">orig_start_error</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> m (tol </span><span class="si">{</span><span class="n">pos_tol</span><span class="si">}</span><span class="s2"> m)&quot;</span>
+
+    <span class="c1"># 3) At the final step the target should be at the original end (lat=0, lon=90 deg)</span>
+    <span class="c1">#    -&gt; PCPF [0, R, 0]</span>
+    <span class="n">idx_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">totalUpdatedTimeSec</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="n">expected_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+    <span class="n">end_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_LP_N_logged</span><span class="p">[</span><span class="n">idx_end</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected_end</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">end_error</span> <span class="o">&lt;</span> <span class="n">pos_tol</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Target should be at end at t=</span><span class="si">{</span><span class="n">totalUpdatedTimeSec</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s, &quot;</span> \
+        <span class="sa">f</span><span class="s2">&quot;error = </span><span class="si">{</span><span class="n">end_error</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> m (tol </span><span class="si">{</span><span class="n">pos_tol</span><span class="si">}</span><span class="s2"> m)&quot;</span>
+
+    <span class="c1"># 4) Verify the angular offset between new start and original start ≈ angle_behind</span>
+    <span class="n">new_start_pos</span> <span class="o">=</span> <span class="n">r_LP_N_logged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cos_angle_actual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">new_start_pos</span><span class="p">,</span> <span class="n">expected_orig_start</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">new_start_pos</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expected_orig_start</span><span class="p">))</span>
+    <span class="n">angle_actual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_angle_actual</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">angle_actual</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">angle_behind</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">),</span> \
+        <span class="sa">f</span><span class="s2">&quot;Angle between new start and original start: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_actual</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> deg, &quot;</span> \
+        <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_behind</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> deg&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_AzElR_rates">
+<a class="viewcode-back" href="../Documentation/simulation/environment/stripLocation/_UnitTest/test_unitStripLocation.html#test_unitStripLocation.test_AzElR_rates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_AzElR_rates</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests that the Az, El, range rates are correct by using 1-step Euler integration.</span>
+<span class="sd">    Uses a stationary strip (start == end at Boulder, CO) to test rate computation,</span>
+<span class="sd">    analogous to the groundLocation Az/El/R rate test.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">simulationTimeStep</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s1">&#39;2021 MAY 04 06:47:48.965 (UTC)&#39;</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">bskPath</span> <span class="o">+</span> <span class="s1">&#39;/supportData/EphemerisData/&#39;</span><span class="p">,</span>
+                                     <span class="n">timeInitString</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s1">&#39;Earth&#39;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">r_sc</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="mi">100</span> <span class="o">*</span> <span class="mf">1E3</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">r_sc</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.00001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">53.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">115.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">75.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+
+    <span class="c1"># Use a stationary strip (start == end) at Boulder, CO</span>
+    <span class="n">stripStation</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">40.009971</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">105.243895</span><span class="p">),</span> <span class="mi">1624</span><span class="p">)</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">40.009971</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">105.243895</span><span class="p">),</span> <span class="mi">1624</span><span class="p">)</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">60.</span><span class="p">)</span>
+    <span class="n">stripStation</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripStation</span><span class="p">)</span>
+
+    <span class="c1"># Log the Az, El, R and rates info</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">stripStation</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Get logged data</span>
+    <span class="n">sc_range</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">slantRange</span>
+    <span class="n">sc_elevation</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">elevation</span>
+    <span class="n">sc_azimuth</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">azimuth</span>
+    <span class="n">sc_range_rate</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">range_dot</span>
+    <span class="n">sc_el_rate</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">el_dot</span>
+    <span class="n">sc_az_rate</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">az_dot</span>
+
+    <span class="c1"># Euler integration: value(t+dt) ≈ value(t) + rate(t)*dt</span>
+    <span class="n">sc_Euler_range</span> <span class="o">=</span> <span class="n">sc_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">sc_range_rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+    <span class="n">sc_Euler_elev</span> <span class="o">=</span> <span class="n">sc_elevation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">sc_el_rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+    <span class="n">sc_Euler_azimuth</span> <span class="o">=</span> <span class="n">sc_azimuth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">sc_az_rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt</span>
+
+    <span class="n">range_rate_worked</span> <span class="o">=</span> <span class="n">sc_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">sc_Euler_range</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+    <span class="n">el_rate_worked</span> <span class="o">=</span> <span class="n">sc_elevation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">sc_Euler_elev</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+    <span class="n">az_rate_worked</span> <span class="o">=</span> <span class="n">sc_azimuth</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">sc_Euler_azimuth</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">range_rate_worked</span><span class="p">,</span> <span class="s2">&quot;Range rate check failed&quot;</span>
+    <span class="k">assert</span> <span class="n">el_rate_worked</span><span class="p">,</span> <span class="s2">&quot;Elevation rate check failed&quot;</span>
+    <span class="k">assert</span> <span class="n">az_rate_worked</span><span class="p">,</span> <span class="s2">&quot;Azimuth rate check failed&quot;</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">test_range_degenerate_strip</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_rotation_degenerate_strip</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_strip_target_motion</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_pre_imaging_blocks_access</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_strip_velocity_output</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_new_start_pre_imaging</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_AzElR_rates</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

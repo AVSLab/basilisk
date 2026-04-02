@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: singleActuatorLTI &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="Module: orbitalElementControl" href="orbitalElementControl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cmdForceInertialToForceAtSite/index.html">cmdForceInertialToForceAtSite</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">linearTimeInvariantSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoise/index.html">meanRevertingNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrOnTimeToForce/index.html">thrOnTimeToForce</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">linearTimeInvariantSystem</a></li>
+      <li class="breadcrumb-item active">Module: singleActuatorLTI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/singleActuatorLTI.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-singleactuatorlti">
+<span id="singleactuatorlti"></span><h1>Module: singleActuatorLTI<a class="headerlink" href="#module-singleactuatorlti" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SingleActuatorLTI</span></code> module implements a single-input, single-output (SISO) linear time-invariant model by specializing <a class="reference internal" href="linearTimeInvariantSystem.html#lineartimeinvariantsystem"><span class="std std-ref">LinearTimeInvariantSystem</span></a>. It maps scalar actuator messages into the LTI input and publishes the scalar LTI output using <code class="docutils literal notranslate"><span class="pre">SingleActuatorMsgPayload</span></code>.</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The inherited LTI dynamics are</p>
+<div class="math notranslate nohighlight">
+\[\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}, \qquad
+\mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}\]</div>
+<p>with fixed dimensions for this subclass:</p>
+<ul class="simple">
+<li><p>input size: <span class="math notranslate nohighlight">\(m=1\)</span></p></li>
+<li><p>output size: <span class="math notranslate nohighlight">\(p=1\)</span></p></li>
+</ul>
+<p>The message mapping is</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{u} = \begin{bmatrix}u\end{bmatrix}, \qquad
+u = \texttt{inMsg().input}\]</div>
+<p>and the published output is</p>
+<div class="math notranslate nohighlight">
+\[\texttt{outMsg.input} = y_0\]</div>
+<p>System matrices <span class="math notranslate nohighlight">\(\mathbf{A},\mathbf{B},\mathbf{C},\mathbf{D}\)</span> are configured through the base class (for example with <code class="docutils literal notranslate"><span class="pre">setA</span></code>, <code class="docutils literal notranslate"><span class="pre">setB</span></code>, <code class="docutils literal notranslate"><span class="pre">setC</span></code>, <code class="docutils literal notranslate"><span class="pre">setD</span></code> or <code class="docutils literal notranslate"><span class="pre">configureSecondOrder</span></code>).</p>
+</section>
+<section id="message-interfaces">
+<h2>Message Interfaces<a class="headerlink" href="#message-interfaces" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#singleactuatormsgpayload"><span class="std std-ref">SingleActuatorMsgPayload</span></a></p></td>
+<td><p>Input scalar actuator command. The <code class="docutils literal notranslate"><span class="pre">input</span></code> field maps to <span class="math notranslate nohighlight">\(u\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>outMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#singleactuatormsgpayload"><span class="std std-ref">SingleActuatorMsgPayload</span></a></p></td>
+<td><p>Output scalar actuator command. The <code class="docutils literal notranslate"><span class="pre">input</span></code> field is populated from <span class="math notranslate nohighlight">\(y_0\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The model is strictly SISO (input/output dimensions are always 1).</p></li>
+<li><p>The state dimension is inherited from the configured base-class matrices.</p></li>
+<li><p>If no state is configured, output uses direct feedthrough from <span class="math notranslate nohighlight">\(\mathbf{D}\)</span> when available.</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv417SingleActuatorLTI">
+<span id="_CPPv317SingleActuatorLTI"></span><span id="_CPPv217SingleActuatorLTI"></span><span id="SingleActuatorLTI"></span><span class="target" id="class_single_actuator_l_t_i"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SingleActuatorLTI</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="linearTimeInvariantSystem.html#_CPPv425LinearTimeInvariantSystem" title="LinearTimeInvariantSystem"><span class="n"><span class="pre">LinearTimeInvariantSystem</span></span></a><a class="headerlink" href="#_CPPv417SingleActuatorLTI" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;singleActuatorLTI.h&gt;</em></div>
+<p>Linear SISO actuator model built on top of <a class="reference internal" href="linearTimeInvariantSystem.html#class_linear_time_invariant_system"><span class="std std-ref">LinearTimeInvariantSystem</span></a>. </p>
+<p>This class implements a single-input, single-output LTI system where both the input and output are carried through a SingleActuatorMsgPayload.</p>
+<p>The internal dynamics are defined by the A, B, C, D matrices stored in the base class <a class="reference internal" href="linearTimeInvariantSystem.html#class_linear_time_invariant_system"><span class="std std-ref">LinearTimeInvariantSystem</span></a>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17SingleActuatorLTI17SingleActuatorLTIEv">
+<span id="_CPPv3N17SingleActuatorLTI17SingleActuatorLTIEv"></span><span id="_CPPv2N17SingleActuatorLTI17SingleActuatorLTIEv"></span><span id="SingleActuatorLTI::SingleActuatorLTI"></span><span class="target" id="class_single_actuator_l_t_i_1a533f4fa4ce2fc8ba5866b6373d2c35b6"></span><span class="sig-name descname"><span class="n"><span class="pre">SingleActuatorLTI</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N17SingleActuatorLTI17SingleActuatorLTIEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Default constructor. </p>
+<p>The underlying <a class="reference internal" href="linearTimeInvariantSystem.html#class_linear_time_invariant_system"><span class="std std-ref">LinearTimeInvariantSystem</span></a> matrices must be configured (for example, via configureSecondOrder or direct setA/setB/setC/setD calls) before the simulation is run. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17SingleActuatorLTI12getInputSizeEv">
+<span id="_CPPv3NK17SingleActuatorLTI12getInputSizeEv"></span><span id="_CPPv2NK17SingleActuatorLTI12getInputSizeEv"></span><span id="SingleActuatorLTI::getInputSizeC"></span><span class="target" id="class_single_actuator_l_t_i_1aa7cde6fe7b189cea6a5929ec0d883b5a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getInputSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK17SingleActuatorLTI12getInputSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the dimension of the input vector. </p>
+<p>This model is strictly SISO, so the input dimension is always 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of inputs (always 1). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17SingleActuatorLTI13getOutputSizeEv">
+<span id="_CPPv3NK17SingleActuatorLTI13getOutputSizeEv"></span><span id="_CPPv2NK17SingleActuatorLTI13getOutputSizeEv"></span><span id="SingleActuatorLTI::getOutputSizeC"></span><span class="target" id="class_single_actuator_l_t_i_1a8bf357fb47cf4509a5c2632581a66984"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getOutputSize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK17SingleActuatorLTI13getOutputSizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the dimension of the output vector. </p>
+<p>This model is strictly SISO, so the output dimension is always 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of outputs (always 1). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17SingleActuatorLTI9readInputE8uint64_t">
+<span id="_CPPv3N17SingleActuatorLTI9readInputE8uint64_t"></span><span id="_CPPv2N17SingleActuatorLTI9readInputE8uint64_t"></span><span id="SingleActuatorLTI::readInput__uint64_t"></span><span class="target" id="class_single_actuator_l_t_i_1acce44db8b698b7fbcef8bf25b4550319"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N17SingleActuatorLTI9readInputE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Read the current input vector from the subscribed input message. </p>
+<p>This method constructs a 1x1 Eigen::VectorXd whose single element is taken from <a class="reference internal" href="#class_single_actuator_l_t_i_1a959af2f62a6c703e64f998c6df26f4dc"><span class="std std-ref">inMsg()</span></a>.input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input vector u of size 1. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N17SingleActuatorLTI11writeOutputE8uint64_tRKN5Eigen8VectorXdE">
+<span id="_CPPv3N17SingleActuatorLTI11writeOutputE8uint64_tRKN5Eigen8VectorXdE"></span><span id="_CPPv2N17SingleActuatorLTI11writeOutputE8uint64_tRKN5Eigen8VectorXdE"></span><span id="SingleActuatorLTI::writeOutput__uint64_t.Eigen::VectorXdCR"></span><span class="target" id="class_single_actuator_l_t_i_1aeee88deba5c2b8e58e0c9336a137a03f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">y</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N17SingleActuatorLTI11writeOutputE8uint64_tRKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Write the current output vector to the output message. </p>
+<p>The first element of the output vector y is written to outMsg as the ‘input’ field of SingleActuatorMsgPayload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p></li>
+<li><p><strong>y</strong> – Output vector of size 1. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17SingleActuatorLTI6outMsgE">
+<span id="_CPPv3N17SingleActuatorLTI6outMsgE"></span><span id="_CPPv2N17SingleActuatorLTI6outMsgE"></span><span id="SingleActuatorLTI::outMsg__Message:SingleActuatorMsgPayload:"></span><span class="target" id="class_single_actuator_l_t_i_1a719d39bc136e226b52332aa1eb3e8f08"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#_CPPv424SingleActuatorMsgPayload" title="SingleActuatorMsgPayload"><span class="n"><span class="pre">SingleActuatorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outMsg</span></span></span><a class="headerlink" href="#_CPPv4N17SingleActuatorLTI6outMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output message carrying the actuator command. </p>
+<p>The ‘input’ field is populated from the first element of the output vector y computed by <a class="reference internal" href="linearTimeInvariantSystem.html#class_linear_time_invariant_system"><span class="std std-ref">LinearTimeInvariantSystem</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17SingleActuatorLTI5inMsgE">
+<span id="_CPPv3N17SingleActuatorLTI5inMsgE"></span><span id="_CPPv2N17SingleActuatorLTI5inMsgE"></span><span id="SingleActuatorLTI::inMsg__ReadFunctor:SingleActuatorMsgPayload:"></span><span class="target" id="class_single_actuator_l_t_i_1a959af2f62a6c703e64f998c6df26f4dc"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#_CPPv424SingleActuatorMsgPayload" title="SingleActuatorMsgPayload"><span class="n"><span class="pre">SingleActuatorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inMsg</span></span></span><a class="headerlink" href="#_CPPv4N17SingleActuatorLTI5inMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input message read functor providing the actuator command. </p>
+<p>The ‘input’ field of the payload is mapped to the input vector u(0). </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="orbitalElementControl.html" class="btn btn-neutral float-left" title="Module: orbitalElementControl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

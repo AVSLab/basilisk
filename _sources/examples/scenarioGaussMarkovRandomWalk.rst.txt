@@ -1,0 +1,13 @@
+.. _scenarioGaussMarkovRandomWalk:
+
+scenarioGaussMarkovRandomWalk
+=============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioGaussMarkovRandomWalk
+   :members:
+   :show-inheritance:
+

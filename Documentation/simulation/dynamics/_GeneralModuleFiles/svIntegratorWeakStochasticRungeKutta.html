@@ -1,0 +1,527 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: svIntegratorWeakStochasticRungeKutta &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTestDynamics" href="_UnitTestDynamics/index.html" />
+    <link rel="prev" title="Module: svIntegratorRungeKutta" href="svIntegratorRungeKutta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: svIntegratorWeakStochasticRungeKutta</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/svIntegratorWeakStochasticRungeKutta.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-svintegratorweakstochasticrungekutta">
+<span id="svintegratorweakstochasticrungekutta"></span><h1>Module: svIntegratorWeakStochasticRungeKutta<a class="headerlink" href="#module-svintegratorweakstochasticrungekutta" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4I_6size_tE15SRKCoefficients">
+<span id="_CPPv3I_6size_tE15SRKCoefficients"></span><span id="_CPPv2I_6size_tE15SRKCoefficients"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberStages</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="struct_s_r_k_coefficients"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SRKCoefficients</span></span></span><a class="headerlink" href="#_CPPv4I_6size_tE15SRKCoefficients" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorWeakStochasticRungeKutta.h&gt;</em></div>
+<p>Stores the coefficients necessary to use the Stochastic Runge-Kutta method.</p>
+<p>The Butcher table looks like:</p>
+<p>c0 | A0 | B0 | c1 | A1 | B1 | B2 -&amp;#8212;|——————&amp;#8212; | alpha | beta0 | beta1</p>
+<p>See more in the description of <a class="reference internal" href="#classsv_integrator_weak_stochastic_runge_kutta"><span class="std std-ref">svIntegratorWeakStochasticRungeKutta</span></a>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients15StageSizedArrayE">
+<span id="_CPPv3N15SRKCoefficients15StageSizedArrayE"></span><span id="_CPPv2N15SRKCoefficients15StageSizedArrayE"></span><span class="target" id="struct_s_r_k_coefficients_1a3f9285bed53ef15b47f1683c2b35726c"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StageSizedArray</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRKCoefficients" title="SRKCoefficients::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array with size = numberStages </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients16StageSizedMatrixE">
+<span id="_CPPv3N15SRKCoefficients16StageSizedMatrixE"></span><span id="_CPPv2N15SRKCoefficients16StageSizedMatrixE"></span><span class="target" id="struct_s_r_k_coefficients_1a8793f20c2d46062dd7c616a934fe3758"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StageSizedMatrix</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRKCoefficients" title="SRKCoefficients::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>Square matrix with size = numberStages </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients5alphaE">
+<span id="_CPPv3N15SRKCoefficients5alphaE"></span><span id="_CPPv2N15SRKCoefficients5alphaE"></span><span id="SRKCoefficients::alpha__StageSizedArray"></span><span class="target" id="struct_s_r_k_coefficients_1aa61a39a0c641d9912935b168b40f56ff"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>“alpha” coefficient array of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients5beta0E">
+<span id="_CPPv3N15SRKCoefficients5beta0E"></span><span id="_CPPv2N15SRKCoefficients5beta0E"></span><span id="SRKCoefficients::beta0__StageSizedArray"></span><span class="target" id="struct_s_r_k_coefficients_1a005afc2cafe3e88fac14b936e92929b1"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients5beta0E" title="Link to this definition"></a><br /></dt>
+<dd><p>“beta0” coefficient array of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients5beta1E">
+<span id="_CPPv3N15SRKCoefficients5beta1E"></span><span id="_CPPv2N15SRKCoefficients5beta1E"></span><span id="SRKCoefficients::beta1__StageSizedArray"></span><span class="target" id="struct_s_r_k_coefficients_1a4f16c42ff4d7fe89921a474aa6c2fac2"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients5beta1E" title="Link to this definition"></a><br /></dt>
+<dd><p>“beta1” coefficient array of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2A0E">
+<span id="_CPPv3N15SRKCoefficients2A0E"></span><span id="_CPPv2N15SRKCoefficients2A0E"></span><span id="SRKCoefficients::A0__StageSizedMatrix"></span><span class="target" id="struct_s_r_k_coefficients_1ad4b421527bf66bd14549191d6e5b0ccc"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="SRKCoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2A0E" title="Link to this definition"></a><br /></dt>
+<dd><p>“A0” coefficient matrix of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2B0E">
+<span id="_CPPv3N15SRKCoefficients2B0E"></span><span id="_CPPv2N15SRKCoefficients2B0E"></span><span id="SRKCoefficients::B0__StageSizedMatrix"></span><span class="target" id="struct_s_r_k_coefficients_1af81e0ef964647ec85ed2e7b3b8a58f36"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="SRKCoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2B0E" title="Link to this definition"></a><br /></dt>
+<dd><p>“B0” coefficient matrix of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2A1E">
+<span id="_CPPv3N15SRKCoefficients2A1E"></span><span id="_CPPv2N15SRKCoefficients2A1E"></span><span id="SRKCoefficients::A1__StageSizedMatrix"></span><span class="target" id="struct_s_r_k_coefficients_1ac5e3132f7161af00a7f76a79630a887f"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="SRKCoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2A1E" title="Link to this definition"></a><br /></dt>
+<dd><p>“A1” coefficient matrix of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2B1E">
+<span id="_CPPv3N15SRKCoefficients2B1E"></span><span id="_CPPv2N15SRKCoefficients2B1E"></span><span id="SRKCoefficients::B1__StageSizedMatrix"></span><span class="target" id="struct_s_r_k_coefficients_1a5508df899bebb2d62723ce7cfce6dc0f"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="SRKCoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2B1E" title="Link to this definition"></a><br /></dt>
+<dd><p>“B1” coefficient matrix of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2B2E">
+<span id="_CPPv3N15SRKCoefficients2B2E"></span><span id="_CPPv2N15SRKCoefficients2B2E"></span><span id="SRKCoefficients::B2__StageSizedMatrix"></span><span class="target" id="struct_s_r_k_coefficients_1a6887d44262cb14d32be353176f91d329"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients16StageSizedMatrixE" title="SRKCoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2B2E" title="Link to this definition"></a><br /></dt>
+<dd><p>“B2” coefficient matrix of the SRK method </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2c0E">
+<span id="_CPPv3N15SRKCoefficients2c0E"></span><span id="_CPPv2N15SRKCoefficients2c0E"></span><span id="SRKCoefficients::c0__StageSizedArray"></span><span class="target" id="struct_s_r_k_coefficients_1a04f86e6acde78f99de54fc16232b862e"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2c0E" title="Link to this definition"></a><br /></dt>
+<dd><p>“c0” coefficient array of the SRK method</p>
+<p>c0 is the row sum of the A(0) matrix:</p>
+<p><div class="math notranslate nohighlight">
+\[    c_0 = \sum_j a^{(0)}_{ij}
+\]</div>
+</p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRKCoefficients2c1E">
+<span id="_CPPv3N15SRKCoefficients2c1E"></span><span id="_CPPv2N15SRKCoefficients2c1E"></span><span id="SRKCoefficients::c1__StageSizedArray"></span><span class="target" id="struct_s_r_k_coefficients_1a6bdb0b68c529b06511040742db7cc817"></span><a class="reference internal" href="#_CPPv4N15SRKCoefficients15StageSizedArrayE" title="SRKCoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRKCoefficients2c1E" title="Link to this definition"></a><br /></dt>
+<dd><p>“c1” coefficient array of the SRK method</p>
+<p>c1 is the row sum of the A(1) matrix:</p>
+<p><div class="math notranslate nohighlight">
+\[    c_1 = \sum_j a^{(1)}_{ij}
+\]</div>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418SRKRandomVariables">
+<span id="_CPPv318SRKRandomVariables"></span><span id="_CPPv218SRKRandomVariables"></span><span id="SRKRandomVariables"></span><span class="target" id="struct_s_r_k_random_variables"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SRKRandomVariables</span></span></span><a class="headerlink" href="#_CPPv418SRKRandomVariables" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorWeakStochasticRungeKutta.h&gt;</em></div>
+<p>Random variables used in the Weak Stochastic Integrator </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SRKRandomVariables2IkE">
+<span id="_CPPv3N18SRKRandomVariables2IkE"></span><span id="_CPPv2N18SRKRandomVariables2IkE"></span><span id="SRKRandomVariables::Ik__Eigen::VectorXd"></span><span class="target" id="struct_s_r_k_random_variables_1a4f858ef6a277a90388902dba58d80955"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ik</span></span></span><a class="headerlink" href="#_CPPv4N18SRKRandomVariables2IkE" title="Link to this definition"></a><br /></dt>
+<dd><p>See Eq 3.2 in Tang &amp; Xiao </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SRKRandomVariables3IklE">
+<span id="_CPPv3N18SRKRandomVariables3IklE"></span><span id="_CPPv2N18SRKRandomVariables3IklE"></span><span id="SRKRandomVariables::Ikl__Eigen::MatrixXd"></span><span class="target" id="struct_s_r_k_random_variables_1a655279f3a90d8bd694669dfb56560152"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ikl</span></span></span><a class="headerlink" href="#_CPPv4N18SRKRandomVariables3IklE" title="Link to this definition"></a><br /></dt>
+<dd><p>See Eq 3.3 in Tang &amp; Xiao </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SRKRandomVariables3IkkE">
+<span id="_CPPv3N18SRKRandomVariables3IkkE"></span><span id="_CPPv2N18SRKRandomVariables3IkkE"></span><span id="SRKRandomVariables::Ikk__Eigen::VectorXd"></span><span class="target" id="struct_s_r_k_random_variables_1aa84cc9833d6c43d91370e98fa14d7923"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ikk</span></span></span><a class="headerlink" href="#_CPPv4N18SRKRandomVariables3IkkE" title="Link to this definition"></a><br /></dt>
+<dd><p>Same as <a class="reference internal" href="#struct_s_r_k_random_variables_1a655279f3a90d8bd694669dfb56560152"><span class="std std-ref">Ikl(k,k)</span></a></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SRKRandomVariables2xiE">
+<span id="_CPPv3N18SRKRandomVariables2xiE"></span><span id="_CPPv2N18SRKRandomVariables2xiE"></span><span id="SRKRandomVariables::xi__double"></span><span class="target" id="struct_s_r_k_random_variables_1aa6e19050296892c9ea85f966929f66f0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xi</span></span></span><a class="headerlink" href="#_CPPv4N18SRKRandomVariables2xiE" title="Link to this definition"></a><br /></dt>
+<dd><p>See Eq 3.2 in Tang &amp; Xiao </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv426SRKRandomVariableGenerator">
+<span id="_CPPv326SRKRandomVariableGenerator"></span><span id="_CPPv226SRKRandomVariableGenerator"></span><span id="SRKRandomVariableGenerator"></span><span class="target" id="class_s_r_k_random_variable_generator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SRKRandomVariableGenerator</span></span></span><a class="headerlink" href="#_CPPv426SRKRandomVariableGenerator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorWeakStochasticRungeKutta.h&gt;</em></div>
+<p>Random Generator for the integrator described in:</p>
+<p>Tang, X., Xiao, A. Efficient weak second-order stochastic Runge–Kutta methods for Itô stochastic differential equations. Bit Numer Math 57, 241–260 (2017). <a class="reference external" href="https://doi.org/10.1007/s10543-016-0618-9">https://doi.org/10.1007/s10543-016-0618-9</a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SRKRandomVariableGenerator7setSeedE6size_t">
+<span id="_CPPv3N26SRKRandomVariableGenerator7setSeedE6size_t"></span><span id="_CPPv2N26SRKRandomVariableGenerator7setSeedE6size_t"></span><span id="SRKRandomVariableGenerator::setSeed__s"></span><span class="target" id="class_s_r_k_random_variable_generator_1a4aa9eb84922fc76c595f0f54ee573f4d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SRKRandomVariableGenerator7setSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the seed to the RNG </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SRKRandomVariableGenerator8generateE6size_td">
+<span id="_CPPv3N26SRKRandomVariableGenerator8generateE6size_td"></span><span id="_CPPv2N26SRKRandomVariableGenerator8generateE6size_td"></span><span id="SRKRandomVariableGenerator::generate__s.double"></span><span class="target" id="class_s_r_k_random_variable_generator_1a1f2f0e8fc68809ff700c45f97fc14a4a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418SRKRandomVariables" title="SRKRandomVariables"><span class="n"><span class="pre">SRKRandomVariables</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">generate</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">h</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SRKRandomVariableGenerator8generateE6size_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Generates the random values necessary for one step of the integrator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – number of noise sources </p></li>
+<li><p><strong>h</strong> – time step, in seconds </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SRKRandomVariableGenerator3rngE">
+<span id="_CPPv3N26SRKRandomVariableGenerator3rngE"></span><span id="_CPPv2N26SRKRandomVariableGenerator3rngE"></span><span id="SRKRandomVariableGenerator::rng__std::mt19937"></span><span class="target" id="class_s_r_k_random_variable_generator_1aa5bb5f0d87e42a464440fed9d42e2473"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">mt19937</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rng</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">random_device</span></span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SRKRandomVariableGenerator3rngE" title="Link to this definition"></a><br /></dt>
+<dd><p>Random Number Generator </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SRKRandomVariableGenerator10uniform_rvE">
+<span id="_CPPv3N26SRKRandomVariableGenerator10uniform_rvE"></span><span id="_CPPv2N26SRKRandomVariableGenerator10uniform_rvE"></span><span id="SRKRandomVariableGenerator::uniform_rv__std::uniform_real_distribution:double:"></span><span class="target" id="class_s_r_k_random_variable_generator_1a6c68a3f3e1be52609b96607161a891a5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">uniform_real_distribution</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uniform_rv</span></span></span><a class="headerlink" href="#_CPPv4N26SRKRandomVariableGenerator10uniform_rvE" title="Link to this definition"></a><br /></dt>
+<dd><p>Uniform random variable, from 0 to 1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SRKRandomVariableGenerator12bernoulli_rvE">
+<span id="_CPPv3N26SRKRandomVariableGenerator12bernoulli_rvE"></span><span id="_CPPv2N26SRKRandomVariableGenerator12bernoulli_rvE"></span><span id="SRKRandomVariableGenerator::bernoulli_rv__std::bernoulli_distribution"></span><span class="target" id="class_s_r_k_random_variable_generator_1a760c712d0b1dbc488355ea7781d4ee25"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">bernoulli_distribution</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bernoulli_rv</span></span></span><a class="headerlink" href="#_CPPv4N26SRKRandomVariableGenerator12bernoulli_rvE" title="Link to this definition"></a><br /></dt>
+<dd><p>Bernoulli random variable (either 0 or 1, with equal probability) </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta">
+<span id="_CPPv3I_6size_tE36svIntegratorWeakStochasticRungeKutta"></span><span id="_CPPv2I_6size_tE36svIntegratorWeakStochasticRungeKutta"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberStages</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">svIntegratorWeakStochasticRungeKutta</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="stateVecStochasticIntegrator.html#_CPPv428StateVecStochasticIntegrator" title="StateVecStochasticIntegrator"><span class="n"><span class="pre">StateVecStochasticIntegrator</span></span></a><a class="headerlink" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorWeakStochasticRungeKutta.h&gt;</em></div>
+<p>The <a class="reference internal" href="#classsv_integrator_weak_stochastic_runge_kutta"><span class="std std-ref">svIntegratorWeakStochasticRungeKutta</span></a> class implements a state integrator that provides weak solutions to problems with stochastic dynamics (SDEs).</p>
+<p>The method is described in: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Tang, X., Xiao, A. Efficient weak second-order stochastic Runge–Kutta methods
+for Itô stochastic differential equations. Bit Numer Math 57, 241–260 (2017).
+https://doi.org/10.1007/s10543-016-0618-9
+</pre></div>
+</div>
+</p>
+<p>The method described in said paper is designed for autonomous systems (where f and g do not depend on time), so we need to modify it for non-autonomous systems. This is simple: we just need to treat the time as a state (with f=1 and g=0).</p>
+<p>The resulting pseudocode for the (explicit) method is (note that the order of the sums and some elements has moved around to reflect the code):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>--- (3.1*) stage definitions ---
+for i = 1..s:
+    // drift‐stage
+    H0[i] = y_n
+        + h * sum_{j=1..i-1}( a0[i][j] * f( t_n + c0[j]*h,   H0[j] ) )
+        + sum_{k=1..m}( Ihat[k] * sum_{j=1..i-1}( b0[i][j] * g[k]( t_n + c1[j]*h,   Hk[j] ) ) )
+
+    // diffusion‐stages, one per noise source k
+    for k = 1..m:
+        Hk[i] = y_n
+            + h  * sum_{j=1..i-1}( a1[i][j] * f(    t_n + c0[j]*h, H0[j] ) )
+            + xi * sum_{j=1..i-1}( b1[i][j] * g[k]( t_n + c1[j]*h, Hk[j] ) )
+            + sum_{l=1..m, l!=k}( Ihat_kl[k][l] * sum_{j=1..i-1}( b2[i][j] * g[l]( t_n + c1[i]*h, Hl[i] ) ) );
+
+where
+  c0[j] = sum_{p=1..s}( a0[j][p] )
+  c1[j] = sum_{p=1..s}( a1[j][p] )
+
+--- (3.2) driving‐variable distributions ---
+For each k:
+    P( Ihat[k] = +sqrt(3*h) ) = 1/6
+    P( Ihat[k] = -sqrt(3*h) ) = 1/6
+    P( Ihat[k] =  0        ) = 2/3
+
+xi = eta1 * sqrt(h)    // eta1 is {+1,−1} with equal prob.
+
+--- (3.3) mixed‐integral approximations ---
+for each pair (k,l):
+    if   k &lt; l:
+        Ihat_kl[k][l] = 0.5 * ( Ihat[l] - eta2 * Ihat[l] )
+    else if k &gt; l:
+        Ihat_kl[k][l] = 0.5 * ( Ihat[l] + eta2 * Ihat[l] )
+    else // k == l:
+        Ihat_kl[k][k] = 0.5 * ( Ihat[k]*Ihat[k] * xi - xi )
+
+--- (3.1*) state evolution ---
+y_n+1 = y_n
+        + h * sum_{i=1..s}( alpha[i] * f( t_n + c0[i]*h, H0[i] ) )
+        + sum_{k=1..m}( Ihat[k]       * sum_{i=1..s}( beta0[i] * g[k]( t_n + c1[i]*h, Hk[i] ) ) )
+        + sum_{k=1..m}( Ihat_kl[k][k] * sum_{i=1..s}( beta1[i] * g[k]( t_n + c1[i]*h, Hk[i] ) ) )
+</pre></div>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRK15SRKCoefficientsI12numberStagesE">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRK15SRKCoefficientsI12numberStagesE"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRK15SRKCoefficientsI12numberStagesE"></span><span id="svIntegratorWeakStochasticRungeKutta::svIntegratorWeakStochasticRungeKutta__DynamicObjectP.SRKCoefficients:numberStages:CR"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a2b26f9fa8a7b7e9ffa72a97c1d624a7f"></span><span class="sig-name descname"><span class="n"><span class="pre">svIntegratorWeakStochasticRungeKutta</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynIn</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRKCoefficients" title="SRKCoefficients"><span class="n"><span class="pre">SRKCoefficients</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="svIntegratorWeakStochasticRungeKutta::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coefficients</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRK15SRKCoefficientsI12numberStagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an explicit RK integrator for the given <a class="reference internal" href="dynamicObject.html#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> using the passed coefficients. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta10setRNGSeedE6size_t">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta10setRNGSeedE6size_t"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta10setRNGSeedE6size_t"></span><span id="svIntegratorWeakStochasticRungeKutta::setRNGSeed__s"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a8b68f00e7acfc252ed7ccb211b4f8ea5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRNGSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta10setRNGSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the seed for the Random Number Generator used by this integrator.</p>
+<p>As a stochastic integrator, random numbers are drawn during each time step. By default, a randomly generated seed is used each time.</p>
+<p>If the seed is set, the integrator will always draw the same numbers during time-stepping. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta9integrateEdd">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta9integrateEdd"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta9integrateEdd"></span><span id="svIntegratorWeakStochasticRungeKutta::integrate__double.double"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a93a62a8fc1e1d9b38c90d0f131c386a1"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">integrate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta9integrateEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs the integration of the associated dynamic objects up to time currentTime+timeStep </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta11rvGeneratorE">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta11rvGeneratorE"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta11rvGeneratorE"></span><span id="svIntegratorWeakStochasticRungeKutta::rvGenerator__SRKRandomVariableGenerator"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1ab5748b4cd8c40549096a29b902c84c42"></span><a class="reference internal" href="#_CPPv426SRKRandomVariableGenerator" title="SRKRandomVariableGenerator"><span class="n"><span class="pre">SRKRandomVariableGenerator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rvGenerator</span></span></span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta11rvGeneratorE" title="Link to this definition"></a><br /></dt>
+<dd><p>Random Number Generator for the integrator </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRRNSt10unique_ptrI15SRKCoefficientsI12numberStagesEEE">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRRNSt10unique_ptrI15SRKCoefficientsI12numberStagesEEE"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRRNSt10unique_ptrI15SRKCoefficientsI12numberStagesEEE"></span><span id="svIntegratorWeakStochasticRungeKutta::svIntegratorWeakStochasticRungeKutta__DynamicObjectP.std::unique_ptr:SRKCoefficients:numberStages::RR"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1ad1607da2e2924ae87d76d4a5e22bac32"></span><span class="sig-name descname"><span class="n"><span class="pre">svIntegratorWeakStochasticRungeKutta</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynIn</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE15SRKCoefficients" title="SRKCoefficients"><span class="n"><span class="pre">SRKCoefficients</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="svIntegratorWeakStochasticRungeKutta::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coefficients</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta36svIntegratorWeakStochasticRungeKuttaEP13DynamicObjectRRNSt10unique_ptrI15SRKCoefficientsI12numberStagesEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Can be used by subclasses to support passing coefficients that are subclasses of <a class="reference internal" href="#struct_s_r_k_coefficients"><span class="std std-ref">SRKCoefficients</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta18computeDerivativesEdd">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta18computeDerivativesEdd"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta18computeDerivativesEdd"></span><span id="svIntegratorWeakStochasticRungeKutta::computeDerivatives__double.double"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a3e2abc2865358c487829dab26e4ac01e"></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta18computeDerivativesEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the derivatives of every state given a time and current states.</p>
+<p>Internally, this sets the states on the dynamic objects and calls the equationsOfMotion methods. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE"></span><span id="svIntegratorWeakStochasticRungeKutta::computeDiffusions__double.double.std::vector:StateIdToIndexMap:CR"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1ae298a491a3393cd13518aa169a1f1563"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDiffusions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateIdToNoiseIndexMaps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the diffusions of every state given a time and current states.</p>
+<p>Internally, this sets the states on the dynamic objects and calls the equationsOfMotionDiffusion methods. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRK17StateIdToIndexMap">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRK17StateIdToIndexMap"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRK17StateIdToIndexMap"></span><span id="svIntegratorWeakStochasticRungeKutta::computeDiffusions__double.double.StateIdToIndexMapCR"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a51526b646a464a80cf39191a9ee337b8"></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDiffusions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateIdToNoiseIndexMap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta17computeDiffusionsEddRK17StateIdToIndexMap" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the diffusions for the states and noise index in <code class="docutils literal notranslate"><span class="pre">stateIdToNoiseIndexMap</span></code> given a time and current states.</p>
+<p>Internally, this sets the states on the dynamic objects and calls the equationsOfMotionDiffusion methods. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t"></span><span id="svIntegratorWeakStochasticRungeKutta::scaledSum__std::array:double.numberStages:CR.std::array:ExtendedStateVector.numberStages:CR.s"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a5056e010bf51555e80cf42be1f2a9e05"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaledSum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="svIntegratorWeakStochasticRungeKutta::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">factors</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="svIntegratorWeakStochasticRungeKutta::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">vectors</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Utility function, computes:</p>
+<p><div class="math notranslate nohighlight">
+\[\text{result} = \sum_{i=0}^{\text{length}-1} \text{factors}[i] \cdot \text{vectors}[i]
+\]</div>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36svIntegratorWeakStochasticRungeKutta12coefficientsE">
+<span id="_CPPv3N36svIntegratorWeakStochasticRungeKutta12coefficientsE"></span><span id="_CPPv2N36svIntegratorWeakStochasticRungeKutta12coefficientsE"></span><span id="svIntegratorWeakStochasticRungeKutta::coefficients__std::unique_ptr:SRKCoefficients:numberStages::C"></span><span class="target" id="classsv_integrator_weak_stochastic_runge_kutta_1a580c29d58f44a1996a849561dcdc8be9"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE15SRKCoefficients" title="SRKCoefficients"><span class="n"><span class="pre">SRKCoefficients</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE36svIntegratorWeakStochasticRungeKutta" title="svIntegratorWeakStochasticRungeKutta::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">coefficients</span></span></span><a class="headerlink" href="#_CPPv4N36svIntegratorWeakStochasticRungeKutta12coefficientsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Coefficients to be used in the method </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="svIntegratorRungeKutta.html" class="btn btn-neutral float-left" title="Module: svIntegratorRungeKutta" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTestDynamics/index.html" class="btn btn-neutral float-right" title="_UnitTestDynamics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

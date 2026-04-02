@@ -1,0 +1,633 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_linkBudget &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="simpleAntenna" href="../../simpleAntenna/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">communication</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">linkBudget</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../simpleAntenna/index.html">simpleAntenna</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">communication</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">linkBudget</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_linkBudget</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/communication/linkBudget/_UnitTest/test_linkBudget.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-linkbudget">
+<span id="id1"></span><h1>test_linkBudget<a class="headerlink" href="#test-linkbudget" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_linkBudget"><strong>Test Description</strong></p>
+<p>This unit test validates the <code class="docutils literal notranslate"><span class="pre">linkBudget</span></code> module which computes end-to-end
+radio link budget between two antennas. The test writes directly to
+<code class="docutils literal notranslate"><span class="pre">AntennaLogMsgPayload</span></code> messages to isolate the linkBudget module from
+simpleAntenna dependencies.</p>
+<p><strong>Test Coverage</strong></p>
+<ul class="simple">
+<li><p>Free Space Path Loss (FSPL) calculations</p></li>
+<li><p>Carrier-to-Noise Ratio (CNR) calculations</p></li>
+<li><p>Pointing loss calculations</p></li>
+<li><p>Frequency offset loss calculations</p></li>
+<li><p>Atmospheric attenuation (space-to-ground links)</p></li>
+<li><p>Space-to-space and space-to-ground link configurations</p></li>
+<li><p>Antenna state handling (Tx/Rx/RxTx combinations)</p></li>
+<li><p>Edge cases (no bandwidth overlap, grazing angles, extreme distances, etc.)</p></li>
+<li><p>Robustness tests (invalid inputs, boundary conditions)</p></li>
+</ul>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.apply_pointing_error">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">apply_pointing_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_az_rad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_el_rad</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#apply_pointing_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.apply_pointing_error" title="Link to this definition"></a></dt>
+<dd><p>Apply pointing error to a base orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_sigma</strong> – Base MRP orientation [s1, s2, s3]</p></li>
+<li><p><strong>error_az_rad</strong> – Azimuth error [rad] (rotation about Y in antenna frame)</p></li>
+<li><p><strong>error_el_rad</strong> – Elevation error [rad] (rotation about X in antenna frame)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>New MRP with pointing error applied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_antenna_derived_params">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_antenna_derived_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directivity_dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_Tx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_Ambient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_sky</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_antenna_derived_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_antenna_derived_params" title="Link to this definition"></a></dt>
+<dd><p>Compute derived antenna parameters for test setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directivity_dB</strong> – Antenna directivity [dB]</p></li>
+<li><p><strong>k</strong> – HPBW ratio (az/el)</p></li>
+<li><p><strong>P_Tx</strong> – Transmit power [W]</p></li>
+<li><p><strong>eta_r</strong> – Radiation efficiency [-]</p></li>
+<li><p><strong>T_E</strong> – Equivalent noise temperature [K]</p></li>
+<li><p><strong>T_Ambient</strong> – Ambient temperature [K]</p></li>
+<li><p><strong>T_sky</strong> – Sky temperature [K]</p></li>
+<li><p><strong>bandwidth</strong> – Bandwidth [Hz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict with HPBW_az, HPBW_el, P_eirp_dB, G_rx_dB, P_N, T_S</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_bandwidth_overlap">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_bandwidth_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_bandwidth_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_bandwidth_overlap" title="Link to this definition"></a></dt>
+<dd><p>Compute the overlapping bandwidth between two antennas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f1</strong> – Center frequency of antenna 1 [Hz]</p></li>
+<li><p><strong>B1</strong> – Bandwidth of antenna 1 [Hz]</p></li>
+<li><p><strong>f2</strong> – Center frequency of antenna 2 [Hz]</p></li>
+<li><p><strong>B2</strong> – Bandwidth of antenna 2 [Hz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Overlapping bandwidth [Hz] (can be negative if no overlap)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_cnr">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_cnr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_eirp_dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G_rx_dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_fspl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_atm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_N_watts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_cnr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_cnr" title="Link to this definition"></a></dt>
+<dd><p>Compute Carrier-to-Noise Ratio.</p>
+<p>P_Rx [dBW] = P_eirp [dBW] + G_rx [dB] - L_fspl [dB] - L_atm [dB] - L_point [dB] - L_freq [dB]
+CNR = P_Rx / P_N  (linear)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P_eirp_dB</strong> – EIRP of transmitter [dBW]</p></li>
+<li><p><strong>G_rx_dB</strong> – Receiver antenna gain [dB]</p></li>
+<li><p><strong>L_fspl</strong> – Free space path loss [dB]</p></li>
+<li><p><strong>L_atm</strong> – Atmospheric loss [dB]</p></li>
+<li><p><strong>L_point</strong> – Pointing loss [dB]</p></li>
+<li><p><strong>L_freq</strong> – Frequency offset loss [dB]</p></li>
+<li><p><strong>P_N_watts</strong> – Noise power [W] (linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CNR (linear, dimensionless)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_expected_overlap">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_expected_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_expected_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_expected_overlap" title="Link to this definition"></a></dt>
+<dd><p>Computes overlap bandwidth and overlap center frequency.
+Overlap region is intersection of [f - B/2, f + B/2] for each.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_frequency_loss">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_frequency_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_overlap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_min</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_frequency_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_frequency_loss" title="Link to this definition"></a></dt>
+<dd><p>Compute frequency offset loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>B_overlap</strong> – Overlapping bandwidth [Hz]</p></li>
+<li><p><strong>B_min</strong> – Smaller of the two bandwidths [Hz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Frequency loss [dB] (positive or zero)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_fspl">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_fspl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_Hz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_fspl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_fspl" title="Link to this definition"></a></dt>
+<dd><p>Compute Free Space Path Loss in dB.</p>
+<p>FSPL = 20*log10(4*pi*d/lambda) = 20*log10(4*pi*d*f/c)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_m</strong> – Distance between antennas [m]</p></li>
+<li><p><strong>frequency_Hz</strong> – Operating frequency [Hz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>FSPL in [dB]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_pointing_loss">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_pointing_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta_az</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_el</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HPBW_az</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HPBW_el</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_pointing_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_pointing_loss" title="Link to this definition"></a></dt>
+<dd><p>Compute pointing loss for Gaussian beam pattern.</p>
+<p>L_point = 10*log10(e)*4*ln(2) * (theta_az^2/HPBW_az^2 + theta_el^2/HPBW_el^2)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta_az</strong> – Azimuth pointing error [rad]</p></li>
+<li><p><strong>theta_el</strong> – Elevation pointing error [rad]</p></li>
+<li><p><strong>HPBW_az</strong> – Half-power beamwidth in azimuth [rad]</p></li>
+<li><p><strong>HPBW_el</strong> – Half-power beamwidth in elevation [rad]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointing loss [dB]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_pointing_sigma">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_pointing_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_pointing_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_pointing_sigma" title="Link to this definition"></a></dt>
+<dd><p>Compute MRP (sigma) to point antenna boresight (+Z) from from_pos toward to_pos.</p>
+<p>The antenna frame convention is that +Z is the boresight direction.
+This function computes the MRP representing the rotation needed to
+align the antenna +Z axis with the direction from from_pos to to_pos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_pos</strong> – Antenna position [m] (list or array of 3 elements)</p></li>
+<li><p><strong>to_pos</strong> – Target position [m] (list or array of 3 elements)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MRP sigma as list [s1, s2, s3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.compute_spacecraft_position_from_central_angle">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">compute_spacecraft_position_from_central_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Re_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">central_angle_rad</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#compute_spacecraft_position_from_central_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.compute_spacecraft_position_from_central_angle" title="Link to this definition"></a></dt>
+<dd><p>Returns ECI-like position for spacecraft given a ground station at [Re,0,0],
+with spacecraft on a circle of radius (Re+alt) rotated by central_angle about +Z.</p>
+<p>Ground is fixed at +X axis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.create_antenna_msg_payload">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">create_antenna_msg_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Antenna'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2200000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directivity_dB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_Tx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_Ambient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_sky</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_AP_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nHat_LP_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_error_az_deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_error_el_deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#create_antenna_msg_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.create_antenna_msg_payload" title="Link to this definition"></a></dt>
+<dd><p>Create an AntennaLogMsgPayload with computed derived values.</p>
+<p>This allows tests to specify high-level parameters and automatically
+computes HPBW, P_eirp, P_N, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Antenna name string</p></li>
+<li><p><strong>environment</strong> – ENV_SPACE (0) or ENV_EARTH (1)</p></li>
+<li><p><strong>state</strong> – ANTENNA_OFF/RX/TX/RXTX</p></li>
+<li><p><strong>frequency</strong> – Operating frequency [Hz]</p></li>
+<li><p><strong>bandwidth</strong> – Bandwidth [Hz]</p></li>
+<li><p><strong>directivity_dB</strong> – Antenna directivity [dB]</p></li>
+<li><p><strong>k</strong> – HPBW ratio (az/el), 1.0 for symmetric beam</p></li>
+<li><p><strong>P_Tx</strong> – Transmit power [W]</p></li>
+<li><p><strong>eta_r</strong> – Radiation efficiency [0-1]</p></li>
+<li><p><strong>T_E</strong> – Equivalent noise temperature [K]</p></li>
+<li><p><strong>T_Ambient</strong> – Ambient temperature [K]</p></li>
+<li><p><strong>T_sky</strong> – Sky noise temperature [K]</p></li>
+<li><p><strong>position</strong> – Antenna position in inertial frame [m]</p></li>
+<li><p><strong>sigma</strong> – MRP orientation (overrides target_position if both given)</p></li>
+<li><p><strong>velocity</strong> – Antenna velocity [m/s]</p></li>
+<li><p><strong>r_AP_N</strong> – Position relative to planet (for ground stations) [m]</p></li>
+<li><p><strong>nHat_LP_N</strong> – Surface normal vector (for ground stations)</p></li>
+<li><p><strong>target_position</strong> – If provided, compute sigma to point toward this position</p></li>
+<li><p><strong>pointing_error_az_deg</strong> – Azimuth pointing error [degrees]</p></li>
+<li><p><strong>pointing_error_el_deg</strong> – Elevation pointing error [degrees]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(payload, params) tuple where payload is AntennaLogMsgPayload
+and params is dict of derived parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.linkBudgetTestFunction">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">linkBudgetTestFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ant1_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ant2_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_km</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_offset_Hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_error_deg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#linkBudgetTestFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.linkBudgetTestFunction" title="Link to this definition"></a></dt>
+<dd><p>Main test function for parameterized link budget tests.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.run_simulation">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">run_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unitTestSim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#run_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.run_simulation" title="Link to this definition"></a></dt>
+<dd><p>Initialize and run simulation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.setup_link_budget_sim">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">setup_link_budget_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ant1_payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ant2_payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_atm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#setup_link_budget_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.setup_link_budget_sim" title="Link to this definition"></a></dt>
+<dd><p>Set up a simulation with linkBudget module and two antenna messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ant1_payload</strong> – AntennaLogMsgPayload for antenna 1</p></li>
+<li><p><strong>ant2_payload</strong> – AntennaLogMsgPayload for antenna 2</p></li>
+<li><p><strong>enable_atm</strong> – Enable atmospheric attenuation calculation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(unitTestSim, linkBudgetModule, linkDataLog)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ant1_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ant2_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_km</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_offset_Hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_error_deg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget" title="Link to this definition"></a></dt>
+<dd><p><strong>Validation Test Description</strong></p>
+<p>This unit test validates the link budget calculations between two antennas
+under various configurations including different antenna states, distances,
+pointing errors, and link types (space-to-space, space-to-ground).</p>
+<p><strong>Test Parameters</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ant1_state</strong> – State of antenna 1 (OFF/RX/TX/RXTX)</p></li>
+<li><p><strong>ant2_state</strong> – State of antenna 2 (OFF/RX/TX/RXTX)</p></li>
+<li><p><strong>link_type</strong> – Type of link (“space_space” or “space_ground”)</p></li>
+<li><p><strong>distance_km</strong> – Distance between antennas [km]</p></li>
+<li><p><strong>freq_offset_Hz</strong> – Frequency offset between antennas [Hz]</p></li>
+<li><p><strong>pointing_error_deg</strong> – Pointing error for antenna 1 [degrees]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_antenna_state_transitions">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_antenna_state_transitions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_antenna_state_transitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_antenna_state_transitions" title="Link to this definition"></a></dt>
+<dd><p>Test that CNR values correctly reflect antenna state combinations.</p>
+<p>NOTE: CNR is set to 0.0 (not -1.0) when antenna is not in receive mode
+or when link is invalid, based on the linkValid flag behavior in the code.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_atmospheric_attenuation_elevation_dependence">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_atmospheric_attenuation_elevation_dependence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_atmospheric_attenuation_elevation_dependence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_atmospheric_attenuation_elevation_dependence" title="Link to this definition"></a></dt>
+<dd><p>Test that atmospheric attenuation increases as elevation decreases:
+~90 deg (overhead) -&gt; moderate elevation -&gt; low elevation.
+Also checks that values remain finite and non-negative.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_atmospheric_attenuation_frequency_dependence">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_atmospheric_attenuation_frequency_dependence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_atmospheric_attenuation_frequency_dependence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_atmospheric_attenuation_frequency_dependence" title="Link to this definition"></a></dt>
+<dd><p>Test that atmospheric attenuation increases with frequency.
+Higher frequencies experience more atmospheric absorption.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_atmospheric_attenuation_low_elevation_stability">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_atmospheric_attenuation_low_elevation_stability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_atmospheric_attenuation_low_elevation_stability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_atmospheric_attenuation_low_elevation_stability" title="Link to this definition"></a></dt>
+<dd><p>Low-elevation stability test to ensure attenuation does not blow up or become NaN/inf.
+Uses a central angle that produces ~2 deg elevation region.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_atmospheric_attenuation_space_ground">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_atmospheric_attenuation_space_ground</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_atmospheric_attenuation_space_ground"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_atmospheric_attenuation_space_ground" title="Link to this definition"></a></dt>
+<dd><p>Test that atmospheric attenuation is computed for space-to-ground links
+when enabled.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_atmospheric_attenuation_space_space">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_atmospheric_attenuation_space_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_atmospheric_attenuation_space_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_atmospheric_attenuation_space_space" title="Link to this definition"></a></dt>
+<dd><p>Test that atmospheric attenuation is NOT computed for space-to-space links
+even when the flag is enabled.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_cnr_bookkeeping_with_atmos_pointing_and_freq_loss">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_cnr_bookkeeping_with_atmos_pointing_and_freq_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_cnr_bookkeeping_with_atmos_pointing_and_freq_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_cnr_bookkeeping_with_atmos_pointing_and_freq_loss" title="Link to this definition"></a></dt>
+<dd><p>Checks that CNR bookkeeping includes all losses (FSPL, pointing, frequency, atmospheric).
+Uses module-computed losses, recomputes CNR from TX/RX derived parameters, and compares.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_cnr_calculation">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_cnr_calculation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_cnr_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_cnr_calculation" title="Link to this definition"></a></dt>
+<dd><p>Validate CNR calculation against analytical formula.</p>
+<p>Sets up a simple link with known parameters and verifies
+the CNR output matches the expected value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_cnr_with_frequency_loss_partial_overlap">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_cnr_with_frequency_loss_partial_overlap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_cnr_with_frequency_loss_partial_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_cnr_with_frequency_loss_partial_overlap" title="Link to this definition"></a></dt>
+<dd><p>Numeric CNR truth check including frequency overlap loss.
+Uses partial overlap and computes FSPL at overlap-center frequency.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_cnr_with_pointing_loss">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_cnr_with_pointing_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_cnr_with_pointing_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_cnr_with_pointing_loss" title="Link to this definition"></a></dt>
+<dd><p>Numeric CNR truth check including pointing loss.
+Uses space-space link with a controlled pointing error.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_combined_pointing_errors">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_combined_pointing_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_combined_pointing_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_combined_pointing_errors" title="Link to this definition"></a></dt>
+<dd><p>Test pointing loss with both azimuth and elevation errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_different_bandwidths">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_different_bandwidths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_different_bandwidths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_different_bandwidths" title="Link to this definition"></a></dt>
+<dd><p>Test frequency overlap calculation with different bandwidths on each antenna.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_distance_calculation">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_distance_calculation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_distance_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_distance_calculation" title="Link to this definition"></a></dt>
+<dd><p>Validate distance calculation between antenna positions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_fspl_analytical">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_fspl_analytical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_fspl_analytical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_fspl_analytical" title="Link to this definition"></a></dt>
+<dd><p>Validate FSPL calculation against analytical formula.</p>
+<p>Tests multiple distance/frequency combinations to ensure
+FSPL = 20*log10(4*pi*d/lambda) is computed correctly.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_fspl_vs_distance">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_fspl_vs_distance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_fspl_vs_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_fspl_vs_distance" title="Link to this definition"></a></dt>
+<dd><p>Verify FSPL increases by 6 dB when distance doubles (inverse square law).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_fspl_vs_frequency">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_fspl_vs_frequency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_fspl_vs_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_fspl_vs_frequency" title="Link to this definition"></a></dt>
+<dd><p>Verify FSPL increases by 6 dB when frequency doubles.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_high_frequency">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_high_frequency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_high_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_high_frequency" title="Link to this definition"></a></dt>
+<dd><p>Test behavior at high frequencies (within ITU-R P.676 valid range: 1-1000 GHz).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_low_frequency">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_low_frequency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_low_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_low_frequency" title="Link to this definition"></a></dt>
+<dd><p>Test behavior at low frequencies (within ITU-R P.676 valid range: 1-1000 GHz).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_no_bandwidth_overlap">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_no_bandwidth_overlap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_no_bandwidth_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_no_bandwidth_overlap" title="Link to this definition"></a></dt>
+<dd><p>Test behavior when antennas have no overlapping bandwidth.
+CNR should be 0 to indicate link failure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_output_message_consistency">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_output_message_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_output_message_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_output_message_consistency" title="Link to this definition"></a></dt>
+<dd><p>Verify that output message fields are consistent between:
+- the recorder log arrays (linkDataLog.*)
+- the most recent output payload read directly
+Also checks distance / overlap bandwidth / overlap-center frequency consistency.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_output_message_structure">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_output_message_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_output_message_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_output_message_structure" title="Link to this definition"></a></dt>
+<dd><p>Verify all expected fields in the output message are populated.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_partial_bandwidth_overlap">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_partial_bandwidth_overlap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_partial_bandwidth_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_partial_bandwidth_overlap" title="Link to this definition"></a></dt>
+<dd><p>Test behavior with partial bandwidth overlap.
+Should see frequency offset loss.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_pointing_loss">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_pointing_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_pointing_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_pointing_loss" title="Link to this definition"></a></dt>
+<dd><p>Validate pointing loss calculation for various off-axis angles.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_symmetric_bidirectional">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_symmetric_bidirectional</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_symmetric_bidirectional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_symmetric_bidirectional" title="Link to this definition"></a></dt>
+<dd><p>Test that a bidirectional link (RXTX &lt;-&gt; RXTX) produces
+symmetric CNR values for identical antennas.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_very_long_distance">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_very_long_distance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_very_long_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_very_long_distance" title="Link to this definition"></a></dt>
+<dd><p>Test behavior with very long distances (deep space communication).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_linkBudget.test_linkBudget_very_short_distance">
+<span class="sig-prename descclassname"><span class="pre">test_linkBudget.</span></span><span class="sig-name descname"><span class="pre">test_linkBudget_very_short_distance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_linkBudget.html#test_linkBudget_very_short_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_linkBudget.test_linkBudget_very_short_distance" title="Link to this definition"></a></dt>
+<dd><p>Test behavior with very short distances (near-field concerns).
+Module should still compute valid FSPL.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../simpleAntenna/index.html" class="btn btn-neutral float-right" title="simpleAntenna" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

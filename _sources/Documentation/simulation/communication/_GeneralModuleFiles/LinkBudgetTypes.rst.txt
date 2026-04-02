@@ -1,0 +1,8 @@
+.. _LinkBudgetTypes:
+
+Module: LinkBudgetTypes
+=======================
+
+.. autodoxygenfile:: LinkBudgetTypes.h
+   :project: _GeneralModuleFiles3
+

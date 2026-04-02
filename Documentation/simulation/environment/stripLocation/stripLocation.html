@@ -1,0 +1,755 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: stripLocation &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="stripLocation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">stripLocation</a></li>
+      <li class="breadcrumb-item active">Module: stripLocation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/stripLocation/stripLocation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-striplocation">
+<span id="striplocation"></span><h1>Module: stripLocation<a class="headerlink" href="#module-striplocation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module extends the <a class="reference internal" href="../groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">Module: groundLocation</span></a> concept to model a <strong>strip imaging target</strong> on a
+celestial body’s surface.  Instead of a single fixed point, the user defines a ground strip by
+specifying a <strong>start</strong> and an <strong>end</strong> location (both body-fixed).  The module uses spherical
+linear interpolation (SLERP) to sweep a moving target point <span class="math notranslate nohighlight">\(L\)</span> along the great-circle arc
+connecting these two locations at a configurable constant acquisition speed. A <strong>pre-imaging time</strong>
+parameter allows the strip’s effective start point to be extrapolated backwards along the great-circle
+arc so that the target point begins moving before the nominal start location, giving the spacecraft
+time to slew.</p>
+<p>The inertial position and velocity of the current target point <span class="math notranslate nohighlight">\(L\)</span> are evaluated and output as
+a <a class="reference internal" href="../../../architecture/msgPayloadDefC/StripStateMsgPayload.html#stripstatemsgpayload"><span class="std std-ref">StripStateMsgPayload</span></a> message.</p>
+<p>One or more spacecraft states can be added to compute each spacecraft’s position relative
+to the current target point <span class="math notranslate nohighlight">\(L\)</span>.  The associated <a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#accessmsgpayload"><span class="std std-ref">AccessMsgPayload</span></a> output message contains the
+relative position vector in spherical coordinates (range, azimuth, elevation) and in
+South-East-Zenith (SEZ) Cartesian coordinates, as well as the corresponding coordinate rates.
+An integer flag indicates whether the spacecraft has access (i.e. is above the minimum
+elevation angle of the <span class="math notranslate nohighlight">\(L\)</span> SEZ frame, within range, and the pre-imaging time has elapsed).</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The body is assumed to be a <strong>sphere</strong> with a constant radius (<code class="docutils literal notranslate"><span class="pre">planetRadius</span></code>).</p></li>
+<li><p>The strip’s central line is a great-circle arc on that sphere; local terrain is not considered.</p></li>
+<li><p>The target point moves along the arc at a <strong>constant acquisition speed</strong> (<code class="docutils literal notranslate"><span class="pre">acquisitionSpeed</span></code>).</p></li>
+<li><p>Elevation constraints are computed assuming a conical field of view around the surface normal
+at the current target location.</p></li>
+<li><p>The pre-imaging time feature uses the same SLERP extrapolation, extending the arc backwards.</p></li>
+</ul>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>planetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) planet state input message. Default is a zero state for the planet.</p></td>
+</tr>
+<tr class="row-odd"><td><p>scStateInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of sc state input messages.  These are set through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>currentStripStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/StripStateMsgPayload.html#stripstatemsgpayload"><span class="std std-ref">StripStateMsgPayload</span></a></p></td>
+<td><p>strip location output message providing the current target point inertial position and velocity</p></td>
+</tr>
+<tr class="row-odd"><td><p>accessOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#accessmsgpayload"><span class="std std-ref">AccessMsgPayload</span></a></p></td>
+<td><p>vector of access output messages (one per spacecraft)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">stripLocation</span></code> module handles the following behavior:</p>
+<ol class="arabic simple">
+<li><p>Reads in the planet’s states using the <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> input message.</p></li>
+<li><p>Converts the start and end latitude/longitude/altitude coordinates to
+planet-centered, planet-fixed (PCPF) coordinates.</p></li>
+<li><dl class="simple">
+<dt>(Optionally) Computes an updated start point by extrapolating backwards along the</dt><dd><p>great-circle arc using the <code class="docutils literal notranslate"><span class="pre">preImagingTime</span></code> parameter.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Propagates the current target point <span class="math notranslate nohighlight">\(L\)</span> along the great-circle arc using SLERP,</dt><dd><p>at the constant <code class="docutils literal notranslate"><span class="pre">acquisitionSpeed</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p>Computes the inertial position and velocity of <span class="math notranslate nohighlight">\(L\)</span>, accounting for planet rotation.</p></li>
+<li><p>Converts each spacecraft’s relative position to the SEZ frame and evaluates range,
+azimuth, elevation, and their rates.</p></li>
+<li><p>Determines spacecraft access (visibility) considering minimum elevation, maximum range,
+and whether the pre-imaging time has elapsed.</p></li>
+<li><p>Supports multiple spacecraft given one <code class="docutils literal notranslate"><span class="pre">stripLocation</span></code> instance.</p></li>
+</ol>
+<section id="target-propagation-along-the-strip">
+<h3>Target Propagation along the Strip<a class="headerlink" href="#target-propagation-along-the-strip" title="Link to this heading"></a></h3>
+<p>Given a start point <span class="math notranslate nohighlight">\(\mathbf{p}_s\)</span> and end point <span class="math notranslate nohighlight">\(\mathbf{p}_e\)</span> on the sphere of
+radius <span class="math notranslate nohighlight">\(R\)</span>, both expressed in PCPF coordinates, the central angle is:</p>
+<div class="math notranslate nohighlight" id="equation-eq-theta-1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-theta-1" title="Link to this equation"></a></span>\[\theta = \arccos\!\left(\frac{\mathbf{p}_s \cdot \mathbf{p}_e}{R^2}\right)\]</div>
+<p>The arc length of the central line is:</p>
+<div class="math notranslate nohighlight" id="equation-eq-arc-length-2">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-arc-length-2" title="Link to this equation"></a></span>\[\ell = \theta \, R\]</div>
+<p>A normalised time parameter <span class="math notranslate nohighlight">\(\tau \in [0,1]\)</span> is computed from the elapsed imaging time
+<span class="math notranslate nohighlight">\(\Delta t\)</span> and the acquisition speed <span class="math notranslate nohighlight">\(v_a\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-tau-3">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-tau-3" title="Link to this equation"></a></span>\[\tau = \frac{\Delta t}{\ell / v_a}\]</div>
+<p>The target position is obtained via spherical linear interpolation (SLERP):</p>
+<div class="math notranslate nohighlight" id="equation-eq-slerp-4">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-slerp-4" title="Link to this equation"></a></span>\[\mathbf{p}(\tau) = \frac{\sin\!\bigl((1-\tau)\,\theta\bigr)}{\sin\theta}\,\mathbf{p}_s
+      + \frac{\sin(\tau\,\theta)}{\sin\theta}\,\mathbf{p}_e\]</div>
+<p>and projected back onto the sphere:</p>
+<div class="math notranslate nohighlight" id="equation-eq-project-5">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-project-5" title="Link to this equation"></a></span>\[\mathbf{r}_{L/P}^P = R \, \frac{\mathbf{p}(\tau)}{\|\mathbf{p}(\tau)\|}\]</div>
+<p>The PCPF velocity of the target is obtained by differentiating the SLERP expression and scaling
+to the acquisition speed.</p>
+</section>
+<section id="determining-spacecraft-to-target-states">
+<h3>Determining Spacecraft-to-Target States<a class="headerlink" href="#determining-spacecraft-to-target-states" title="Link to this heading"></a></h3>
+<p>The position of the spacecraft relative to the current target point in the SEZ frame is
+parameterized by the Cartesian coordinates:</p>
+<div class="math notranslate nohighlight" id="equation-eq-strip-sez-coords-1">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-strip-sez-coords-1" title="Link to this equation"></a></span>\[\mathbf{r}_{B/L} = x\hat{S} + y\hat{E} + z\hat{Z}\]</div>
+<p>The Cartesian coordinates are converted to spherical coordinates centered at the target point,
+giving the range (<span class="math notranslate nohighlight">\(\rho\)</span>), azimuth (<span class="math notranslate nohighlight">\(Az\)</span>), and elevation (<span class="math notranslate nohighlight">\(El\)</span>):</p>
+<div class="math notranslate nohighlight" id="equation-eq-strip-rho-2">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-strip-rho-2" title="Link to this equation"></a></span>\[\rho = \sqrt{x^2 + y^2 + z^2}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-strip-az-3">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-strip-az-3" title="Link to this equation"></a></span>\[Az = \arctan\!\frac{y}{x}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-strip-el-4">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-strip-el-4" title="Link to this equation"></a></span>\[El = \arctan\!\frac{z}{\sqrt{x^2+y^2}}\]</div>
+<p>The spherical coordinate rates are computed by differentiating the range, azimuth, and elevation
+with respect to the rotating SEZ frame:</p>
+<div class="math notranslate nohighlight" id="equation-eq-strip-sez-rhodot-5">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-strip-sez-rhodot-5" title="Link to this equation"></a></span>\[\dot{\rho} = \frac{x\dot{x}+y\dot{y}+z\dot{z}}{\sqrt{x^2 + y^2 + z^2}}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-strip-sez-azdot-6">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-strip-sez-azdot-6" title="Link to this equation"></a></span>\[\dot{Az} = \frac{-x\dot{y}+y\dot{x}}{x^2+y^2}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-strip-sez-eldot-7">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-strip-sez-eldot-7" title="Link to this equation"></a></span>\[\dot{El} = \frac{1}{1+\frac{z^2}{x^2+y^2}} \left( \frac{\dot{z}}{\sqrt{x^2+y^2}} - \frac{z(x\dot{x}+y\dot{y})}{(x^2+y^2)^{3/2}} \right)\]</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>To use this module, instantiate the class and provide it with two body-fixed locations (start and
+end of the strip) and the desired acquisition speed.  A planet
+position/attitude message (i.e., an instance of <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a>) can optionally
+be provided; to compute access, at least one <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a> message must be added to
+the module using the <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code> method.  The first spacecraft is index 0, the
+second is 1, and so on.</p>
+<p>A new instance of <code class="docutils literal notranslate"><span class="pre">stripLocation</span></code>, alongside necessary user-supplied parameters, can be created
+by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stripTarget</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stripTarget&quot;</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># defaults to Earth&#39;s radius</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">100e3</span>              <span class="c1"># (optional) maximum slant range for access [m]</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>  <span class="c1"># minimum elevation for access [rad]; defaults to 10 deg</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">smallAngle</span> <span class="o">=</span> <span class="mf">1e-12</span>                <span class="c1"># (optional) threshold used to treat the strip as having zero length [rad]; defaults to 1e-12</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">acquisitionSpeed</span> <span class="o">=</span> <span class="mf">3e-6</span>           <span class="c1"># constant acquisition speed along the strip [m/ns]; defaults to 3 km/s</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">preImagingTime</span> <span class="o">=</span> <span class="mf">6e10</span>          <span class="c1"># (optional) pre-imaging offset time [ns]; defaults to 0</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">40.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">105.0</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>  <span class="c1"># start lat, lon, alt</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">42.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">103.0</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>    <span class="c1"># end lat, lon, alt</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stripTarget</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">planetRadius</span></code> variable is optional and defaults to Earth’s radius.  Strip endpoints are
+specified through the <code class="docutils literal notranslate"><span class="pre">specifyLocationStart()</span></code> and <code class="docutils literal notranslate"><span class="pre">specifyLocationEnd()</span></code> methods, which
+accept geodetic latitude, longitude (both in radians), and altitude (in meters).  Alternatively,
+the PCPF position vectors <code class="docutils literal notranslate"><span class="pre">r_LP_P_Start</span></code> and <code class="docutils literal notranslate"><span class="pre">r_LP_P_End</span></code> can be set directly.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">maximumRange</span></code> variable is optional and defaults to -1, meaning no maximum range is
+considered.  Set it to a positive value to have the <code class="docutils literal notranslate"><span class="pre">hasAccess</span></code> output depend on range.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">smallAngle</span></code> variable is optional and defaults to <span class="math notranslate nohighlight">\(10^{-12}\)</span> rad.  It is
+used as a numerical tolerance when evaluating near-zero strip central angles.  If set to a
+non-positive value, it is reset to this default at module reset.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">preImagingTime</span></code> variable is optional and defaults to 0.  When set to a
+positive value, the effective start point is extrapolated backwards along the great-circle arc
+so that the target begins moving before the nominal start location, allowing time for
+spacecraft maneuvers before the imaging pass begins.  Access is not granted until the
+pre-imaging phase has elapsed.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">stripLocation</span></code> can be affixed to a specific planet by setting its <code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> input
+message:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stripTarget</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Spacecraft can be added to the model by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">stripTarget</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc2</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+<span class="c1">#   log code</span>
+<span class="n">dataLog0</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">dataLog1</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">dataLog2</span> <span class="o">=</span> <span class="n">stripTarget</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413StripLocation">
+<span id="_CPPv313StripLocation"></span><span id="_CPPv213StripLocation"></span><span id="StripLocation"></span><span class="target" id="class_strip_location"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StripLocation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv413StripLocation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stripLocation.h&gt;</em></div>
+<p>strip location class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13StripLocationEv">
+<span id="_CPPv3N13StripLocation13StripLocationEv"></span><span id="_CPPv2N13StripLocation13StripLocationEv"></span><span id="StripLocation::StripLocation"></span><span class="target" id="class_strip_location_1abcdca1877e8a1b270b5788eb512d7927"></span><span class="sig-name descname"><span class="n"><span class="pre">StripLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation13StripLocationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>create an instance of the Strip Location Class </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocationD0Ev">
+<span id="_CPPv3N13StripLocationD0Ev"></span><span id="_CPPv2N13StripLocationD0Ev"></span><span id="StripLocation::~StripLocation"></span><span class="target" id="class_strip_location_1afd421fc64b46e80a32e18043016fd51d"></span><span class="sig-name descname"><span class="n"><span class="pre">~StripLocation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>empty destructor method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation11UpdateStateE8uint64_t">
+<span id="_CPPv3N13StripLocation11UpdateStateE8uint64_t"></span><span id="_CPPv2N13StripLocation11UpdateStateE8uint64_t"></span><span id="StripLocation::UpdateState__uint64_t"></span><span class="target" id="class_strip_location_1ac8dd7fb940a068c3acffe0efe64c160b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>update module </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation5ResetE8uint64_t">
+<span id="_CPPv3N13StripLocation5ResetE8uint64_t"></span><span id="_CPPv2N13StripLocation5ResetE8uint64_t"></span><span id="StripLocation::Reset__uint64_t"></span><span class="target" id="class_strip_location_1aa5fcb9b000121d27c015f7ef8389782a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation12ReadMessagesEv">
+<span id="_CPPv3N13StripLocation12ReadMessagesEv"></span><span id="_CPPv2N13StripLocation12ReadMessagesEv"></span><span id="StripLocation::ReadMessages"></span><span class="target" id="class_strip_location_1ac4757bac5d3ad96dcaad052252dfde10"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation12ReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>read module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13WriteMessagesE8uint64_t">
+<span id="_CPPv3N13StripLocation13WriteMessagesE8uint64_t"></span><span id="_CPPv2N13StripLocation13WriteMessagesE8uint64_t"></span><span id="StripLocation::WriteMessages__uint64_t"></span><span class="target" id="class_strip_location_1a27f2b2e3f038539defa81fedb7ff801c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation13WriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>write module messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N13StripLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N13StripLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="StripLocation::addSpacecraftToModel__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_strip_location_1a5d3befdfa3e452d229e3d51ca575d890"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>add a scState message name to the vector of names to be subscribed to (also creates a corresponding access message output name) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation20specifyLocationStartEddd">
+<span id="_CPPv3N13StripLocation20specifyLocationStartEddd"></span><span id="_CPPv2N13StripLocation20specifyLocationStartEddd"></span><span id="StripLocation::specifyLocationStart__double.double.double"></span><span class="target" id="class_strip_location_1a3ea666f4b9ac9b58831fa713b840aad5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">specifyLocationStart</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">longitude</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation20specifyLocationStartEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>specify the start location of the strip from planet-centered latitude, longitude, altitude position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – </p></li>
+<li><p><strong>longitude</strong> – </p></li>
+<li><p><strong>alt</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation18specifyLocationEndEddd">
+<span id="_CPPv3N13StripLocation18specifyLocationEndEddd"></span><span id="_CPPv2N13StripLocation18specifyLocationEndEddd"></span><span id="StripLocation::specifyLocationEnd__double.double.double"></span><span class="target" id="class_strip_location_1ae8c4cb6ebc49fd9ed8591c91ba22a024"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">specifyLocationEnd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lat</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">longitude</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation18specifyLocationEndEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>specify the end location of the strip from planet-centered latitude, longitude, altitude position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – </p></li>
+<li><p><strong>longitude</strong> – </p></li>
+<li><p><strong>alt</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation16minimumElevationE">
+<span id="_CPPv3N13StripLocation16minimumElevationE"></span><span id="_CPPv2N13StripLocation16minimumElevationE"></span><span id="StripLocation::minimumElevation__double"></span><span class="target" id="class_strip_location_1a94577a2af714676f4719f4221386251a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minimumElevation</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation16minimumElevationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] minimum elevation above the local horizon ; defaults to 10 degrees equivalent </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation12maximumRangeE">
+<span id="_CPPv3N13StripLocation12maximumRangeE"></span><span id="_CPPv2N13StripLocation12maximumRangeE"></span><span id="StripLocation::maximumRange__double"></span><span class="target" id="class_strip_location_1a4b9ddce0dee87dc73c36882eaca1e0ca"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maximumRange</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation12maximumRangeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] (optional) maximum range ; defaults to -1, which represents no maximum range </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation10smallAngleE">
+<span id="_CPPv3N13StripLocation10smallAngleE"></span><span id="_CPPv2N13StripLocation10smallAngleE"></span><span id="StripLocation::smallAngle__double"></span><span class="target" id="class_strip_location_1a6873fbb2d211d47983080daec4c2958f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">smallAngle</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation10smallAngleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] numerical tolerance when evaluating near-zero strip central angles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation12planetRadiusE">
+<span id="_CPPv3N13StripLocation12planetRadiusE"></span><span id="_CPPv2N13StripLocation12planetRadiusE"></span><span id="StripLocation::planetRadius__double"></span><span class="target" id="class_strip_location_1a0cde696e420d7ad1314a32debee65dd7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetRadius</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation12planetRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] planet radius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation12r_LP_P_StartE">
+<span id="_CPPv3N13StripLocation12r_LP_P_StartE"></span><span id="_CPPv2N13StripLocation12r_LP_P_StartE"></span><span id="StripLocation::r_LP_P_Start__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1ad4975f6e65ef37ff8461b1696a8e0cd7"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P_Start</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation12r_LP_P_StartE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] ground location of the starting point of the strip relative to PCPF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation10r_LP_P_EndE">
+<span id="_CPPv3N13StripLocation10r_LP_P_EndE"></span><span id="_CPPv2N13StripLocation10r_LP_P_EndE"></span><span id="StripLocation::r_LP_P_End__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1afedc3aa0f3984a0ab916167330ca9faa"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P_End</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation10r_LP_P_EndE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] ground location of the ending point of the strip relative to PCPF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6pStartE">
+<span id="_CPPv3N13StripLocation6pStartE"></span><span id="_CPPv2N13StripLocation6pStartE"></span><span id="StripLocation::pStart__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a3fa7c40a5e9f4170d6cf79564501a511"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pStart</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6pStartE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] normalized starting point to make sure it is on the Earth surface for the interpolation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13pStartUpdatedE">
+<span id="_CPPv3N13StripLocation13pStartUpdatedE"></span><span id="_CPPv2N13StripLocation13pStartUpdatedE"></span><span id="StripLocation::pStartUpdated__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1aab854196564ad6ecdf0ec1f99eccfd94"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pStartUpdated</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation13pStartUpdatedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] updated starting point after pre-imaging update </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation4pEndE">
+<span id="_CPPv3N13StripLocation4pEndE"></span><span id="_CPPv2N13StripLocation4pEndE"></span><span id="StripLocation::pEnd__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a167574cde902d1044c3290337c19e546"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pEnd</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation4pEndE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] normalized ending point to make sure it is on the Earth surface for the interpolation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation16acquisitionSpeedE">
+<span id="_CPPv3N13StripLocation16acquisitionSpeedE"></span><span id="_CPPv2N13StripLocation16acquisitionSpeedE"></span><span id="StripLocation::acquisitionSpeed__double"></span><span class="target" id="class_strip_location_1a05c20a07b430a2e503de8f823f86766b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">acquisitionSpeed</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation16acquisitionSpeedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/ns] constant acquisition speed of the camera </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation14preImagingTimeE">
+<span id="_CPPv3N13StripLocation14preImagingTimeE"></span><span id="_CPPv2N13StripLocation14preImagingTimeE"></span><span id="StripLocation::preImagingTime__double"></span><span class="target" id="class_strip_location_1a225a757dc2bbc0031658237809675205"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preImagingTime</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation14preImagingTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] pre-imaging time used to artificially modify pStart </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation11planetInMsgE">
+<span id="_CPPv3N13StripLocation11planetInMsgE"></span><span id="_CPPv2N13StripLocation11planetInMsgE"></span><span id="StripLocation::planetInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_strip_location_1a60a40246ea6043c32f9a95a2c7d62ee4"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation11planetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>planet state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation23currentStripStateOutMsgE">
+<span id="_CPPv3N13StripLocation23currentStripStateOutMsgE"></span><span id="_CPPv2N13StripLocation23currentStripStateOutMsgE"></span><span id="StripLocation::currentStripStateOutMsg__Message:StripStateMsgPayload:"></span><span class="target" id="class_strip_location_1a2f22d663e35a3fb1611f5605b1a3f08b"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/StripStateMsgPayload.html#_CPPv420StripStateMsgPayload" title="StripStateMsgPayload"><span class="n"><span class="pre">StripStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentStripStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation23currentStripStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>current target location and velocity output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13accessOutMsgsE">
+<span id="_CPPv3N13StripLocation13accessOutMsgsE"></span><span id="_CPPv2N13StripLocation13accessOutMsgsE"></span><span id="StripLocation::accessOutMsgs__std::vector:Message:AccessMsgPayload:P:"></span><span class="target" id="class_strip_location_1a29dae15579c3ca40790c79e1a8490888"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation13accessOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of current ground target access message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13scStateInMsgsE">
+<span id="_CPPv3N13StripLocation13scStateInMsgsE"></span><span id="_CPPv2N13StripLocation13scStateInMsgsE"></span><span id="StripLocation::scStateInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_strip_location_1aadb9f26bc1f35777eea24fbb504a27fd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation13scStateInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation20durationStripImagingE">
+<span id="_CPPv3N13StripLocation20durationStripImagingE"></span><span id="_CPPv2N13StripLocation20durationStripImagingE"></span><span id="StripLocation::durationStripImaging__uint64_t"></span><span class="target" id="class_strip_location_1a4c13c8bd25b5acd233a357b9526c5d3b"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">durationStripImaging</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation20durationStripImagingE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] time already spent to image the strip (need to be re-initialized to 0 when imaging consecutive strips) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation22isStartPositionUpdatedE">
+<span id="_CPPv3N13StripLocation22isStartPositionUpdatedE"></span><span id="_CPPv2N13StripLocation22isStartPositionUpdatedE"></span><span id="StripLocation::isStartPositionUpdated__b"></span><span class="target" id="class_strip_location_1a3196c5ef45b2d7a4a218f84e4c802aeb"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isStartPositionUpdated</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation22isStartPositionUpdatedE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag indicating if the updated start position has already been computed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation9bskLoggerE">
+<span id="_CPPv3N13StripLocation9bskLoggerE"></span><span id="_CPPv2N13StripLocation9bskLoggerE"></span><span id="StripLocation::bskLogger__BSKLogger"></span><span class="target" id="class_strip_location_1ad57a70bb73c06c8360b78de780a5ee9d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation22updateInertialPositionEv">
+<span id="_CPPv3N13StripLocation22updateInertialPositionEv"></span><span id="_CPPv2N13StripLocation22updateInertialPositionEv"></span><span id="StripLocation::updateInertialPosition"></span><span class="target" id="class_strip_location_1a4aa89d0d7552984a6b5a83f195d935cf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateInertialPosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation22updateInertialPositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>compute inertial position and velocity of the target point on the strip </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation24updateTargetPositionPCPFE8uint64_t">
+<span id="_CPPv3N13StripLocation24updateTargetPositionPCPFE8uint64_t"></span><span id="_CPPv2N13StripLocation24updateTargetPositionPCPFE8uint64_t"></span><span id="StripLocation::updateTargetPositionPCPF__uint64_t"></span><span class="target" id="class_strip_location_1af0055ccaf888ad0fb50f43d7e9a2d746"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateTargetPositionPCPF</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation24updateTargetPositionPCPFE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>update the target point on the central line in PCPF </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation13computeAccessEv">
+<span id="_CPPv3N13StripLocation13computeAccessEv"></span><span id="_CPPv2N13StripLocation13computeAccessEv"></span><span id="StripLocation::computeAccess"></span><span class="target" id="class_strip_location_1a75408310622af233051fda00304ed469"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAccess</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation13computeAccessEv" title="Link to this definition"></a><br /></dt>
+<dd><p>compute access to the target point on the central line </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation9newpstartEv">
+<span id="_CPPv3N13StripLocation9newpstartEv"></span><span id="_CPPv2N13StripLocation9newpstartEv"></span><span id="StripLocation::newpstart"></span><span class="target" id="class_strip_location_1aa460659e4744cc5aa084048141824c10"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">newpstart</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StripLocation9newpstartEv" title="Link to this definition"></a><br /></dt>
+<dd><p>update the starting point of the strip to take into account the specified pre-imaging time </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StripLocation19PositionCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE">
+<span id="_CPPv3NK13StripLocation19PositionCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE"></span><span id="_CPPv2NK13StripLocation19PositionCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE"></span><span id="StripLocation::PositionCentralLine__double.double.Eigen::Vector3dCR.Eigen::Vector3dCRC"></span><span class="target" id="class_strip_location_1a4cbf427a4b65556afffb704ec0afd6f2"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PositionCentralLine</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">teta</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pStart</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pEnd</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StripLocation19PositionCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>return target point on the central line of the strip relative to PCPF </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StripLocation19VelocityCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE">
+<span id="_CPPv3NK13StripLocation19VelocityCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE"></span><span id="_CPPv2NK13StripLocation19VelocityCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE"></span><span id="StripLocation::VelocityCentralLine__double.double.Eigen::Vector3dCR.Eigen::Vector3dCRC"></span><span class="target" id="class_strip_location_1a054d435e6b127f2f3e5fd7a6057bb3f4"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VelocityCentralLine</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">teta</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pStart</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pEnd</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StripLocation19VelocityCentralLineEddRKN5Eigen8Vector3dERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>return the tangent velocity vector to the central line path of the target point relative to PCPF </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation23currentStripStateBufferE">
+<span id="_CPPv3N13StripLocation23currentStripStateBufferE"></span><span id="_CPPv2N13StripLocation23currentStripStateBufferE"></span><span id="StripLocation::currentStripStateBuffer__StripStateMsgPayload"></span><span class="target" id="class_strip_location_1aadb0f76cb8e6642a0817797d0d53a176"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/StripStateMsgPayload.html#_CPPv420StripStateMsgPayload" title="StripStateMsgPayload"><span class="n"><span class="pre">StripStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentStripStateBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation23currentStripStateBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of target location and velocity output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation11planetStateE">
+<span id="_CPPv3N13StripLocation11planetStateE"></span><span id="_CPPv2N13StripLocation11planetStateE"></span><span id="StripLocation::planetState__SpicePlanetStateMsgPayload"></span><span class="target" id="class_strip_location_1a6575cd9564a7246f8d491dac26d32912"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetState</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation11planetStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of planet data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation15accessMsgBufferE">
+<span id="_CPPv3N13StripLocation15accessMsgBufferE"></span><span id="_CPPv2N13StripLocation15accessMsgBufferE"></span><span id="StripLocation::accessMsgBuffer__std::vector:AccessMsgPayload:"></span><span class="target" id="class_strip_location_1a56c51864875ec3dbbad3362bd369a523"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccessMsgPayload.html#_CPPv416AccessMsgPayload" title="AccessMsgPayload"><span class="n"><span class="pre">AccessMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accessMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation15accessMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of access output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation14scStatesBufferE">
+<span id="_CPPv3N13StripLocation14scStatesBufferE"></span><span id="_CPPv2N13StripLocation14scStatesBufferE"></span><span id="StripLocation::scStatesBuffer__std::vector:SCStatesMsgPayload:"></span><span class="target" id="class_strip_location_1aa1100637903cd9868cc20ec84b69e6ae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStatesBuffer</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation14scStatesBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of spacecraft states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation9r_North_NE">
+<span id="_CPPv3N13StripLocation9r_North_NE"></span><span id="_CPPv2N13StripLocation9r_North_NE"></span><span id="StripLocation::r_North_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a815671dfdc490c17833a65a21f14fbe8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_North_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation9r_North_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>inertial 3rd axis, defined as “North” </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6r_LP_PE">
+<span id="_CPPv3N13StripLocation6r_LP_PE"></span><span id="_CPPv2N13StripLocation6r_LP_PE"></span><span id="StripLocation::r_LP_P__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a3d5fdb10a098ef2d1aa87e18b001ac69"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_P</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6r_LP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] ground location of the current target point on the central line of the strip relative to PCPF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6r_LP_NE">
+<span id="_CPPv3N13StripLocation6r_LP_NE"></span><span id="_CPPv2N13StripLocation6r_LP_NE"></span><span id="StripLocation::r_LP_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a4c8eab57567c60ef32489a416a9064c0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LP_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6r_LP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] current target position vector relative to planet origin vector in inertial coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6r_LN_NE">
+<span id="_CPPv3N13StripLocation6r_LN_NE"></span><span id="_CPPv2N13StripLocation6r_LN_NE"></span><span id="StripLocation::r_LN_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1ad7d6ffae02b27dac49218a5ebf18d407"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_LN_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6r_LN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] current target position vector relative to inertial frame origin in inertial coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6r_PN_NE">
+<span id="_CPPv3N13StripLocation6r_PN_NE"></span><span id="_CPPv2N13StripLocation6r_PN_NE"></span><span id="StripLocation::r_PN_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a673c864ad51f46b1242c879f6e756743"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] planet position vector relative to inertial frame origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6v_LP_PE">
+<span id="_CPPv3N13StripLocation6v_LP_PE"></span><span id="_CPPv2N13StripLocation6v_LP_PE"></span><span id="StripLocation::v_LP_P__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a91c98263a73d71dc35b0311cce143f70"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_LP_P</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6v_LP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] velocity of the current target point on the central line of the strip relative to PCPF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6v_LP_NE">
+<span id="_CPPv3N13StripLocation6v_LP_NE"></span><span id="_CPPv2N13StripLocation6v_LP_NE"></span><span id="StripLocation::v_LP_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a78f9c6d16e356bdd52a6bb6aeac916c4"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_LP_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6v_LP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] velocity vector of the current target point relative to the planet in the inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6v_LN_NE">
+<span id="_CPPv3N13StripLocation6v_LN_NE"></span><span id="_CPPv2N13StripLocation6v_LN_NE"></span><span id="StripLocation::v_LN_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1ab0d3042a60daf8e92248cca05aacef5b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_LN_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6v_LN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] velocity vector of the current target point relative to the inertial origin in the inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6dcm_LPE">
+<span id="_CPPv3N13StripLocation6dcm_LPE"></span><span id="_CPPv2N13StripLocation6dcm_LPE"></span><span id="StripLocation::dcm_LP__Eigen::Matrix3d"></span><span class="target" id="class_strip_location_1a1572dce20e2db0e4763e8de713886ce9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_LP</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6dcm_LPE" title="Link to this definition"></a><br /></dt>
+<dd><p>rotation matrix from planet-centered, planet-fixed frame P to site-local topographic (SEZ) frame L coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation6dcm_PNE">
+<span id="_CPPv3N13StripLocation6dcm_PNE"></span><span id="_CPPv2N13StripLocation6dcm_PNE"></span><span id="StripLocation::dcm_PN__Eigen::Matrix3d"></span><span class="target" id="class_strip_location_1a5ad36f9bca422c1be5335208a63196f5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation6dcm_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>rotation matrix from inertial frame N to planet-centered to planet-fixed frame P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation10dcm_PN_dotE">
+<span id="_CPPv3N13StripLocation10dcm_PN_dotE"></span><span id="_CPPv2N13StripLocation10dcm_PN_dotE"></span><span id="StripLocation::dcm_PN_dot__Eigen::Matrix3d"></span><span class="target" id="class_strip_location_1a929085b2c861e71caeb263dd25822181"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN_dot</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation10dcm_PN_dotE" title="Link to this definition"></a><br /></dt>
+<dd><p>rotation matrix derivative from inertial frame N to planet-centered to planet-fixed frame P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation4w_PNE">
+<span id="_CPPv3N13StripLocation4w_PNE"></span><span id="_CPPv2N13StripLocation4w_PNE"></span><span id="StripLocation::w_PN__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1a9ba902ae9ba17a4e21151fce32e92412"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w_PN</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation4w_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity of planet-fixed frame P relative to inertial frame N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation9rhat_LP_NE">
+<span id="_CPPv3N13StripLocation9rhat_LP_NE"></span><span id="_CPPv2N13StripLocation9rhat_LP_NE"></span><span id="StripLocation::rhat_LP_N__Eigen::Vector3d"></span><span class="target" id="class_strip_location_1aea1d3422883b6a42cf51921ef66d10f0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhat_LP_N</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation9rhat_LP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>surface normal vector from the target location in inertial coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation5thetaE">
+<span id="_CPPv3N13StripLocation5thetaE"></span><span id="_CPPv2N13StripLocation5thetaE"></span><span id="StripLocation::theta__double"></span><span class="target" id="class_strip_location_1a154e5cc3fa67de6b9761b94223e623ce"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] angle between pStart and pEnd from the center of Earth (the Earth is assumed perfectly spherical) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation12thetaUpdatedE">
+<span id="_CPPv3N13StripLocation12thetaUpdatedE"></span><span id="_CPPv2N13StripLocation12thetaUpdatedE"></span><span id="StripLocation::thetaUpdated__double"></span><span class="target" id="class_strip_location_1acbbf288f2d67b323b0848cc34d109d17"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaUpdated</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation12thetaUpdatedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] updated angle between pStartUpdated and pEnd used in target propagation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation17lengthCentralLineE">
+<span id="_CPPv3N13StripLocation17lengthCentralLineE"></span><span id="_CPPv2N13StripLocation17lengthCentralLineE"></span><span id="StripLocation::lengthCentralLine__double"></span><span class="target" id="class_strip_location_1a54e9ab51ab77f0feddc6422d0937c27a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lengthCentralLine</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation17lengthCentralLineE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] length of the central line </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation24lengthCentralLineUpdatedE">
+<span id="_CPPv3N13StripLocation24lengthCentralLineUpdatedE"></span><span id="_CPPv2N13StripLocation24lengthCentralLineUpdatedE"></span><span id="StripLocation::lengthCentralLineUpdated__double"></span><span class="target" id="class_strip_location_1aebb03ef8900dec0f043a4849d65c7409"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lengthCentralLineUpdated</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation24lengthCentralLineUpdatedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] updated length of the central line taking into account the pre-imaging time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StripLocation11OldSimNanosE">
+<span id="_CPPv3N13StripLocation11OldSimNanosE"></span><span id="_CPPv2N13StripLocation11OldSimNanosE"></span><span id="StripLocation::OldSimNanos__uint64_t"></span><span class="target" id="class_strip_location_1ae0fdf1ec7a0bd9e5191c855645782a1c"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OldSimNanos</span></span></span><a class="headerlink" href="#_CPPv4N13StripLocation11OldSimNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] previous currentSimNanos </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="stripLocation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

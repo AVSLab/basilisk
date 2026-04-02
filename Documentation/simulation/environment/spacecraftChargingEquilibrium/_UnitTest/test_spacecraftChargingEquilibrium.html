@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spacecraftChargingEquilibrium &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="spacecraftLocation" href="../../spacecraftLocation/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">spacecraftChargingEquilibrium</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_spacecraftChargingEquilibrium</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-spacecraftchargingequilibrium">
+<span id="id1"></span><h1>test_spacecraftChargingEquilibrium<a class="headerlink" href="#test-spacecraftchargingequilibrium" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_spacecraftChargingEquilibrium">Python reimplementation of spacecraft charging equilibrium math for unit-test cross-checks.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.BeamParameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">BeamParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_eb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_eb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_eb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#BeamParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.BeamParameters" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Electron-beam parameters matching ElectronBeamMsgPayload fields.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">SpacecraftChargingEquilibriumCppReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electron_flux</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_flux</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_see_electron</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_see_ion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_backscattered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#SpacecraftChargingEquilibriumCppReference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Ground-truth reference implementation matching spacecraftChargingEquilibrium C++ math.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.interp">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#SpacecraftChargingEquilibriumCppReference.interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.interp" title="Link to this definition"></a></dt>
+<dd><p>Linear interpolation with the same edge behavior as C++ interp().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.trapz">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trapz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#SpacecraftChargingEquilibriumCppReference.trapz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.trapz" title="Link to this definition"></a></dt>
+<dd><p>Trapezoidal integration matching spacecraftChargingEquilibrium.cpp::trapz().</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_cpp_requires_exactly_two_spacecraft">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_cpp_requires_exactly_two_spacecraft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_cpp_requires_exactly_two_spacecraft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_cpp_requires_exactly_two_spacecraft" title="Link to this definition"></a></dt>
+<dd><p>Single-spacecraft run should fail reset with the exact-two-spacecraft precondition.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_cpp_vs_python_beam_parameter_cases">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_cpp_vs_python_beam_parameter_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_eb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_eb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_eb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_cpp_vs_python_beam_parameter_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_cpp_vs_python_beam_parameter_cases" title="Link to this definition"></a></dt>
+<dd><p>Compare C++ and Python equilibrium outputs across beam parameter cases.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_cpp_vs_python_plasma_scaling_cases">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_cpp_vs_python_plasma_scaling_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_electron_flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_ion_flux</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_cpp_vs_python_plasma_scaling_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_cpp_vs_python_plasma_scaling_cases" title="Link to this definition"></a></dt>
+<dd><p>Compare C++ and Python equilibrium outputs across plasma scaling cases.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_cpp_vs_python_sunlit_area_override_cases">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_cpp_vs_python_sunlit_area_override_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">servicer_sunlit_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sunlit_area</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_cpp_vs_python_sunlit_area_override_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_cpp_vs_python_sunlit_area_override_cases" title="Link to this definition"></a></dt>
+<dd><p>Compare C++ and Python equilibrium outputs when sunlit areas are overridden.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_cpp_vs_python_zero_padded_plasma_bins">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_cpp_vs_python_zero_padded_plasma_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_cpp_vs_python_zero_padded_plasma_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_cpp_vs_python_zero_padded_plasma_bins" title="Link to this definition"></a></dt>
+<dd><p>Ensure trailing zero-filled plasma bins are ignored consistently.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_plasma_scaling_trends_target_potential">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_plasma_scaling_trends_target_potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_plasma_scaling_trends_target_potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_plasma_scaling_trends_target_potential" title="Link to this definition"></a></dt>
+<dd><p>Verify target-potential trend ordering across electron/ion flux scaling.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_python_reimplementation_matches_cpp_module">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_python_reimplementation_matches_cpp_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_python_reimplementation_matches_cpp_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_python_reimplementation_matches_cpp_module" title="Link to this definition"></a></dt>
+<dd><p>Baseline cross-check under nominal plasma and beam settings.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_eb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_eb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_eb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases" title="Link to this definition"></a></dt>
+<dd><p>Compare C++ current-message target terms to Python terms at equilibrium.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_near_equilibrium">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftChargingEquilibrium.</span></span><span class="sig-name descname"><span class="pre">test_target_current_breakdown_cpp_vs_python_near_equilibrium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sunlit_area</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftChargingEquilibrium.html#test_target_current_breakdown_cpp_vs_python_near_equilibrium"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_near_equilibrium" title="Link to this definition"></a></dt>
+<dd><p>Compare C++ current-message target terms across sunlit-area settings.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../spacecraftLocation/index.html" class="btn btn-neutral float-right" title="spacecraftLocation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

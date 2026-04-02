@@ -1,0 +1,17 @@
+.. _UnitTestsimpleBattery:
+
+_UnitTest
+=========
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+   test_simpleBattery
+   test_simpleBatteryFault
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+

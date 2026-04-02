@@ -1,0 +1,13 @@
+.. _scenarioPrescribedMotionWithRotationBranching:
+
+scenarioPrescribedMotionWithRotationBranching
+=============================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioPrescribedMotionWithRotationBranching
+   :members:
+   :show-inheritance:
+

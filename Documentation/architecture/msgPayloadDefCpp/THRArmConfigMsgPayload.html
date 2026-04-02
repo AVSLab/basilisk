@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THRArmConfigMsgPayload &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="THROutputMsgPayload" href="THROutputMsgPayload.html" />
+    <link rel="prev" title="MJSysMassMatrixMsgPayload" href="MJSysMassMatrixMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefCpp</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigLogMsgPayload.html">CSSConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ChargeMsmMsgPayload.html">ChargeMsmMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataStorageStatusMsgPayload.html">DataStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="JointArrayStateMsgPayload.html">JointArrayStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJJointReactionsMsgPayload.html">MJJointReactionsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJSceneStateMsgPayload.html">MJSceneStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJSysMassMatrixMsgPayload.html">MJSysMassMatrixMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">THRArmConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THROutputMsgPayload.html">THROutputMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGConfigMsgPayload.html">VSCMGConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VizUserInputMsgPayload.html">VizUserInputMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefCpp</a></li>
+      <li class="breadcrumb-item active">THRArmConfigMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefCpp/THRArmConfigMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="thrarmconfigmsgpayload">
+<span id="id1"></span><h1>THRArmConfigMsgPayload<a class="headerlink" href="#thrarmconfigmsgpayload" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422THRArmConfigMsgPayload">
+<span id="_CPPv322THRArmConfigMsgPayload"></span><span id="_CPPv222THRArmConfigMsgPayload"></span><span id="THRArmConfigMsgPayload"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">THRArmConfigMsgPayload</span></span></span><a class="headerlink" href="#_CPPv422THRArmConfigMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;THRArmConfigMsgPayload.h&gt;</em></div>
+<p>Structure used by the messaging system to communicate details about the spacecraft system configuration for spacecraft with thruster arms. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload9thrArmIdxE">
+<span id="_CPPv3N22THRArmConfigMsgPayload9thrArmIdxE"></span><span id="_CPPv2N22THRArmConfigMsgPayload9thrArmIdxE"></span><span id="THRArmConfigMsgPayload::thrArmIdx__std::vector:i:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a585fdf6cf87dbaf51d203444e49fea41"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrArmIdx</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload9thrArmIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] index for which arm a thruster belongs to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload14thrArmJointIdxE">
+<span id="_CPPv3N22THRArmConfigMsgPayload14thrArmJointIdxE"></span><span id="_CPPv2N22THRArmConfigMsgPayload14thrArmJointIdxE"></span><span id="THRArmConfigMsgPayload::thrArmJointIdx__std::vector:i:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a7c5b2bd0466ec19280b61aa707baea90"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrArmJointIdx</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload14thrArmJointIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] index for which hinged joint in an arm is the closest parent joint </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload10armTreeIdxE">
+<span id="_CPPv3N22THRArmConfigMsgPayload10armTreeIdxE"></span><span id="_CPPv2N22THRArmConfigMsgPayload10armTreeIdxE"></span><span id="THRArmConfigMsgPayload::armTreeIdx__std::vector:i:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1ab109ffd2404369c0b8bb57999be91f1e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">armTreeIdx</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload10armTreeIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] index for which kinematic tree each thruster arm belongs to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload13armJointCountE">
+<span id="_CPPv3N22THRArmConfigMsgPayload13armJointCountE"></span><span id="_CPPv2N22THRArmConfigMsgPayload13armJointCountE"></span><span id="THRArmConfigMsgPayload::armJointCount__std::vector:i:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a10ef4b2515e7601890f290c2dc049fa2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">armJointCount</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload13armJointCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] list of the number of hinged joints in each thruster arm </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload6r_CP_PE">
+<span id="_CPPv3N22THRArmConfigMsgPayload6r_CP_PE"></span><span id="_CPPv2N22THRArmConfigMsgPayload6r_CP_PE"></span><span id="THRArmConfigMsgPayload::r_CP_P__std::vector:double:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a9b779844843ddcd45a4fd34f9d5196f2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_CP_P</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload6r_CP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from the parent joint to the child joint(parent joint’s frame), column-major order </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload6r_TP_PE">
+<span id="_CPPv3N22THRArmConfigMsgPayload6r_TP_PE"></span><span id="_CPPv2N22THRArmConfigMsgPayload6r_TP_PE"></span><span id="THRArmConfigMsgPayload::r_TP_P__std::vector:double:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a32d172cfe4a766b883b9f591dac7118a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TP_P</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload6r_TP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from the closest parent joint to the thruster (parent joint’s frame), column-major order </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload6shat_PE">
+<span id="_CPPv3N22THRArmConfigMsgPayload6shat_PE"></span><span id="_CPPv2N22THRArmConfigMsgPayload6shat_PE"></span><span id="THRArmConfigMsgPayload::shat_P__std::vector:double:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a895abfb40dac243818331f33e713955f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shat_P</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload6shat_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] spin axis unit vector of a child joint (parent joint’s frame), column-major order </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload6fhat_PE">
+<span id="_CPPv3N22THRArmConfigMsgPayload6fhat_PE"></span><span id="_CPPv2N22THRArmConfigMsgPayload6fhat_PE"></span><span id="THRArmConfigMsgPayload::fhat_P__std::vector:double:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1a3cc9e2d2bf45dbfce7171e85e72b558f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fhat_P</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload6fhat_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] force axis unit vector of a thruster (parent joint’s frame), column-major order </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22THRArmConfigMsgPayload7dcm_C0PE">
+<span id="_CPPv3N22THRArmConfigMsgPayload7dcm_C0PE"></span><span id="_CPPv2N22THRArmConfigMsgPayload7dcm_C0PE"></span><span id="THRArmConfigMsgPayload::dcm_C0P__std::vector:double:"></span><span class="target" id="struct_t_h_r_arm_config_msg_payload_1afb00968782723b0130cc9877cd173f29"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_C0P</span></span></span><a class="headerlink" href="#_CPPv4N22THRArmConfigMsgPayload7dcm_C0PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] direction cosine matrix from the child joint frame zero angle orientation to the parent joint frame, column-major order </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJSysMassMatrixMsgPayload.html" class="btn btn-neutral float-left" title="MJSysMassMatrixMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="THROutputMsgPayload.html" class="btn btn-neutral float-right" title="THROutputMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: meanRevertingNoise &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: stochasticAtmDensity" href="stochasticAtmDensity.html" />
+    <link rel="prev" title="meanRevertingNoise" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cmdForceInertialToForceAtSite/index.html">cmdForceInertialToForceAtSite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTimeInvariantSystem/index.html">linearTimeInvariantSystem</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">meanRevertingNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrOnTimeToForce/index.html">thrOnTimeToForce</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">meanRevertingNoise</a></li>
+      <li class="breadcrumb-item active">Module: meanRevertingNoise</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/meanRevertingNoise/meanRevertingNoise.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-meanrevertingnoise">
+<span id="meanrevertingnoise"></span><h1>Module: meanRevertingNoise<a class="headerlink" href="#module-meanrevertingnoise" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MeanRevertingNoise</span></code> module is an abstract MuJoCo dynamics-task base class that implements a scalar
+mean-reverting stochastic process (Ornstein-Uhlenbeck). It provides state registration, drift/diffusion setup, and
+parameter accessors. Derived classes define how the scalar stochastic state is mapped into output messages.</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The internal scalar state <span class="math notranslate nohighlight">\(x\)</span> follows</p>
+<div class="math notranslate nohighlight">
+\[dx = -\frac{1}{\tau}x\,dt + \sqrt{\frac{2}{\tau}}\sigma_{st}\,dW\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the time constant</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma_{st}\)</span> is the stationary standard deviation</p></li>
+<li><p><span class="math notranslate nohighlight">\(dW\)</span> is Wiener process increment</p></li>
+</ul>
+<p>At each update, the base class computes:</p>
+<div class="math notranslate nohighlight">
+\[\dot{x} = -\frac{1}{\tau}x\]</div>
+<p>and configures one scalar diffusion source with amplitude</p>
+<div class="math notranslate nohighlight">
+\[\sigma = \sqrt{\frac{2}{\tau}}\sigma_{st}\]</div>
+<p>The base class then calls the virtual hook:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">writeOutput</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which must be implemented by subclasses.</p>
+</section>
+<section id="message-interfaces">
+<h2>Message Interfaces<a class="headerlink" href="#message-interfaces" title="Link to this heading"></a></h2>
+<p>This base class does not define concrete input or output messages.</p>
+<p>Subclasses are responsible for defining and publishing message interfaces in their <code class="docutils literal notranslate"><span class="pre">writeOutput</span></code> implementation.</p>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each update step, the module performs the following operations:</p>
+<ol class="arabic simple">
+<li><p>Ensures the scalar state was registered.</p></li>
+<li><p>Reads current state value <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p>Sets deterministic derivative <span class="math notranslate nohighlight">\(\dot{x} = -x/\tau\)</span>.</p></li>
+<li><p>Sets scalar diffusion magnitude <span class="math notranslate nohighlight">\(\sqrt{2/\tau}\sigma_{st}\)</span> for one noise source.</p></li>
+<li><p>Calls subclass <code class="docutils literal notranslate"><span class="pre">writeOutput(CurrentSimNanos,</span> <span class="pre">x)</span></code>.</p></li>
+</ol>
+<p>During state registration, the module:</p>
+<ul class="simple">
+<li><p>registers a 1x1 state named <code class="docutils literal notranslate"><span class="pre">meanRevertingState</span></code>,</p></li>
+<li><p>assigns one noise source,</p></li>
+<li><p>initializes the state to zero.</p></li>
+</ul>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The class is abstract and cannot be used directly without subclassing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setTimeConstant(t)</span></code> requires <span class="math notranslate nohighlight">\(t &gt; 0\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setStationaryStd(s)</span></code> requires <span class="math notranslate nohighlight">\(s \ge 0\)</span>.</p></li>
+<li><p>Calling state getter/setter methods before state registration raises an error.</p></li>
+</ul>
+</section>
+<section id="verification-and-testing">
+<h2>Verification and Testing<a class="headerlink" href="#verification-and-testing" title="Link to this heading"></a></h2>
+<p>The OU process implementation is verified in
+<code class="docutils literal notranslate"><span class="pre">src/simulation/mujocoDynamics/meanRevertingNoise/_UnitTest/test_meanRevertingNoise.py</span></code> through a subclass usage
+path. The test validates empirical mean, variance, and estimated time constant against expected OU statistics.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418MeanRevertingNoise">
+<span id="_CPPv318MeanRevertingNoise"></span><span id="_CPPv218MeanRevertingNoise"></span><span id="MeanRevertingNoise"></span><span class="target" id="class_mean_reverting_noise"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MeanRevertingNoise</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/StatefulSysModel.html#_CPPv416StatefulSysModel" title="StatefulSysModel"><span class="n"><span class="pre">StatefulSysModel</span></span></a><a class="headerlink" href="#_CPPv418MeanRevertingNoise" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;meanRevertingNoise.h&gt;</em></div>
+<p>Base class that provides a scalar Ornstein–Uhlenbeck state x and its stochastic evolution. Derived classes implement output handling. </p>
+<p>The state x follows   <div class="math notranslate nohighlight">
+\[  dx = -\frac{1}{\tau}\,x\,dt + \sqrt{\frac{2}{\tau}}\,\sigma_{\text{st}}\,dW
+\]</div>
+ The base class: 1) registers a 1-by-1 state with one noise source 2) computes drift and diffusion each step 3) calls the user hook writeOutput(CurrentSimNanos, x) </p>
+<p>Subclassed by <a class="reference internal" href="stochasticAtmDensity.html#class_stochastic_atm_density"><span class="std std-ref">StochasticAtmDensity</span></a>, <a class="reference internal" href="stochasticDragCoeff.html#class_stochastic_drag_coeff"><span class="std std-ref">StochasticDragCoeff</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise18MeanRevertingNoiseEv">
+<span id="_CPPv3N18MeanRevertingNoise18MeanRevertingNoiseEv"></span><span id="_CPPv2N18MeanRevertingNoise18MeanRevertingNoiseEv"></span><span id="MeanRevertingNoise::MeanRevertingNoise"></span><span class="target" id="class_mean_reverting_noise_1ae66723f2c1febf2005afc03d1a687190"></span><span class="sig-name descname"><span class="n"><span class="pre">MeanRevertingNoise</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise18MeanRevertingNoiseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Default constructor. Parameters remain at defaults. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise14registerStatesE18DynParamRegisterer">
+<span id="_CPPv3N18MeanRevertingNoise14registerStatesE18DynParamRegisterer"></span><span id="_CPPv2N18MeanRevertingNoise14registerStatesE18DynParamRegisterer"></span><span id="MeanRevertingNoise::registerStates__DynParamRegisterer"></span><span class="target" id="class_mean_reverting_noise_1ae8d52dc376bf95f8b0715b0cf85cab8f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/StatefulSysModel.html#_CPPv418DynParamRegisterer" title="DynParamRegisterer"><span class="n"><span class="pre">DynParamRegisterer</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">registerer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise14registerStatesE18DynParamRegisterer" title="Link to this definition"></a><br /></dt>
+<dd><p>Register the scalar OU state with one noise source. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>registerer</strong> – Simulation state registerer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise11UpdateStateE8uint64_t">
+<span id="_CPPv3N18MeanRevertingNoise11UpdateStateE8uint64_t"></span><span id="_CPPv2N18MeanRevertingNoise11UpdateStateE8uint64_t"></span><span id="MeanRevertingNoise::UpdateState__uint64_t"></span><span class="target" id="class_mean_reverting_noise_1aeb0695aa31cac925430b23be3d70e3af"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update the OU state drift and diffusion, then call writeOutput. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18MeanRevertingNoise16getStationaryStdEv">
+<span id="_CPPv3NK18MeanRevertingNoise16getStationaryStdEv"></span><span id="_CPPv2NK18MeanRevertingNoise16getStationaryStdEv"></span><span id="MeanRevertingNoise::getStationaryStdC"></span><span class="target" id="class_mean_reverting_noise_1a10f152361d181862cf107944825542e1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStationaryStd</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18MeanRevertingNoise16getStationaryStdEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\text{st}}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise16setStationaryStdEd">
+<span id="_CPPv3N18MeanRevertingNoise16setStationaryStdEd"></span><span id="_CPPv2N18MeanRevertingNoise16setStationaryStdEd"></span><span id="MeanRevertingNoise::setStationaryStd__double"></span><span class="target" id="class_mean_reverting_noise_1aaa4078cb0581100ff5ad746c5cb3da4f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStationaryStd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise16setStationaryStdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\text{st}}\)</span>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> – Nonnegative expected. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18MeanRevertingNoise15getTimeConstantEv">
+<span id="_CPPv3NK18MeanRevertingNoise15getTimeConstantEv"></span><span id="_CPPv2NK18MeanRevertingNoise15getTimeConstantEv"></span><span id="MeanRevertingNoise::getTimeConstantC"></span><span class="target" id="class_mean_reverting_noise_1a3f09a985257eba8f10ac7265b626f3c4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTimeConstant</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18MeanRevertingNoise15getTimeConstantEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise15setTimeConstantEd">
+<span id="_CPPv3N18MeanRevertingNoise15setTimeConstantEd"></span><span id="_CPPv2N18MeanRevertingNoise15setTimeConstantEd"></span><span id="MeanRevertingNoise::setTimeConstant__double"></span><span class="target" id="class_mean_reverting_noise_1a589a4450194d463d0d52a750e307dec0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTimeConstant</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise15setTimeConstantEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – Positive expected. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18MeanRevertingNoise8getThetaEv">
+<span id="_CPPv3NK18MeanRevertingNoise8getThetaEv"></span><span id="_CPPv2NK18MeanRevertingNoise8getThetaEv"></span><span id="MeanRevertingNoise::getThetaC"></span><span class="target" id="class_mean_reverting_noise_1ab86ca3fc88d9b6ce5070363f876334e4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTheta</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18MeanRevertingNoise8getThetaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get <span class="math notranslate nohighlight">\(\theta = 1/\tau\)</span> [s^{-1}]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18MeanRevertingNoise8getSigmaEv">
+<span id="_CPPv3NK18MeanRevertingNoise8getSigmaEv"></span><span id="_CPPv2NK18MeanRevertingNoise8getSigmaEv"></span><span id="MeanRevertingNoise::getSigmaC"></span><span class="target" id="class_mean_reverting_noise_1a828d80d6f6819e099300b1023625ad56"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSigma</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18MeanRevertingNoise8getSigmaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get diffusion amplitude <span class="math notranslate nohighlight">\(\sigma = \sqrt{2/\tau}\,\sigma_{\text{st}}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18MeanRevertingNoise13getStateValueEv">
+<span id="_CPPv3NK18MeanRevertingNoise13getStateValueEv"></span><span id="_CPPv2NK18MeanRevertingNoise13getStateValueEv"></span><span id="MeanRevertingNoise::getStateValueC"></span><span class="target" id="class_mean_reverting_noise_1ae956762f04960d940bcbaa66b080510f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateValue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18MeanRevertingNoise13getStateValueEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the current scalar state x. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if called before registerStates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise13setStateValueEd">
+<span id="_CPPv3N18MeanRevertingNoise13setStateValueEd"></span><span id="_CPPv2N18MeanRevertingNoise13setStateValueEd"></span><span id="MeanRevertingNoise::setStateValue__double"></span><span class="target" id="class_mean_reverting_noise_1a5b294d3413f0e93a25e16a302fd0f093"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise13setStateValueEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the scalar state x. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New value. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if called before registerStates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise9bskLoggerE">
+<span id="_CPPv3N18MeanRevertingNoise9bskLoggerE"></span><span id="_CPPv2N18MeanRevertingNoise9bskLoggerE"></span><span id="MeanRevertingNoise::bskLogger__BSKLogger"></span><span class="target" id="class_mean_reverting_noise_1ac3c32c5e2ef9b827dc9e27a566bb744c"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logger. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise11writeOutputE8uint64_td">
+<span id="_CPPv3N18MeanRevertingNoise11writeOutputE8uint64_td"></span><span id="_CPPv2N18MeanRevertingNoise11writeOutputE8uint64_td"></span><span id="MeanRevertingNoise::writeOutput__uint64_t.double"></span><span class="target" id="class_mean_reverting_noise_1a7fbd65ab67039160be48dc950f220875"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise11writeOutputE8uint64_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Pure virtual output hook. Called every step after drift and diffusion are set. Use this to read inputs if needed and write outputs. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p></li>
+<li><p><strong>x</strong> – Current scalar state value. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise6xStateE">
+<span id="_CPPv3N18MeanRevertingNoise6xStateE"></span><span id="_CPPv2N18MeanRevertingNoise6xStateE"></span><span id="MeanRevertingNoise::xState__StateDataP"></span><span class="target" id="class_mean_reverting_noise_1a034f53d15804801749acea1f37a12dce"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">xState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise6xStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise15sigmaStationaryE">
+<span id="_CPPv3N18MeanRevertingNoise15sigmaStationaryE"></span><span id="_CPPv2N18MeanRevertingNoise15sigmaStationaryE"></span><span id="MeanRevertingNoise::sigmaStationary__double"></span><span class="target" id="class_mean_reverting_noise_1adb8ad6c34a08eb91862e713b3dba61cc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigmaStationary</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise15sigmaStationaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stationary std dev of x. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18MeanRevertingNoise12timeConstantE">
+<span id="_CPPv3N18MeanRevertingNoise12timeConstantE"></span><span id="_CPPv2N18MeanRevertingNoise12timeConstantE"></span><span id="MeanRevertingNoise::timeConstant__double"></span><span class="target" id="class_mean_reverting_noise_1a65d7e85a4ba100515888db34264fe2ea"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeConstant</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18MeanRevertingNoise12timeConstantE" title="Link to this definition"></a><br /></dt>
+<dd><p>OU time constant in seconds. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="meanRevertingNoise" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stochasticAtmDensity.html" class="btn btn-neutral float-right" title="Module: stochasticAtmDensity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

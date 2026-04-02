@@ -1,0 +1,13 @@
+.. _dataFetcher:
+
+dataFetcher
+===========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: dataFetcher
+   :members:
+   :show-inheritance:
+

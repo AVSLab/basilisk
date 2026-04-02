@@ -1,0 +1,1108 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_stochasticIntegrators &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_stochasticIntegrators</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_stochasticIntegrators</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tests the Euler-Mayurama and SRK integrator described in:</span>
+
+<span class="sd">Tang, X., Xiao, A. Efficient weak second-order stochastic Runge-Kutta methods</span>
+<span class="sd">for Itô stochastic differential equations. Bit Numer Math 57, 241-260 (2017).</span>
+<span class="sd">https://doi.org/10.1007/s10543-016-0618-9</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.testing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">pythonVariableLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dynParamManager</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">SRKMethod</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;W2Ito1&quot;</span><span class="p">,</span> <span class="s2">&quot;W2Ito2&quot;</span><span class="p">]</span>
+<span class="n">Method</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;W2Ito1&quot;</span><span class="p">,</span> <span class="s2">&quot;W2Ito2&quot;</span><span class="p">,</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">]</span>
+<span class="n">METHODS</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">Method</span><span class="p">)</span>
+
+<span class="c1"># Function of the form y = f(t,x) where x and y are vectors of the same size</span>
+<span class="n">DynFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]</span>
+
+<span class="c1"># Coefficient sets (from Tang &amp; Xiao Table 2, W2-Ito1 &amp; W2-Ito2)</span>
+<span class="n">W2Ito1Coefficients</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">]),</span>
+    <span class="s1">&#39;beta0&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="s1">&#39;beta1&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]),</span>
+
+    <span class="s1">&#39;A0&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B0&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[(</span><span class="mi">6</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[(</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">/</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;A1&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B1&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B2&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+<span class="p">}</span>
+
+<span class="n">W2Ito2Coefficients</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">]),</span>
+    <span class="s1">&#39;beta0&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="s1">&#39;beta1&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]),</span>
+
+    <span class="s1">&#39;A0&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B0&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;A1&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B1&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+
+    <span class="s1">&#39;B2&#39;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+<span class="p">}</span>
+
+<span class="n">SRK_COEFFICIENTS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">SRKMethod</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;W2Ito1&quot;</span><span class="p">:</span> <span class="n">W2Ito1Coefficients</span><span class="p">,</span>
+    <span class="s2">&quot;W2Ito2&quot;</span><span class="p">:</span> <span class="n">W2Ito2Coefficients</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="srk2Integrate">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.srk2Integrate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">srk2Integrate</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">:</span> <span class="n">DynFunc</span><span class="p">,</span>
+        <span class="n">g_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynFunc</span><span class="p">],</span>
+        <span class="n">x0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">rng_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">beta0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">beta1</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">A0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">B0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">A1</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">B1</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">B2</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic s-stage SRK integrator for vector SDE:</span>
+<span class="sd">        dX = f(t,X) dt + sum_k g_list[k](t,X) dW_k</span>
+
+<span class="sd">    Method described in Tang &amp; Xiao.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        f: Drift function.</span>
+<span class="sd">        g_list: List of diffusion functions.</span>
+<span class="sd">        x0: Initial state.</span>
+<span class="sd">        dt: Time step.</span>
+<span class="sd">        tf: Final time.</span>
+<span class="sd">        rng_seed: Random seed.</span>
+<span class="sd">        alpha, beta0, beta1, A0, B0, A1, B1, B2: SRK coefficients.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Array of state trajectories, including time as the first column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_f</span><span class="p">(</span><span class="n">full_state</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">full_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">full_state</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">)])</span>
+
+    <span class="n">wrapped_g_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g_list</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_g</span><span class="p">(</span><span class="n">full_state</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">g</span><span class="p">:</span> <span class="n">DynFunc</span> <span class="o">=</span> <span class="n">g</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">full_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">full_state</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="n">g</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">)])</span>
+        <span class="n">wrapped_g_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapped_g</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g_list</span><span class="p">)</span>
+
+    <span class="n">nsteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">tf</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">x0</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">SRKRandomVariableGenerator</span><span class="p">()</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="n">rng_seed</span><span class="p">)</span>
+
+    <span class="c1"># throw the first away, similar to how Basilisk</span>
+    <span class="c1"># calls the equationsOfMotion once at the beginning</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># generate random variables</span>
+        <span class="n">rvs</span><span class="p">:</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">SRKRandomVariables</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+        <span class="n">Ik</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rvs</span><span class="o">.</span><span class="n">Ik</span>
+        <span class="n">Ikl</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rvs</span><span class="o">.</span><span class="n">Ikl</span>
+        <span class="n">xi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">rvs</span><span class="o">.</span><span class="n">xi</span>
+
+        <span class="c1"># allocate stage arrays</span>
+        <span class="n">H0</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
+        <span class="n">Hk</span> <span class="o">=</span> <span class="p">[[</span><span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+
+            <span class="c1"># compute H0 stages</span>
+            <span class="n">sumA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">sumB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                <span class="n">sumA</span> <span class="o">+=</span> <span class="n">A0</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_f</span><span class="p">(</span><span class="n">H0</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">dt</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                    <span class="n">sumB</span> <span class="o">+=</span> <span class="n">B0</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_g_list</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">Ik</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">H0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="n">sumA</span> <span class="o">+</span> <span class="n">sumB</span>
+
+            <span class="c1"># compute Hk stages</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">sumA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">sumB1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">sumB2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                    <span class="n">sumA</span> <span class="o">+=</span> <span class="n">A1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_f</span><span class="p">(</span><span class="n">H0</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">dt</span>
+                    <span class="n">sumB1</span> <span class="o">+=</span> <span class="n">B1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_g_list</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">xi</span>
+                    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">l</span> <span class="o">!=</span> <span class="n">k</span><span class="p">:</span>
+                            <span class="n">sumB2</span> <span class="o">+=</span> <span class="n">B2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_g_list</span><span class="p">[</span><span class="n">l</span><span class="p">](</span><span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">Ikl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">l</span><span class="p">]</span>
+                <span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="n">sumA</span> <span class="o">+</span> <span class="n">sumB1</span> <span class="o">+</span> <span class="n">sumB2</span>
+
+        <span class="c1"># combine increments</span>
+        <span class="n">drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="n">drift</span> <span class="o">+=</span> <span class="n">alpha</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_f</span><span class="p">(</span><span class="n">H0</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">dt</span>
+
+        <span class="n">diffusion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                <span class="n">diffusion</span> <span class="o">+=</span> <span class="n">beta0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_g_list</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">Ik</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">diffusion</span> <span class="o">+=</span> <span class="n">beta1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">wrapped_g_list</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">Hk</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">Ikl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="n">drift</span> <span class="o">+</span> <span class="n">diffusion</span>
+
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="eulerMayuramaIntegrate">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.eulerMayuramaIntegrate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eulerMayuramaIntegrate</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">:</span> <span class="n">DynFunc</span><span class="p">,</span>
+        <span class="n">g_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynFunc</span><span class="p">],</span>
+        <span class="n">x0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">rng_seed</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Euler-Mayurama integrator for the vector SDE:</span>
+<span class="sd">        dX = f(t,X) dt + sum_k g_list[k](t,X) dW_k</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: Drift function.</span>
+<span class="sd">        g_list: List of diffusion functions.</span>
+<span class="sd">        x0: Initial state.</span>
+<span class="sd">        dt: Time step.</span>
+<span class="sd">        tf: Final time.</span>
+<span class="sd">        rng_seed: Random seed.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Array of state trajectories, including time as the first column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g_list</span><span class="p">)</span>
+
+    <span class="n">nsteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">tf</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x0</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">EulerMayuramaRandomVariableGenerator</span><span class="p">()</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="n">rng_seed</span><span class="p">)</span>
+
+    <span class="c1"># throw the first away, similar to how Basilisk</span>
+    <span class="c1"># calls the equationsOfMotion once at the beginning</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span><span class="p">):</span>
+        <span class="c1"># generate random variables</span>
+        <span class="n">pseudoTimeSteps</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+        <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">step</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="p">,:])</span><span class="o">*</span><span class="n">dt</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">g_list</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">g</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">step</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">step</span><span class="p">,:])</span><span class="o">*</span><span class="n">pseudoTimeSteps</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ExponentialSystem">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ExponentialSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExponentialSystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple deterministic system with one state: dx/dt = x*t.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the system with initial state x0.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="ExponentialSystem.f">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ExponentialSystem.f">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drift function for the exponential system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span></div>
+
+
+    <span class="n">g</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="OrnsteinUhlenbeckSystem">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.OrnsteinUhlenbeckSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OrnsteinUhlenbeckSystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A process defined by</span>
+
+<span class="sd">        dx = theta*(mu - x)*dt + sigma*dW</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.01</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the OU process parameters.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+
+<div class="viewcode-block" id="OrnsteinUhlenbeckSystem.f">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.OrnsteinUhlenbeckSystem.f">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drift function for the OU process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span></div>
+
+
+<div class="viewcode-block" id="OrnsteinUhlenbeckSystem.g1">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.OrnsteinUhlenbeckSystem.g1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Diffusion function for the OU process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">])</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of diffusion functions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="OrnsteinUhlenbeckSystem.mean">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.OrnsteinUhlenbeckSystem.mean">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;E[x(t)]&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="OrnsteinUhlenbeckSystem.var">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.OrnsteinUhlenbeckSystem.var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Var(x(t))&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">])</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ComplexOrnsteinUhlenbeckSystem">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ComplexOrnsteinUhlenbeckSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComplexOrnsteinUhlenbeckSystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A process defined by</span>
+
+<span class="sd">        dx = -theta*x*dt + sigma_x1*dW_1 + sigma_x2*dW_2</span>
+<span class="sd">        dy = -theta*y*dt + sigma_y1*dW_1 + sigma_y2*dW_2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">y0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">.1</span><span class="p">,</span>
+            <span class="n">theta_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">theta_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.073</span><span class="p">,</span>
+            <span class="n">sigma_x1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.015</span><span class="p">,</span> <span class="n">sigma_x2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.011</span><span class="p">,</span>
+            <span class="n">sigma_y1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sigma_y2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">.029</span>
+        <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the complex OU process parameters.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_x</span> <span class="o">=</span> <span class="n">theta_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_y</span> <span class="o">=</span> <span class="n">theta_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_x1</span> <span class="o">=</span> <span class="n">sigma_x1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_x2</span> <span class="o">=</span> <span class="n">sigma_x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_y1</span> <span class="o">=</span> <span class="n">sigma_y1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_y2</span> <span class="o">=</span> <span class="n">sigma_y2</span>
+
+<div class="viewcode-block" id="ComplexOrnsteinUhlenbeckSystem.f">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ComplexOrnsteinUhlenbeckSystem.f">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drift function for the complex OU process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_x</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_y</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="ComplexOrnsteinUhlenbeckSystem.g1">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ComplexOrnsteinUhlenbeckSystem.g1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;First diffusion function for the complex OU process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_y1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ComplexOrnsteinUhlenbeckSystem.g2">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.ComplexOrnsteinUhlenbeckSystem.g2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Second diffusion function for the complex OU process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_x2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_y2</span><span class="p">])</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of diffusion functions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Example1System">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.Example1System">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example1System</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Example 1 dynamical system in:</span>
+
+<span class="sd">        Tang, X., Xiao, A. Efficient weak second-order stochastic Runge-Kutta methods</span>
+<span class="sd">        for Itô stochastic differential equations. Bit Numer Math 57, 241-260 (2017).</span>
+<span class="sd">        https://doi.org/10.1007/s10543-016-0618-9</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y1_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y2_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Example 1 system.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y1_0</span><span class="p">,</span> <span class="n">y2_0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Example1System.f">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.Example1System.f">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drift function for Example 1 system.&quot;&quot;&quot;</span>
+        <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="o">-</span><span class="mi">273</span><span class="o">/</span><span class="mi">512</span><span class="o">*</span><span class="n">y1</span><span class="p">,</span>
+            <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">160</span><span class="o">*</span><span class="n">y1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">785</span><span class="o">/</span><span class="mi">512</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">y2</span>
+        <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Example1System.g1">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.Example1System.g1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;First diffusion function for Example 1 system.&quot;&quot;&quot;</span>
+        <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">y1</span><span class="p">,</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">y2</span>
+        <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Example1System.g2">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.Example1System.g2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Second diffusion function for Example 1 system.&quot;&quot;&quot;</span>
+        <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="mi">1</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">y1</span><span class="p">,</span>
+            <span class="mi">1</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">y1</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">y2</span>
+        <span class="p">])</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of diffusion functions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="getBasiliskSim">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.getBasiliskSim">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">DynFunc</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynFunc</span><span class="p">],</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set up and return a Basilisk simulation for a given SDE and integrator method.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method (&quot;W2Ito1&quot;, &quot;W2Ito2&quot;, or &quot;EulerMayurama&quot;).</span>
+<span class="sd">        dt: Time step.</span>
+<span class="sd">        x0: Initial state.</span>
+<span class="sd">        f: Drift function.</span>
+<span class="sd">        g: List of diffusion functions.</span>
+<span class="sd">        seed: RNG seed (or None for random).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (scSim, stateModel, integratorObject, stateLogger).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatefulSysModel</span>
+
+    <span class="c1"># Declared inside, since StatefulSysModel may be undefined if not running with mujoco</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">GenericStochasticStateModel</span><span class="p">(</span><span class="n">StatefulSysModel</span><span class="o">.</span><span class="n">StatefulSysModel</span><span class="p">):</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">DynFunc</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynFunc</span><span class="p">]):</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">:</span> <span class="n">StatefulSysModel</span><span class="o">.</span><span class="n">DynParamRegisterer</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Called once during InitializeSimulation&quot;&quot;&quot;</span>
+            <span class="c1"># We get one noise source per diffusion function g:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dynParamManager</span><span class="o">.</span><span class="n">StateData</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">[</span><span class="n">i</span><span class="p">]]])</span>
+
+            <span class="c1"># We want every noise source to be shared between states</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">registerer</span><span class="o">.</span><span class="n">registerSharedNoiseSource</span><span class="p">([</span>
+                    <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span>
+                <span class="p">])</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Called at every integrator step&quot;&quot;&quot;</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span>
+
+            <span class="n">t</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">*</span> <span class="n">CurrentSimNanos</span>
+
+            <span class="c1"># Collect current state into a numpy array</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">state</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">])</span>
+
+            <span class="c1"># Compute f and store in the derivative of the states</span>
+            <span class="n">deriv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">(</span> <span class="p">[[</span><span class="n">deriv</span><span class="p">[</span><span class="n">i</span><span class="p">]]]</span> <span class="p">)</span>
+
+            <span class="c1"># Compute g_k and store in the diffusion of the states</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">(</span> <span class="p">[[</span><span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]]],</span> <span class="n">index</span><span class="o">=</span><span class="n">k</span> <span class="p">)</span>
+
+    <span class="c1"># Create sim, process, and task</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span> <span class="c1"># empty scene, no multi-body dynamics</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;W2Ito1&quot;</span><span class="p">:</span>
+        <span class="n">integratorClass</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorW2Ito1</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;W2Ito2&quot;</span><span class="p">:</span>
+        <span class="n">integratorClass</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorW2Ito2</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">integratorClass</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorMayurama</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">integratorClass</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">integratorObject</span><span class="o">.</span><span class="n">setRNGSeed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+
+    <span class="n">stateModel</span> <span class="o">=</span> <span class="n">GenericStochasticStateModel</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+    <span class="n">stateModel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;testModel&quot;</span>
+
+    <span class="c1"># The same model computes both the drift and diffusion of the state</span>
+    <span class="c1"># so they must be added to both tasks</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">stateModel</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDiffusionDynamicsTask</span><span class="p">(</span><span class="n">stateModel</span><span class="p">)</span>
+
+    <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">pythonVariableLogger</span><span class="o">.</span><span class="n">PythonVariableLogger</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">state</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">stateModel</span><span class="o">.</span><span class="n">states</span><span class="p">])}</span>
+    <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">stateLogger</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span></div>
+
+
+<div class="viewcode-block" id="estimateErrorAndEmpiricalVariance">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.estimateErrorAndEmpiricalVariance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">estimateErrorAndEmpiricalVariance</span><span class="p">(</span>
+        <span class="n">computeTrajectory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span>
+        <span class="n">G</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">estimateGOnTrajectory</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">M1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">M2</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the error and empirical variance according to the</span>
+<span class="sd">    equations described in Section 4 of Tang &amp; Xiao.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        computeTrajectory (Callable[[], npt.NDArray[np.float64]]): A function that,</span>
+<span class="sd">        when called, realizes one simulation by forward propagating the system from</span>
+<span class="sd">        t0. The result is the state at the end point. In the paper: ``y_N``.</span>
+<span class="sd">        G (Callable[[npt.NDArray[np.float64]], float]): A differentiable function</span>
+<span class="sd">        that takes in a state vector and outputs a single number.</span>
+<span class="sd">        estimateGOnTrajectory (float): The estimate of the application of the function</span>
+<span class="sd">        G on the random variable that is the last state of the propagated system.</span>
+<span class="sd">        In the paper: ``E[G(y(t_N))]``</span>
+<span class="sd">        M1 (int): Number of batches.</span>
+<span class="sd">        M2 (int): Number of trajectories per batch.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[float, float]: The integrator error (``\hat{\mu}`` in the paper), and</span>
+<span class="sd">        the empirical variance (``\hat{\sigma}_\mu^2`` in the paper).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">muHat</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M1</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">M1</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">M2</span><span class="p">)),</span> <span class="n">total</span><span class="o">=</span><span class="n">M1</span><span class="o">*</span><span class="n">M2</span><span class="p">):</span>
+        <span class="n">muHat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="n">computeTrajectory</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimateGOnTrajectory</span><span class="p">)</span><span class="o">/</span><span class="n">M2</span>
+
+    <span class="n">muHatAvg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">muHat</span><span class="p">)</span> <span class="o">/</span> <span class="n">M1</span>
+
+    <span class="n">sigmaMuSquared</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M1</span><span class="p">):</span>
+        <span class="n">sigmaMuSquared</span> <span class="o">+=</span> <span class="p">(</span><span class="n">muHat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">muHatAvg</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">M1</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">muHatAvg</span><span class="p">,</span> <span class="n">sigmaMuSquared</span></div>
+
+
+
+<div class="viewcode-block" id="test_deterministic">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_deterministic">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_deterministic</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test deterministic integration (no diffusion) for all integrator methods.</span>
+<span class="sd">    Compares Basilisk and Python implementations against the analytical solution</span>
+<span class="sd">    for the exponential system dx/dt = x*t.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method (&quot;W2Ito1&quot;, &quot;W2Ito2&quot;, or &quot;EulerMayurama&quot;).</span>
+<span class="sd">        plot: If True, plot the relative error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">.01</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">ExponentialSystem</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">tBasilisk</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">*</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">eulerMayuramaIntegrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">srk2Integrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">SRK_COEFFICIENTS</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+    <span class="n">tPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">xExpected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="n">tPython</span> <span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tBasilisk</span><span class="p">,</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">xBasilisk</span> <span class="o">-</span> <span class="n">xExpected</span><span class="p">)</span><span class="o">/</span><span class="n">xExpected</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Basilisk&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tPython</span><span class="p">,</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">xPython</span> <span class="o">-</span> <span class="n">xExpected</span><span class="p">)</span><span class="o">/</span><span class="n">xExpected</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Relative Error [%]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># The Python and Basilisk implementation should behave identially</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">xPython</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">expectedIntegrationError</span> <span class="o">=</span> <span class="mf">.05</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;W2Ito1&quot;</span><span class="p">:</span>
+        <span class="n">expectedIntegrationError</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;W2Ito2&quot;</span><span class="p">:</span>
+        <span class="n">expectedIntegrationError</span> <span class="o">=</span> <span class="mf">1e-8</span>
+
+    <span class="c1"># The Basilisk should have some integration error w.r.t analytical solution</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">xExpected</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">atol</span><span class="o">=</span><span class="n">expectedIntegrationError</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_ou">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_ou">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_ou</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Ornstein-Uhlenbeck process integration for all integrator methods.</span>
+<span class="sd">    Compares Basilisk and Python implementations for a single realization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method.</span>
+<span class="sd">        plot: If True, plot the state trajectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">OrnsteinUhlenbeckSystem</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">tBasilisk</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">*</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">eulerMayuramaIntegrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">srk2Integrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">SRK_COEFFICIENTS</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+    <span class="n">tPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tBasilisk</span><span class="p">,</span> <span class="n">xBasilisk</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Basilisk&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tPython</span><span class="p">,</span> <span class="n">xPython</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># The Python and Basilisk implementation should behave identially</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">xPython</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_ouComplex">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_ouComplex">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_ouComplex</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test integration of a two-dimensional coupled Ornstein-Uhlenbeck process.</span>
+<span class="sd">    Compares Basilisk and Python implementations for a single realization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method.</span>
+<span class="sd">        plot: If True, plot the state trajectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">ComplexOrnsteinUhlenbeckSystem</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">tBasilisk</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">*</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">eulerMayuramaIntegrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">srk2Integrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">SRK_COEFFICIENTS</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+    <span class="n">tPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tBasilisk</span><span class="p">,</span> <span class="n">xBasilisk</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Basilisk&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tPython</span><span class="p">,</span> <span class="n">xPython</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;xy&quot;</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># The Python and Basilisk implementation should behave identially</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span>
+        <span class="n">xPython</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span>
+        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_example1">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_example1">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_example1</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Example 1 system from Tang &amp; Xiao (2017) for all integrator methods.</span>
+<span class="sd">    Compares Basilisk and Python implementations for a single realization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method.</span>
+<span class="sd">        plot: If True, plot the state trajectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">Example1System</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">tBasilisk</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">*</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;EulerMayurama&quot;</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">eulerMayuramaIntegrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">txPython</span> <span class="o">=</span> <span class="n">srk2Integrate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">SRK_COEFFICIENTS</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+    <span class="n">tPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xPython</span> <span class="o">=</span> <span class="n">txPython</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tBasilisk</span><span class="p">,</span> <span class="n">xBasilisk</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Basilisk&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tPython</span><span class="p">,</span> <span class="n">xPython</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># The Python and Basilisk implementation should behave identially</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span>
+        <span class="n">xPython</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span>
+        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_validateOu">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_validateOu">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">flaky</span><span class="p">(</span><span class="n">reruns</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;figureOfMerit&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;variance&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_validateOu</span><span class="p">(</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span>
+        <span class="n">figureOfMerit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;variance&quot;</span><span class="p">],</span>
+        <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate the weak accuracy of the integrators for the Ornstein-Uhlenbeck process.</span>
+<span class="sd">    Compares the empirical mean or variance of the final state to the analytical value</span>
+<span class="sd">    using multiple Monte Carlo batches.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method.</span>
+<span class="sd">        figureOfMerit: &quot;mean&quot; or &quot;variance&quot; to validate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">.05</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">OrnsteinUhlenbeckSystem</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">basiliskTrajectory</span><span class="p">():</span>
+        <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+
+    <span class="c1"># G is some differentiable function on the final state after</span>
+    <span class="c1"># propagation</span>
+    <span class="c1"># estimateGOnTrajectory should be the correct E[G(x(t))]</span>
+
+    <span class="k">if</span> <span class="n">figureOfMerit</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">G</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># E[G(x(t))] = E[x(t)]</span>
+        <span class="n">estimateGOnTrajectory</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">figureOfMerit</span> <span class="o">==</span> <span class="s2">&quot;variance&quot;</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">G</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="c1"># E[G(x(t))] = E[x(t)**2] = Var(x(t)) + E[x(t)]**2</span>
+        <span class="n">estimateGOnTrajectory</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">tf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">system</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">err</span><span class="p">,</span> <span class="n">varErr</span> <span class="o">=</span> <span class="n">estimateErrorAndEmpiricalVariance</span><span class="p">(</span>
+        <span class="n">basiliskTrajectory</span><span class="p">,</span>
+        <span class="n">G</span><span class="p">,</span>
+        <span class="n">estimateGOnTrajectory</span><span class="p">,</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="p">)</span>
+    <span class="n">twoSigma</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">varErr</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">figureOfMerit</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">&quot;+-&quot;</span><span class="p">,</span> <span class="n">twoSigma</span><span class="p">)</span>
+
+    <span class="c1"># We expect the error to be zero, but we allow some tolerance</span>
+    <span class="c1"># given that the error is estimated with a certain variance</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">err</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="n">atol</span> <span class="o">=</span> <span class="n">twoSigma</span><span class="p">,</span>
+        <span class="n">rtol</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># when running in pytest, we use skipAssert=True, because the test</span>
+<span class="c1"># keeps failing for low tf and we can&#39;t afford a high tf at CI testing time</span>
+<div class="viewcode-block" id="test_validateExample1">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_validateExample1">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">flaky</span><span class="p">(</span><span class="n">reruns</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_validateExample1</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">skipAssert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate the weak accuracy of the integrators for Example 1 from Tang &amp; Xiao (2017).</span>
+<span class="sd">    Compares the empirical variance of the final state to the analytical value using</span>
+<span class="sd">    multiple Monte Carlo batches.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: Integration method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">**-</span><span class="mi">3</span>
+
+    <span class="n">system</span> <span class="o">=</span> <span class="n">Example1System</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">basiliskTrajectory</span><span class="p">():</span>
+        <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">xBasilisk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span>
+
+    <span class="c1"># Use the same G and E[G(x(t))] as in Example 1 in the paper</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">G</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">estimateGOnTrajectory</span> <span class="o">=</span> <span class="mi">149</span><span class="o">/</span><span class="mi">150</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">tf</span><span class="p">)</span> <span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">150</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">tf</span><span class="p">)</span>
+
+    <span class="n">err</span><span class="p">,</span> <span class="n">varErr</span> <span class="o">=</span> <span class="n">estimateErrorAndEmpiricalVariance</span><span class="p">(</span>
+        <span class="n">basiliskTrajectory</span><span class="p">,</span>
+        <span class="n">G</span><span class="p">,</span>
+        <span class="n">estimateGOnTrajectory</span><span class="p">,</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="p">)</span>
+    <span class="n">twoSigma</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">varErr</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">&quot;variance error&quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">&quot;+-&quot;</span><span class="p">,</span> <span class="n">twoSigma</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skipAssert</span><span class="p">:</span>
+        <span class="c1"># We expect the error to be zero, but we allow some tolerance</span>
+        <span class="c1"># given that the error is estimated with a certain variance</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">err</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">atol</span> <span class="o">=</span> <span class="n">twoSigma</span><span class="p">,</span>
+            <span class="n">rtol</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+
+    <span class="c1"># run this test with a higher tf, enough to pass</span>
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">METHODS</span><span class="p">:</span>
+        <span class="n">test_validateExample1</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">tf</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">skipAssert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

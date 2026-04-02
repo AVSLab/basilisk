@@ -1,0 +1,8 @@
+.. _FacetElementMsgPayload:
+
+FacetElementMsgPayload
+==============================
+
+.. autodoxygenfile:: FacetElementMsgPayload.h
+   :project: msgPayloadDefC
+

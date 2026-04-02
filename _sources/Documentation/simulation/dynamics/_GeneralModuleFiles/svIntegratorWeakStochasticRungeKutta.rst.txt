@@ -1,0 +1,8 @@
+.. _svIntegratorWeakStochasticRungeKutta:
+
+Module: svIntegratorWeakStochasticRungeKutta
+============================================
+
+.. autodoxygenfile:: svIntegratorWeakStochasticRungeKutta.h
+   :project: _GeneralModuleFiles4
+

@@ -1,0 +1,8 @@
+.. _CMEstDataMsgPayload:
+
+CMEstDataMsgPayload
+===========================
+
+.. autodoxygenfile:: CMEstDataMsgPayload.h
+   :project: msgPayloadDefC
+

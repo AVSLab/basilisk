@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: stochasticAtmDensity &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: stochasticDragCoeff" href="stochasticDragCoeff.html" />
+    <link rel="prev" title="Module: meanRevertingNoise" href="meanRevertingNoise.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cmdForceInertialToForceAtSite/index.html">cmdForceInertialToForceAtSite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTimeInvariantSystem/index.html">linearTimeInvariantSystem</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">meanRevertingNoise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrOnTimeToForce/index.html">thrOnTimeToForce</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">meanRevertingNoise</a></li>
+      <li class="breadcrumb-item active">Module: stochasticAtmDensity</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/meanRevertingNoise/stochasticAtmDensity.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-stochasticatmdensity">
+<span id="stochasticatmdensity"></span><h1>Module: stochasticAtmDensity<a class="headerlink" href="#module-stochasticatmdensity" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">StochasticAtmDensity</span></code> module applies scalar mean-reverting stochastic noise to atmospheric density by
+specializing <a class="reference internal" href="meanRevertingNoise.html#meanrevertingnoise"><span class="std std-ref">MeanRevertingNoise</span></a>. It scales incoming atmospheric
+density by a stochastic multiplicative factor and republishes the perturbed atmosphere message.</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The inherited Ornstein-Uhlenbeck state <span class="math notranslate nohighlight">\(x\)</span> evolves as</p>
+<div class="math notranslate nohighlight">
+\[dx = -\frac{1}{\tau}x\,dt + \sqrt{\frac{2}{\tau}}\sigma_{st}\,dW\]</div>
+<p>The output neutral density is</p>
+<div class="math notranslate nohighlight">
+\[\rho_{out} = \rho_{in}(1 + x)\]</div>
+<p>All other atmospheric payload fields are passed through unchanged.</p>
+</section>
+<section id="message-interfaces">
+<h2>Message Interfaces<a class="headerlink" href="#message-interfaces" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>atmoDensInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#atmopropsmsgpayload"><span class="std std-ref">AtmoPropsMsgPayload</span></a></p></td>
+<td><p>Input atmosphere properties message containing baseline <code class="docutils literal notranslate"><span class="pre">neutralDensity</span></code> and other atmospheric fields.</p></td>
+</tr>
+<tr class="row-odd"><td><p>atmoDensOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#atmopropsmsgpayload"><span class="std std-ref">AtmoPropsMsgPayload</span></a></p></td>
+<td><p>Output atmosphere properties message with stochastic density correction applied to <code class="docutils literal notranslate"><span class="pre">neutralDensity</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each update step, the module performs the following operations:</p>
+<ol class="arabic simple">
+<li><p>Reads the current OU state <span class="math notranslate nohighlight">\(x\)</span> from the base class.</p></li>
+<li><p>Reads <code class="docutils literal notranslate"><span class="pre">atmoDensInMsg</span></code>.</p></li>
+<li><p>Multiplies <code class="docutils literal notranslate"><span class="pre">neutralDensity</span></code> by <span class="math notranslate nohighlight">\((1+x)\)</span>.</p></li>
+<li><p>Writes the modified payload to <code class="docutils literal notranslate"><span class="pre">atmoDensOutMsg</span></code>.</p></li>
+</ol>
+<p>The OU process parameters are configured through base-class setters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">setStationaryStd(sigma_st)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setTimeConstant(tau)</span></code></p></li>
+</ul>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The model applies multiplicative density noise only; it does not model spatial correlation or altitude-dependent
+stochastic parameters internally.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(x &lt; -1\)</span>, the corrected density can become negative unless constrained externally.</p></li>
+</ul>
+</section>
+<section id="verification-and-testing">
+<h2>Verification and Testing<a class="headerlink" href="#verification-and-testing" title="Link to this heading"></a></h2>
+<p>The module behavior is validated in
+<code class="docutils literal notranslate"><span class="pre">src/simulation/mujocoDynamics/meanRevertingNoise/_UnitTest/test_meanRevertingNoise.py</span></code> by checking that the output
+density time series has the expected OU statistics (mean, variance, and correlation time) for a constant nominal
+density input.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv420StochasticAtmDensity">
+<span id="_CPPv320StochasticAtmDensity"></span><span id="_CPPv220StochasticAtmDensity"></span><span id="StochasticAtmDensity"></span><span class="target" id="class_stochastic_atm_density"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticAtmDensity</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="meanRevertingNoise.html#_CPPv418MeanRevertingNoise" title="MeanRevertingNoise"><span class="n"><span class="pre">MeanRevertingNoise</span></span></a><a class="headerlink" href="#_CPPv420StochasticAtmDensity" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticAtmDensity.h&gt;</em></div>
+<p>Applies a mean-reverting (Ornstein–Uhlenbeck) correction to atmospheric density. </p>
+<p>This class derives from <a class="reference internal" href="meanRevertingNoise.html#class_mean_reverting_noise"><span class="std std-ref">MeanRevertingNoise</span></a>, which provides the scalar OU state <span class="math notranslate nohighlight">\(x\)</span> evolving as:   <div class="math notranslate nohighlight">
+\[  dx = -\frac{1}{\tau}\, x \, dt + \sqrt{\frac{2}{\tau}}\, \sigma_{\text{st}}\, dW
+\]</div>
+</p>
+<p>The corrected density is:   <div class="math notranslate nohighlight">
+\[  \rho_\text{out} = \rho_\text{in}\,(1 + x)
+\]</div>
+</p>
+<p>The state <span class="math notranslate nohighlight">\(x\)</span> is stored and propagated by the base class. This class only specifies how the state modifies the atmosphere message. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20StochasticAtmDensity13atmoDensInMsgE">
+<span id="_CPPv3N20StochasticAtmDensity13atmoDensInMsgE"></span><span id="_CPPv2N20StochasticAtmDensity13atmoDensInMsgE"></span><span id="StochasticAtmDensity::atmoDensInMsg__ReadFunctor:AtmoPropsMsgPayload:"></span><span class="target" id="class_stochastic_atm_density_1ad0b5cb792112c4b513a073bebed45bde"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmoDensInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20StochasticAtmDensity13atmoDensInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input atmospheric properties message. </p>
+<p>This message is read each step to obtain the unperturbed atmospheric density and temperature before applying the stochastic correction. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20StochasticAtmDensity14atmoDensOutMsgE">
+<span id="_CPPv3N20StochasticAtmDensity14atmoDensOutMsgE"></span><span id="_CPPv2N20StochasticAtmDensity14atmoDensOutMsgE"></span><span id="StochasticAtmDensity::atmoDensOutMsg__Message:AtmoPropsMsgPayload:"></span><span class="target" id="class_stochastic_atm_density_1a7a74202caa744a1363bb9edc39cc788a"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmoDensOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N20StochasticAtmDensity14atmoDensOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output atmospheric properties message. </p>
+<p>This message is written each step with the corrected neutral density value. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20StochasticAtmDensity11writeOutputE8uint64_td">
+<span id="_CPPv3N20StochasticAtmDensity11writeOutputE8uint64_td"></span><span id="_CPPv2N20StochasticAtmDensity11writeOutputE8uint64_td"></span><span id="StochasticAtmDensity::writeOutput__uint64_t.double"></span><span class="target" id="class_stochastic_atm_density_1aaacaba7a5aac042d05cb297750eed2d8"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N20StochasticAtmDensity11writeOutputE8uint64_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Apply the OU correction factor and write output. </p>
+<p>Called automatically by <a class="reference internal" href="meanRevertingNoise.html#class_mean_reverting_noise_1aeb0695aa31cac925430b23be3d70e3af"><span class="std std-ref">MeanRevertingNoise::UpdateState()</span></a>, after the stochastic state has been updated and before the simulation advances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p></li>
+<li><p><strong>x</strong> – Current value of the scalar mean-reverting correction factor. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="meanRevertingNoise.html" class="btn btn-neutral float-left" title="Module: meanRevertingNoise" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stochasticDragCoeff.html" class="btn btn-neutral float-right" title="Module: stochasticDragCoeff" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

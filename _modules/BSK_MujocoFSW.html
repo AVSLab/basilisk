@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_MujocoFSW &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BSK_MujocoFSW</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BSK_MujocoFSW</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">supportFilePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thrArmControlSupport&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">supportFilePath</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jointThrAllocation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stateMerge</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">thrFiringRound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">hingedJointArrayMotor</span><span class="p">,</span>
+    <span class="n">jointMotionCompensator</span><span class="p">,</span>
+    <span class="n">thrJointCompensation</span><span class="p">,</span>
+    <span class="n">inertial3D</span><span class="p">,</span>
+    <span class="n">attTrackingError</span><span class="p">,</span>
+    <span class="n">mrpFeedback</span><span class="p">,</span>
+    <span class="n">inertialCartFeedback</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">thrOnTimeToForce</span><span class="p">,</span>
+    <span class="n">simpleNav</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BSKMujocoFSWModels</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the bskSim FSW class&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">,</span> <span class="n">fswRate</span><span class="p">):</span>
+        <span class="c1"># define empty class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrArmConfigMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transRefMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bodyTorqueGateway</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTimeGateway</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Define process name and task time-steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processName</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">FSWProcessName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">fswRate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTimeStep</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+
+        <span class="c1"># Define default values for the scenario</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrForces</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span> <span class="c1"># N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxJointTorques</span> <span class="o">=</span> <span class="p">[</span><span class="mf">22.5</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span> <span class="c1"># Nm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlWeight</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrustWeight</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+        <span class="c1"># Define the default control gains</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tpos</span> <span class="o">=</span> <span class="mf">27.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tatt</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omegaOuter</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omegaInner</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">omegaOuter</span>
+        <span class="n">piRot</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="mf">330.0</span><span class="o">*</span><span class="p">(</span><span class="mf">0.79</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.69</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">Tatt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pRot</span> <span class="o">=</span> <span class="n">piRot</span>
+        <span class="n">xiRot</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kRot</span> <span class="o">=</span> <span class="n">piRot</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">xiRot</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="mf">330.0</span><span class="o">*</span><span class="p">(</span><span class="mf">0.79</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.69</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kiRot</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="n">piPos</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="mf">350.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">Tpos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pTrans</span> <span class="o">=</span> <span class="p">(</span><span class="n">piPos</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">xiPos</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kTrans</span> <span class="o">=</span> <span class="p">(</span><span class="n">piPos</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">xiPos</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="mf">350.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">kiMotor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omegaInner</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kTheta</span> <span class="o">=</span> <span class="p">(</span><span class="n">kiMotor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">xiMotor</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="n">piMotor</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xiMotor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">omegaInner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pTheta</span> <span class="o">=</span> <span class="p">(</span><span class="n">piMotor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+
+        <span class="c1"># Define the XML object names for later use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hubName</span> <span class="o">=</span> <span class="s2">&quot;hub&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointRefs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;arm_1_base&quot;</span><span class="p">,</span> <span class="s2">&quot;arm_1_joint_1&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_1_base&quot;</span><span class="p">,</span> <span class="s2">&quot;arm_1_joint_2&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_1_tip&quot;</span><span class="p">,</span>  <span class="s2">&quot;arm_1_joint_3&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_1_tip&quot;</span><span class="p">,</span>  <span class="s2">&quot;arm_1_joint_4&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_2_base&quot;</span><span class="p">,</span> <span class="s2">&quot;arm_2_joint_1&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_2_base&quot;</span><span class="p">,</span> <span class="s2">&quot;arm_2_joint_2&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_2_tip&quot;</span><span class="p">,</span>  <span class="s2">&quot;arm_2_joint_3&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;arm_2_tip&quot;</span><span class="p">,</span>  <span class="s2">&quot;arm_2_joint_4&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointActNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;u_arm_1_joint_1&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_1_joint_2&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_1_joint_3&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_1_joint_4&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;u_arm_2_joint_1&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_2_joint_2&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_2_joint_3&quot;</span><span class="p">,</span><span class="s2">&quot;u_arm_2_joint_4&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrActNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;F_thruster_1&quot;</span><span class="p">,</span><span class="s2">&quot;F_thruster_2&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bodyActNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tau_prescribed_1&quot;</span><span class="p">,</span><span class="s2">&quot;tau_prescribed_2&quot;</span><span class="p">,</span><span class="s2">&quot;tau_prescribed_3&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Define initial event check values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastDesAngles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastDesAngleRates</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastDesCmdWriteTime</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrustJustActivated</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Instantiate FSW modules as objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span> <span class="o">=</span> <span class="n">stateMerge</span><span class="o">.</span><span class="n">StateMerge</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span> <span class="o">=</span> <span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">InertialCartFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span> <span class="o">=</span> <span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">JointThrAllocation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span> <span class="o">=</span> <span class="n">thrFiringRound</span><span class="o">.</span><span class="n">ThrFiringRound</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span> <span class="o">=</span> <span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">HingedJointArrayMotor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span> <span class="o">=</span> <span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">JointMotionCompensator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span> <span class="o">=</span> <span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">ThrOnTimeToForce</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span> <span class="o">=</span> <span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">ThrJointCompensation</span><span class="p">()</span>
+
+        <span class="c1"># Create the FSW module gateway messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupGatewayMsgs</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Initialize all modules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">InitAllFSWObjects</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Create tasks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span> <span class="o">=</span> <span class="s2">&quot;outerLoopTask&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionTaskName</span> <span class="o">=</span> <span class="s2">&quot;jointMotionTask&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTaskName</span> <span class="o">=</span> <span class="s2">&quot;thrFiringTask&quot;</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTimeStep</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointMotionTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="p">),</span> <span class="mi">99</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="p">),</span> <span class="mi">98</span><span class="p">)</span>
+
+        <span class="c1"># Assign initialized modules to tasks</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attError</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">,</span> <span class="mi">46</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="p">,</span> <span class="mi">45</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="p">,</span> <span class="mi">44</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="p">,</span> <span class="mi">43</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointMotionTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointMotionTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+
+        <span class="c1"># Create events to to be called for changing active controllers</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeroGatewayMsgs</span><span class="p">()</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">conditionJointMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event condition to use the joint motion controller after the outer</span>
+<span class="sd">            control loop has been updated&quot;&quot;&quot;</span>
+            <span class="n">desAngles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">desAngleReader</span><span class="p">()</span><span class="o">.</span><span class="n">states</span><span class="p">)</span>
+            <span class="n">desAngleRates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">desAngleReader</span><span class="p">()</span><span class="o">.</span><span class="n">stateDots</span><span class="p">)</span>
+            <span class="n">currentWriteTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">desAngleReader</span><span class="o">.</span><span class="n">timeWritten</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">desAngles</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numJoints</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">desAngleRates</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numJoints</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="n">currentWriteTime</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesCmdWriteTime</span>
+            <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesAngles</span> <span class="o">=</span> <span class="n">desAngles</span><span class="p">[:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesAngleRates</span> <span class="o">=</span> <span class="n">desAngleRates</span><span class="p">[:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesCmdWriteTime</span> <span class="o">=</span> <span class="n">currentWriteTime</span>
+            <span class="k">return</span> <span class="n">changed</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">actionJointMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event action to activate the joint motion controller when there</span>
+<span class="sd">            is a change in the desired joint angles or thruster forces&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGatewayMsgs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">jointMotionTaskName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;jointMotion&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;thrFiring&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;coast&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;jointMotion&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="n">conditionJointMotion</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="n">actionJointMotion</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">conditionThrFiring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event condition to fire the thrusters once the joints have</span>
+<span class="sd">            reached the desired angles and stopped&quot;&quot;&quot;</span>
+            <span class="n">desStates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesAngles</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">desStatesDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">lastDesAngleRates</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">curStates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numJoints</span><span class="p">)</span>
+            <span class="n">curStatesDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numJoints</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numJoints</span><span class="p">):</span>
+                <span class="n">curStates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">anglesReaders</span><span class="p">[</span><span class="n">i</span><span class="p">]()</span><span class="o">.</span><span class="n">state</span>
+                <span class="n">curStatesDot</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">angleRatesReaders</span><span class="p">[</span><span class="n">i</span><span class="p">]()</span><span class="o">.</span><span class="n">state</span>
+            <span class="n">angError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">wrapAngle</span><span class="p">(</span><span class="n">desStates</span> <span class="o">-</span> <span class="n">curStates</span><span class="p">)</span>
+            <span class="n">stateError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">angError</span><span class="p">))</span>
+            <span class="n">rateError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">desStatesDot</span> <span class="o">-</span> <span class="n">curStatesDot</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">stateError</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">rateError</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">actionThrFiring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event action to activate the thruster firing when the joints have</span>
+<span class="sd">            reached the desired angles and stopped&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrustJustActivated</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGatewayMsgs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrFiringTaskName</span><span class="p">)</span>
+            <span class="n">CurrentSimNanos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span>
+            <span class="n">thrOnTimes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrTimeReader</span><span class="p">()</span><span class="o">.</span><span class="n">OnTimeRequest</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgPayload</span><span class="p">()</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">OnTimeRequest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">thrOnTimes</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrFiringTimeGateway</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;jointMotion&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;thrFiring&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;coast&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;thrFiring&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="n">conditionThrFiring</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="n">actionThrFiring</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">conditionCoast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event condition to coast (no commands) between the time</span>
+<span class="sd">            when the thrusters are done firing and the next outer loop update&quot;&quot;&quot;</span>
+            <span class="n">thrForces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">reader</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrForceReaders</span><span class="p">):</span>
+                <span class="n">thrForces</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">reader</span><span class="p">()</span><span class="o">.</span><span class="n">input</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrustJustActivated</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">thrustJustActivated</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thrForces</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">actionCoast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Event action to activate coasting (no commands) between the time</span>
+<span class="sd">            when the thrusters are done firing and the next outer loop update&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGatewayMsgs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">outerLoopTaskName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;jointMotion&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;thrFiring&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="s2">&quot;coast&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;coast&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="n">conditionCoast</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="n">actionCoast</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------------------------------- #</span>
+    <span class="c1"># These are module-initialization methods</span>
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetVehicleConfiguration">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetVehicleConfiguration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetVehicleConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the spacecraft configuration information&quot;&quot;&quot;</span>
+        <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="mf">350.0</span>
+        <span class="c1"># use the hub inertia for mrp feedback module since will not have instantaneous inertia otherwise</span>
+        <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="mf">330.0</span><span class="o">*</span><span class="p">(</span><span class="mf">0.69</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.52</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="mf">330.0</span><span class="o">*</span><span class="p">(</span><span class="mf">0.79</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.52</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="mf">330.0</span><span class="o">*</span><span class="p">(</span><span class="mf">0.79</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.69</span><span class="o">**</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetThrArmConfig">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetThrArmConfig">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetThrArmConfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the thruster arm configuration information&quot;&quot;&quot;</span>
+        <span class="n">thrArmConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArmConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">thrArmIdx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">thrArmJointIdx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">armTreeIdx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">armJointCount</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="n">r_CP_P</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">r_TP_P</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">shat_P</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">fhat_P</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">arm2BaseDcm</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">dcm_C0P</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">identity</span> <span class="o">+</span> <span class="n">identity</span> <span class="o">+</span> <span class="n">identity</span> <span class="o">+</span> <span class="n">identity</span>
+            <span class="o">+</span> <span class="n">arm2BaseDcm</span> <span class="o">+</span> <span class="n">identity</span> <span class="o">+</span> <span class="n">identity</span> <span class="o">+</span> <span class="n">identity</span>
+        <span class="p">)</span>
+
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">thrArmIdx</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">thrArmJointIdx</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">armTreeIdx</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">armJointCount</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">r_CP_P</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">r_TP_P</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">shat_P</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">fhat_P</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">dcm_C0P</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">thrArmIdx</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">thrArmIdx</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">thrArmJointIdx</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">thrArmJointIdx</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">armTreeIdx</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">armTreeIdx</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">armJointCount</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">armJointCount</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">r_CP_P</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">r_CP_P</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">r_TP_P</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">r_TP_P</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shat_P</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">shat_P</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fhat_P</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">fhat_P</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dcm_C0P</span><span class="p">:</span>
+            <span class="n">thrArmConfigOut</span><span class="o">.</span><span class="n">dcm_C0P</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrArmConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArmConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">thrArmConfigOut</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetTransRef">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetTransRef">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetTransRef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the translational reference state information&quot;&quot;&quot;</span>
+        <span class="n">transRefOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TransRefMsgPayload</span><span class="p">()</span>
+        <span class="n">transRefOut</span><span class="o">.</span><span class="n">r_RN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">transRefOut</span><span class="o">.</span><span class="n">v_RN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">transRefOut</span><span class="o">.</span><span class="n">a_RN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TransRefMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">transRefOut</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetInertial3D">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetInertial3D">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetInertial3D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defined the inertial 3D guidance module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetStateMerge">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetStateMerge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetStateMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the state merge module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;stateMerge&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span><span class="o">.</span><span class="n">attStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hubName</span><span class="p">)</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span><span class="o">.</span><span class="n">transStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">systemCoM</span><span class="o">.</span><span class="n">comStatesOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetNavConverter">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetNavConverter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetNavConverter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the nav converter module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;navConverter&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stateMerge</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetAttError">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetAttError">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetAttError</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the attitude tracking error module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attError&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetMrpFeedback">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetMrpFeedback">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetMrpFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the MRP feedback module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kRot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiRot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pRot</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetInertialCartFeedback">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetInertialCartFeedback">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetInertialCartFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the inertial cart feedback module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertialCartFeedback&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">deputyNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">navConverter</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">deputyRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transRefMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">deputyVehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kTrans</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">setP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pTrans</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetJointThrAllocation">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetJointThrAllocation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetJointThrAllocation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the joint and thruster allocation module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;jointThrAllocation&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">armConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrArmConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">CoMStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">systemCoM</span><span class="o">.</span><span class="n">comStatesOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">hubStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hubName</span><span class="p">)</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">transForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">forceOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">rotTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">setWc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controlWeight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">setWf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrustWeight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">setThrForceMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForces</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">desAngleReader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desAngleReader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">desJointAnglesOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetThrFiringRound">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetThrFiringRound">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetThrFiringRound</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the thruster firing logic module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;thrFiringRound&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">thrForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">thrForceOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">setControlPeriodSec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outerLoopTimeStep</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">setOnTimeResolutionSec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">innerLoopTimeStep</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">setNumThrusters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">setThrForceMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForces</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrTimeReader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrTimeReader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrFiringRound</span><span class="o">.</span><span class="n">thrOnTimeOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetHingedJointArrayMotor">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetHingedJointArrayMotor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetHingedJointArrayMotor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the hinged joint array motor module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;hingedJointArrayMotor&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">massMatrixInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">systemMassMatrix</span><span class="o">.</span><span class="n">massMatrixOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">reactionForcesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">jointReactionForces</span><span class="o">.</span><span class="n">reactionForcesOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">desJointStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">desJointAnglesOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anglesReaders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleRatesReaders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bodyName</span><span class="p">,</span> <span class="n">jointName</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointRefs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+            <span class="n">joint</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">bodyName</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">jointStatesInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">jointStateDotsInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="p">)</span>
+            <span class="c1"># Redirect the module outputs to each joint motor torque gateway message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">motorTorquesOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Set up readers for the angles for use in the event system</span>
+            <span class="n">angleReader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+            <span class="n">angleRateReader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+            <span class="n">angleReader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+            <span class="n">angleRateReader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">anglesReaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angleReader</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angleRatesReaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angleRateReader</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">setKtheta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kTheta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">setPtheta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pTheta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hingedJointArrayMotor</span><span class="o">.</span><span class="n">setUMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxJointTorques</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetJointMotionCompensator">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetJointMotionCompensator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetJointMotionCompensator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the joint motion compensator module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;jointMotionCompensator&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">massMatrixInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">systemMassMatrix</span><span class="o">.</span><span class="n">massMatrixOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">reactionForcesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">jointReactionForces</span><span class="o">.</span><span class="n">reactionForcesOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">jointTorqueInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="c1"># Redirect the module outputs to each hub motor torque gateway message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jointMotionCompensator</span><span class="o">.</span><span class="n">hubTorqueOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bodyTorqueGateway</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetThrOnTimeToForce">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetThrOnTimeToForce">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetThrOnTimeToForce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the thruster on-time to force conversion module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;thrOnTimeToForce&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">onTimeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTimeGateway</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">addThruster</span><span class="p">()</span>
+            <span class="c1"># Redirect the module outputs to each thruster force gateway message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">thrusterForceOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrOnTimeToForce</span><span class="o">.</span><span class="n">setThrMag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForces</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.SetThrJointCompensation">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.SetThrJointCompensation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetThrJointCompensation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the thruster-joint compensation module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;thrJointCompensation&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">armConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrArmConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">massMatrixInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">systemMassMatrix</span><span class="o">.</span><span class="n">massMatrixOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">reactionForcesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">jointReactionForces</span><span class="o">.</span><span class="n">reactionForcesOutMsg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">addThruster</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">thrForcesInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bodyName</span><span class="p">,</span> <span class="n">jointName</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointRefs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+            <span class="n">joint</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">bodyName</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">jointName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">jointStatesInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+            <span class="c1"># Redirect the module outputs to each joint motor torque gateway message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">motorTorquesOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrJointCompensation</span><span class="o">.</span><span class="n">setUMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxJointTorques</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.InitAllFSWObjects">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.InitAllFSWObjects">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InitAllFSWObjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize all FSW objects in the simulation&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetVehicleConfiguration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetThrArmConfig</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetTransRef</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetInertial3D</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetStateMerge</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetNavConverter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetAttError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetMrpFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetInertialCartFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetJointThrAllocation</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetThrFiringRound</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetHingedJointArrayMotor</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetJointMotionCompensator</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetThrOnTimeToForce</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetThrJointCompensation</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.setupGatewayMsgs">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.setupGatewayMsgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupGatewayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;create stand-alone actuator gateway messages such that different modules can write this message (or it can be left as zero)</span>
+<span class="sd">        and provide a common input message for the mujoco actuators&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numJoints</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bodyTorqueGateway</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTimeGateway</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsg</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeroGatewayMsgs</span><span class="p">()</span>
+
+        <span class="c1"># connect the gateway messages to the appropriate mujoco actuator input messages</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointActNames</span><span class="p">):</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrActNames</span><span class="p">):</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bodyActNames</span><span class="p">):</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bodyTorqueGateway</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Setup readers for the thruster force gateway messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrForceReaders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numThrusters</span><span class="p">):</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgReader</span><span class="p">()</span>
+            <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thrForceReaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">zeroGatewayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">zeroActMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">zeroTimeMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgPayload</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jointTorqueGateways</span><span class="p">:</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zeroActMsg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrForceGateways</span><span class="p">:</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zeroActMsg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bodyTorqueGateway</span><span class="p">:</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zeroActMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrFiringTimeGateway</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zeroTimeMsg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BSKMujocoFSWModels.wrapAngle">
+<a class="viewcode-back" href="../examples/mujoco/mujocoModels/BSK_MujocoFSW.html#BSK_MujocoFSW.BSKMujocoFSWModels.wrapAngle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to wrap angles to the range [-pi, pi]&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

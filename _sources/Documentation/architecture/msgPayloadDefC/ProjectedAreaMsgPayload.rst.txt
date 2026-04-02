@@ -1,0 +1,8 @@
+.. _ProjectedAreaMsgPayload:
+
+ProjectedAreaMsgPayload
+===============================
+
+.. autodoxygenfile:: ProjectedAreaMsgPayload.h
+   :project: msgPayloadDefC
+

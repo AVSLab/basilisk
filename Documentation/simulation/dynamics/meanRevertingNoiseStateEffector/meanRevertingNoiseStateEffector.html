@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: meanRevertingNoiseStateEffector &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="meanRevertingNoiseStateEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">meanRevertingNoiseStateEffector</a></li>
+      <li class="breadcrumb-item active">Module: meanRevertingNoiseStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-meanrevertingnoisestateeffector">
+<span id="meanrevertingnoisestateeffector"></span><h1>Module: meanRevertingNoiseStateEffector<a class="headerlink" href="#module-meanrevertingnoisestateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MeanRevertingNoiseStateEffector</span></code> module is a spacecraft
+<a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">StateEffector</span></a> that propagates a single scalar
+mean-reverting stochastic state.</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The internal state <span class="math notranslate nohighlight">\(x\)</span> follows an Ornstein-Uhlenbeck process:</p>
+<div class="math notranslate nohighlight">
+\[dx = -\frac{1}{\tau}x\,dt + \sqrt{\frac{2}{\tau}}\sigma_{st}\,dW\]</div>
+<p>No module-specific input or output messages are used. Other modules can consume
+the state by reading it from the dynamics state manager by name.</p>
+<p>The registered state name can be set or queried using <code class="docutils literal notranslate"><span class="pre">setStateName(&quot;...&quot;)</span></code> and <code class="docutils literal notranslate"><span class="pre">getStateName()</span></code>.</p>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each integrator sub-step, the module:</p>
+<ol class="arabic simple">
+<li><p>Reads the internal state <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p>Sets deterministic drift <span class="math notranslate nohighlight">\(\dot{x} = -x/\tau\)</span>.</p></li>
+<li><p>Sets one diffusion term with amplitude <span class="math notranslate nohighlight">\(\sqrt{2/\tau}\sigma_{st}\)</span>.</p></li>
+</ol>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Because the registered state has a stochastic diffusion source, a stochastic
+integrator must be used for the parent spacecraft dynamics.</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv431MeanRevertingNoiseStateEffector">
+<span id="_CPPv331MeanRevertingNoiseStateEffector"></span><span id="_CPPv231MeanRevertingNoiseStateEffector"></span><span id="MeanRevertingNoiseStateEffector"></span><span class="target" id="class_mean_reverting_noise_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MeanRevertingNoiseStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv431MeanRevertingNoiseStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;meanRevertingNoiseStateEffector.h&gt;</em></div>
+<p>State effector that propagates a scalar Ornstein-Uhlenbeck process. </p>
+<p>This module propagates a scalar stochastic state <span class="math notranslate nohighlight">\(x\)</span> using   <div class="math notranslate nohighlight">
+\[    dx = -\frac{1}{\tau}x\,dt + \sqrt{\frac{2}{\tau}}\sigma_{\mathrm{st}}\,dW,
+\]</div>
+ where <span class="math notranslate nohighlight">\(\tau\)</span> is the time constant and <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> is the stationary standard deviation. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector31MeanRevertingNoiseStateEffectorEv">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector31MeanRevertingNoiseStateEffectorEv"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector31MeanRevertingNoiseStateEffectorEv"></span><span id="MeanRevertingNoiseStateEffector::MeanRevertingNoiseStateEffector"></span><span class="target" id="class_mean_reverting_noise_state_effector_1af6d202d606edd9089bb18d4501c49d97"></span><span class="sig-name descname"><span class="n"><span class="pre">MeanRevertingNoiseStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector31MeanRevertingNoiseStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffectorD0Ev">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffectorD0Ev"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffectorD0Ev"></span><span id="MeanRevertingNoiseStateEffector::~MeanRevertingNoiseStateEffector"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a019efa8a84634f8e9de46818720ad3e4"></span><span class="sig-name descname"><span class="n"><span class="pre">~MeanRevertingNoiseStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector14registerStatesER15DynParamManager"></span><span id="MeanRevertingNoiseStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a9b021da11e6fec04ddbdd65a4bb8c939"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Register this effector’s internal stochastic state with the dynamics manager. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Dynamics parameter manager used to create the correction state. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector12linkInStatesER15DynParamManager"></span><span id="MeanRevertingNoiseStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_mean_reverting_noise_state_effector_1acb5097b1d585c7d23796c9ac5e2b95a2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Link any required external states and properties. </p>
+<p>
+This effector has no required external state links. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> – states </p></li>
+<li><p><strong>states</strong> – Dynamics parameter manager.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="MeanRevertingNoiseStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_mean_reverting_noise_state_effector_1ab426d758bec47d9080d355fc0523bbb9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute deterministic and stochastic dynamics for the correction state. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – integTime </p></li>
+<li><p><strong>rDDot_BN_N</strong> – rDDot_BN_N </p></li>
+<li><p><strong>omegaDot_BN_B</strong> – omegaDot_BN_B </p></li>
+<li><p><strong>sigma_BN</strong> – sigma_BN </p></li>
+<li><p><strong>integTime</strong> – Integration time in seconds. </p></li>
+<li><p><strong>rDDot_BN_N</strong> – Hub translational acceleration [m/s^2] (unused). </p></li>
+<li><p><strong>omegaDot_BN_B</strong> – Hub angular acceleration [rad/s^2] (unused). </p></li>
+<li><p><strong>sigma_BN</strong> – Hub attitude MRP (unused). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector16setStationaryStdEd">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector16setStationaryStdEd"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector16setStationaryStdEd"></span><span id="MeanRevertingNoiseStateEffector::setStationaryStd__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1aa9898ff6fe556bf4ff49e92be9e3f3d7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStationaryStd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigmaStationary</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector16setStationaryStdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the stationary standard deviation of the OU state. </p>
+<p>
+Values smaller than zero are rejected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigmaStationary</strong> – Stationary standard deviation, <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK31MeanRevertingNoiseStateEffector16getStationaryStdEv">
+<span id="_CPPv3NK31MeanRevertingNoiseStateEffector16getStationaryStdEv"></span><span id="_CPPv2NK31MeanRevertingNoiseStateEffector16getStationaryStdEv"></span><span id="MeanRevertingNoiseStateEffector::getStationaryStdC"></span><span class="target" id="class_mean_reverting_noise_state_effector_1ad373f963d4ad056cad351d69b4186365"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStationaryStd</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK31MeanRevertingNoiseStateEffector16getStationaryStdEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector15setTimeConstantEd">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector15setTimeConstantEd"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector15setTimeConstantEd"></span><span id="MeanRevertingNoiseStateEffector::setTimeConstant__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a8b676b94794f0b68e19a481c665d182e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTimeConstant</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeConstant</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector15setTimeConstantEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the OU time constant. </p>
+<p>
+Values less than or equal to zero are rejected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeConstant</strong> – Time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK31MeanRevertingNoiseStateEffector15getTimeConstantEv">
+<span id="_CPPv3NK31MeanRevertingNoiseStateEffector15getTimeConstantEv"></span><span id="_CPPv2NK31MeanRevertingNoiseStateEffector15getTimeConstantEv"></span><span id="MeanRevertingNoiseStateEffector::getTimeConstantC"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a742bc0e7b862c2c6cb2857f653b08259"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTimeConstant</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK31MeanRevertingNoiseStateEffector15getTimeConstantEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the OU time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK31MeanRevertingNoiseStateEffector13getStateValueEv">
+<span id="_CPPv3NK31MeanRevertingNoiseStateEffector13getStateValueEv"></span><span id="_CPPv2NK31MeanRevertingNoiseStateEffector13getStateValueEv"></span><span id="MeanRevertingNoiseStateEffector::getStateValueC"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a444b1f8afb578da33ca7c958fd471fd9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateValue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK31MeanRevertingNoiseStateEffector13getStateValueEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the current state value. </p>
+<p>
+If called before state registration, this returns the configured initial value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current scalar state <span class="math notranslate nohighlight">\(x\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector13setStateValueEd">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector13setStateValueEd"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector13setStateValueEd"></span><span id="MeanRevertingNoiseStateEffector::setStateValue__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1aca447545cd367d72ee17856308bdab8a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector13setStateValueEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the state value. </p>
+<p>
+This updates the configured initial value and also updates the registered state immediately if registration has already occurred. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New scalar state <span class="math notranslate nohighlight">\(x\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK31MeanRevertingNoiseStateEffector12getStateNameEv">
+<span id="_CPPv3NK31MeanRevertingNoiseStateEffector12getStateNameEv"></span><span id="_CPPv2NK31MeanRevertingNoiseStateEffector12getStateNameEv"></span><span id="MeanRevertingNoiseStateEffector::getStateNameC"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a222a77ed7142ae58014d164d7e9e78d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK31MeanRevertingNoiseStateEffector12getStateNameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the registered state manager name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector12setStateNameENSt6stringE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector12setStateNameENSt6stringE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector12setStateNameENSt6stringE"></span><span id="MeanRevertingNoiseStateEffector::setStateName__ss"></span><span class="target" id="class_mean_reverting_noise_state_effector_1af4873cd886dccb08fcf8a1e7c1e8682e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateName</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector12setStateNameENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the state manager name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – State name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector11nameOfStateE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector11nameOfStateE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector11nameOfStateE"></span><span id="MeanRevertingNoiseStateEffector::nameOfState__ss"></span><span class="target" id="class_mean_reverting_noise_state_effector_1ab9e99fa137512ca218e71d1da32e9dab"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfState</span></span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector11nameOfStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>state manager key for scalar state <span class="math notranslate nohighlight">\(x\)</span></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector5stateE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector5stateE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector5stateE"></span><span id="MeanRevertingNoiseStateEffector::state__StateDataP"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a39861db170651c8276aef39e6e1dd3ee"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to scalar state container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector15sigmaStationaryE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector15sigmaStationaryE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector15sigmaStationaryE"></span><span id="MeanRevertingNoiseStateEffector::sigmaStationary__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1ae8b77dcae9c20101ff304ce8c3feb455"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigmaStationary</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector15sigmaStationaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector12timeConstantE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector12timeConstantE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector12timeConstantE"></span><span id="MeanRevertingNoiseStateEffector::timeConstant__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a12b8cb7b9765bf2d20f329b0126d9b22"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeConstant</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector12timeConstantE" title="Link to this definition"></a><br /></dt>
+<dd><p>OU time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector9stateInitE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector9stateInitE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector9stateInitE"></span><span id="MeanRevertingNoiseStateEffector::stateInit__double"></span><span class="target" id="class_mean_reverting_noise_state_effector_1ad5ddb807479d969854fbb6d5e112702d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector9stateInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>initial value for <span class="math notranslate nohighlight">\(x\)</span> used at state registration </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N31MeanRevertingNoiseStateEffector10effectorIDE">
+<span id="_CPPv3N31MeanRevertingNoiseStateEffector10effectorIDE"></span><span id="_CPPv2N31MeanRevertingNoiseStateEffector10effectorIDE"></span><span id="MeanRevertingNoiseStateEffector::effectorID__uint64_t"></span><span class="target" id="class_mean_reverting_noise_state_effector_1a348f76b6c5b79d8da6023fcecfa69cb3"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N31MeanRevertingNoiseStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>unique ID counter used to generate a distinct state name </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="meanRevertingNoiseStateEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing a Basilisk Plugin &mdash; Basilisk 2.10.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="About Vizard" href="../Vizard/Vizard.html" />
+    <link rel="prev" title="Installing Plugins" href="installing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing Plugins</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Writing a Basilisk Plugin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-layout">Plugin Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#swig-interface">SWIG Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cmakelists-txt">CMakeLists.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyproject-toml">pyproject.toml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-and-installing">Building and Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#publishing-to-pypi">Publishing to PyPI</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Writing a Basilisk Plugin</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Plugins/writing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="writing-a-basilisk-plugin">
+<span id="writingplugins"></span><h1>Writing a Basilisk Plugin<a class="headerlink" href="#writing-a-basilisk-plugin" title="Link to this heading"></a></h1>
+<aside class="sidebar">
+<p class="sidebar-title">BSK-SDK Repo</p>
+<p>The plugin source code is found on GitHub at <a class="reference external" href="https://github.com/AVSLab/bsk_sdk">bsk-sdk</a>.</p>
+</aside>
+<p>A plugin uses exactly the same C++ or C module structure as built-in
+Basilisk modules — see <a class="reference internal" href="../Learn/makingModules/cppModules.html#cppmodules"><span class="std std-ref">Making C++ Modules</span></a> and <a class="reference internal" href="../Learn/makingModules/cModules.html#cmodules"><span class="std std-ref">Making C Modules</span></a> for how to
+write the module itself.  This page covers only the plugin-specific
+packaging: the project layout, <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>, and <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p>
+<p>A complete working example is in the
+<a class="reference external" href="https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-plugin">bsk-sdk repository</a>.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Basilisk installed: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">bsk</span></code></p></li>
+<li><p>The SDK: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">bsk-sdk</span></code></p></li>
+<li><p>CMake ≥ 3.26 and a C++17 compiler (same requirement as Basilisk itself)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scikit-build-core</span></code> and <code class="docutils literal notranslate"><span class="pre">build</span></code>: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">scikit-build-core</span> <span class="pre">build</span></code></p></li>
+</ul>
+</section>
+<section id="plugin-layout">
+<h2>Plugin Layout<a class="headerlink" href="#plugin-layout" title="Link to this heading"></a></h2>
+<p>Follow the same folder convention as BSK — one folder per module, named
+identically to the module:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>my-plugin/
+├── pyproject.toml
+├── CMakeLists.txt
+├── messages/               # (optional) custom message definitions
+│   └── MyMsgPayload.h
+└── myModule/
+    ├── myModule.h
+    ├── myModule.cpp
+    ├── myModule.i
+    └── _UnitTest/
+        └── test_myModule.py
+</pre></div>
+</div>
+</section>
+<section id="swig-interface">
+<h2>SWIG Interface<a class="headerlink" href="#swig-interface" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">.i</span></code> file is the same as any BSK module.  For C++ use
+<code class="docutils literal notranslate"><span class="pre">swig_common_model.i</span></code>, for C use <code class="docutils literal notranslate"><span class="pre">swig_c_wrap.i</span></code>:</p>
+<div class="highlight-swig notranslate"><div class="highlight"><pre><span></span><span class="nf">%module</span><span class="w"> </span><span class="n">myModule</span>
+<span class="o">%</span><span class="p">{</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;myModule.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="nf">%include</span><span class="w"> </span><span class="s">&quot;swig_common_model.i&quot;</span><span class="w">   </span><span class="cm">/* C++ modules */</span>
+<span class="cm">/* %include &quot;swig_c_wrap.i&quot;      C modules — use %c_wrap_2 instead */</span>
+<span class="nf">%include</span><span class="w"> </span><span class="s">&quot;myModule.h&quot;</span>
+</pre></div>
+</div>
+<p>If subclassing a BSK base class, <code class="docutils literal notranslate"><span class="pre">%include</span></code> its <code class="docutils literal notranslate"><span class="pre">.i</span></code> file before yours:</p>
+<div class="highlight-swig notranslate"><div class="highlight"><pre><span></span><span class="nf">%include</span><span class="w"> </span><span class="s">&quot;swig_common_model.i&quot;</span>
+<span class="nf">%include</span><span class="w"> </span><span class="s">&quot;simulation/environment/_GeneralModuleFiles/atmosphereBase.i&quot;</span>
+<span class="nf">%include</span><span class="w"> </span><span class="s">&quot;customAtmosphere.h&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="cmakelists-txt">
+<h2>CMakeLists.txt<a class="headerlink" href="#cmakelists-txt" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> has a boilerplate section (copy as-is) and a
+plugin-specific section:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="c"># ==========================================================================</span>
+<span class="c"># Boilerplate: copy as-is</span>
+<span class="c"># ==========================================================================</span>
+<span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.26</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">my_plugin</span><span class="w"> </span><span class="s">LANGUAGES</span><span class="w"> </span><span class="s">C</span><span class="w"> </span><span class="s">CXX</span><span class="p">)</span>
+
+<span class="nb">find_package</span><span class="p">(</span><span class="s">Python3</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">COMPONENTS</span><span class="w"> </span><span class="s">Interpreter</span><span class="w"> </span><span class="s">Development.Module</span><span class="w"> </span><span class="s">NumPy</span><span class="p">)</span>
+
+<span class="nb">execute_process</span><span class="p">(</span>
+<span class="w">  </span><span class="s">COMMAND</span><span class="w"> </span><span class="s2">&quot;${Python3_EXECUTABLE}&quot;</span><span class="w"> </span><span class="s">-c</span>
+<span class="w">    </span><span class="s2">&quot;import bsk_sdk; print(bsk_sdk.cmake_config_dir(), end=&#39;&#39;)&quot;</span>
+<span class="w">  </span><span class="s">OUTPUT_VARIABLE</span><span class="w"> </span><span class="s">bsk_sdk_dir</span>
+<span class="w">  </span><span class="s">RESULT_VARIABLE</span><span class="w"> </span><span class="s">rc</span>
+<span class="p">)</span>
+<span class="nb">if</span><span class="p">(</span><span class="s">NOT</span><span class="w"> </span><span class="s">rc</span><span class="w"> </span><span class="s">EQUAL</span><span class="w"> </span><span class="s">0</span><span class="w"> </span><span class="s">OR</span><span class="w"> </span><span class="s">bsk_sdk_dir</span><span class="w"> </span><span class="s">STREQUAL</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">message</span><span class="p">(</span><span class="s">FATAL_ERROR</span><span class="w"> </span><span class="s2">&quot;bsk-sdk not found — is it installed in this Python environment?&quot;</span><span class="p">)</span>
+<span class="nb">endif</span><span class="p">()</span>
+<span class="nb">file</span><span class="p">(</span><span class="s">TO_CMAKE_PATH</span><span class="w"> </span><span class="s2">&quot;${bsk_sdk_dir}&quot;</span><span class="w"> </span><span class="s">bsk_sdk_dir</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">bsk-sdk_DIR</span><span class="w"> </span><span class="s2">&quot;${bsk_sdk_dir}&quot;</span><span class="p">)</span>
+<span class="nb">find_package</span><span class="p">(</span><span class="s">bsk-sdk</span><span class="w"> </span><span class="s">CONFIG</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">set</span><span class="p">(</span><span class="s">PKG_DIR</span><span class="w"> </span><span class="s2">&quot;${SKBUILD_PLATLIB_DIR}/my_plugin&quot;</span><span class="p">)</span>
+
+<span class="c"># ==========================================================================</span>
+<span class="c"># Plugin-specific configuration</span>
+<span class="c"># ==========================================================================</span>
+
+<span class="nb">file</span><span class="p">(</span><span class="s">GLOB</span><span class="w"> </span><span class="s">PLUGIN_SOURCES</span><span class="w"> </span><span class="s">CONFIGURE_DEPENDS</span><span class="w"> </span><span class="s2">&quot;${CMAKE_CURRENT_SOURCE_DIR}/myModule/*.cpp&quot;</span><span class="p">)</span>
+
+<span class="c"># If subclassing a BSK base class (AtmosphereBase, DynamicEffector, etc.),</span>
+<span class="c"># add its implementation from the SDK:</span>
+<span class="c"># list(APPEND PLUGIN_SOURCES &quot;${BSK_SDK_RUNTIME_MIN_DIR}/atmosphereBase.cpp&quot;)</span>
+
+<span class="nb">bsk_add_swig_module</span><span class="p">(</span>
+<span class="w">  </span><span class="s">TARGET</span><span class="w"> </span><span class="s">myModule</span>
+<span class="w">  </span><span class="s">INTERFACE</span><span class="w"> </span><span class="s2">&quot;${CMAKE_CURRENT_SOURCE_DIR}/myModule/myModule.i&quot;</span>
+<span class="w">  </span><span class="s">SOURCES</span><span class="w">   </span><span class="o">${</span><span class="nv">PLUGIN_SOURCES</span><span class="o">}</span>
+<span class="w">  </span><span class="s">INCLUDE_DIRS</span>
+<span class="w">    </span><span class="s2">&quot;${CMAKE_CURRENT_SOURCE_DIR}/myModule&quot;</span>
+<span class="w">    </span><span class="s2">&quot;${CMAKE_CURRENT_SOURCE_DIR}/messages&quot;</span>
+<span class="w">  </span><span class="s">LINK_LIBS</span><span class="w"> </span><span class="s">bsk::plugin</span>
+<span class="w">  </span><span class="s">OUTPUT_DIR</span><span class="w"> </span><span class="s2">&quot;${PKG_DIR}&quot;</span>
+<span class="p">)</span>
+
+<span class="c"># Optional: generate Python bindings for custom messages</span>
+<span class="nb">bsk_generate_messages</span><span class="p">(</span>
+<span class="w">  </span><span class="s">OUTPUT_DIR</span><span class="w"> </span><span class="s2">&quot;${PKG_DIR}/messaging&quot;</span>
+<span class="w">  </span><span class="s">MSG_HEADERS</span>
+<span class="w">    </span><span class="s2">&quot;${CMAKE_CURRENT_SOURCE_DIR}/messages/MyMsgPayload.h&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pyproject-toml">
+<h2>pyproject.toml<a class="headerlink" href="#pyproject-toml" title="Link to this heading"></a></h2>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;scikit-build-core&gt;=0.9&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;scikit_build_core.build&quot;</span>
+
+<span class="k">[project]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;my-plugin&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.0.0&quot;</span>
+<span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.9&quot;</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;bsk&quot;</span><span class="p">]</span>
+
+<span class="k">[tool.scikit-build]</span>
+<span class="n">wheel</span><span class="p">.</span><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+</pre></div>
+</div>
+</section>
+<section id="building-and-installing">
+<h2>Building and Installing<a class="headerlink" href="#building-and-installing" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Development install</span>
+pip<span class="w"> </span>install<span class="w"> </span>--no-build-isolation<span class="w"> </span>-e<span class="w"> </span>.
+
+<span class="c1"># Build a distributable wheel</span>
+python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel
+pip<span class="w"> </span>install<span class="w"> </span>dist/*.whl
+
+<span class="c1"># Run unit tests</span>
+pytest<span class="w"> </span>myModule/_UnitTest/<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="publishing-to-pypi">
+<h2>Publishing to PyPI<a class="headerlink" href="#publishing-to-pypi" title="Link to this heading"></a></h2>
+<p>A plugin is a standard Python wheel.  Declare <code class="docutils literal notranslate"><span class="pre">bsk</span></code> as a runtime
+dependency so end users get Basilisk with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">my-plugin</span></code>.
+<code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> is only needed at build time and does not need to be
+declared as a runtime dependency.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installing.html" class="btn btn-neutral float-left" title="Installing Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Vizard/Vizard.html" class="btn btn-neutral float-right" title="About Vizard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

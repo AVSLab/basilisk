@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="30.60297 27.93788 385.5904 306.68936" width="385.5904" height="306.68936">
+  <defs>
+    <linearGradient x1="0" x2="1" id="Gradient" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#53b592"/>
+      <stop offset="1" stop-color="#96d2b3"/>
+    </linearGradient>
+    <linearGradient id="Obj_Gradient" xl:href="#Gradient" gradientTransform="translate(98.50707 171.6466) rotate(91) scale(14.134217)"/>
+    <linearGradient x1="0" x2="1" id="Gradient_2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b9b9b9"/>
+      <stop offset="1" stop-color="#929292"/>
+    </linearGradient>
+    <linearGradient id="Obj_Gradient_2" xl:href="#Gradient_2" gradientTransform="translate(59.59043 114.80708) rotate(1.3536377) scale(73.462025)"/>
+    <linearGradient id="Obj_Gradient_3" xl:href="#Gradient_2" gradientTransform="translate(58.840576 144.984) rotate(4) scale(73.65572)"/>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 9 8" markerWidth="9" markerHeight="8" color="black">
+      <g>
+        <path d="M 3.4999996 0 L -2.0999998 -2.0999998 L 0 0 L 0 0 L -2.0999998 2.0999998 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <linearGradient x1="0" x2="1" id="Gradient_3" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c0bfff"/>
+      <stop offset=".49639423" stop-color="#a1a0ff"/>
+      <stop offset="1" stop-color="#8080fe"/>
+    </linearGradient>
+    <linearGradient id="Obj_Gradient_4" xl:href="#Gradient_3" gradientTransform="translate(96.07241 232.15316) rotate(-88.19879) scale(41.58039)"/>
+    <linearGradient id="Obj_Gradient_5" xl:href="#Gradient_3" gradientTransform="translate(68.56939 229.03441) rotate(-66.19879) scale(41.13102)"/>
+    <linearGradient id="Obj_Gradient_6" xl:href="#Gradient_3" gradientTransform="translate(122.91812 230.69266) rotate(-109.19879) scale(41.13102)"/>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 5 0 L -3 -3 L 0 0 L 0 0 L -3 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <linearGradient id="Obj_Gradient_7" xl:href="#Gradient_3" gradientTransform="translate(262.7301 293.45746) rotate(-75.19879) scale(41.13102)"/>
+    <linearGradient id="Obj_Gradient_8" xl:href="#Gradient_3" gradientTransform="translate(311.22702 279.90706) rotate(-103.19879) scale(41.13102)"/>
+    <linearGradient id="Obj_Gradient_9" xl:href="#Gradient_3" gradientTransform="translate(364.3474 277.39128) rotate(-136.19879) scale(41.13102)"/>
+    <linearGradient id="Obj_Gradient_10" xl:href="#Gradient_2" gradientTransform="translate(231.4761 117.69321) rotate(1.3536377) scale(73.462025)"/>
+    <linearGradient id="Obj_Gradient_11" xl:href="#Gradient_2" gradientTransform="translate(230.72624 147.87014) rotate(4) scale(73.65572)"/>
+    <linearGradient x1="0" x2="1" id="Gradient_4" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#96d2b3"/>
+      <stop offset="1" stop-color="#53b592"/>
+    </linearGradient>
+    <linearGradient id="Obj_Gradient_12" xl:href="#Gradient_4" gradientTransform="translate(287.47724 188.60072) rotate(75) scale(14.134217)"/>
+  </defs>
+  <g id="Canvas_1" fill-opacity="1" stroke-opacity="1" fill="none" stroke="none" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="30.60297" y="27.93788" width="385.5904" height="306.68936"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_1335">
+        <path d="M 53.637393 170.86339 L 53.415385 183.58225 L 62.36465 185.1521 L 143.13007 186.56186 L 143.35208 173.843 L 134.4028 172.27315 Z" fill="url(#Obj_Gradient)"/>
+        <path d="M 53.637393 170.86339 L 53.415385 183.58225 L 62.36465 185.1521 L 143.13007 186.56186 L 143.35208 173.843 L 134.4028 172.27315 L 53.637393 170.86339 M 53.415385 183.58225 L 134.1808 184.99201 L 143.13007 186.56186 M 134.1808 184.99201 L 134.4028 172.27315" stroke="#53b592" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+      </g>
+      <g id="Group_1331">
+        <g id="Graphic_1334">
+          <path d="M 58.85382 145.98 L 60.327044 83.63415 C 60.37923 81.42563 62.2119 79.67758 64.42042 79.72976 C 64.42042 79.72976 64.42042 79.72976 64.42042 79.72976 L 129.86418 81.27619 C 132.0727 81.328375 133.82076 83.16104 133.76857 85.36956 L 132.29535 147.71541 C 132.24316 149.92393 130.4105 151.67199 128.20197 151.6198 C 128.20197 151.6198 128.20197 151.6198 128.20197 151.6198 L 62.75821 150.07338 C 60.54969 150.02119 58.801636 148.18852 58.85382 145.98 Z" fill="url(#Obj_Gradient_2)"/>
+        </g>
+        <g id="Graphic_1333">
+          <path d="M 70.76439 129.09858 C 85.75407 120.91294 109.01535 122.53953 122.71993 132.73166 C 136.42458 142.92376 135.38281 157.8218 120.39306 166.00738 C 105.40338 174.19302 82.14211 172.56643 68.43753 162.3743 C 54.73287 152.1822 55.774644 137.28416 70.76439 129.09858" fill="url(#Obj_Gradient_3)"/>
+        </g>
+        <g id="Graphic_1332">
+          <path d="M 73.20834 62.51727 C 88.78122 54.406735 112.08967 57.23669 125.26925 68.83815 C 138.4489 80.439565 136.50877 96.4192 120.93583 104.52967 C 105.36295 112.64021 82.0545 109.81026 68.87492 98.2088 C 55.695264 86.60738 57.6354 70.627744 73.20834 62.51727" fill="#929292"/>
+        </g>
+      </g>
+      <g id="Graphic_1330">
+        <rect x="101.02303" y="113.21618" width="8.108801" height="9.460268" id="path"/>
+        <clipPath id="clip_path">
+          <use xl:href="#path"/>
+        </clipPath>
+        <g clip-path="url(#clip_path)">
+          <image xl:href="image115.pdf" width="24" height="28" transform="translate(101.02303 113.21618) scale(.33786673)"/>
+        </g>
+      </g>
+      <g id="Graphic_1329">
+        <rect x="100.19072" y="159.07358" width="13.037188" height="9.126032" id="path_2"/>
+        <clipPath id="clip_path_2">
+          <use xl:href="#path_2"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_2)">
+          <image xl:href="image117.pdf" width="40" height="28" transform="translate(100.19072 159.07358) scale(.3259297)"/>
+        </g>
+      </g>
+      <g id="Group_1318">
+        <g id="Line_1322">
+          <line x1="99.45244" y1="133.42674" x2="110.4656" y2="143.66317" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1321">
+          <circle cx="97.23996" cy="131.3703" r="2.52000403744163" fill="black"/>
+          <circle cx="97.23996" cy="131.3703" r="2.52000403744163" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1320">
+          <line x1="94.87676" y1="133.25108" x2="83.80547" y2="142.06229" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1319">
+          <line x1="97.11295" y1="131.8471" x2="98.02418" y2="113.64249" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1314">
+        <g id="Graphic_1317">
+          <path d="M 101.0653 132.03242 C 101.36713 134.18002 99.87223 136.16534 97.72383 136.46728 C 95.57542 136.76922 93.5912 135.27285 93.28938 133.12525 C 92.98755 130.97765 94.48259 128.9933 96.63099 128.69136 C 98.7794 128.38942 100.76348 129.88482 101.0653 132.03242 Z" fill="white"/>
+          <path d="M 101.0653 132.03242 C 101.36713 134.18002 99.87223 136.16534 97.72383 136.46728 C 95.57542 136.76922 93.5912 135.27285 93.28938 133.12525 C 92.98755 130.97765 94.48259 128.9933 96.63099 128.69136 C 98.7794 128.38942 100.76348 129.88482 101.0653 132.03242 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1316">
+          <path d="M 97.17741 132.57932 L 96.63099 128.69136 C 98.77825 128.38958 100.76359 129.88564 101.06537 132.0329 L 97.17741 132.57932 Z" fill="black"/>
+          <path d="M 97.17741 132.57932 L 96.63099 128.69136 C 98.77825 128.38958 100.76359 129.88564 101.06537 132.0329 L 97.17741 132.57932 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1315">
+          <path d="M 97.17741 132.57932 L 97.72383 136.46728 C 95.57656 136.76906 93.59122 135.273 93.28945 133.12574 L 97.17741 132.57932 Z" fill="black"/>
+          <path d="M 97.17741 132.57932 L 97.72383 136.46728 C 95.57656 136.76906 93.59122 135.273 93.28945 133.12574 L 97.17741 132.57932 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1336">
+        <g id="Graphic_1339">
+          <path d="M 105.76578 228.456 L 106.82127 194.8922 C 106.89071 192.68416 105.15702 190.8379 102.94898 190.76846 L 91.80974 190.41816 C 89.60169 190.34872 87.75542 192.0824 87.68599 194.29045 C 87.68599 194.29045 87.68599 194.29045 87.68599 194.29045 L 86.63049 227.85425 C 86.56105 230.0623 88.29474 231.90857 90.50279 231.978 L 101.64203 232.3283 C 103.85007 232.39774 105.69634 230.66406 105.76578 228.456 Z" fill="url(#Obj_Gradient_4)"/>
+          <path d="M 105.76578 228.456 L 106.82127 194.8922 C 106.89071 192.68416 105.15702 190.8379 102.94898 190.76846 L 91.80974 190.41816 C 89.60169 190.34872 87.75542 192.0824 87.68599 194.29045 C 87.68599 194.29045 87.68599 194.29045 87.68599 194.29045 L 86.63049 227.85425 C 86.56105 230.0623 88.29474 231.90857 90.50279 231.978 L 101.64203 232.3283 C 103.85007 232.39774 105.69634 230.66406 105.76578 228.456 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1338">
+          <path d="M 103.8306 195.34885 C 100.10117 196.63744 94.1421 196.41212 90.52063 194.84557 C 86.89915 193.27903 86.98667 190.9645 90.71611 189.67592 C 94.44553 188.38733 100.4046 188.61265 104.02607 190.1792 C 107.64756 191.74573 107.56004 194.06027 103.8306 195.34885" fill="#8080ff"/>
+          <path d="M 103.8306 195.34885 C 100.10117 196.63744 94.1421 196.41212 90.52063 194.84557 C 86.89915 193.27903 86.98667 190.9645 90.71611 189.67592 C 94.44553 188.38733 100.4046 188.61265 104.02607 190.1792 C 107.64756 191.74573 107.56004 194.06027 103.8306 195.34885" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1337">
+          <path d="M 102.81407 232.63613 C 99.17208 233.92813 93.35479 233.70816 89.82077 232.14483 C 86.28673 230.5815 86.37425 228.2668 90.01626 226.97482 C 93.65824 225.68283 99.47554 225.9028 103.00956 227.46613 C 106.5436 229.02945 106.45607 231.34414 102.81407 232.63613" fill="#c0c0ff"/>
+          <path d="M 102.81407 232.63613 C 99.17208 233.92813 93.35479 233.70816 89.82077 232.14483 C 86.28673 230.5815 86.37425 228.2668 90.01626 226.97482 C 93.65824 225.68283 99.47554 225.9028 103.00956 227.46613 C 106.5436 229.02945 106.45607 231.34414 102.81407 232.63613" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1340">
+        <g id="Graphic_1343">
+          <path d="M 78.9419 229.23768 L 92.31241 198.92442 C 93.20394 196.90316 92.28812 194.54189 90.26687 193.65036 L 80.06997 189.15273 C 78.04871 188.2612 75.687435 189.17702 74.795905 191.19828 L 61.4254 221.51154 C 60.533866 223.5328 61.44969 225.89407 63.47094 226.7856 C 63.47094 226.7856 63.47094 226.7856 63.47094 226.7856 L 73.66784 231.28323 C 75.68909 232.17476 78.05037 231.25894 78.9419 229.23768 Z" fill="url(#Obj_Gradient_5)"/>
+          <path d="M 78.9419 229.23768 L 92.31241 198.92442 C 93.20394 196.90316 92.28812 194.54189 90.26687 193.65036 L 80.06997 189.15273 C 78.04871 188.2612 75.687435 189.17702 74.795905 191.19828 L 61.4254 221.51154 C 60.533866 223.5328 61.44969 225.89407 63.47094 226.7856 C 63.47094 226.7856 63.47094 226.7856 63.47094 226.7856 L 73.66784 231.28323 C 75.68909 232.17476 78.05037 231.25894 78.9419 229.23768 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1342">
+          <path d="M 89.36844 198.22748 C 85.42787 198.02517 79.98712 195.58395 77.21619 192.77485 C 74.445245 189.96575 75.39343 187.85254 79.33402 188.05486 C 83.2746 188.25716 88.71534 190.69839 91.48627 193.50749 C 94.25722 196.31659 93.30903 198.4298 89.36844 198.22748" fill="#8080ff"/>
+          <path d="M 89.36844 198.22748 C 85.42787 198.02517 79.98712 195.58395 77.21619 192.77485 C 74.445245 189.96575 75.39343 187.85254 79.33402 188.05486 C 83.2746 188.25716 88.71534 190.69839 91.48627 193.50749 C 94.25722 196.31659 93.30903 198.4298 89.36844 198.22748" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1341">
+          <path d="M 74.457875 232.41885 C 70.597095 232.25245 65.28579 229.8693 62.59474 227.09594 C 59.90367 224.32258 60.85192 222.20922 64.71271 222.37563 C 68.57349 222.54202 73.8848 224.92517 76.57585 227.69853 C 79.26692 230.4719 78.31867 232.58526 74.457875 232.41885" fill="#c0c0ff"/>
+          <path d="M 74.457875 232.41885 C 70.597095 232.25245 65.28579 229.8693 62.59474 227.09594 C 59.90367 224.32258 60.85192 222.20922 64.71271 222.37563 C 68.57349 222.54202 73.8848 224.92517 76.57585 227.69853 C 79.26692 230.4719 78.31867 232.58526 74.457875 232.41885" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1344">
+        <g id="Graphic_1347">
+          <path d="M 130.64272 223.76728 L 119.7477 192.4789 C 119.02123 190.39263 116.74105 189.29029 114.65478 190.01676 C 114.65478 190.01676 114.65478 190.01676 114.65478 190.01676 L 104.12987 193.68167 C 102.04359 194.40814 100.94125 196.68831 101.66772 198.77459 L 112.56274 230.06297 C 113.28921 232.14924 115.56939 233.25158 117.65566 232.52512 C 117.65566 232.52512 117.65566 232.52512 117.65566 232.52512 L 128.18058 228.8602 C 130.26685 228.13374 131.36919 225.85356 130.64272 223.76728 Z" fill="url(#Obj_Gradient_6)"/>
+          <path d="M 130.64272 223.76728 L 119.7477 192.4789 C 119.02123 190.39263 116.74105 189.29029 114.65478 190.01676 C 114.65478 190.01676 114.65478 190.01676 114.65478 190.01676 L 104.12987 193.68167 C 102.04359 194.40814 100.94125 196.68831 101.66772 198.77459 L 112.56274 230.06297 C 113.28921 232.14924 115.56939 233.25158 117.65566 232.52512 C 117.65566 232.52512 117.65566 232.52512 117.65566 232.52512 L 128.18058 228.8602 C 130.26685 228.13374 131.36919 225.85356 130.64272 223.76728 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1346">
+          <path d="M 117.1193 193.97697 C 114.09938 196.51649 108.45536 198.44167 104.51303 198.277 C 100.57068 198.11232 99.82293 195.92016 102.84288 193.38065 C 105.86281 190.84114 111.50683 188.91596 115.44916 189.08063 C 119.3915 189.2453 120.13925 191.43746 117.1193 193.97697" fill="#8080ff"/>
+          <path d="M 117.1193 193.97697 C 114.09938 196.51649 108.45536 198.44167 104.51303 198.277 C 100.57068 198.11232 99.82293 195.92016 102.84288 193.38065 C 105.86281 190.84114 111.50683 188.91596 115.44916 189.08063 C 119.3915 189.2453 120.13925 191.43746 117.1193 193.97697" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1345">
+          <path d="M 129.53286 229.15194 C 126.59579 231.6633 121.08604 233.54267 117.2265 233.34965 C 113.36695 233.15665 112.61915 230.96433 115.55624 228.45298 C 118.49332 225.94163 124.00306 224.06225 127.8626 224.25527 C 131.72216 224.44828 132.46996 226.6406 129.53286 229.15194" fill="#c0c0ff"/>
+          <path d="M 129.53286 229.15194 C 126.59579 231.6633 121.08604 233.54267 117.2265 233.34965 C 113.36695 233.15665 112.61915 230.96433 115.55624 228.45298 C 118.49332 225.94163 124.00306 224.06225 127.8626 224.25527 C 131.72216 224.44828 132.46996 226.6406 129.53286 229.15194" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Graphic_1357">
+        <path d="M 106.75227 176.83663 L 114.86548 177.26182 L 114.42393 185.68709 L 106.31072 185.2619 Z" id="path_3"/>
+        <clipPath id="clip_path_3">
+          <use xl:href="#path_3"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_3)">
+          <image xl:href="image114.pdf" width="26" height="27" transform="translate(106.75227 176.83663) rotate(3) scale(.31247495)"/>
+        </g>
+      </g>
+      <g id="Group_1370">
+        <g id="Line_1374">
+          <line x1="98.877" y1="170.92985" x2="103.98285" y2="177.12169" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1373">
+          <circle cx="97.41354" cy="169.15513" r="1.80000290304554" fill="black"/>
+          <circle cx="97.41354" cy="169.15513" r="1.80000290304554" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1372">
+          <line x1="95.91237" y1="170.89833" x2="91.06696" y2="176.52493" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1371">
+          <line x1="97.52145" y1="166.85718" x2="97.87052" y2="159.42394" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1375">
+        <g id="Line_1379">
+          <line x1="98.52663" y1="182.1962" x2="103.63249" y2="188.38804" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1378">
+          <circle cx="97.06318" cy="180.42149" r="1.80000290304554" fill="black"/>
+          <circle cx="97.06318" cy="180.42149" r="1.80000290304554" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1377">
+          <line x1="95.56201" y1="182.16468" x2="90.7166" y2="187.79128" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1376">
+          <line x1="97.17269" y1="178.12361" x2="97.52837" y2="170.66024" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1380">
+        <g id="Line_1384">
+          <line x1="84.07494" y1="191.51106" x2="83.2167" y2="186.87208" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1383">
+          <circle cx="84.36238" cy="193.06474" r="1.08000170159413" fill="black"/>
+          <circle cx="84.36238" cy="193.06474" r="1.08000170159413" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1382">
+          <line x1="85.75324" y1="192.31489" x2="90.27992" y2="189.87442" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Line_1381">
+          <line x1="83.74183" y1="194.51784" x2="81.88624" y2="198.86287" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Group_1395">
+        <g id="Line_1399">
+          <line x1="96.01107" y1="191.43871" x2="93.84128" y2="187.6223" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1398">
+          <circle cx="96.79199" cy="192.81226" r="1.08000170159413" fill="black"/>
+          <circle cx="96.79199" cy="192.81226" r="1.08000170159413" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1397">
+          <line x1="97.89049" y1="191.67644" x2="101.22998" y2="188.22347" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Line_1396">
+          <line x1="96.76381" y1="194.3922" x2="96.67197" y2="199.5414" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Group_1400">
+        <g id="Line_1404">
+          <line x1="108.82913" y1="192.96622" x2="105.49074" y2="190.48433" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1403">
+          <circle cx="110.09717" cy="193.90892" r="1.08000170159412" fill="black"/>
+          <circle cx="110.09717" cy="193.90892" r="1.08000170159412" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1402">
+          <line x1="110.52707" y1="192.3884" x2="111.77598" y2="187.97102" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+        <g id="Line_1401">
+          <line x1="110.64752" y1="195.39" x2="112.1027" y2="199.30615" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Graphic_1413">
+        <rect x="71.75072" y="190.03358" width="7.921978" height="8.433073" id="path_4"/>
+        <clipPath id="clip_path_4">
+          <use xl:href="#path_4"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_4)">
+          <image xl:href="image129.pdf" width="31" height="33" transform="translate(71.75072 190.03358) scale(.25554768)"/>
+        </g>
+      </g>
+      <g id="Graphic_1414">
+        <rect x="98.75072" y="193.99358" width="7.921978" height="8.433073" id="path_5"/>
+        <clipPath id="clip_path_5">
+          <use xl:href="#path_5"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_5)">
+          <image xl:href="image130.pdf" width="31" height="33" transform="translate(98.75072 193.99358) scale(.25554768)"/>
+        </g>
+      </g>
+      <g id="Graphic_1415">
+        <rect x="114.23072" y="191.67017" width="8.177526" height="8.433073" id="path_6"/>
+        <clipPath id="clip_path_6">
+          <use xl:href="#path_6"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_6)">
+          <image xl:href="image131.pdf" width="32" height="33" transform="translate(114.23072 191.67017) scale(.25554768)"/>
+        </g>
+      </g>
+      <g id="Line_1416">
+        <line x1="83.9213" y1="194.0506" x2="66.10112" y2="233.88015" marker-end="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Group_1358">
+        <g id="Graphic_1361">
+          <path d="M 78.89234 210.16875 C 79.08607 211.54718 78.12657 212.82145 76.747625 213.01525 C 75.36868 213.20905 74.095115 212.2486 73.90139 210.87018 C 73.70766 209.49175 74.667245 208.2181 76.04619 208.0243 C 77.42514 207.8305 78.69861 208.79032 78.89234 210.16875 Z" fill="white"/>
+          <path d="M 78.89234 210.16875 C 79.08607 211.54718 78.12657 212.82145 76.747625 213.01525 C 75.36868 213.20905 74.095115 212.2486 73.90139 210.87018 C 73.70766 209.49175 74.667245 208.2181 76.04619 208.0243 C 77.42514 207.8305 78.69861 208.79032 78.89234 210.16875 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1360">
+          <path d="M 76.39691 210.51977 L 76.04619 208.0243 C 77.424405 207.8306 78.69869 208.79085 78.89238 210.16906 L 76.39691 210.51977 Z" fill="black"/>
+          <path d="M 76.39691 210.51977 L 76.04619 208.0243 C 77.424405 207.8306 78.69869 208.79085 78.89238 210.16906 L 76.39691 210.51977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1359">
+          <path d="M 76.39691 210.51977 L 76.747625 213.01525 C 75.36941 213.20895 74.09513 212.2487 73.90143 210.8705 L 76.39691 210.51977 Z" fill="black"/>
+          <path d="M 76.39691 210.51977 L 76.747625 213.01525 C 75.36941 213.20895 74.09513 212.2487 73.90143 210.8705 L 76.39691 210.51977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Line_1417">
+        <line x1="96.77107" y1="193.89224" x2="95.94237" y2="236.6791" marker-end="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Group_1405">
+        <g id="Graphic_1408">
+          <path d="M 99.05234 211.24875 C 99.24607 212.62718 98.28657 213.90145 96.90762 214.09525 C 95.52868 214.28905 94.25511 213.3286 94.06139 211.95018 C 93.86766 210.57175 94.82724 209.2981 96.20619 209.1043 C 97.58514 208.9105 98.85861 209.87032 99.05234 211.24875 Z" fill="white"/>
+          <path d="M 99.05234 211.24875 C 99.24607 212.62718 98.28657 213.90145 96.90762 214.09525 C 95.52868 214.28905 94.25511 213.3286 94.06139 211.95018 C 93.86766 210.57175 94.82724 209.2981 96.20619 209.1043 C 97.58514 208.9105 98.85861 209.87032 99.05234 211.24875 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1407">
+          <path d="M 96.55691 211.59977 L 96.20619 209.1043 C 97.5844 208.9106 98.85869 209.87085 99.05238 211.24906 L 96.55691 211.59977 Z" fill="black"/>
+          <path d="M 96.55691 211.59977 L 96.20619 209.1043 C 97.5844 208.9106 98.85869 209.87085 99.05238 211.24906 L 96.55691 211.59977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1406">
+          <path d="M 96.55691 211.59977 L 96.90762 214.09525 C 95.52941 214.28895 94.25513 213.3287 94.06143 211.9505 L 96.55691 211.59977 Z" fill="black"/>
+          <path d="M 96.55691 211.59977 L 96.90762 214.09525 C 95.52941 214.28895 94.25513 213.3287 94.06143 211.9505 L 96.55691 211.59977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Line_1418">
+        <line x1="110.45832" y1="194.92677" x2="124.98672" y2="235.87332" marker-end="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Group_1409">
+        <g id="Graphic_1412">
+          <path d="M 118.85234 211.24875 C 119.04606 212.62718 118.08657 213.90145 116.70762 214.09525 C 115.32868 214.28905 114.05511 213.3286 113.86139 211.95018 C 113.66766 210.57175 114.62724 209.2981 116.00619 209.1043 C 117.38514 208.9105 118.65861 209.87032 118.85234 211.24875 Z" fill="white"/>
+          <path d="M 118.85234 211.24875 C 119.04606 212.62718 118.08657 213.90145 116.70762 214.09525 C 115.32868 214.28905 114.05511 213.3286 113.86139 211.95018 C 113.66766 210.57175 114.62724 209.2981 116.00619 209.1043 C 117.38514 208.9105 118.65861 209.87032 118.85234 211.24875 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1411">
+          <path d="M 116.35691 211.59977 L 116.00619 209.1043 C 117.3844 208.9106 118.65869 209.87085 118.85238 211.24906 L 116.35691 211.59977 Z" fill="black"/>
+          <path d="M 116.35691 211.59977 L 116.00619 209.1043 C 117.3844 208.9106 118.65869 209.87085 118.85238 211.24906 L 116.35691 211.59977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1410">
+          <path d="M 116.35691 211.59977 L 116.70762 214.09525 C 115.32941 214.28895 114.05513 213.3287 113.86143 211.9505 L 116.35691 211.59977 Z" fill="black"/>
+          <path d="M 116.35691 211.59977 L 116.70762 214.09525 C 115.32941 214.28895 114.05513 213.3287 113.86143 211.9505 L 116.35691 211.59977 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Graphic_1421">
+        <rect x="61.31072" y="236.47358" width="4.9542356" height="7.431353" id="path_7"/>
+        <clipPath id="clip_path_7">
+          <use xl:href="#path_7"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_7)">
+          <image xl:href="image132.pdf" width="26" height="39" transform="translate(61.31072 236.47358) scale(.19054752)"/>
+        </g>
+      </g>
+      <g id="Graphic_1420">
+        <rect x="93.78117" y="240.8539" width="5.144783" height="7.431353" id="path_8"/>
+        <clipPath id="clip_path_8">
+          <use xl:href="#path_8"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_8)">
+          <image xl:href="image133.pdf" width="27" height="39" transform="translate(93.78117 240.8539) scale(.19054752)"/>
+        </g>
+      </g>
+      <g id="Graphic_1419">
+        <rect x="126.44218" y="239.35358" width="5.144783" height="7.431353" id="path_9"/>
+        <clipPath id="clip_path_9">
+          <use xl:href="#path_9"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_9)">
+          <image xl:href="image134.pdf" width="27" height="39" transform="translate(126.44218 239.35358) scale(.19054752)"/>
+        </g>
+      </g>
+      <g id="Group_1422">
+        <g id="Graphic_1425">
+          <path d="M 99.67284 179.92875 C 99.86657 181.30718 98.90707 182.58145 97.52812 182.77525 C 96.14918 182.96905 94.87561 182.0086 94.68189 180.63018 C 94.48816 179.25175 95.44775 177.9781 96.82669 177.7843 C 98.20564 177.5905 99.47911 178.55032 99.67284 179.92875 Z" fill="white"/>
+          <path d="M 99.67284 179.92875 C 99.86657 181.30718 98.90707 182.58145 97.52812 182.77525 C 96.14918 182.96905 94.87561 182.0086 94.68189 180.63018 C 94.48816 179.25175 95.44775 177.9781 96.82669 177.7843 C 98.20564 177.5905 99.47911 178.55032 99.67284 179.92875 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1424">
+          <path d="M 97.17741 180.27978 L 96.82669 177.7843 C 98.2049 177.5906 99.47919 178.55085 99.67288 179.92906 L 97.17741 180.27978 Z" fill="black"/>
+          <path d="M 97.17741 180.27978 L 96.82669 177.7843 C 98.2049 177.5906 99.47919 178.55085 99.67288 179.92906 L 97.17741 180.27978 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+        <g id="Graphic_1423">
+          <path d="M 97.17741 180.27978 L 97.52812 182.77525 C 96.14991 182.96895 94.87563 182.0087 94.68193 180.6305 L 97.17741 180.27978 Z" fill="black"/>
+          <path d="M 97.17741 180.27978 L 97.52812 182.77525 C 96.14991 182.96895 94.87563 182.0087 94.68193 180.6305 L 97.17741 180.27978 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".25"/>
+        </g>
+      </g>
+      <g id="Group_1509">
+        <g id="Graphic_1512">
+          <path d="M 273.00672 292.0356 L 281.47057 260.00395 C 282.03493 257.8681 280.761 255.67917 278.62517 255.1148 L 267.85022 252.2677 C 265.7144 251.70334 263.52545 252.97727 262.9611 255.1131 C 262.9611 255.1131 262.9611 255.1131 262.9611 255.1131 L 254.49723 287.14477 C 253.93287 289.2806 255.2068 291.46955 257.34264 292.0339 L 268.11758 294.881 C 270.2534 295.44538 272.44236 294.17145 273.00672 292.0356 Z" fill="url(#Obj_Gradient_7)"/>
+          <path d="M 273.00672 292.0356 L 281.47057 260.00395 C 282.03493 257.8681 280.761 255.67917 278.62517 255.1148 L 267.85022 252.2677 C 265.7144 251.70334 263.52545 252.97727 262.9611 255.1131 C 262.9611 255.1131 262.9611 255.1131 262.9611 255.1131 L 254.49723 287.14477 C 253.93287 289.2806 255.2068 291.46955 257.34264 292.0339 L 268.11758 294.881 C 270.2534 295.44538 272.44236 294.17145 273.00672 292.0356 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1511">
+          <path d="M 278.45382 259.77612 C 274.5301 260.19275 268.77446 258.6327 265.5982 256.29166 C 262.42194 253.9506 263.02787 251.7151 266.9516 251.29847 C 270.8753 250.88185 276.63096 252.4419 279.8072 254.78294 C 282.98348 257.124 282.37755 259.3595 278.45382 259.77612" fill="#8080ff"/>
+          <path d="M 278.45382 259.77612 C 274.5301 260.19275 268.77446 258.6327 265.5982 256.29166 C 262.42194 253.9506 263.02787 251.7151 266.9516 251.29847 C 270.8753 250.88185 276.63096 252.4419 279.8072 254.78294 C 282.98348 257.124 282.37755 259.3595 278.45382 259.77612" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1510">
+          <path d="M 269.07554 295.87907 C 265.23626 296.31868 259.61754 294.79575 256.52577 292.4775 C 253.434 290.15925 254.03996 287.92358 257.87925 287.48398 C 261.71853 287.04436 267.33724 288.5673 270.429 290.88554 C 273.5208 293.2038 272.91483 295.43947 269.07554 295.87907" fill="#c0c0ff"/>
+          <path d="M 269.07554 295.87907 C 265.23626 296.31868 259.61754 294.79575 256.52577 292.4775 C 253.434 290.15925 254.03996 287.92358 257.87925 287.48398 C 261.71853 287.04436 267.33724 288.5673 270.429 290.88554 C 273.5208 293.2038 272.91483 295.43947 269.07554 295.87907" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1500">
+        <g id="Graphic_1503">
+          <path d="M 270.66418 273.79208 C 270.91325 275.56435 269.67962 277.2027 267.9067 277.45187 C 266.13376 277.70104 264.49632 276.4662 264.24724 274.69392 C 263.99817 272.92166 265.2319 271.2841 267.00485 271.03493 C 268.77778 270.78576 270.4151 272.0198 270.66418 273.79208 Z" fill="white"/>
+          <path d="M 270.66418 273.79208 C 270.91325 275.56435 269.67962 277.2027 267.9067 277.45187 C 266.13376 277.70104 264.49632 276.4662 264.24724 274.69392 C 263.99817 272.92166 265.2319 271.2841 267.00485 271.03493 C 268.77778 270.78576 270.4151 272.0198 270.66418 273.79208 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1502">
+          <path d="M 267.45577 274.2434 L 267.00485 271.03493 C 268.77683 270.7859 270.4152 272.0205 270.66424 273.79248 L 267.45577 274.2434 Z" fill="black"/>
+          <path d="M 267.45577 274.2434 L 267.00485 271.03493 C 268.77683 270.7859 270.4152 272.0205 270.66424 273.79248 L 267.45577 274.2434 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1501">
+          <path d="M 267.45577 274.2434 L 267.9067 277.45187 C 266.1347 277.7009 264.49633 276.4663 264.2473 274.69432 L 267.45577 274.2434 Z" fill="black"/>
+          <path d="M 267.45577 274.2434 L 267.9067 277.45187 C 266.1347 277.7009 264.49633 276.4663 264.2473 274.69432 L 267.45577 274.2434 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1496">
+        <g id="Graphic_1499">
+          <path d="M 319.6332 273.82706 L 312.0684 241.57124 C 311.56398 239.42046 309.4115 238.0858 307.26074 238.59023 C 307.26074 238.59023 307.26074 238.59023 307.26074 238.59023 L 296.4104 241.1349 C 294.2596 241.63932 292.92497 243.79178 293.42938 245.94257 L 300.9942 278.1984 C 301.4986 280.34917 303.65107 281.6838 305.80185 281.1794 L 316.6522 278.63472 C 318.80297 278.1303 320.13762 275.97784 319.6332 273.82706 Z" fill="url(#Obj_Gradient_8)"/>
+          <path d="M 319.6332 273.82706 L 312.0684 241.57124 C 311.56398 239.42046 309.4115 238.0858 307.26074 238.59023 C 307.26074 238.59023 307.26074 238.59023 307.26074 238.59023 L 296.4104 241.1349 C 294.2596 241.63932 292.92497 243.79178 293.42938 245.94257 L 300.9942 278.1984 C 301.4986 280.34917 303.65107 281.6838 305.80185 281.1794 L 316.6522 278.63472 C 318.80297 278.1303 320.13762 275.97784 319.6332 273.82706 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1498">
+          <path d="M 309.2978 242.78636 C 306.02897 244.9963 300.21463 246.32097 296.3111 245.7451 C 292.40758 245.16926 291.89307 242.91094 295.16192 240.701 C 298.43076 238.49108 304.2451 237.1664 308.1486 237.74227 C 312.05215 238.31812 312.56666 240.57644 309.2978 242.78636" fill="#8080ff"/>
+          <path d="M 309.2978 242.78636 C 306.02897 244.9963 300.21463 246.32097 296.3111 245.7451 C 292.40758 245.16926 291.89307 242.91094 295.16192 240.701 C 298.43076 238.49108 304.2451 237.1664 308.1486 237.74227 C 312.05215 238.31812 312.56666 240.57644 309.2978 242.78636" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1497">
+          <path d="M 317.96658 279.0662 C 314.78308 281.2568 309.10707 282.54995 305.28885 281.95456 C 301.4706 281.35918 300.95607 279.1007 304.1396 276.91012 C 307.32308 274.71954 312.9991 273.42638 316.8173 274.02177 C 320.63555 274.61715 321.1501 276.87563 317.96658 279.0662" fill="#c0c0ff"/>
+          <path d="M 317.96658 279.0662 C 314.78308 281.2568 309.10707 282.54995 305.28885 281.95456 C 301.4706 281.35918 300.95607 279.1007 304.1396 276.91012 C 307.32308 274.71954 312.9991 273.42638 316.8173 274.02177 C 320.63555 274.61715 321.1501 276.87563 317.96658 279.0662" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1492">
+        <g id="Graphic_1495">
+          <path d="M 368.086 267.71383 L 344.17384 244.78192 C 342.5794 243.25284 340.0473 243.30583 338.51823 244.90027 L 330.8043 252.94394 C 329.27522 254.53837 329.3282 257.07048 330.92265 258.59955 L 354.8348 281.53147 C 356.42925 283.06054 358.96136 283.00755 360.49043 281.41312 C 360.49043 281.41312 360.49043 281.41312 360.49043 281.41312 L 368.20436 273.36945 C 369.73343 271.775 369.68045 269.2429 368.086 267.71383 Z" fill="url(#Obj_Gradient_9)"/>
+          <path d="M 368.086 267.71383 L 344.17384 244.78192 C 342.5794 243.25284 340.0473 243.30583 338.51823 244.90027 L 330.8043 252.94394 C 329.27522 254.53837 329.3282 257.07048 330.92265 258.59955 L 354.8348 281.53147 C 356.42925 283.06054 358.96136 283.00755 360.49043 281.41312 C 360.49043 281.41312 360.49043 281.41312 360.49043 281.41312 L 368.20436 273.36945 C 369.73343 271.775 369.68045 269.2429 368.086 267.71383 Z" stroke="#7f80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1494">
+          <path d="M 342.51204 247.30998 C 340.97418 250.9437 336.81933 255.2214 333.23193 256.86445 C 329.6445 258.5075 327.98305 256.89375 329.52093 253.26 C 331.0588 249.62627 335.21363 245.3486 338.80104 243.70553 C 342.38845 242.06247 344.0499 243.67623 342.51204 247.30998" fill="#8080ff"/>
+          <path d="M 342.51204 247.30998 C 340.97418 250.9437 336.81933 255.2214 333.23193 256.86445 C 329.6445 258.5075 327.98305 256.89375 329.52093 253.26 C 331.0588 249.62627 335.21363 245.3486 338.80104 243.70553 C 342.38845 242.06247 344.0499 243.67623 342.51204 247.30998" stroke="#9090ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1493">
+          <path d="M 369.5417 273.01546 C 368.06488 276.5865 364.0089 280.7624 360.48238 282.34262 C 356.95586 283.92285 355.2943 282.30898 356.77112 278.73794 C 358.24795 275.1669 362.30394 270.991 365.83045 269.41078 C 369.35696 267.83055 371.01854 269.44442 369.5417 273.01546" fill="#c0c0ff"/>
+          <path d="M 369.5417 273.01546 C 368.06488 276.5865 364.0089 280.7624 360.48238 282.34262 C 356.95586 283.92285 355.2943 282.30898 356.77112 278.73794 C 358.24795 275.1669 362.30394 270.991 365.83045 269.41078 C 369.35696 267.83055 371.01854 269.44442 369.5417 273.01546" stroke="#8080ff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1488">
+        <g id="Graphic_1491">
+          <path d="M 230.73948 148.86614 L 232.2127 86.52029 C 232.2649 84.31177 234.09756 82.56371 236.30608 82.6159 C 236.30608 82.6159 236.30608 82.6159 236.30608 82.6159 L 301.74984 84.16233 C 303.95836 84.21451 305.7064 86.04718 305.65423 88.2557 L 304.181 150.60155 C 304.12882 152.81007 302.29615 154.55813 300.08763 154.50594 C 300.08763 154.50594 300.08763 154.50594 300.08763 154.50594 L 234.64387 152.95951 C 232.43535 152.90733 230.6873 151.07466 230.73948 148.86614 Z" fill="url(#Obj_Gradient_10)"/>
+        </g>
+        <g id="Graphic_1490">
+          <path d="M 242.65005 131.98472 C 257.63973 123.79908 280.901 125.42567 294.6056 135.6178 C 308.31024 145.8099 307.26847 160.70793 292.27872 168.89352 C 277.28904 177.07916 254.02777 175.45257 240.3232 165.26044 C 226.61853 155.06834 227.6603 140.1703 242.65005 131.98472" fill="url(#Obj_Gradient_11)"/>
+        </g>
+        <g id="Graphic_1489">
+          <path d="M 245.094 65.40341 C 260.66688 57.292874 283.97533 60.122826 297.1549 71.724285 C 310.33457 83.3257 308.39443 99.30534 292.8215 107.41581 C 277.2486 115.52635 253.94016 112.6964 240.76058 101.09493 C 227.58093 89.49352 229.52106 73.51388 245.094 65.40341" fill="#929292"/>
+        </g>
+      </g>
+      <g id="Graphic_1487">
+        <rect x="272.9087" y="116.10232" width="8.108801" height="9.460268" id="path_10"/>
+        <clipPath id="clip_path_10">
+          <use xl:href="#path_10"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_10)">
+          <image xl:href="image115.pdf" width="24" height="28" transform="translate(272.9087 116.10232) scale(.33786673)"/>
+        </g>
+      </g>
+      <g id="Graphic_1486">
+        <rect x="271.69828" y="158.54062" width="13.037188" height="9.126032" id="path_11"/>
+        <clipPath id="clip_path_11">
+          <use xl:href="#path_11"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_11)">
+          <image xl:href="image117.pdf" width="40" height="28" transform="translate(271.69828 158.54062) scale(.3259297)"/>
+        </g>
+      </g>
+      <g id="Graphic_1485">
+        <path d="M 247.78807 213.86822 L 244.49568 201.58088 L 252.79934 197.89264 L 330.82462 176.98583 L 334.117 189.27317 L 325.81335 192.96141 Z" fill="url(#Obj_Gradient_12)"/>
+        <path d="M 247.78807 213.86822 L 244.49568 201.58088 L 252.79934 197.89264 L 330.82462 176.98583 L 334.117 189.27317 L 325.81335 192.96141 L 247.78807 213.86822 M 244.49568 201.58088 L 322.52097 180.67407 L 330.82462 176.98583 M 322.52097 180.67407 L 325.81335 192.96141" stroke="#53b592" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+      </g>
+      <g id="Graphic_1484">
+        <path d="M 293.3918 189.86241 L 301.50503 190.2876 L 301.06348 198.71287 L 292.95026 198.28767 Z" id="path_12"/>
+        <clipPath id="clip_path_12">
+          <use xl:href="#path_12"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_12)">
+          <image xl:href="image114.pdf" width="26" height="27" transform="translate(293.3918 189.86241) rotate(3) scale(.31247495)"/>
+        </g>
+      </g>
+      <g id="Line_1483">
+        <line x1="268.81828" y1="173.30062" x2="287.68838" y2="196.98555" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Group_1478">
+        <g id="Line_1482">
+          <line x1="271.2077" y1="175.15118" x2="282.22085" y2="185.38762" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1481">
+          <circle cx="268.9952" cy="173.09474" r="2.52000403744163" fill="black"/>
+          <circle cx="268.9952" cy="173.09474" r="2.52000403744163" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1480">
+          <line x1="266.632" y1="174.97552" x2="255.56073" y2="183.78673" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1479">
+          <line x1="268.8682" y1="173.57155" x2="269.77943" y2="155.36693" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1473">
+        <g id="Line_1477">
+          <line x1="271.3381" y1="136.31288" x2="282.35126" y2="146.54931" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1476">
+          <circle cx="269.12562" cy="134.25643" r="2.52000403744165" fill="black"/>
+          <circle cx="269.12562" cy="134.25643" r="2.52000403744165" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1475">
+          <line x1="266.76242" y1="136.13722" x2="255.69114" y2="144.94843" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1474">
+          <line x1="268.9986" y1="134.73324" x2="269.90984" y2="116.52863" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1469">
+        <g id="Graphic_1472">
+          <path d="M 272.95096 134.91855 C 273.2528 137.06615 271.7579 139.05148 269.6095 139.35342 C 267.46108 139.65536 265.47686 138.15899 265.17504 136.01139 C 264.8732 133.86379 266.36825 131.87944 268.51665 131.5775 C 270.66506 131.27556 272.64914 132.77096 272.95096 134.91855 Z" fill="white"/>
+          <path d="M 272.95096 134.91855 C 273.2528 137.06615 271.7579 139.05148 269.6095 139.35342 C 267.46108 139.65536 265.47686 138.15899 265.17504 136.01139 C 264.8732 133.86379 266.36825 131.87944 268.51665 131.5775 C 270.66506 131.27556 272.64914 132.77096 272.95096 134.91855 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1471">
+          <path d="M 269.06307 135.46546 L 268.51665 131.5775 C 270.6639 131.27572 272.64925 132.77178 272.95103 134.91904 L 269.06307 135.46546 Z" fill="black"/>
+          <path d="M 269.06307 135.46546 L 268.51665 131.5775 C 270.6639 131.27572 272.64925 132.77178 272.95103 134.91904 L 269.06307 135.46546 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1470">
+          <path d="M 269.06307 135.46546 L 269.6095 139.35342 C 267.46222 139.6552 265.4769 138.15914 265.1751 136.01188 L 269.06307 135.46546 Z" fill="black"/>
+          <path d="M 269.06307 135.46546 L 269.6095 139.35342 C 267.46222 139.6552 265.4769 138.15914 265.1751 136.01188 L 269.06307 135.46546 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1464">
+        <g id="Line_1468">
+          <line x1="290.49582" y1="197.71009" x2="300.73836" y2="204.14791" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1467">
+          <circle cx="287.93852" cy="196.10273" r="2.52000403744163" fill="black"/>
+          <circle cx="287.93852" cy="196.10273" r="2.52000403744163" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1466">
+          <line x1="286.0952" y1="198.49527" x2="278.3907" y2="208.4954" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+        <g id="Line_1465">
+          <line x1="287.93063" y1="196.5961" x2="284.4107" y2="178.7118" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Line_1445">
+        <line x1="363.13828" y1="275.61" x2="371.4798" y2="284.9072" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Line_1444">
+        <line x1="310.93828" y1="277.2808" x2="314.24295" y2="289.47154" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Line_1443">
+        <line x1="263.19288" y1="291.104" x2="259.89745" y2="303.10627" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Graphic_1442">
+        <rect x="253.2557" y="248.264" width="11.839208" height="12.603028" id="path_13"/>
+        <clipPath id="clip_path_13">
+          <use xl:href="#path_13"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_13)">
+          <image xl:href="image129.pdf" width="31" height="33" transform="translate(253.2557 248.264) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Graphic_1441">
+        <rect x="289.16716" y="250.81637" width="11.839208" height="12.603028" id="path_14"/>
+        <clipPath id="clip_path_14">
+          <use xl:href="#path_14"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_14)">
+          <image xl:href="image130.pdf" width="31" height="33" transform="translate(289.16716 250.81637) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Graphic_1440">
+        <rect x="331.3556" y="259.54476" width="12.221118" height="12.603028" id="path_15"/>
+        <clipPath id="clip_path_15">
+          <use xl:href="#path_15"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_15)">
+          <image xl:href="image131.pdf" width="32" height="33" transform="translate(331.3556 259.54476) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Graphic_1439">
+        <rect x="247.23638" y="299.744" width="9.929658" height="14.894487" id="path_16"/>
+        <clipPath id="clip_path_16">
+          <use xl:href="#path_16"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_16)">
+          <image xl:href="image132.pdf" width="26" height="39" transform="translate(247.23638 299.744) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Graphic_1438">
+        <rect x="301.5219" y="285.6623" width="10.311568" height="14.894487" id="path_17"/>
+        <clipPath id="clip_path_17">
+          <use xl:href="#path_17"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_17)">
+          <image xl:href="image133.pdf" width="27" height="39" transform="translate(301.5219 285.6623) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Graphic_1437">
+        <rect x="377.73996" y="281.92345" width="10.311568" height="14.894487" id="path_18"/>
+        <clipPath id="clip_path_18">
+          <use xl:href="#path_18"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_18)">
+          <image xl:href="image134.pdf" width="27" height="39" transform="translate(377.73996 281.92345) scale(.38190993)"/>
+        </g>
+      </g>
+      <g id="Group_1433">
+        <g id="Line_1436">
+          <path d="M 221.39115 334.12724 C 221.39115 334.12724 226.1846 325.4768 243.2384 320.7348 C 260.2922 315.9928 281.58702 317.38912 281.58702 317.38912" stroke="#5e5e5e" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1435">
+          <path d="M 281.58702 317.38912 C 281.58702 317.38912 293.97034 305.38206 312.45568 303.35638 C 330.941 301.3307 346.8359 310.23896 346.8359 310.23896" stroke="#5e5e5e" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_1434">
+          <path d="M 346.8359 310.23896 C 346.8359 310.23896 369.1661 301.34886 388.67375 301.63817 C 408.1814 301.92748 415.69338 311.26016 415.69338 311.26016" stroke="#5e5e5e" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+      </g>
+      <g id="Group_1534">
+        <g id="Group_1528">
+          <g id="Line_1532">
+            <line x1="271.235" y1="252.08025" x2="268.0403" y2="243.88222" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+          <g id="Graphic_1531">
+            <circle cx="272.33163" cy="254.89436" r="2.52000403744164" fill="black"/>
+            <circle cx="272.33163" cy="254.89436" r="2.52000403744164" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          </g>
+          <g id="Line_1530">
+            <line x1="275.00352" y1="253.48567" x2="283.35276" y2="249.08375" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+        </g>
+        <g id="Line_1533">
+          <line x1="272.35626" y1="254.94977" x2="269.854" y2="264.77972" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1535">
+        <g id="Group_1537">
+          <g id="Line_1540">
+            <line x1="300.24194" y1="239.55493" x2="294.08005" y2="233.62948" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+          <g id="Graphic_1539">
+            <circle cx="302.41886" cy="241.64832" r="2.52000403744164" fill="black"/>
+            <circle cx="302.41886" cy="241.64832" r="2.52000403744164" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          </g>
+          <g id="Line_1538">
+            <line x1="304.0911" y1="239.1329" x2="309.20902" y2="231.43454" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+        </g>
+        <g id="Line_1536">
+          <line x1="302.46596" y1="241.68652" x2="304.69914" y2="251.58107" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1541">
+        <g id="Graphic_1544">
+          <path d="M 310.00436 260.11208 C 310.25343 261.88435 309.0198 263.5227 307.24686 263.77187 C 305.47393 264.02104 303.8365 262.7862 303.58742 261.01392 C 303.33834 259.24166 304.5721 257.6041 306.34502 257.35493 C 308.11795 257.10576 309.75528 258.3398 310.00436 260.11208 Z" fill="white"/>
+          <path d="M 310.00436 260.11208 C 310.25343 261.88435 309.0198 263.5227 307.24686 263.77187 C 305.47393 264.02104 303.8365 262.7862 303.58742 261.01392 C 303.33834 259.24166 304.5721 257.6041 306.34502 257.35493 C 308.11795 257.10576 309.75528 258.3398 310.00436 260.11208 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1543">
+          <path d="M 306.79594 260.5634 L 306.34502 257.35493 C 308.117 257.1059 309.75538 258.3405 310.0044 260.11248 L 306.79594 260.5634 Z" fill="black"/>
+          <path d="M 306.79594 260.5634 L 306.34502 257.35493 C 308.117 257.1059 309.75538 258.3405 310.0044 260.11248 L 306.79594 260.5634 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1542">
+          <path d="M 306.79594 260.5634 L 307.24686 263.77187 C 305.47488 264.0209 303.8365 262.7863 303.58747 261.01432 L 306.79594 260.5634 Z" fill="black"/>
+          <path d="M 306.79594 260.5634 L 307.24686 263.77187 C 305.47488 264.0209 303.8365 262.7863 303.58747 261.01432 L 306.79594 260.5634 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1545">
+        <g id="Group_1547">
+          <g id="Line_1550">
+            <line x1="332.87447" y1="249.62305" x2="324.55464" y2="247.84362" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+          <g id="Graphic_1549">
+            <circle cx="335.82782" cy="250.2547" r="2.52000403744164" fill="black"/>
+            <circle cx="335.82782" cy="250.2547" r="2.52000403744164" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          </g>
+          <g id="Line_1548">
+            <line x1="335.90373" y1="247.2351" x2="336.1349" y2="238.03956" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+          </g>
+        </g>
+        <g id="Line_1546">
+          <line x1="335.888" y1="250.26214" x2="343.02516" y2="257.46978" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1551">
+        <g id="Graphic_1554">
+          <path d="M 353.82418 263.52784 C 354.07325 265.3001 352.8396 266.93846 351.0667 267.18763 C 349.29375 267.4368 347.6563 266.20195 347.40724 264.42968 C 347.15816 262.6574 348.3919 261.01986 350.16484 260.7707 C 351.93778 260.52152 353.5751 261.75557 353.82418 263.52784 Z" fill="white"/>
+          <path d="M 353.82418 263.52784 C 354.07325 265.3001 352.8396 266.93846 351.0667 267.18763 C 349.29375 267.4368 347.6563 266.20195 347.40724 264.42968 C 347.15816 262.6574 348.3919 261.01986 350.16484 260.7707 C 351.93778 260.52152 353.5751 261.75557 353.82418 263.52784 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1553">
+          <path d="M 350.61576 263.97916 L 350.16484 260.7707 C 351.93683 260.52166 353.5752 261.75625 353.82423 263.52824 L 350.61576 263.97916 Z" fill="black"/>
+          <path d="M 350.61576 263.97916 L 350.16484 260.7707 C 351.93683 260.52166 353.5752 261.75625 353.82423 263.52824 L 350.61576 263.97916 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1552">
+          <path d="M 350.61576 263.97916 L 351.0667 267.18763 C 349.2947 267.43667 347.65633 266.20207 347.4073 264.43008 L 350.61576 263.97916 Z" fill="black"/>
+          <path d="M 350.61576 263.97916 L 351.0667 267.18763 C 349.2947 267.43667 347.65633 266.20207 347.4073 264.43008 L 350.61576 263.97916 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Line_1557">
+        <line x1="287.75144" y1="196.77927" x2="302.46596" y2="241.68652" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Line_1556">
+        <line x1="287.75144" y1="196.77927" x2="335.888" y2="250.26214" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Line_1555">
+        <line x1="287.75144" y1="196.77927" x2="272.35626" y2="254.94977" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0,2.0" stroke-width=".5"/>
+      </g>
+      <g id="Group_1427">
+        <g id="Graphic_1430">
+          <path d="M 291.57628 196.43865 C 291.8781 198.58625 290.3832 200.57157 288.2348 200.87351 C 286.0864 201.17545 284.10218 199.67908 283.80035 197.53148 C 283.49853 195.38388 284.99356 193.39953 287.14197 193.09759 C 289.29037 192.79565 291.27445 194.29105 291.57628 196.43865 Z" fill="white"/>
+          <path d="M 291.57628 196.43865 C 291.8781 198.58625 290.3832 200.57157 288.2348 200.87351 C 286.0864 201.17545 284.10218 199.67908 283.80035 197.53148 C 283.49853 195.38388 284.99356 193.39953 287.14197 193.09759 C 289.29037 192.79565 291.27445 194.29105 291.57628 196.43865 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1429">
+          <path d="M 287.68838 196.98555 L 287.14197 193.09759 C 289.28923 192.7958 291.27457 194.29187 291.57634 196.43913 L 287.68838 196.98555 Z" fill="black"/>
+          <path d="M 287.68838 196.98555 L 287.14197 193.09759 C 289.28923 192.7958 291.27457 194.29187 291.57634 196.43913 L 287.68838 196.98555 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+        <g id="Graphic_1428">
+          <path d="M 287.68838 196.98555 L 288.2348 200.87351 C 286.08754 201.1753 284.1022 199.67923 283.80042 197.53197 L 287.68838 196.98555 Z" fill="black"/>
+          <path d="M 287.68838 196.98555 L 288.2348 200.87351 C 286.08754 201.1753 284.1022 199.67923 283.80042 197.53197 L 287.68838 196.98555 Z" stroke="black" stroke-linecap="butt" stroke-linejoin="miter" stroke-width=".5"/>
+        </g>
+      </g>
+      <g id="Group_1558">
+        <g id="Line_1561"/>
+        <g id="Line_1560"/>
+        <g id="Line_1559"/>
+      </g>
+      <g id="Graphic_1562">
+        <text transform="translate(40.16776 32.93788)" fill="black">
+          <tspan font-family="Times New Roman" font-size="11" fill="black" x="0" y="10">Lander stowed configuration.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_1564">
+        <text transform="translate(199.59968 32.93788)" fill="black">
+          <tspan font-family="Times New Roman" font-size="11" fill="black" x="0" y="10">Lander deployed configuration.</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

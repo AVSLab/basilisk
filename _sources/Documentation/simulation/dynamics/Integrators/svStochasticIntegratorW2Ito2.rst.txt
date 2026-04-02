@@ -1,0 +1,8 @@
+.. _svStochasticIntegratorW2Ito2:
+
+Module: svStochasticIntegratorW2Ito2
+====================================
+
+.. autodoxygenfile:: svStochasticIntegratorW2Ito2.h
+   :project: Integrators
+

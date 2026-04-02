@@ -1,0 +1,8 @@
+.. _NBodyGravity:
+
+Module: NBodyGravity
+====================
+
+.. autodoxygenfile:: NBodyGravity.h
+   :project: NBodyGravity
+

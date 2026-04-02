@@ -1,0 +1,8 @@
+.. _StripStateMsgPayload:
+
+StripStateMsgPayload
+============================
+
+.. autodoxygenfile:: StripStateMsgPayload.h
+   :project: msgPayloadDefC
+

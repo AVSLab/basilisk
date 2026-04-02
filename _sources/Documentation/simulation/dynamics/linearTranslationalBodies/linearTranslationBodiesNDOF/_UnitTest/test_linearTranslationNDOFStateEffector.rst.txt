@@ -1,0 +1,13 @@
+.. _test_linearTranslationNDOFStateEffector:
+
+test_linearTranslationNDOFStateEffector
+=======================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_linearTranslationNDOFStateEffector
+   :members:
+   :show-inheritance:
+

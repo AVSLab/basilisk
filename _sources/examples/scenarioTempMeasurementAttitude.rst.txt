@@ -1,0 +1,13 @@
+.. _scenarioTempMeasurementAttitude:
+
+scenarioTempMeasurementAttitude
+===============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioTempMeasurementAttitude
+   :members:
+   :show-inheritance:
+
