@@ -329,6 +329,21 @@ void MJScene::printMujocoModelDebugInfo(const std::string& path)
     mj_printModel(this->getMujocoModel(), path.c_str());
 }
 
+std::vector<std::string> MJScene::getBodyNames() const
+{
+    return this->spec.getBodyNames();
+}
+
+std::string MJScene::getBodyParentName(const std::string& bodyName) const
+{
+    return this->spec.getBodyParentName(bodyName);
+}
+
+std::vector<MJGeomInfo> MJScene::getGeomInfos() const
+{
+    return this->spec.getGeomInfos();
+}
+
 MJBody& MJScene::getBody(const std::string& name)
 {
     auto& bodies = this->spec.getBodies();

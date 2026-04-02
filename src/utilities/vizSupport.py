@@ -37,6 +37,13 @@ try:
 except ImportError:
     vizFound = False
 
+try:
+    from Basilisk.simulation import mujoco
+
+    mujocoFound = True
+except ImportError:
+    mujocoFound = False
+
 pauseFlag = False
 endFlag = False
 
@@ -526,6 +533,102 @@ def updateTargetLineList(viz):
     del viz.liveSettings.targetLineList[:]
     viz.liveSettings.targetLineList = vizInterface.PointLineConfig(targetLineList)
     return
+
+
+def _createCustomModelsFromMJScene(viz, scene):
+    """Auto-create Vizard custom models from MuJoCo geom data.
+
+    Maps MuJoCo geom types to Vizard primitive shapes and creates
+    custom models with the correct size, position, orientation, and color
+    for each body in the scene.
+    """
+    import math
+
+    # MuJoCo geom type constants (from mjtGeom enum)
+    _MJGEOM_PLANE = 0
+    _MJGEOM_HFIELD = 1
+    _MJGEOM_SPHERE = 2
+    _MJGEOM_CAPSULE = 3
+    _MJGEOM_ELLIPSOID = 4
+    _MJGEOM_CYLINDER = 5
+    _MJGEOM_BOX = 6
+    _MJGEOM_MESH = 7
+
+    # Map MuJoCo geom types to Vizard primitive model paths
+    _GEOM_TYPE_MAP = {
+        _MJGEOM_BOX: "CUBE",
+        _MJGEOM_SPHERE: "SPHERE",
+        _MJGEOM_CYLINDER: "CYLINDER",
+        _MJGEOM_CAPSULE: "CYLINDER",
+        _MJGEOM_ELLIPSOID: "SPHERE",
+    }
+
+    geomInfos = scene.getGeomInfos()
+
+    # Group geoms by body name
+    bodyGeoms = {}
+    for geom in geomInfos:
+        bodyGeoms.setdefault(geom.bodyName, []).append(geom)
+
+    for bodyName, geoms in bodyGeoms.items():
+        for geom in geoms:
+            modelPath = _GEOM_TYPE_MAP.get(geom.type)
+            if modelPath is None:
+                continue
+
+            # Compute scale from MuJoCo size
+            size = list(geom.size)
+            if geom.type == _MJGEOM_BOX:
+                # MuJoCo size = half-extents, Vizard CUBE default = 1x1x1
+                scale = [2 * size[0], 2 * size[1], 2 * size[2]]
+            elif geom.type == _MJGEOM_SPHERE:
+                # MuJoCo size[0] = radius, Vizard SPHERE default diameter = 1
+                scale = [2 * size[0], 2 * size[0], 2 * size[0]]
+            elif geom.type == _MJGEOM_CYLINDER:
+                # MuJoCo size[0] = radius, size[1] = half-height
+                # Vizard CYLINDER default = diameter 1, height 1
+                scale = [2 * size[0], 2 * size[1], 2 * size[0]]
+            elif geom.type == _MJGEOM_CAPSULE:
+                # Approximate as cylinder
+                scale = [2 * size[0], 2 * size[1], 2 * size[0]]
+            elif geom.type == _MJGEOM_ELLIPSOID:
+                # MuJoCo size = semi-axes
+                scale = [2 * size[0], 2 * size[1], 2 * size[2]]
+            else:
+                scale = [1, 1, 1]
+
+            # Position offset in body frame
+            offset = list(geom.pos)
+
+            # Convert quaternion (w, x, y, z) to 3-2-1 Euler angles (z, y, x)
+            qw, qx, qy, qz = geom.quat
+            # Roll (x-axis rotation)
+            sinr_cosp = 2 * (qw * qx + qy * qz)
+            cosr_cosp = 1 - 2 * (qx * qx + qy * qy)
+            roll = math.atan2(sinr_cosp, cosr_cosp)
+            # Pitch (y-axis rotation)
+            sinp = 2 * (qw * qy - qz * qx)
+            sinp = max(-1, min(1, sinp))
+            pitch = math.asin(sinp)
+            # Yaw (z-axis rotation)
+            siny_cosp = 2 * (qw * qz + qx * qy)
+            cosy_cosp = 1 - 2 * (qy * qy + qz * qz)
+            yaw = math.atan2(siny_cosp, cosy_cosp)
+            rotation = [yaw, pitch, roll]
+
+            # Convert RGBA from 0-1 float to 0-255 int
+            rgba = list(geom.rgba)
+            color = [int(c * 255) for c in rgba]
+
+            createCustomModel(
+                viz,
+                modelPath=modelPath,
+                simBodiesToModify=[bodyName],
+                scale=scale,
+                offset=offset,
+                rotation=rotation,
+                color=color,
+            )
 
 
 customModelList = []
@@ -1108,7 +1211,10 @@ def enableUnityVisualization(
     simTaskName:
         task to which to add the vizInterface module
     scList:
-        :ref:`spacecraft` objects.  Can be a single object or list of objects
+        :ref:`spacecraft` objects, :ref:`MJScene` objects, or tuples of (name, stateOutMsg).
+        Can be a single object or list of objects.
+        When an :ref:`MJScene` is provided, all bodies are auto-discovered and their
+        parent-child hierarchy is resolved from the MuJoCo model
 
     Keyword Args
     ------------
@@ -1267,6 +1373,52 @@ def enableUnityVisualization(
     spacecraftParentName = ""
 
     for sc in scList:
+        # Check if this is an MJScene object
+        if mujocoFound and isinstance(sc, mujoco.MJScene):
+            # Auto-discover all bodies their child hierarchy
+            bodyNames = sc.getBodyNames()
+
+            # Find the hub body, set it as top-level spacecraft
+            hubName = None
+            for name in bodyNames:
+                if sc.getBody(name).isFree():
+                    hubName = name
+                    break
+            if hubName is None:
+                raise ValueError(
+                    "MJScene has no free body. Cannot determine the hub spacecraft."
+                )
+
+            # Add the hub body first as the top-level spacecraft
+            scData = vizInterface.VizSpacecraftData()
+            scData.spacecraftName = hubName
+            spacecraftParentName = hubName
+            scData.scStateInMsg.subscribeTo(sc.getBody(hubName).getOrigin().stateOutMsg)
+            scSim.vizMessenger.scData.push_back(scData)
+
+            # Add all other bodies as child spacecraft, using the MuJoCo
+            # body hierarchy to resolve parentSpacecraftName
+            for name in bodyNames:
+                if name == hubName:
+                    continue
+                scData = vizInterface.VizSpacecraftData()
+                scData.spacecraftName = name
+
+                # Walk up the MuJoCo body tree to find the nearest ancestor that 
+                # is in bodyNames
+                parentName = sc.getBodyParentName(name)
+                scData.parentSpacecraftName = parentName if parentName else hubName
+
+                scData.scStateInMsg.subscribeTo(sc.getBody(name).getOrigin().stateOutMsg)
+                scSim.vizMessenger.scData.push_back(scData)
+
+            # Auto-create custom models from MuJoCo geom data so Vizard renders 
+            # the correct geometry for each body
+            _createCustomModelsFromMJScene(scSim.vizMessenger, sc)
+
+            c += 1
+            continue
+
         # create spacecraft information container
         scData = vizInterface.VizSpacecraftData()
 
