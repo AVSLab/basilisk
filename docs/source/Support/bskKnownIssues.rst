@@ -8,8 +8,16 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is deprecated.  Use ``messaging`` instead.
 
-Version |release| (April 2, 2026)
----------------------------------
+Version |release|
+-----------------
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
+
+Version 2.10.0 (April 2, 2026)
+------------------------------
 - When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
   if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
   SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer

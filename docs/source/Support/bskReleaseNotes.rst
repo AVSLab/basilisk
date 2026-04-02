@@ -23,8 +23,13 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
-Version |release| (April 2, 2026)
----------------------------------
+Version |release|
+-----------------
+.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+
+
+Version 2.10.0 (April 2, 2026)
+------------------------------
 - :beta:`Stochastic Integration`: Added support for stochastic dynamics (dynamics driven by Stochastic Differential Equations).
 - :beta:`Stochastic Integration`: Added stochastic dynamics support in core dynamics infrastructure (``DynamicObject``, ``StateData``,
   and ``DynParamManager``), including diffusion propagation APIs and support for shared noise sources.
