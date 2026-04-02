@@ -14,6 +14,8 @@ The high level steps to release a new version of Basilisk are as follows:
    to reflect the new release.
 #. Add release date to ``docs/source/Support/bskReleaseNotes.rst``
    and ``docs/source/Support/bskKnownIssues.rst`` files.
+#. Integrate content of ``docs/source/Support/bskReleaseNotesSnippets/_compiled_latest.rst`` into ``bskReleaseNotes.rst``.
+   Delete the release notes snippets.
 #. Ensure documentation builds without warnings or errors.
 #. Push branch to origin and do a PR.
 #. Merge ``develop`` into ``master``
