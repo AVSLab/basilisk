@@ -1,1 +1,0 @@
-- Removed deprecated ``vizInterface.MultiSphere`` and ``vizInterface.MultiSphereInfo`` aliases; use ``vizInterface.MultiShape`` and ``vizInterface.MultiShapeInfo``.

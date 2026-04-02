@@ -1,1 +1,0 @@
-- Added :ref:`scenarioThrArmControl`, a MuJoCo example scenario for spacecraft control using thruster arms.

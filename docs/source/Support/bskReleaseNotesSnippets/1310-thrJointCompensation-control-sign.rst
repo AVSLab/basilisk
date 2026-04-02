@@ -1,1 +1,0 @@
-- Fixed :ref:`thrJointCompensation` hinged joint control sign convention so that the computed compensation torque is applied in the correct direction.

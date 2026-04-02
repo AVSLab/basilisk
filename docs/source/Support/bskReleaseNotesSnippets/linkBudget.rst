@@ -1,1 +1,0 @@
-- Added :ref:`linkBudget`, a communication module that computes link Carrier-to-Noise Ratio (CNR) between two antennas including FSPL and optional atmospheric, pointing, and frequency-offset losses.

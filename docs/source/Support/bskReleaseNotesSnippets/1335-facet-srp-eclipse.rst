@@ -1,1 +1,0 @@
-- Added optional ``sunEclipseInMsg`` input to :ref:`facetSRPDynamicEffector` so that eclipse shadow conditions scale the SRP force and torque by the illumination factor.

@@ -1,2 +1,0 @@
-- Improved ``gravityEffector`` gravity-coefficient loading to always include the requested highest degree and consistently enforce ``maxDeg`` truncation.
-- Updated spherical-harmonic coefficient parsing to map values by explicit ``(degree, order)`` indices, handle missing entries as zero-filled terms, and reject duplicate or malformed rows.
