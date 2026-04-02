@@ -1,1 +1,0 @@
-- Fixed :ref:`reactionWheelStateEffector` mixed-model wheel logging so theta outputs are indexed correctly when balanced and jitter wheel models are used together.

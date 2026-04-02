@@ -1,1 +1,0 @@
-- Fixed ``PythonVariableLogger`` to resume logging correctly after ``Reset()``, reject negative ``min_log_period`` values, and support indexed access for logged names that collide with class attributes such as ``times``.

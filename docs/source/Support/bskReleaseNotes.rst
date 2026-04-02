@@ -23,10 +23,71 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
-Version |release|
------------------
-.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
-
+Version |release| (April 2, 2026)
+---------------------------------
+- :beta:`Stochastic Integration`: Added support for stochastic dynamics (dynamics driven by Stochastic Differential Equations).
+- :beta:`Stochastic Integration`: Added stochastic dynamics support in core dynamics infrastructure (``DynamicObject``, ``StateData``,
+  and ``DynParamManager``), including diffusion propagation APIs and support for shared noise sources.
+- :beta:`Stochastic Integration`: Added diffusion dynamics task support to ``MJScene`` via ``AddModelToDiffusionDynamicsTask()`` for
+  MuJoCo systems with stochastic state dynamics.
+- :beta:`Stochastic Integration`: Added stochastic integrator base classes ``StateVecStochasticIntegrator``.
+- :beta:`Stochastic Integration`: Added ``svIntegratorWeakStochasticRungeKutta`` to support stochastic integrator implementations.
+- :beta:`Stochastic Integration`: Added :ref:`svStochasticIntegratorMayurama` (Euler-Mayurama), a 1-weak/1-strong stochastic integrator.
+- :beta:`Stochastic Integration`: Added two stochastic integrators: :ref:`svStochasticIntegratorW2Ito1` and :ref:`svStochasticIntegratorW2Ito2`. These are 2-weak-order stochastic integrators.
+- :beta:`Stochastic Integration`: Added MuJoCo models (:ref:`meanRevertingNoise`, :ref:`stochasticAtmDensity`, and
+  :ref:`stochasticDragCoeff`) to model mean-reverting stochastic processes in dynamics-task modules.
+- :beta:`Stochastic Integration`: Added :ref:`meanRevertingNoiseStateEffector`, a generic spacecraft state effector that propagates a scalar
+  Ornstein-Uhlenbeck mean-reverting stochastic state.
+- :beta:`Stochastic Integration`: Added :ref:`scenarioStochasticDrag` and :ref:`scenarioStochasticDragSpacecraft`, which illustrate how to
+  use a state driven by stochastic dynamics to model randomly evolving atmospheric density (and thus drag force).
+  The former scenario uses MuJoCo dynamics and the latter spacecraft dynamics.
+- :beta:`Stochastic Integration`: Added optional density correction support to :ref:`dragDynamicEffector` through
+  ``densityCorrectionStateName``, allowing drag density to be computed as
+  ``(1 + correction) * neutralDensity`` using a user-selected scalar state.
+- Updated :ref:`tleHandling` to map TLE mean elements in TEME to Basilisk osculating elements in J2000/ICRS and to generate TLEs using an SGP4-consistent mean-element iteration.
+- Fixed how the gravity spherical harmonic coefficient are loaded in ``loadGravFromFile()``.  They were hard coded to 2nd order.
+- Added a new scenario, :ref:`scenario_FaultList`, that demonstrates the use of the fault modeling capabilities by selecting faults from :ref:`BSK_Faults`.
+- Added a ``Dockerfile`` to build Basilisk container images. See :ref:`bskContainers` for usage details.
+- Prebuilt multi-architecture (``linux/amd64``, ``linux/arm64``) container images are now published to GHCR on each release tag.
+- Updated :ref:`vizInterface` to bind to all network interfaces (``0.0.0.0``) by default, enabling Vizard connectivity when Basilisk is running inside a container.
+- Added :ref:`hillFrameRelativeControl`, a Hill-frame PD controller that computes an inertial force command to track deputy relative position and velocity with respect to a chief spacecraft.
+- Added :ref:`thrOnTimeToForce` module to convert thruster on-times to thruster forces for use in MuJoCo scenes
+- Fixed :ref:`reactionWheelStateEffector` mixed-model wheel logging so theta outputs are indexed correctly when balanced and jitter wheel models are used together.
+- Added a new :ref:`facetedSpacecraftModel` module to convert spacecraft facet geometry from the local facet frames to the spacecraft hub body frame. The module supports both fixed facets and single-axis articulating facets.
+- Added a new :ref:`facetedSpacecraftProjectedArea` module to compute the per-facet and total projected area of a faceted spacecraft model using a provided heading direction vector. The module supports three heading configuration options: direct general heading, Sun direction heading, and spacecraft inertial velocity heading.
+- Fixed :ref:`thrJointCompensation` hinged joint control sign convention so that the computed compensation torque is applied in the correct direction.
+- Added :ref:`scenarioThrArmControl`, a MuJoCo example scenario for spacecraft control using thruster arms.
+- Added Python 3.14 support across packaging and CI.
+- Updated platform install guides to document Basilisk support for Python 3.14.
+- Updated :ref:`tleHandling` TLE parsing to fail explicitly on unsupported catalog-ID encodings.
+- Added tests in ``test_readTLE.py`` to validate rejection of unsupported catalog-ID encoding.
+- Added ``sccache`` compiler caching to CI builds to speed up incremental C++ compilation. See :ref:`configureBuild` for how to use ``sccache`` locally.
+- Removed deprecated ``vizInterface.MultiSphereVector`` support; use ``vizInterface.MultiShapeVector``.
+- Removed deprecated ``vizInterface.MultiSphere`` and ``vizInterface.MultiSphereInfo`` aliases; use ``vizInterface.MultiShape`` and ``vizInterface.MultiShapeInfo``.
+- ``dragDynamicEffector``, ``facetDragDynamicEffector``, and ``cannonballDrag`` now accept an optional ``windVelInMsg`` (:ref:`WindMsgPayload`) to compute atmosphere-relative drag velocity; supersedes the former ``useAtmosphereRelativeVelocity``/``planetOmega_N`` flags.
+- Updated :ref:`scenarioDragDeorbit`, :ref:`scenarioDragRendezvous`, :ref:`scenarioAerocapture`, and :ref:`scenarioStochasticDragSpacecraft` to illustrate optional use of wind velocity input.
+- Added :ref:`windBase` abstract base class and :ref:`zeroWindModel` concrete implementation. The base class now handles co-rotating atmosphere calculations, while the zero wind model represents conditions with no additional wind perturbations beyond atmospheric co-rotation.
+- Removed Python 3.8 support from the build and CI configuration, and marked Python 3.9 support as deprecated for removal after March 2027.
+- Added :ref:`stripLocation` to support the strip imaging mode.
+- Updated :ref:`locationPointing` to include the new strip imaging mode.
+- Added new tests in ``test_locationPointing.py`` to verify the new strip imaging mode.
+- Created new message :ref:`StripStateMsgPayload` to interface :ref:`locationPointing` with the new :ref:`stripLocation`.
+- Added the scenario :ref:`scenarioStripImaging` showing how to perform strip imaging tasks.
+- Updated Python packaging metadata to use the PEP 639 license fields and require a newer setuptools version that supports them.
+- Added optional ``sunEclipseInMsg`` input to :ref:`facetSRPDynamicEffector` so that eclipse shadow conditions scale the SRP force and torque by the illumination factor.
+- Added documentation for the ``bsk-sdk`` plugin system, covering how to install,
+  write, and distribute out-of-tree Basilisk plugins as standard Python wheels.
+- Added ``BSK_SUPPORT_DATA_CACHE`` environment variable to ``dataFetcher.py`` to allow overriding the default Pooch cache directory for support data files.  See :ref:`addSupportData` for details.
+- Added missing docstring to ``gravBodyFactory.createSpiceInterface()`` that prevented it from being built.
+- Added a detailed note for ``spicePlanetFrames`` describing default ``IAU_*`` behavior, supported alternatives such as ``ITRF93`` and ``J2000``, and how frame-association FK kernels interact with this setting.
+- Added an ``examples`` optional dependency set so users can install example-only Python packages with ``pip install "bsk[examples]"`` or ``pip install -e ".[examples]"``.
+- Added a matching ``python conanfile.py --examples True`` build option for source checkouts, with example dependencies enabled by default and ``--examples False`` available to skip them.
+- Improved ``gravityEffector`` gravity-coefficient loading to always include the requested highest degree and consistently enforce ``maxDeg`` truncation.
+- Updated spherical-harmonic coefficient parsing to map values by explicit ``(degree, order)`` indices, handle missing entries as zero-filled terms, and reject duplicate or malformed rows.
+- Added :ref:`linkBudget`, a communication module that computes link Carrier-to-Noise Ratio (CNR) between two antennas including FSPL and optional atmospheric, pointing, and frequency-offset losses.
+- Fixed ``PythonVariableLogger`` to resume logging correctly after ``Reset()``, reject negative ``min_log_period`` values, and support indexed access for logged names that collide with class attributes such as ``times``.
+- Added :ref:`spacecraftChargingEquilibrium` module to solve coupled servicer/target equilibrium potentials with electron-beam current coupling.
+- Update the developer workflow on how release notes are added.  The new method now adds small release notes RST snippets into ``docs/source/Support/bskReleaseNotesSnippets`` folder.  A README.md file there explains how to do this.
 - Removed the default ``--clean`` flag from ``setup.py`` to allow for incremental pip wheel builds.
 - TLE parsing fixed to be robust to file ending issues between LF and CRLF.
 - Updated ``conanfile.py`` to pass ``compiler.cstd=gnu17`` during Conan build step to avoid ``cspice/0067``
@@ -69,8 +130,8 @@ Version |release|
   with differential cannonball drag and orbital-element feedback control.
 
 
-Version 2.9.0 (Jan. 28 2026)
-----------------------------
+Version 2.9.0 (Jan. 28, 2026)
+-----------------------------
 - Deploy both release docs at https://avslab.github.io/basilisk and developer beta
   docs at https://avslab.github.io/basilisk/developer.
 - Added :ref:`releaseGuide` on releasing a new version of Basilisk.

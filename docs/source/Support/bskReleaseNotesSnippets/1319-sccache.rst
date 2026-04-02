@@ -1,1 +1,0 @@
-- Added ``sccache`` compiler caching to CI builds to speed up incremental C++ compilation. See :ref:`configureBuild` for how to use ``sccache`` locally.

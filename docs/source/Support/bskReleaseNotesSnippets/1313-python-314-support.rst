@@ -1,2 +1,0 @@
-- Added Python 3.14 support across packaging and CI.
-- Updated platform install guides to document Basilisk support for Python 3.14.

@@ -1,2 +1,0 @@
-- Added missing docstring to ``gravBodyFactory.createSpiceInterface()`` that prevented it from being built.
-- Added a detailed note for ``spicePlanetFrames`` describing default ``IAU_*`` behavior, supported alternatives such as ``ITRF93`` and ``J2000``, and how frame-association FK kernels interact with this setting.

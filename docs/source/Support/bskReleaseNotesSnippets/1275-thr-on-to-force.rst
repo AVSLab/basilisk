@@ -1,1 +1,0 @@
-- Added :ref:`thrOnTimeToForce` module to convert thruster on-times to thruster forces for use in MuJoCo scenes

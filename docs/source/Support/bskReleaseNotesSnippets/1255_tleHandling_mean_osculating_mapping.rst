@@ -1,1 +1,0 @@
-- Updated :ref:`tleHandling` to map TLE mean elements in TEME to Basilisk osculating elements in J2000/ICRS and to generate TLEs using an SGP4-consistent mean-element iteration.
