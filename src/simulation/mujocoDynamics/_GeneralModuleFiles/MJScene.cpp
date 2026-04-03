@@ -85,11 +85,11 @@ void MJScene::SelfInit()
 void MJScene::Reset(uint64_t CurrentSimNanos)
 {
     this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->initializeDynamics();
     this->dynamicsTask.TaskName = "Dynamics:" + this->ModelTag;
     this->dynamicsTask.ResetTaskList(CurrentSimNanos);
     this->dynamicsDiffusionTask.TaskName = "DiffusionDynamics:" + this->ModelTag;
     this->dynamicsDiffusionTask.ResetTaskList(CurrentSimNanos);
-    this->initializeDynamics();
     this->writeOutputStateMessages(CurrentSimNanos);
 }
 
