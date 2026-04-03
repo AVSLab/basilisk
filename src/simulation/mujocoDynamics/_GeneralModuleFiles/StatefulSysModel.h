@@ -123,7 +123,7 @@ protected:
  * }
  * \endcode
  */
-class StatefulSysModel : public SysModel
+class StatefulSysModel : virtual public SysModel
 {
 public:
     /** Default constructor */
