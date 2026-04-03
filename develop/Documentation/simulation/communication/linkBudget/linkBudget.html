@@ -1,0 +1,1124 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: linkBudget &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="linkBudget" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">communication</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">linkBudget</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleAntenna/index.html">simpleAntenna</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">communication</a></li>
+          <li class="breadcrumb-item"><a href="index.html">linkBudget</a></li>
+      <li class="breadcrumb-item active">Module: linkBudget</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/communication/linkBudget/linkBudget.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-linkbudget">
+<span id="linkbudget"></span><h1>Module: linkBudget<a class="headerlink" href="#module-linkbudget" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>[BETA]</strong> <a class="reference internal" href="#linkbudget"><span class="std std-ref">Module: linkBudget</span></a>  is a beta module in an initial public release. This module might be
+subject to changes in future releases.</p>
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document describes how the linkBudget module operates within the Basilisk astrodynamics simulation framework. The purpose of this module is to provide a radio link budget calculation between two antennas, enabling the simulation of spacecraft-to-spacecraft or spacecraft-to-ground communication links.</p>
+<p>The module computes the end-to-end link budget accounting for free space path loss (FSPL), atmospheric attenuation (based on <a class="reference external" href="https://www.itu.int/rec/R-REC-P.676">ITU-R P.676</a>), antenna pointing losses, and frequency offset losses. The primary output is the Carrier-to-Noise Ratio (CNR) for each receiving antenna, which is essential for evaluating communication system performance.</p>
+<p>This module requires two connected antenna output messages (e.g. from <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a> modules). The link budget calculation automatically determines the link configuration (space-to-space or space-to-ground) based on the antenna environment types.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 25.0%" />
+<col style="width: 35.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>antennaInPayload_1</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a></p></td>
+<td><p>Output message from antenna 1</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-odd"><td><p>antennaInPayload_2</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#antennalogmsgpayload"><span class="std std-ref">AntennaLogMsgPayload</span></a></p></td>
+<td><p>Output message from antenna 2</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-even"><td><p>linkBudgetOutPayload</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#linkbudgetmsgpayload"><span class="std std-ref">LinkBudgetMsgPayload</span></a></p></td>
+<td><p>Link budget calculation results</p></td>
+<td><p>Output</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<span id="linkbudget-detailed-module-description"></span><h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The linkBudget module calculates the radio link budget between two antennas. It receives antenna state information from two antenna modules (e.g. <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a>) and computes the various losses and the resulting Carrier-to-Noise Ratio (CNR) for each receiving antenna.</p>
+<p>The module supports the following communication configurations:</p>
+<ul class="simple">
+<li><p><strong>Space &lt;–&gt; Space</strong>: Direct line-of-sight communication between two spacecraft</p></li>
+<li><p><strong>Space &lt;–&gt; Ground</strong>: Communication between a spacecraft and a ground station on Earth</p></li>
+</ul>
+<p><strong>Ground &lt;–&gt; Ground</strong> communication and communication with a Ground station not on Earth are not supported (see <a class="reference internal" href="#module-assumptions-link"><span class="std std-ref">Module Assumptions and Limitations</span></a>).</p>
+<section id="link-budget-calculation-overview">
+<h3>Link Budget Calculation Overview<a class="headerlink" href="#link-budget-calculation-overview" title="Link to this heading"></a></h3>
+<p>The link budget equation implemented by this module is:</p>
+<div class="math notranslate nohighlight">
+\[P_\mathrm{Rx}\,\mathrm{[dBW]} = P_\mathrm{EIRP} + G_\mathrm{Rx} - L_\mathrm{FSPL} - L_\mathrm{atm} - L_\mathrm{point} - L_\mathrm{freq}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P_\mathrm{Rx}\)</span> is the received power at the receiver antenna in <span class="math notranslate nohighlight">\([\mathrm{dBW}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(P_\mathrm{EIRP}\)</span> is the Equivalent Isotropically Radiated Power (EIRP) of the transmitter antenna in <span class="math notranslate nohighlight">\([\mathrm{dBW}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(G_\mathrm{Rx}\)</span> is the receiver antenna gain in <span class="math notranslate nohighlight">\([\mathrm{dBi}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(L_\mathrm{FSPL}\)</span> is the Free Space Path Loss (FSPL) in <span class="math notranslate nohighlight">\([\mathrm{dB}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(L_\mathrm{atm}\)</span> is the atmospheric attenuation loss in <span class="math notranslate nohighlight">\([\mathrm{dB}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(L_\mathrm{point}\)</span> is the pointing error loss in <span class="math notranslate nohighlight">\([\mathrm{dB}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(L_\mathrm{freq}\)</span> is the frequency offset loss in <span class="math notranslate nohighlight">\([\mathrm{dB}]\)</span></p></li>
+</ul>
+<p>The following sections describe each loss term in detail.</p>
+</section>
+<section id="free-space-path-loss-fspl">
+<span id="fspl-calculation"></span><h3>Free Space Path Loss (FSPL)<a class="headerlink" href="#free-space-path-loss-fspl" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id5">
+<span id="linkbudget-figure-1"></span><a class="reference internal image-reference" href="../../../../_images/LinkBudgetFspl.svg"><img alt="Schematic of Free Space Path Loss calculation" src="../../../../_images/LinkBudgetFspl.svg" style="width: 40%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Illustration of Free Space Path Loss (FSPL) between two antennas</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The Free Space Path Loss (FSPL) accounts for the signal power reduction due to the spreading of electromagnetic waves over distance. This is often the dominant loss term in space communication links.
+The FSPL is illustrated in Figure 1, showing two antennas separated by distance <span class="math notranslate nohighlight">\(d\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[L_\mathrm{FSPL}\,\mathrm{[dB]} = 20 \cdot \log_{10}\left(\frac{4 \pi d}{\lambda}\right)\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(d\)</span> is the distance between the two antennas <span class="math notranslate nohighlight">\([\mathrm{m}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\lambda = c / f\)</span> is the wavelength <span class="math notranslate nohighlight">\([\mathrm{m}]\)</span>, with <span class="math notranslate nohighlight">\(c\)</span> <span class="math notranslate nohighlight">\([\mathrm{m/s}]\)</span> being the speed of light and <span class="math notranslate nohighlight">\(f\)</span> <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span> the center frequency of the overlapping bandwidth.</p></li>
+</ul>
+<p>The distance <span class="math notranslate nohighlight">\(d\)</span> is computed from the antenna position vectors <span class="math notranslate nohighlight">\(\mathbf{r}_\mathrm{A1,N}^\mathrm{N}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{r}_\mathrm{A2,N}^\mathrm{N}\)</span> provided in the input messages:</p>
+<div class="math notranslate nohighlight">
+\[d = \|\mathbf{r}_\mathrm{A1,N}^\mathrm{N} - \mathbf{r}_\mathrm{A2,N}^\mathrm{N}\|\]</div>
+</section>
+<section id="atmospheric-attenuation">
+<span id="id1"></span><h3>Atmospheric Attenuation<a class="headerlink" href="#atmospheric-attenuation" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id6">
+<span id="linkbudget-figure-2"></span><a class="reference internal image-reference" href="../../../../_images/LinkBudgetAtm.svg"><img alt="Schematic of atmospheric attenuation along slant path" src="../../../../_images/LinkBudgetAtm.svg" style="width: 40%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 2: Illustration of atmospheric attenuation calculation along the slant path from ground to spacecraft</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>For <strong>space-to-ground</strong> links, the module computes atmospheric attenuation due to oxygen, water vapor and nitrogen absorption following the <a class="reference external" href="https://www.itu.int/rec/R-REC-P.676">ITU-R P.676-13</a> recommendation. This calculation is only performed when atmospheric attenuation is enabled <code class="docutils literal notranslate"><span class="pre">atmosAtt</span> <span class="pre">==</span> <span class="pre">True</span></code> and one antenna is located on the ground.</p>
+<p>The atmospheric attenuation model divides the atmosphere into discrete layers (increasing thickness with increasing altitude) from the ground antenna altitude up to 100 km (Karman line). The slant path depending on angle <span class="math notranslate nohighlight">\(\alpha\)</span> (see Figure 2) through each layer is computed based on the antenna positions and the altitude of each layer.</p>
+<p>The atmospheric conditions (temperature, pressure, water vapor density) at each altitude layer are obtained from the <a class="reference external" href="https://www.itu.int/rec/R-REC-P.835">ITU-R P.835-7</a> reference standard atmosphere model via the <code class="docutils literal notranslate"><span class="pre">ItuAtmosphere</span></code> utility class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Atmospheric attenuation lookup tables are precomputed at initialization, using the ground antenna position and frequency and re-used during simulation. Changes in frequency during simulation will not update the atmospheric attenuation profile.</p>
+</div>
+<p>For more information the reader is referred to the following ITU-R recommendations:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.676">ITU-R P.676-13</a>: Attenuation by atmospheric gases and related effects</p></li>
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.835">ITU-R P.835-7</a>: Reference standard atmospheres</p></li>
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.453">ITU-R P.453-14</a>: The radio refractive index: its formula and refractivity data</p></li>
+</ul>
+</section>
+<section id="pointing-loss">
+<span id="id2"></span><h3>Pointing Loss<a class="headerlink" href="#pointing-loss" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id7">
+<span id="linkbudget-figure-3"></span><a class="reference internal image-reference" href="../../../../_images/LinkBudgetPoint.svg"><img alt="Schematic of antenna pointing loss" src="../../../../_images/LinkBudgetPoint.svg" style="width: 40%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 3: Illustration of pointing loss due to antenna misalignment (pointing error angle in elevation, <span class="math notranslate nohighlight">\(\| \theta_\mathrm{el} \| &gt; 0^\circ\)</span>)</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The pointing error loss accounts for signal degradation when the antennas are not perfectly aligned. This loss is computed assuming a Gaussian antenna radiation pattern (consistent with the <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a> module).</p>
+<p>For each antenna, the pointing error is decomposed into azimuth and elevation components relative to the antenna boresight direction:</p>
+<p>According to the <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a> gaussian-beam pattern, the pointing loss is computed as:</p>
+<div class="math notranslate nohighlight">
+\[L_\mathrm{point}\,\mathrm{[dB]} = 10 \cdot \log_{10}(e) \cdot 4 \cdot \ln(2) \cdot \left[ \left(\frac{\theta_\mathrm{az}}{\theta_\mathrm{HPBW,az}}\right)^2 + \left(\frac{\theta_\mathrm{el}}{\theta_\mathrm{HPBW,el}}\right)^2 \right]\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(e\)</span> is Euler’s number <span class="math notranslate nohighlight">\([-]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta_\mathrm{az}\)</span> is the azimuth pointing error <span class="math notranslate nohighlight">\([\mathrm{rad}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta_\mathrm{el}\)</span> is the elevation pointing error <span class="math notranslate nohighlight">\([\mathrm{rad}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta_\mathrm{HPBW,az}\)</span> is the Half-Power BeamWidth in azimuth <span class="math notranslate nohighlight">\([\mathrm{rad}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta_\mathrm{HPBW,el}\)</span> is the Half-Power BeamWidth in elevation <span class="math notranslate nohighlight">\([\mathrm{rad}]\)</span></p></li>
+</ul>
+<p>For <strong>space-to-space</strong> links, the total pointing loss is the sum of pointing losses from both antennas. For <strong>space-to-ground</strong> links, the ground antenna is assumed to be perfectly pointed at the spacecraft, so only the spacecraft antenna pointing loss is computed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a <strong>custom antenna</strong> module is implemented (non gaussian radiation pattern), the pointing loss calculation in the linkBudget module must be updated accordingly!</p>
+</div>
+</section>
+<section id="frequency-offset-loss">
+<span id="id3"></span><h3>Frequency Offset Loss<a class="headerlink" href="#frequency-offset-loss" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id8">
+<span id="linkbudget-figure-4"></span><a class="reference internal image-reference" href="../../../../_images/LinkBudgetBand.svg"><img alt="Schematic of frequency offset and bandwidth overlap" src="../../../../_images/LinkBudgetBand.svg" style="width: 30%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 4: Illustration of frequency offset loss due to partial bandwidth overlap</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The frequency offset loss accounts for the reduction in effective bandwidth when the two antennas operate at slightly different center frequencies or have different bandwidths.</p>
+<p>The overlapping bandwidth is computed as:</p>
+<div class="math notranslate nohighlight">
+\[B_\mathrm{overlap} = f_\mathrm{high} - f_\mathrm{low}\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}f_\mathrm{low} = \max\left(f_\mathrm{Tx} - \frac{B_\mathrm{Tx}}{2}, f_\mathrm{Rx} - \frac{B_\mathrm{Rx}}{2}\right)\\f_\mathrm{high} = \min\left(f_\mathrm{Tx} + \frac{B_\mathrm{Tx}}{2}, f_\mathrm{Rx} + \frac{B_\mathrm{Rx}}{2}\right)\end{aligned}\end{align} \]</div>
+<p>The frequency offset loss is then:</p>
+<div class="math notranslate nohighlight">
+\[L_\mathrm{freq}\,\mathrm{[dB]} = 10 \cdot \log_{10}\left(\frac{B_\mathrm{min}}{B_\mathrm{overlap}}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(B_\mathrm{min} = \min(B_\mathrm{Tx}, B_\mathrm{Rx})\)</span> is the smaller of the two antenna bandwidths.
+For partial overlap (<span class="math notranslate nohighlight">\(0 &lt; B_\mathrm{overlap} &lt; B_\mathrm{min}\)</span>), this yields a positive loss term.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(f_\mathrm{high}\)</span> is the upper frequency of the overlapping bandwidth <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span> (see Figure 4)</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_\mathrm{low}\)</span> is the lower frequency of the overlapping bandwidth <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span> (see Figure 4)</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_\mathrm{Tx}\)</span> is the transmitter antenna center frequency <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(f_\mathrm{Rx}\)</span> is the receiver antenna center frequency <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(B_\mathrm{Tx}\)</span> is the transmitter antenna bandwidth <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(B_\mathrm{Rx}\)</span> is the receiver antenna bandwidth <span class="math notranslate nohighlight">\([\mathrm{Hz}]\)</span></p></li>
+</ul>
+<p>If there is no overlapping bandwidth (<span class="math notranslate nohighlight">\(B_\mathrm{overlap} \leq 0\)</span>), the radio link is considered non-functional which is reflected in the link budget calculation.</p>
+</section>
+<section id="carrier-to-noise-ratio-cnr">
+<span id="cnr-calculation"></span><h3>Carrier-to-Noise Ratio (CNR)<a class="headerlink" href="#carrier-to-noise-ratio-cnr" title="Link to this heading"></a></h3>
+<p>The Carrier-to-Noise Ratio is the primary output of this module for evaluating link performance. It is computed for each antenna that is in receive mode (<code class="docutils literal notranslate"><span class="pre">ANTENNA_RX</span></code> or <code class="docutils literal notranslate"><span class="pre">ANTENNA_RXTX</span></code>):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{CNR}\,\mathrm{[-]} = 10^{(P_\mathrm{Rx} - P_\mathrm{N}) / 10}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P_\mathrm{Rx}\)</span> is the received signal power [dBW]</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_\mathrm{N}\)</span> is the noise power from the antenna module [dBW]</p></li>
+</ul>
+<p>If an antenna is not in receive mode, its CNR is set to <span class="math notranslate nohighlight">\(0.0\)</span>.</p>
+</section>
+<section id="module-configuration">
+<h3>Module Configuration<a class="headerlink" href="#module-configuration" title="Link to this heading"></a></h3>
+<p>The following optional settings can be configured:</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-text">Module Configuration Options</span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 15.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>atmosAtt</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>Enable/disable atmospheric attenuation calculation (only applicable for space-ground links)</p></td>
+</tr>
+<tr class="row-odd"><td><p>pointingLoss</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>Enable/disable pointing loss calculation</p></td>
+</tr>
+<tr class="row-even"><td><p>freqLoss</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>Enable/disable frequency offset loss calculation</p></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math notranslate nohighlight">\(L_\mathrm{FSPL}\)</span> is always calculated and cannot be disabled.</p>
+</section>
+</section>
+<section id="module-assumptions-and-limitations">
+<span id="module-assumptions-link"></span><h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The following assumptions and limitations apply to the linkBudget module:</p>
+<ul class="simple">
+<li><p><strong>Ground-to-ground communication is not supported.</strong> Both antennas cannot be in a ground environment simultaneously.</p></li>
+<li><p><strong>Atmospheric attenuation is based on a clear-sky model.</strong> The following effects are not included:</p>
+<ul>
+<li><p>Rain attenuation (<a class="reference external" href="https://www.itu.int/rec/R-REC-P.838">ITU-R P.838</a>)</p></li>
+<li><p>Cloud and fog attenuation (<a class="reference external" href="https://www.itu.int/rec/R-REC-P.840">ITU-R P.840</a>)</p></li>
+<li><p>Ionospheric scintillation effects (<a class="reference external" href="https://www.itu.int/rec/R-REC-P.618">ITU-R P.618</a>)</p></li>
+<li><p>Other ionospheric effects (<a class="reference external" href="https://www.itu.int/rec/R-REC-P.531">ITU-R P.531</a>)</p></li>
+<li><p>Atmospheric signal path bending (<a class="reference external" href="https://www.itu.int/rec/R-REC-P.453">ITU-R P.453</a>)</p></li>
+</ul>
+</li>
+<li><p><strong>The International Telecommunication Union’s (ITU) Reference Standard Atmosphere (RSA) is used for atmospheric attenuation.</strong> Local atmospheric variations and seasonal changes as e.g. shown in <a class="reference external" href="https://www.itu.int/rec/R-REC-P.835">ITU-R P.835</a> are not modeled.</p></li>
+<li><p><strong>The atmospheric attenuation model is valid for frequencies between 1 GHz and 1000 GHz.</strong> This range is defined by the ITU-R P.676-13 recommendation. Frequencies outside this range may produce inaccurate atmospheric attenuation estimates.</p></li>
+<li><p><strong>Atmospheric attenuation calculations require a minimum elevation angle of: :math:`5^circ`.</strong> At lower elevation angles (grazing angles), the slant path through the atmosphere becomes very long, leading to numerical instabilities and potentially unrealistic attenuation values. The module clamps the elevation angle to a minimum of 5° for atmospheric calculations.</p></li>
+<li><p><strong>Ground antennas can only be placed on Earth.</strong> The model does not currently support ground stations on other celestial bodies.</p></li>
+<li><p><strong>Ground antennas are assumed to be perfectly pointed.</strong> For space-to-ground links, only the spacecraft antenna contributes to pointing loss.</p></li>
+<li><p><strong>Doppler shift due to spacecraft motion is currently not considered.</strong> The frequency offset between antennas due to relative motion is not currently computed.</p></li>
+<li><p><strong>Impedance mismatch losses are not included.</strong></p></li>
+<li><p><strong>Polarization is not modeled.</strong></p></li>
+<li><p><strong>Communication between close antennas (&lt; 10 km) may yield inaccurate results.</strong> The Gaussian-beam assumption in <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a> may not get accurate results at close range.</p></li>
+<li><p><strong>Multipath effects are not considered.</strong></p></li>
+</ul>
+</section>
+<section id="technical-notes">
+<h2>Technical Notes<a class="headerlink" href="#technical-notes" title="Link to this heading"></a></h2>
+<section id="frequency-range">
+<h3>Frequency Range<a class="headerlink" href="#frequency-range" title="Link to this heading"></a></h3>
+<p>The atmospheric attenuation model implements the line-by-line calculation method from ITU-R P.676-13, which is valid for frequencies from <strong>1 GHz to 1000 GHz</strong>. The model includes:</p>
+<ul class="simple">
+<li><p>44 oxygen absorption lines (Table 1 of ITU-R P.676-13)</p></li>
+<li><p>35 water vapor absorption lines (Table 2 of ITU-R P.676-13)</p></li>
+<li><p>Pressure-induced nitrogen absorption continuum</p></li>
+<li><p>Non-resonant Debye spectrum for oxygen below 10 GHz</p></li>
+</ul>
+</section>
+<section id="elevation-angle-constraints">
+<h3>Elevation Angle Constraints<a class="headerlink" href="#elevation-angle-constraints" title="Link to this heading"></a></h3>
+<p>The atmospheric slant path integration uses the relationship:</p>
+<div class="math notranslate nohighlight">
+\[A_\mathrm{gas} = \int_{h_1}^{h_2} \frac{\gamma(h)}{\sin \phi(h)} \, dh\]</div>
+<p>where <span class="math notranslate nohighlight">\(\phi(h)\)</span> is the elevation angle at height <span class="math notranslate nohighlight">\(h\)</span>. As <span class="math notranslate nohighlight">\(\phi \to 0^\circ\)</span>, the denominator approaches zero, causing numerical issues.</p>
+<p>To ensure numerical stability, the module enforces a <strong>minimum elevation angle of :math:`5^circ`</strong> for atmospheric attenuation calculations. This corresponds to a maximum air mass factor of approximately 11.5.</p>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">Elevation Angle and Air Mass Factor</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Elevation Angle</p></th>
+<th class="head"><p>Air Mass Factor</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(90^\circ\)</span> (zenith)</p></td>
+<td><p>1.0</p></td>
+<td><p>Minimum path length</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(30^\circ\)</span></p></td>
+<td><p>2.0</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(10^\circ\)</span></p></td>
+<td><p>5.8</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(5^\circ\)</span></p></td>
+<td><p>11.5</p></td>
+<td><p>Module minimum</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(0^\circ\)</span> (horizon)</p></td>
+<td><p>inf</p></td>
+<td><p>Not supported</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="setting-up-the-link-budget-module">
+<h3>Setting Up the Link Budget Module<a class="headerlink" href="#setting-up-the-link-budget-module" title="Link to this heading"></a></h3>
+<p>To use the linkBudget module, you must first create two antenna modules (using <a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">Module: simpleAntenna</span></a>) and connect their output messages to the link budget module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">linkBudget</span><span class="p">,</span> <span class="n">simpleAntenna</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+
+<span class="c1"># Create simulation</span>
+<span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+<span class="c1"># Create process and task</span>
+<span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;DynamicsProcess&quot;</span><span class="p">)</span>
+<span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;dynTask&quot;</span>
+<span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1E9</span><span class="p">)))</span>  <span class="c1"># 1 second update rate</span>
+
+<span class="c1"># Create antenna modules</span>
+<span class="n">antenna1</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+<span class="n">antenna1</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;antenna1&quot;</span>
+<span class="c1"># ... configure antenna1 parameters ...</span>
+
+<span class="n">antenna2</span> <span class="o">=</span> <span class="n">simpleAntenna</span><span class="o">.</span><span class="n">SimpleAntenna</span><span class="p">()</span>
+<span class="n">antenna2</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;antenna2&quot;</span>
+<span class="c1"># ... configure antenna2 parameters ...</span>
+
+<span class="c1"># Create link budget module</span>
+<span class="n">linkBudgetModule</span> <span class="o">=</span> <span class="n">linkBudget</span><span class="o">.</span><span class="n">LinkBudget</span><span class="p">()</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;linkBudget&quot;</span>
+
+<span class="c1"># Connect antenna output messages to link budget inputs</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">antennaInPayload_1</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antenna1</span><span class="o">.</span><span class="n">antennaOutStateMsg</span><span class="p">)</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">antennaInPayload_2</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">antenna2</span><span class="o">.</span><span class="n">antennaOutStateMsg</span><span class="p">)</span>
+
+<span class="c1"># Add modules to task</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">antenna1</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">antenna2</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">linkBudgetModule</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="enabling-atmospheric-attenuation">
+<h3>Enabling Atmospheric Attenuation<a class="headerlink" href="#enabling-atmospheric-attenuation" title="Link to this heading"></a></h3>
+<p>Atmospheric attenuation is disabled by default. To enable it for space-to-ground links, set the <code class="docutils literal notranslate"><span class="pre">atmosAtt</span></code> flag to True before running the simulation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enable atmospheric attenuation for space-ground links</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">atmosAtt</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Optionally disable other loss calculations</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">pointingLoss</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Disable pointing loss</span>
+<span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">freqLoss</span> <span class="o">=</span> <span class="kc">False</span>      <span class="c1"># Disable frequency offset loss</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">atmosAtt</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> from Python, the module resolves the ITU lookup JSON files using <code class="docutils literal notranslate"><span class="pre">supportDataTools.dataFetcher</span></code> (pooch-backed), which supports wheel/pip installations.
+For advanced workflows, these file paths can be overridden explicitly using <code class="docutils literal notranslate"><span class="pre">setOxygenLookupFilePath()</span></code> and <code class="docutils literal notranslate"><span class="pre">setWaterVaporLookupFilePath()</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Atmospheric attenuation is automatically disabled for space-to-space links regardless of the configuration setting.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The atmospheric attenuation lookup table is precomputed during module initialization using the ground antenna’s initial position and frequency. Changes to the antenna frequency during simulation will <strong>not</strong> update the atmospheric attenuation profile. If frequency changes are required, the simulation must be re-initialized.</p>
+</div>
+</section>
+<section id="accessing-link-budget-results">
+<h3>Accessing Link Budget Results<a class="headerlink" href="#accessing-link-budget-results" title="Link to this heading"></a></h3>
+<p>The link budget module outputs a message of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#linkbudgetmsgpayload"><span class="std std-ref">LinkBudgetMsgPayload</span></a>. To subscribe to and record this output:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up message recorder</span>
+<span class="n">linkBudgetLog</span> <span class="o">=</span> <span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">linkBudgetOutPayload</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">linkBudgetLog</span><span class="p">)</span>
+
+<span class="c1"># Run simulation</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+<span class="c1"># Access logged data</span>
+<span class="n">CNR1</span> <span class="o">=</span> <span class="n">linkBudgetLog</span><span class="o">.</span><span class="n">CNR1</span>          <span class="c1"># [-]  Carrier-to-Noise Ratio for antenna 1</span>
+<span class="n">CNR2</span> <span class="o">=</span> <span class="n">linkBudgetLog</span><span class="o">.</span><span class="n">CNR2</span>          <span class="c1"># [-]  Carrier-to-Noise Ratio for antenna 2</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">linkBudgetLog</span><span class="o">.</span><span class="n">distance</span>  <span class="c1"># [m]  Distance between antennas</span>
+<span class="n">bandwidth</span> <span class="o">=</span> <span class="n">linkBudgetLog</span><span class="o">.</span><span class="n">bandwidth</span> <span class="c1"># [Hz] Overlapping bandwidth</span>
+<span class="n">frequency</span> <span class="o">=</span> <span class="n">linkBudgetLog</span><span class="o">.</span><span class="n">frequency</span> <span class="c1"># [Hz] Center frequency</span>
+</pre></div>
+</div>
+</section>
+<section id="accessing-individual-loss-terms">
+<h3>Accessing Individual Loss Terms<a class="headerlink" href="#accessing-individual-loss-terms" title="Link to this heading"></a></h3>
+<p>The individual loss terms can be accessed through getter methods for debugging or analysis purposes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">L_FSPL</span> <span class="o">=</span> <span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">getL_FSPL</span><span class="p">()</span>   <span class="c1"># [dB] Free space path loss</span>
+<span class="n">L_atm</span> <span class="o">=</span> <span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">getL_atm</span><span class="p">()</span>     <span class="c1"># [dB] Atmospheric attenuation</span>
+<span class="n">L_point</span> <span class="o">=</span> <span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">getL_point</span><span class="p">()</span> <span class="c1"># [dB] Pointing loss</span>
+<span class="n">L_freq</span> <span class="o">=</span> <span class="n">linkBudgetModule</span><span class="o">.</span><span class="n">getL_freq</span><span class="p">()</span>   <span class="c1"># [dB] Frequency offset loss</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<p>The atmospheric attenuation model is based on the following ITU-R recommendations:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.676">ITU-R P.676-13</a>: Attenuation by atmospheric gases and related effects</p></li>
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.835">ITU-R P.835-7</a>: Reference standard atmospheres</p></li>
+<li><p><a class="reference external" href="https://www.itu.int/rec/R-REC-P.453">ITU-R P.453-14</a>: The radio refractive index: its formula and refractivity data</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411LookupTable">
+<span id="_CPPv311LookupTable"></span><span id="_CPPv211LookupTable"></span><span id="LookupTable"></span><span class="target" id="struct_lookup_table"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LookupTable</span></span></span><a class="headerlink" href="#_CPPv411LookupTable" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;linkBudget.h&gt;</em></div>
+<p>This module describes how the radio link-budget model operates within the simulation environment. The purpose of this module is to provide a basic representation of radio-link communication between two spacecrafts or between a spacecraft and a ground station. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3f_lE">
+<span id="_CPPv3N11LookupTable3f_lE"></span><span id="_CPPv2N11LookupTable3f_lE"></span><span id="LookupTable::f_l__std::vector:double:"></span><span class="target" id="struct_lookup_table_1a70f2f4d7180bedd46e6483177dc705ca"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f_l</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3f_lE" title="Link to this definition"></a><br /></dt>
+<dd><p>[GHz] Frequency lookup values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_1E">
+<span id="_CPPv3N11LookupTable3l_1E"></span><span id="_CPPv2N11LookupTable3l_1E"></span><span id="LookupTable::l_1__std::vector:double:"></span><span class="target" id="struct_lookup_table_1a142bca8e8a47663121824b69d1370099"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_1</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a1, b1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_2E">
+<span id="_CPPv3N11LookupTable3l_2E"></span><span id="_CPPv2N11LookupTable3l_2E"></span><span id="LookupTable::l_2__std::vector:double:"></span><span class="target" id="struct_lookup_table_1a2a7509c4f29dc40337bfc876c67277f4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_2</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a2, b2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_3E">
+<span id="_CPPv3N11LookupTable3l_3E"></span><span id="_CPPv2N11LookupTable3l_3E"></span><span id="LookupTable::l_3__std::vector:double:"></span><span class="target" id="struct_lookup_table_1ac5f16f0133cfd311097be1263e27a15c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_3</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a3, b3 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_4E">
+<span id="_CPPv3N11LookupTable3l_4E"></span><span id="_CPPv2N11LookupTable3l_4E"></span><span id="LookupTable::l_4__std::vector:double:"></span><span class="target" id="struct_lookup_table_1a790bfdf2a3521b9c6d9fa4e458e28ddb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_4</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_4E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a4, b4 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_5E">
+<span id="_CPPv3N11LookupTable3l_5E"></span><span id="_CPPv2N11LookupTable3l_5E"></span><span id="LookupTable::l_5__std::vector:double:"></span><span class="target" id="struct_lookup_table_1a70a549d8551beb35b32f1e28b6838eae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_5</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_5E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a5, b5 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11LookupTable3l_6E">
+<span id="_CPPv3N11LookupTable3l_6E"></span><span id="_CPPv2N11LookupTable3l_6E"></span><span id="LookupTable::l_6__std::vector:double:"></span><span class="target" id="struct_lookup_table_1ac954b6718d4077ebcdec786e8ef09396"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l_6</span></span></span><a class="headerlink" href="#_CPPv4N11LookupTable3l_6E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lookup coefficient a6, b6 </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422AttenuationLookupTable">
+<span id="_CPPv322AttenuationLookupTable"></span><span id="_CPPv222AttenuationLookupTable"></span><span id="AttenuationLookupTable"></span><span class="target" id="struct_attenuation_lookup_table"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AttenuationLookupTable</span></span></span><a class="headerlink" href="#_CPPv422AttenuationLookupTable" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;linkBudget.h&gt;</em></div>
+<p>Precomputed atmospheric attenuation profile Stores layer-by-layer attenuation data for slant path integration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22AttenuationLookupTable7layer_iE">
+<span id="_CPPv3N22AttenuationLookupTable7layer_iE"></span><span id="_CPPv2N22AttenuationLookupTable7layer_iE"></span><span id="AttenuationLookupTable::layer_i__std::vector:double:"></span><span class="target" id="struct_attenuation_lookup_table_1a6d06c4e751b7e05cb60df84c83685d67"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">layer_i</span></span></span><a class="headerlink" href="#_CPPv4N22AttenuationLookupTable7layer_iE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Altitude layers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22AttenuationLookupTable7gamma_iE">
+<span id="_CPPv3N22AttenuationLookupTable7gamma_iE"></span><span id="_CPPv2N22AttenuationLookupTable7gamma_iE"></span><span id="AttenuationLookupTable::gamma_i__std::vector:double:"></span><span class="target" id="struct_attenuation_lookup_table_1a39c7a868d7fb2ca13984613e34e14d99"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gamma_i</span></span></span><a class="headerlink" href="#_CPPv4N22AttenuationLookupTable7gamma_iE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB/km] Attenuation values at each altitude layer (vertical) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22AttenuationLookupTable15delta_h_layer_iE">
+<span id="_CPPv3N22AttenuationLookupTable15delta_h_layer_iE"></span><span id="_CPPv2N22AttenuationLookupTable15delta_h_layer_iE"></span><span id="AttenuationLookupTable::delta_h_layer_i__std::vector:double:"></span><span class="target" id="struct_attenuation_lookup_table_1a46284c711188b11ef124f2ea3b673aa0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">delta_h_layer_i</span></span></span><a class="headerlink" href="#_CPPv4N22AttenuationLookupTable15delta_h_layer_iE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Thickness of each altitude layer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22AttenuationLookupTable3n_iE">
+<span id="_CPPv3N22AttenuationLookupTable3n_iE"></span><span id="_CPPv2N22AttenuationLookupTable3n_iE"></span><span id="AttenuationLookupTable::n_i__std::vector:double:"></span><span class="target" id="struct_attenuation_lookup_table_1a40437c12ca440bb6a83ac7264c36e134"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n_i</span></span></span><a class="headerlink" href="#_CPPv4N22AttenuationLookupTable3n_iE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Refractivity at each altitude layer </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv410LinkBudget">
+<span id="_CPPv310LinkBudget"></span><span id="_CPPv210LinkBudget"></span><span id="LinkBudget"></span><span class="target" id="class_link_budget"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LinkBudget</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv410LinkBudget" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;linkBudget.h&gt;</em></div>
+<p>Radio link budget model for spacecraft-to-spacecraft or spacecraft-to-ground communication. </p>
+<p>This module computes the end-to-end link budget between two antennas, accounting for:<ul class="simple">
+<li><p>Free space path loss (FSPL)</p></li>
+<li><p>Atmospheric attenuation (ITU-R P.676)</p></li>
+<li><p>Antenna pointing losses</p></li>
+<li><p>Frequency offset losses</p></li>
+<li><p>Carrier-to-noise ratio (CNR) </p></li>
+</ul>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget10LinkBudgetEv">
+<span id="_CPPv3N10LinkBudget10LinkBudgetEv"></span><span id="_CPPv2N10LinkBudget10LinkBudgetEv"></span><span id="LinkBudget::LinkBudget"></span><span class="target" id="class_link_budget_1a94c4b3c4900ad65977045e1aa87e80b0"></span><span class="sig-name descname"><span class="n"><span class="pre">LinkBudget</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget10LinkBudgetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudgetD0Ev">
+<span id="_CPPv3N10LinkBudgetD0Ev"></span><span id="_CPPv2N10LinkBudgetD0Ev"></span><span id="LinkBudget::~LinkBudget"></span><span class="target" id="class_link_budget_1a616cb5fc5552ca15a41a6520647af11c"></span><span class="sig-name descname"><span class="n"><span class="pre">~LinkBudget</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N10LinkBudgetD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget5ResetE8uint64_t">
+<span id="_CPPv3N10LinkBudget5ResetE8uint64_t"></span><span id="_CPPv2N10LinkBudget5ResetE8uint64_t"></span><span id="LinkBudget::Reset__uint64_t"></span><span class="target" id="class_link_budget_1a9f0c8a9a7cf4407b4428a0a50c82e18c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connect. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget11UpdateStateE8uint64_t">
+<span id="_CPPv3N10LinkBudget11UpdateStateE8uint64_t"></span><span id="_CPPv2N10LinkBudget11UpdateStateE8uint64_t"></span><span id="LinkBudget::UpdateState__uint64_t"></span><span class="target" id="class_link_budget_1a6c98fdc288957635871262115d03dba3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. Provide an appropriate description. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget9getL_FSPLEv">
+<span id="_CPPv3NK10LinkBudget9getL_FSPLEv"></span><span id="_CPPv2NK10LinkBudget9getL_FSPLEv"></span><span id="LinkBudget::getL_FSPLC"></span><span class="target" id="class_link_budget_1a9fb526cfaa0560e8b997aee0a99fe620"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getL_FSPL</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget9getL_FSPLEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get ‘free space path loss’. </p>
+<p>GETTERS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FSPL [dB] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget8getL_atmEv">
+<span id="_CPPv3NK10LinkBudget8getL_atmEv"></span><span id="_CPPv2NK10LinkBudget8getL_atmEv"></span><span id="LinkBudget::getL_atmC"></span><span class="target" id="class_link_budget_1a1ec5f847d3e25bd55dabbd1f0be4c36f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getL_atm</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget8getL_atmEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get atmospheric attenuation loss. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>L_atm [dB] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget9getL_freqEv">
+<span id="_CPPv3NK10LinkBudget9getL_freqEv"></span><span id="_CPPv2NK10LinkBudget9getL_freqEv"></span><span id="LinkBudget::getL_freqC"></span><span class="target" id="class_link_budget_1a89c6a4af40925fbe82ff5d6c9dff6f44"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getL_freq</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget9getL_freqEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get frequency offset loss. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>L_freq [dB] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget10getL_pointEv">
+<span id="_CPPv3NK10LinkBudget10getL_pointEv"></span><span id="_CPPv2NK10LinkBudget10getL_pointEv"></span><span id="LinkBudget::getL_pointC"></span><span class="target" id="class_link_budget_1a493b4ad5f94f5f4387a55e94016665e0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getL_point</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget10getL_pointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get pointing loss. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>L_point [dB] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget7getCNR1Ev">
+<span id="_CPPv3NK10LinkBudget7getCNR1Ev"></span><span id="_CPPv2NK10LinkBudget7getCNR1Ev"></span><span id="LinkBudget::getCNR1C"></span><span class="target" id="class_link_budget_1acddc49498fc95944c56c220829469413"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCNR1</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget7getCNR1Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Get carrier to noise ratio of antenna1. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CNR1 [-] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget7getCNR2Ev">
+<span id="_CPPv3NK10LinkBudget7getCNR2Ev"></span><span id="_CPPv2NK10LinkBudget7getCNR2Ev"></span><span id="LinkBudget::getCNR2C"></span><span class="target" id="class_link_budget_1af349678c01acceec2d3898acfa2cd314"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCNR2</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget7getCNR2Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Get carrier to noise ratio of antenna2. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CNR2 [-] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget23setOxygenLookupFilePathERKNSt6stringE">
+<span id="_CPPv3N10LinkBudget23setOxygenLookupFilePathERKNSt6stringE"></span><span id="_CPPv2N10LinkBudget23setOxygenLookupFilePathERKNSt6stringE"></span><span id="LinkBudget::setOxygenLookupFilePath__ssCR"></span><span class="target" id="class_link_budget_1a9e5718833ffdbd99783c00c1cc5ea92e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setOxygenLookupFilePath</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">filePath</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget23setOxygenLookupFilePathERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the oxygen lookup table JSON file path. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filePath</strong> – Absolute or relative path to <code class="docutils literal notranslate"><span class="pre">oxygen.json</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget27setWaterVaporLookupFilePathERKNSt6stringE">
+<span id="_CPPv3N10LinkBudget27setWaterVaporLookupFilePathERKNSt6stringE"></span><span id="_CPPv2N10LinkBudget27setWaterVaporLookupFilePathERKNSt6stringE"></span><span id="LinkBudget::setWaterVaporLookupFilePath__ssCR"></span><span class="target" id="class_link_budget_1ab52b29836032127c0ebb170daf784a50"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setWaterVaporLookupFilePath</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">filePath</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget27setWaterVaporLookupFilePathERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the water-vapor lookup table JSON file path. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filePath</strong> – Absolute or relative path to <code class="docutils literal notranslate"><span class="pre">waterVapour.json</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget23getOxygenLookupFilePathEv">
+<span id="_CPPv3NK10LinkBudget23getOxygenLookupFilePathEv"></span><span id="_CPPv2NK10LinkBudget23getOxygenLookupFilePathEv"></span><span id="LinkBudget::getOxygenLookupFilePathC"></span><span class="target" id="class_link_budget_1a8e4a3688c8ea2bf72418cc64e6216907"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getOxygenLookupFilePath</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget23getOxygenLookupFilePathEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the configured oxygen lookup table JSON file path. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Oxygen lookup table path </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10LinkBudget27getWaterVaporLookupFilePathEv">
+<span id="_CPPv3NK10LinkBudget27getWaterVaporLookupFilePathEv"></span><span id="_CPPv2NK10LinkBudget27getWaterVaporLookupFilePathEv"></span><span id="LinkBudget::getWaterVaporLookupFilePathC"></span><span class="target" id="class_link_budget_1a99e3106fe01135c438f0e83b9ed11f7b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWaterVaporLookupFilePath</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10LinkBudget27getWaterVaporLookupFilePathEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the configured water-vapor lookup table JSON file path. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Water-vapor lookup table path </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget8atmosAttE">
+<span id="_CPPv3N10LinkBudget8atmosAttE"></span><span id="_CPPv2N10LinkBudget8atmosAttE"></span><span id="LinkBudget::atmosAtt__b"></span><span class="target" id="class_link_budget_1a7a7238425191800f731c8481e3624bfb"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmosAtt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget8atmosAttE" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable/disable atmospheric attenuation (only used for space-ground). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget12pointingLossE">
+<span id="_CPPv3N10LinkBudget12pointingLossE"></span><span id="_CPPv2N10LinkBudget12pointingLossE"></span><span id="LinkBudget::pointingLoss__b"></span><span class="target" id="class_link_budget_1ae3492201c7ef632f77d2f4b9ace28f18"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pointingLoss</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget12pointingLossE" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable/disable pointing loss. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget8freqLossE">
+<span id="_CPPv3N10LinkBudget8freqLossE"></span><span id="_CPPv2N10LinkBudget8freqLossE"></span><span id="LinkBudget::freqLoss__b"></span><span class="target" id="class_link_budget_1a39b25d14441530f4fb61cba64f057ee7"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">freqLoss</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget8freqLossE" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable/disable frequency offset loss. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget18antennaInPayload_1E">
+<span id="_CPPv3N10LinkBudget18antennaInPayload_1E"></span><span id="_CPPv2N10LinkBudget18antennaInPayload_1E"></span><span id="LinkBudget::antennaInPayload_1__ReadFunctor:AntennaLogMsgPayload:"></span><span class="target" id="class_link_budget_1a3d5e2ec90d0c1fd3847acd56f0cf4300"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaInPayload_1</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget18antennaInPayload_1E" title="Link to this definition"></a><br /></dt>
+<dd><p>antenna output antenna 1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget18antennaInPayload_2E">
+<span id="_CPPv3N10LinkBudget18antennaInPayload_2E"></span><span id="_CPPv2N10LinkBudget18antennaInPayload_2E"></span><span id="LinkBudget::antennaInPayload_2__ReadFunctor:AntennaLogMsgPayload:"></span><span class="target" id="class_link_budget_1ac4bdfaf856382cc014aacc2831845700"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaInPayload_2</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget18antennaInPayload_2E" title="Link to this definition"></a><br /></dt>
+<dd><p>antenna output antenna 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget11antennaIn_1E">
+<span id="_CPPv3N10LinkBudget11antennaIn_1E"></span><span id="_CPPv2N10LinkBudget11antennaIn_1E"></span><span id="LinkBudget::antennaIn_1__AntennaLogMsgPayload"></span><span class="target" id="class_link_budget_1a057c3181ea78b1a34e67ba6859b80656"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaIn_1</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget11antennaIn_1E" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget11antennaIn_2E">
+<span id="_CPPv3N10LinkBudget11antennaIn_2E"></span><span id="_CPPv2N10LinkBudget11antennaIn_2E"></span><span id="LinkBudget::antennaIn_2__AntennaLogMsgPayload"></span><span class="target" id="class_link_budget_1a4c6ecdbc1b2ae304fc9c7dead05704ea"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaIn_2</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget11antennaIn_2E" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget20linkBudgetOutPayloadE">
+<span id="_CPPv3N10LinkBudget20linkBudgetOutPayloadE"></span><span id="_CPPv2N10LinkBudget20linkBudgetOutPayloadE"></span><span id="LinkBudget::linkBudgetOutPayload__Message:LinkBudgetMsgPayload:"></span><span class="target" id="class_link_budget_1a26b78fd98b299d473fd6b9fa99295b8f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#_CPPv420LinkBudgetMsgPayload" title="LinkBudgetMsgPayload"><span class="n"><span class="pre">LinkBudgetMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkBudgetOutPayload</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget20linkBudgetOutPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>output msg description </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget26linkBudgetOutPayloadBufferE">
+<span id="_CPPv3N10LinkBudget26linkBudgetOutPayloadBufferE"></span><span id="_CPPv2N10LinkBudget26linkBudgetOutPayloadBufferE"></span><span id="LinkBudget::linkBudgetOutPayloadBuffer__LinkBudgetMsgPayload"></span><span class="target" id="class_link_budget_1aedf48bc75808e021eb46a39f21806c00"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#_CPPv420LinkBudgetMsgPayload" title="LinkBudgetMsgPayload"><span class="n"><span class="pre">LinkBudgetMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkBudgetOutPayloadBuffer</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget26linkBudgetOutPayloadBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>local copy of message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget9bskLoggerE">
+<span id="_CPPv3N10LinkBudget9bskLoggerE"></span><span id="_CPPv2N10LinkBudget9bskLoggerE"></span><span id="LinkBudget::bskLogger__BSKLogger"></span><span class="target" id="class_link_budget_1a0f405feeca59cd95aefe0f56e062fcc1"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget12readMessagesEv">
+<span id="_CPPv3N10LinkBudget12readMessagesEv"></span><span id="_CPPv2N10LinkBudget12readMessagesEv"></span><span id="LinkBudget::readMessages"></span><span class="target" id="class_link_budget_1a089962d5f5e09245f49ab8cb9a109bb5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget14initializationEv">
+<span id="_CPPv3N10LinkBudget14initializationEv"></span><span id="_CPPv2N10LinkBudget14initializationEv"></span><span id="LinkBudget::initialization"></span><span class="target" id="class_link_budget_1a36383c7fc72fb09433298ce773c0aff4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initialization</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget14initializationEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget19calculateLinkBudgetEv">
+<span id="_CPPv3N10LinkBudget19calculateLinkBudgetEv"></span><span id="_CPPv2N10LinkBudget19calculateLinkBudgetEv"></span><span id="LinkBudget::calculateLinkBudget"></span><span class="target" id="class_link_budget_1a30927b09c215b52538219945a03efbca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateLinkBudget</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget19calculateLinkBudgetEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget13calculateFSPLEv">
+<span id="_CPPv3N10LinkBudget13calculateFSPLEv"></span><span id="_CPPv2N10LinkBudget13calculateFSPLEv"></span><span id="LinkBudget::calculateFSPL"></span><span class="target" id="class_link_budget_1a7e43d6fbebdbbcd9e3a4f34285a1a567"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateFSPL</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget13calculateFSPLEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget24calculateAtmosphericLossEv">
+<span id="_CPPv3N10LinkBudget24calculateAtmosphericLossEv"></span><span id="_CPPv2N10LinkBudget24calculateAtmosphericLossEv"></span><span id="LinkBudget::calculateAtmosphericLoss"></span><span class="target" id="class_link_budget_1a53dd02bc0b63153d7c7ded53468128c2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateAtmosphericLoss</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget24calculateAtmosphericLossEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget18calcCosSlantGroundEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N10LinkBudget18calcCosSlantGroundEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N10LinkBudget18calcCosSlantGroundEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="LinkBudget::calcCosSlantGround__Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_link_budget_1ac85b52fdf57fea0b038e39e208fd15af"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calcCosSlantGround</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_AN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n_A_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_BN_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget18calcCosSlantGroundEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget19generateLookupTableEN15LinkBudgetTypes7GasTypeEP11LookupTable">
+<span id="_CPPv3N10LinkBudget19generateLookupTableEN15LinkBudgetTypes7GasTypeEP11LookupTable"></span><span id="_CPPv2N10LinkBudget19generateLookupTableEN15LinkBudgetTypes7GasTypeEP11LookupTable"></span><span id="LinkBudget::generateLookupTable__LinkBudgetTypes::GasType.LookupTableP"></span><span class="target" id="class_link_budget_1aee873875f29838d13ce809152ed75920"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">generateLookupTable</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/LinkBudgetTypes.html#_CPPv415LinkBudgetTypes" title="LinkBudgetTypes"><span class="n"><span class="pre">LinkBudgetTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/LinkBudgetTypes.html#_CPPv4N15LinkBudgetTypes7GasTypeE" title="LinkBudgetTypes::GasType"><span class="n"><span class="pre">GasType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">gasType</span></span>, <a class="reference internal" href="#_CPPv411LookupTable" title="LookupTable"><span class="n"><span class="pre">LookupTable</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">lookupTable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget19generateLookupTableEN15LinkBudgetTypes7GasTypeEP11LookupTable" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget40precomputeAtmosphericAttenuationAtLayersEP22AttenuationLookupTabled">
+<span id="_CPPv3N10LinkBudget40precomputeAtmosphericAttenuationAtLayersEP22AttenuationLookupTabled"></span><span id="_CPPv2N10LinkBudget40precomputeAtmosphericAttenuationAtLayersEP22AttenuationLookupTabled"></span><span id="LinkBudget::precomputeAtmosphericAttenuationAtLayers__AttenuationLookupTableP.double"></span><span class="target" id="class_link_budget_1a01bf0ba5449753577cf48286b6af44d5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">precomputeAtmosphericAttenuationAtLayers</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422AttenuationLookupTable" title="AttenuationLookupTable"><span class="n"><span class="pre">AttenuationLookupTable</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tableAttenuation</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frequency</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget40precomputeAtmosphericAttenuationAtLayersEP22AttenuationLookupTabled" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget16getPointingErrorEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen4MRPdE">
+<span id="_CPPv3N10LinkBudget16getPointingErrorEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen4MRPdE"></span><span id="_CPPv2N10LinkBudget16getPointingErrorEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen4MRPdE"></span><span id="LinkBudget::getPointingError__Eigen::Vector3d.Eigen::Vector3d.Eigen::MRPd"></span><span class="target" id="class_link_budget_1ad5b7779424342c29b6302001f46ecbd2"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector2d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPointingError</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_A1N_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_A2N_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_NA1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget16getPointingErrorEN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen4MRPdE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget21calculatePointingLossEv">
+<span id="_CPPv3N10LinkBudget21calculatePointingLossEv"></span><span id="_CPPv2N10LinkBudget21calculatePointingLossEv"></span><span id="LinkBudget::calculatePointingLoss"></span><span class="target" id="class_link_budget_1af02461cead2f6e3dd3474fd211a688a4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculatePointingLoss</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget21calculatePointingLossEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget28calculateFrequencyOffsetLossEv">
+<span id="_CPPv3N10LinkBudget28calculateFrequencyOffsetLossEv"></span><span id="_CPPv2N10LinkBudget28calculateFrequencyOffsetLossEv"></span><span id="LinkBudget::calculateFrequencyOffsetLoss"></span><span class="target" id="class_link_budget_1a9dbca48d1dcea37223f40c5ddc10ef95"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateFrequencyOffsetLoss</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget28calculateFrequencyOffsetLossEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget12calculateCNREv">
+<span id="_CPPv3N10LinkBudget12calculateCNREv"></span><span id="_CPPv2N10LinkBudget12calculateCNREv"></span><span id="LinkBudget::calculateCNR"></span><span class="target" id="class_link_budget_1a4063436a3524ab0b301a4d127f12c309"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateCNR</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget12calculateCNREv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N10LinkBudget19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N10LinkBudget19writeOutputMessagesE8uint64_t"></span><span id="LinkBudget::writeOutputMessages__uint64_t"></span><span class="target" id="class_link_budget_1a6b687224d5a84d3ebca3476a4a7305a9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LinkBudget19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget16antennaPlacementE">
+<span id="_CPPv3N10LinkBudget16antennaPlacementE"></span><span id="_CPPv2N10LinkBudget16antennaPlacementE"></span><span id="LinkBudget::antennaPlacement__LinkBudgetTypes::AntennaPlacement"></span><span class="target" id="class_link_budget_1a77a0ab5055468a7b71a26ce1755d0d9d"></span><a class="reference internal" href="../_GeneralModuleFiles/LinkBudgetTypes.html#_CPPv415LinkBudgetTypes" title="LinkBudgetTypes"><span class="n"><span class="pre">LinkBudgetTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/LinkBudgetTypes.html#_CPPv4N15LinkBudgetTypes16AntennaPlacementE" title="LinkBudgetTypes::AntennaPlacement"><span class="n"><span class="pre">AntennaPlacement</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">antennaPlacement</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget16antennaPlacementE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna placement type </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget4env1E">
+<span id="_CPPv3N10LinkBudget4env1E"></span><span id="_CPPv2N10LinkBudget4env1E"></span><span id="LinkBudget::env1__AntennaTypes::EnvironmentType"></span><span class="target" id="class_link_budget_1ac8e7f0a1b6066d403f457ef1f4040463"></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes15EnvironmentTypeE" title="AntennaTypes::EnvironmentType"><span class="n"><span class="pre">EnvironmentType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">env1</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget4env1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna environment of antenna 1: space, 2: ground </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget4env2E">
+<span id="_CPPv3N10LinkBudget4env2E"></span><span id="_CPPv2N10LinkBudget4env2E"></span><span id="LinkBudget::env2__AntennaTypes::EnvironmentType"></span><span class="target" id="class_link_budget_1a8e33049e74f7c1d630737492ef281f6a"></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv412AntennaTypes" title="AntennaTypes"><span class="n"><span class="pre">AntennaTypes</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../_GeneralModuleFiles/AntennaDefinitions.html#_CPPv4N12AntennaTypes15EnvironmentTypeE" title="AntennaTypes::EnvironmentType"><span class="n"><span class="pre">EnvironmentType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">env2</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget4env2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Antenna environment of antenna 2: space, 2: ground </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget8distanceE">
+<span id="_CPPv3N10LinkBudget8distanceE"></span><span id="_CPPv2N10LinkBudget8distanceE"></span><span id="LinkBudget::distance__double"></span><span class="target" id="class_link_budget_1a0a7948d3ae37e2cf65c9a86a97b42650"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">distance</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget8distanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Distance between antennas </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget6L_FSPLE">
+<span id="_CPPv3N10LinkBudget6L_FSPLE"></span><span id="_CPPv2N10LinkBudget6L_FSPLE"></span><span id="LinkBudget::L_FSPL__double"></span><span class="target" id="class_link_budget_1a51c99a196592dc6c5d8518f8447ad5a2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L_FSPL</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget6L_FSPLE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Free space path loss </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget5L_atmE">
+<span id="_CPPv3N10LinkBudget5L_atmE"></span><span id="_CPPv2N10LinkBudget5L_atmE"></span><span id="LinkBudget::L_atm__double"></span><span class="target" id="class_link_budget_1aabdae31c0b7ac83cb7c29fe465899988"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L_atm</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget5L_atmE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Atmospheric loss </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget6L_freqE">
+<span id="_CPPv3N10LinkBudget6L_freqE"></span><span id="_CPPv2N10LinkBudget6L_freqE"></span><span id="LinkBudget::L_freq__double"></span><span class="target" id="class_link_budget_1a87002fc54bdd09681b50a3055c858288"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L_freq</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget6L_freqE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Frequency offset loss </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget7L_pointE">
+<span id="_CPPv3N10LinkBudget7L_pointE"></span><span id="_CPPv2N10LinkBudget7L_pointE"></span><span id="LinkBudget::L_point__double"></span><span class="target" id="class_link_budget_1aa74ed18255dcdd54ee05ff6c70f6a48a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L_point</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget7L_pointE" title="Link to this definition"></a><br /></dt>
+<dd><p>[dB] Pointing loss </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget5P_Rx1E">
+<span id="_CPPv3N10LinkBudget5P_Rx1E"></span><span id="_CPPv2N10LinkBudget5P_Rx1E"></span><span id="LinkBudget::P_Rx1__double"></span><span class="target" id="class_link_budget_1a9687edc84fcfe0e9016c9f812b4dc6f5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_Rx1</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget5P_Rx1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Antenna receive power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget5P_Rx2E">
+<span id="_CPPv3N10LinkBudget5P_Rx2E"></span><span id="_CPPv2N10LinkBudget5P_Rx2E"></span><span id="LinkBudget::P_Rx2__double"></span><span class="target" id="class_link_budget_1a7c2fa71a9ab7ce67c7e591c6a6391187"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_Rx2</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget5P_Rx2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[W] Antenna receive power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget4CNR1E">
+<span id="_CPPv3N10LinkBudget4CNR1E"></span><span id="_CPPv2N10LinkBudget4CNR1E"></span><span id="LinkBudget::CNR1__double"></span><span class="target" id="class_link_budget_1a7f9f15240b961f848e0b79de14c6e5de"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CNR1</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget4CNR1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Carrier to noise ratio </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget4CNR2E">
+<span id="_CPPv3N10LinkBudget4CNR2E"></span><span id="_CPPv2N10LinkBudget4CNR2E"></span><span id="LinkBudget::CNR2__double"></span><span class="target" id="class_link_budget_1a8d0deeee90a0221b9fe3837be1bdc115"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CNR2</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget4CNR2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Carrier to noise ratio </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget9B_overlapE">
+<span id="_CPPv3N10LinkBudget9B_overlapE"></span><span id="_CPPv2N10LinkBudget9B_overlapE"></span><span id="LinkBudget::B_overlap__double"></span><span class="target" id="class_link_budget_1ae40b309b5bb09f26cb0633c584faad25"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B_overlap</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget9B_overlapE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Hz] Overlapping bandwidth </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget10centerfreqE">
+<span id="_CPPv3N10LinkBudget10centerfreqE"></span><span id="_CPPv2N10LinkBudget10centerfreqE"></span><span id="LinkBudget::centerfreq__double"></span><span class="target" id="class_link_budget_1adbe48ac8fd346f2cc743eba150e1b353"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">centerfreq</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget10centerfreqE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Hz] Center frequency of the two antennas </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget5h_ToaE">
+<span id="_CPPv3N10LinkBudget5h_ToaE"></span><span id="_CPPv2N10LinkBudget5h_ToaE"></span><span id="LinkBudget::h_Toa__doubleC"></span><span class="target" id="class_link_budget_1a12f53f95d7b2c69173df77f7b8e10235"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h_Toa</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">100.0e3</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget5h_ToaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Height of top of atmosphere for attenuation integration(TOA = 100 km “Karman line”) (above spherical earth surface) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget9gndAntPntE">
+<span id="_CPPv3N10LinkBudget9gndAntPntE"></span><span id="_CPPv2N10LinkBudget9gndAntPntE"></span><span id="LinkBudget::gndAntPnt__AntennaLogMsgPayloadP"></span><span class="target" id="class_link_budget_1a81b1df4c3e99a9d1c3a3f7852bc3abac"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">gndAntPnt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget9gndAntPntE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Pointer to the ground antenna msg payload </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget8scAntPntE">
+<span id="_CPPv3N10LinkBudget8scAntPntE"></span><span id="_CPPv2N10LinkBudget8scAntPntE"></span><span id="LinkBudget::scAntPnt__AntennaLogMsgPayloadP"></span><span class="target" id="class_link_budget_1a85675940ead03b48d5a8a776b3d92af8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AntennaLogMsgPayload.html#_CPPv420AntennaLogMsgPayload" title="AntennaLogMsgPayload"><span class="n"><span class="pre">AntennaLogMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">scAntPnt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget8scAntPntE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Pointer to the spacecraft antenna msg payload </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget12oxygenLookupE">
+<span id="_CPPv3N10LinkBudget12oxygenLookupE"></span><span id="_CPPv2N10LinkBudget12oxygenLookupE"></span><span id="LinkBudget::oxygenLookup__LookupTable"></span><span class="target" id="class_link_budget_1a87afa881f287de0183efa3a5fb0bad6b"></span><a class="reference internal" href="#_CPPv411LookupTable" title="LookupTable"><span class="n"><span class="pre">LookupTable</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oxygenLookup</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget12oxygenLookupE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Oxygen absorption coefficients (frequency plus ITU-R P.676 a1..a6 coefficients) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget16waterVaporLookupE">
+<span id="_CPPv3N10LinkBudget16waterVaporLookupE"></span><span id="_CPPv2N10LinkBudget16waterVaporLookupE"></span><span id="LinkBudget::waterVaporLookup__LookupTable"></span><span class="target" id="class_link_budget_1a864b2c939e12d1d01be12716c60b7ef5"></span><a class="reference internal" href="#_CPPv411LookupTable" title="LookupTable"><span class="n"><span class="pre">LookupTable</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">waterVaporLookup</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget16waterVaporLookupE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Water vapor absorption coefficients (frequency plus ITU-R P.676 b1..b6 coefficients) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget20oxygenLookupFilePathE">
+<span id="_CPPv3N10LinkBudget20oxygenLookupFilePathE"></span><span id="_CPPv2N10LinkBudget20oxygenLookupFilePathE"></span><span id="LinkBudget::oxygenLookupFilePath__ss"></span><span class="target" id="class_link_budget_1a77c73c6f9e631341bcd9f42e3838b3fd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oxygenLookupFilePath</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget20oxygenLookupFilePathE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Optional oxygen lookup table JSON file path override </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget24waterVaporLookupFilePathE">
+<span id="_CPPv3N10LinkBudget24waterVaporLookupFilePathE"></span><span id="_CPPv2N10LinkBudget24waterVaporLookupFilePathE"></span><span id="LinkBudget::waterVaporLookupFilePath__ss"></span><span class="target" id="class_link_budget_1a5189fe1d65327e4accddce20b54f1d47"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">waterVaporLookupFilePath</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget24waterVaporLookupFilePathE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Optional water-vapor lookup table JSON file path override </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget17attenuationLookupE">
+<span id="_CPPv3N10LinkBudget17attenuationLookupE"></span><span id="_CPPv2N10LinkBudget17attenuationLookupE"></span><span id="LinkBudget::attenuationLookup__AttenuationLookupTable"></span><span class="target" id="class_link_budget_1a946d30e4bf76ca80a4123f5f13bff2e1"></span><a class="reference internal" href="#_CPPv422AttenuationLookupTable" title="AttenuationLookupTable"><span class="n"><span class="pre">AttenuationLookupTable</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attenuationLookup</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget17attenuationLookupE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Atmospheric attenuation lookup table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget3h_0E">
+<span id="_CPPv3N10LinkBudget3h_0E"></span><span id="_CPPv2N10LinkBudget3h_0E"></span><span id="LinkBudget::h_0__double"></span><span class="target" id="class_link_budget_1ac7de08e50250fe2fc7262fdddee37a15"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h_0</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget3h_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Altitude of ground antenna </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget3n_0E">
+<span id="_CPPv3N10LinkBudget3n_0E"></span><span id="_CPPv2N10LinkBudget3n_0E"></span><span id="LinkBudget::n_0__double"></span><span class="target" id="class_link_budget_1a7acb76bd8f717df947395617489d2407"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n_0</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget3n_0E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Refractivity at ground antenna altitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget9linkValidE">
+<span id="_CPPv3N10LinkBudget9linkValidE"></span><span id="_CPPv2N10LinkBudget9linkValidE"></span><span id="LinkBudget::linkValid__b"></span><span class="target" id="class_link_budget_1a02007dc0e4c3041b44e7f6c30a9cd165"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkValid</span></span></span><a class="headerlink" href="#_CPPv4N10LinkBudget9linkValidE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Flag indicating if the link is valid (sufficient bandwidth overlap, antennas in correct states, etc.) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10LinkBudget17MIN_SIN_ELEVATIONE">
+<span id="_CPPv3N10LinkBudget17MIN_SIN_ELEVATIONE"></span><span id="_CPPv2N10LinkBudget17MIN_SIN_ELEVATIONE"></span><span id="LinkBudget::MIN_SIN_ELEVATION__doubleC"></span><span class="target" id="class_link_budget_1af5a21067b717f357f81f8b6c06b948c5"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MIN_SIN_ELEVATION</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0872</span></span><a class="headerlink" href="#_CPPv4N10LinkBudget17MIN_SIN_ELEVATIONE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="linkBudget" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

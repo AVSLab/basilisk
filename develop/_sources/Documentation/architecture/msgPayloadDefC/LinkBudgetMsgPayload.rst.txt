@@ -1,0 +1,8 @@
+.. _LinkBudgetMsgPayload:
+
+LinkBudgetMsgPayload
+============================
+
+.. autodoxygenfile:: LinkBudgetMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,13 @@
+.. _test_prescribedRotation1DOF:
+
+test_prescribedRotation1DOF
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_prescribedRotation1DOF
+   :members:
+   :show-inheritance:
+

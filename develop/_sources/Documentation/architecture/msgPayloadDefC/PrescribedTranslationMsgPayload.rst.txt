@@ -1,0 +1,8 @@
+.. _PrescribedTranslationMsgPayload:
+
+PrescribedTranslationMsgPayload
+=======================================
+
+.. autodoxygenfile:: PrescribedTranslationMsgPayload.h
+   :project: msgPayloadDefC
+

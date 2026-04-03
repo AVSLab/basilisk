@@ -1,0 +1,1384 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spacecraftChargingEquilibrium &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spacecraftChargingEquilibrium" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spacecraftChargingEquilibrium</a></li>
+      <li class="breadcrumb-item active">Module: spacecraftChargingEquilibrium</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/spacecraftChargingEquilibrium/spacecraftChargingEquilibrium.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spacecraftchargingequilibrium">
+<span id="spacecraftchargingequilibrium"></span><h1>Module: spacecraftChargingEquilibrium<a class="headerlink" href="#module-spacecraftchargingequilibrium" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">spacecraftChargingEquilibrium</span></code> module computes spacecraft equilibrium (floating) electric potentials in a plasma environment using two sequential <strong>1-D root solves</strong> (by enforcing a zero net current condition on each spacecraft surface). The model includes ambient plasma electron/ion collection, photoelectron emission, and secondary electron emission (SEE), electron backscattering, and electron beam coupling (from one spacecraft to another).</p>
+<p>The charging and electron-beam coupling equations used by this module follow Hammerl and Schaub’s coupled spacecraft charging model <a class="reference internal" href="#hammerl2024" id="id1"><span>[Hammerl2024]</span></a> and the references cited therein as well as the Dr. Lai’s book: “Fundamentals of Spacecraft Charging”. Additional background references on plasma interactions and modeling include <a class="reference internal" href="#hippler2001" id="id2"><span>[Hippler2001]</span></a>, <a class="reference internal" href="#davismandell2016" id="id3"><span>[DavisMandell2016]</span></a>, <a class="reference internal" href="#drainesalpeter1979" id="id4"><span>[DraineSalpeter1979]</span></a>, and <a class="reference internal" href="#romerocalvo2022" id="id5"><span>[RomeroCalvo2022]</span></a>.</p>
+<p>A Python unit test script is provided to verify expected charging trends for a coupled two-spacecraft case (see User Guide).</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Conducting spacecraft and single potential</strong>: the theory used assumes each spacecraft is fully conducting and can be described by a single surface potential <span class="math notranslate nohighlight">\(\phi\)</span> (no differential charging).</p></li>
+<li><p><strong>Exactly two spacecraft are required</strong>: the coupled electron-beam charging logic is implemented for exactly two spacecraft and assumes:</p>
+<ul>
+<li><p>spacecraft index <code class="docutils literal notranslate"><span class="pre">0</span></code> is the <strong>servicer</strong></p></li>
+<li><p>spacecraft index <code class="docutils literal notranslate"><span class="pre">1</span></code> is the <strong>target</strong></p></li>
+</ul>
+</li>
+<li><p><strong>Plasma environment input required</strong>: the plasma flux/energy grid message must be connected. If not connected, the module logs an error in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.</p></li>
+<li><p><strong>Surface areas</strong>: the module uses a configurable default exposed area and a configurable sunlit-area fallback. Sunlit area can be provided per spacecraft through input messages or per-spacecraft defaults via setters.</p></li>
+<li><p><strong>Numerical solution</strong>: equilibrium potentials are found using a bisection root solver. The bracket range must contain the root for each current balance equation.</p></li>
+</ul>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all module input and output messages. The module msg variable name is set by the user
+from Python. The msg type contains a link to the message structure definition, while the description explains how
+the message is used.</p>
+<table class="docutils align-default" id="id16">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>plasmaFluxInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PlasmaFluxMsgPayload.html#_CPPv420PlasmaFluxMsgPayload" title="PlasmaFluxMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">PlasmaFluxMsgPayload</span></code></a></p></td>
+<td><p>plasma environment input message containing the energy grid and particle flux distributions used to compute ambient electron/ion collection currents and yield-weighted emission currents</p></td>
+</tr>
+<tr class="row-odd"><td><p>scStateInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">SCStatesMsgPayload</span></code></a></p></td>
+<td><p>vector of spacecraft state input messages; entries are appended via <code class="docutils literal notranslate"><span class="pre">addSpacecraft()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>eBeamInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ElectronBeamMsgPayload.html#_CPPv422ElectronBeamMsgPayload" title="ElectronBeamMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">ElectronBeamMsgPayload</span></code></a></p></td>
+<td><p>vector of electron beam parameter input messages (optional). If a spacecraft’s beam message is linked, its gun parameters are read from the message and used in beam-coupled charging terms</p></td>
+</tr>
+<tr class="row-odd"><td><p>voltOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#_CPPv414VoltMsgPayload" title="VoltMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">VoltMsgPayload</span></code></a></p></td>
+<td><p>output vector of equilibrium spacecraft potentials (voltage), one per spacecraft</p></td>
+</tr>
+<tr class="row-even"><td><p>currentsOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScChargingCurrentsMsgPayload.html#_CPPv428ScChargingCurrentsMsgPayload" title="ScChargingCurrentsMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">ScChargingCurrentsMsgPayload</span></code></a></p></td>
+<td><p>output vector of per-spacecraft current-component breakdowns used in the equilibrium evaluation (ambient, beam, and total terms)</p></td>
+</tr>
+<tr class="row-odd"><td><p>scSunlitAreaInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScSunlitFacetAreaMsgPayload.html#_CPPv427ScSunlitFacetAreaMsgPayload" title="ScSunlitFacetAreaMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">ScSunlitFacetAreaMsgPayload</span></code></a></p></td>
+<td><p>vector of optional sunlit facet area input messages, one per spacecraft. If linked and written, this overrides the configured per-spacecraft default or fallback sunlit area used in charging calculations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="overview-zero-net-current-equilibrium">
+<h3>Overview: zero net current equilibrium<a class="headerlink" href="#overview-zero-net-current-equilibrium" title="Link to this heading"></a></h3>
+<p>The module computes equilibrium potential(s) by requiring the <strong>total current</strong> to each spacecraft to be zero:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{tot}}(\phi) = \sum_k I_k(\phi) = 0\]</div>
+<p>For the servicer/target problem with electron beam emission and impact, the total currents
+for the servicer and target are broken down into the terms in the following section and the equilibrium is solved by root-finding these current-balance
+equations numerically.</p>
+</section>
+<section id="a-note-on-implementation-style">
+<h3>A note on implementation style<a class="headerlink" href="#a-note-on-implementation-style" title="Link to this heading"></a></h3>
+<p>Hammerl (2024) presents closed-form expressions for Maxwellian environments (e.g., ambient collection currents) and also defines yield-weighted current forms that can be evaluated from an energy distribution. The Basilisk implementation uses the same <strong>energy-shifted flux structure</strong> but evaluates currents with:</p>
+<ul class="simple">
+<li><p>linear interpolation of tabulated flux/yield curves</p></li>
+<li><p>trapezoidal integration (<code class="docutils literal notranslate"><span class="pre">trapz()</span></code>) over a specified energy interval</p></li>
+</ul>
+<p>This approach is intended to <em>mimic the behavior of the analytical model</em> while allowing non-Maxwellian or numerically provided flux distributions.</p>
+</section>
+<section id="ambient-collection-and-emission-currents">
+<h3>Ambient collection and emission currents<a class="headerlink" href="#ambient-collection-and-emission-currents" title="Link to this heading"></a></h3>
+<section id="plasma-electron-collection-current">
+<h4>Plasma electron collection current<a class="headerlink" href="#plasma-electron-collection-current" title="Link to this heading"></a></h4>
+<p>The implementation evaluates the plasma electron collection current directly from the <strong>tabulated electron flux distribution</strong> <span class="math notranslate nohighlight">\(F_e(E)\)</span> using an energy-shifted integral. This is consistent with the flux-transform structure used in yield-weighted current expressions (Eq. (5) in <a class="reference internal" href="#hammerl2024" id="id6"><span>[Hammerl2024]</span></a>), but here it is applied to the collection current itself.</p>
+<p>The current is computed as:</p>
+<div class="math notranslate nohighlight">
+\[I_e(\phi) = -q\,A \int_{E_{\min}}^{E_{\max}} \left(\frac{E}{E-\phi}\right)\,F_e(E-\phi)\,dE\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the area exposed to plasma, <span class="math notranslate nohighlight">\(q\)</span> is the elementary charge, and <span class="math notranslate nohighlight">\(F_e(E)\)</span> is the electron flux distribution provided by <code class="docutils literal notranslate"><span class="pre">plasmaFluxInMsg</span></code>.</p>
+<section id="numerical-details-as-implemented">
+<h5>Numerical details (as implemented)<a class="headerlink" href="#numerical-details-as-implemented" title="Link to this heading"></a></h5>
+<ul>
+<li><p>The integrand used in code is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="n">E</span> <span class="o">-</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="n">getFlux</span><span class="p">(</span><span class="n">E</span> <span class="o">-</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The integration is performed by trapezoidal quadrature (<code class="docutils literal notranslate"><span class="pre">trapz</span></code>).</p></li>
+<li><p>The integration bounds are chosen to keep the shifted argument <span class="math notranslate nohighlight">\((E-\phi)\)</span> inside the tabulated energy range and to avoid evaluating too close to the singular point:</p>
+<ul>
+<li><p>If <span class="math notranslate nohighlight">\(\phi &lt; 0\)</span>, bounds are approximately:</p>
+<div class="math notranslate nohighlight">
+\[E_{\min} \approx 0.1,\quad E_{\max} \approx E_{\mathrm{grid,max}}\]</div>
+</li>
+<li><p>If <span class="math notranslate nohighlight">\(\phi \ge 0\)</span>, bounds are shifted upward:</p>
+<div class="math notranslate nohighlight">
+\[E_{\min} \approx 0.1 + |\phi|,\quad E_{\max} \approx E_{\mathrm{grid,max}} + |\phi|\]</div>
+</li>
+</ul>
+</li>
+</ul>
+<p>This numerical choice is designed to mimic the potential-shift behavior of the analytical model while remaining stable for arbitrary tabulated flux distributions.</p>
+</section>
+</section>
+<section id="plasma-ion-collection-current">
+<h4>Plasma ion collection current<a class="headerlink" href="#plasma-ion-collection-current" title="Link to this heading"></a></h4>
+<p>The ion collection current is computed in the same numerical style using the tabulated ion flux distribution <span class="math notranslate nohighlight">\(F_i(E)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[I_i(\phi) = +q\,A \int_{E_{\min}}^{E_{\max}} \left(\frac{E}{E+\phi}\right)\,F_i(E+\phi)\,dE\]</div>
+<section id="id7">
+<h5>Numerical details (as implemented)<a class="headerlink" href="#id7" title="Link to this heading"></a></h5>
+<ul>
+<li><p>The integrand used in code is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="n">E</span> <span class="o">+</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="n">getFlux</span><span class="p">(</span><span class="n">E</span> <span class="o">+</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;ion&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The bounds are chosen so that <span class="math notranslate nohighlight">\((E+\phi)\)</span> remains within the tabulated range:</p>
+<ul>
+<li><p>If <span class="math notranslate nohighlight">\(\phi &gt; 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[E_{\min} \approx 0.1,\quad E_{\max} \approx E_{\mathrm{grid,max}}\]</div>
+</li>
+<li><p>If <span class="math notranslate nohighlight">\(\phi \le 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[E_{\min} \approx 0.1 + |\phi|,\quad E_{\max} \approx E_{\mathrm{grid,max}} + |\phi|\]</div>
+</li>
+</ul>
+</li>
+</ul>
+<p>These bounds mirror the logic in the implementation and help avoid evaluating near <span class="math notranslate nohighlight">\(E+\phi=0\)</span>.</p>
+</section>
+</section>
+<section id="secondary-electron-emission-due-to-ambient-electrons">
+<h4>Secondary electron emission due to ambient electrons<a class="headerlink" href="#secondary-electron-emission-due-to-ambient-electrons" title="Link to this heading"></a></h4>
+<p>SEE current due to ambient electrons is computed by weighting the electron flux by the electron SEE yield curve and applying the same energy-shift/Jacobian factor. This corresponds to the yield-weighting structure described in <a class="reference internal" href="#hammerl2024" id="id8"><span>[Hammerl2024]</span></a> (Eq. (5) and the related discussion), evaluated numerically:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{SEE,e}}(\phi) = q\,A \int Y_e(E)\left(\frac{E}{E-\phi}\right)\,F_e(E-\phi)\,dE\]</div>
+<p>For <span class="math notranslate nohighlight">\(\phi&gt;0\)</span>, the emitted secondaries can be recollected, and the implementation applies an exponential suppression factor consistent with the form used in Hammerl (Eq. (3) in <a class="reference internal" href="#hammerl2024" id="id9"><span>[Hammerl2024]</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{SEE,e}}(\phi&gt;0) = I_{\mathrm{SEE,e}}(\phi)\exp\!\left(-\frac{\phi}{T_{\mathrm{SEE}}}\right)\]</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">secondaryElectronTemperature</span></code> is the model parameter for secondary electron temperature.</p>
+</section>
+<section id="secondary-electron-emission-due-to-ambient-ions">
+<h4>Secondary electron emission due to ambient ions<a class="headerlink" href="#secondary-electron-emission-due-to-ambient-ions" title="Link to this heading"></a></h4>
+<p>The ion-driven SEE current is evaluated using the tabulated ion yield curve:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{SEE,i}}(\phi) = q\,A \int Y_i(E)\left(\frac{E}{E+\phi}\right)\,F_i(E+\phi)\,dE\]</div>
+<p>and uses the same <span class="math notranslate nohighlight">\(\exp(-\phi/T_{\mathrm{SEE}})\)</span> suppression for <span class="math notranslate nohighlight">\(\phi&gt;0\)</span>.</p>
+</section>
+<section id="electron-backscattering-current-due-to-ambient-electrons">
+<h4>Electron backscattering current due to ambient electrons<a class="headerlink" href="#electron-backscattering-current-due-to-ambient-electrons" title="Link to this heading"></a></h4>
+<p>Backscattering due to ambient electrons is computed using the backscatter yield curve with the same shifted-flux structure:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{BS}}(\phi) = q\,A \int Y_{\mathrm{BS}}(E)\left(\frac{E}{E-\phi}\right)\,F_e(E-\phi)\,dE\]</div>
+<p>and applies <span class="math notranslate nohighlight">\(\exp(-\phi/T_{\mathrm{BS}})\)</span> suppression for <span class="math notranslate nohighlight">\(\phi&gt;0\)</span>, where
+<code class="docutils literal notranslate"><span class="pre">backscatterElectronTemperature</span></code> is the corresponding model parameter.</p>
+</section>
+<section id="photoelectric-current">
+<h4>Photoelectric current<a class="headerlink" href="#photoelectric-current" title="Link to this heading"></a></h4>
+<p>The photoelectric current is implemented in a standard piecewise form (Eq. (10) in <a class="reference internal" href="#hammerl2024" id="id10"><span>[Hammerl2024]</span></a>), with the underlying functional form commonly referenced to spacecraft charging texts such as <a class="reference internal" href="#lai2011" id="id11"><span>[Lai2011]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}I_{\mathrm{ph}}(\phi) =
+\begin{cases}
+  j_{\mathrm{ph},0}\,A_{\mathrm{sunlit}}, &amp; \phi \le 0 \\
+  j_{\mathrm{ph},0}\,A_{\mathrm{sunlit}} \exp\!\left(-\dfrac{\phi}{T_{\mathrm{ph}}}\right), &amp; \phi &gt; 0
+\end{cases}\end{split}\]</div>
+<p>In code, <code class="docutils literal notranslate"><span class="pre">photoelectronFlux</span></code> corresponds to <span class="math notranslate nohighlight">\(j_{\mathrm{ph},0}\)</span> and <code class="docutils literal notranslate"><span class="pre">photoelectronTemperature</span></code> corresponds to <span class="math notranslate nohighlight">\(T_{\mathrm{ph}}\)</span>.</p>
+</section>
+</section>
+<section id="electron-beam-coupling-currents">
+<h3>Electron beam coupling currents<a class="headerlink" href="#electron-beam-coupling-currents" title="Link to this heading"></a></h3>
+<section id="effective-energy-for-beam-induced-yields">
+<h4>Effective energy for beam-induced yields<a class="headerlink" href="#effective-energy-for-beam-induced-yields" title="Link to this heading"></a></h4>
+<p>Beam electrons arriving at the target use the effective (landing) energy defined by the potential difference (Eq. (8) in <a class="reference internal" href="#hammerl2024" id="id12"><span>[Hammerl2024]</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[E_{\mathrm{eff}} = E_{\mathrm{EB}} - \phi_S + \phi_T\]</div>
+<p>This value is used when evaluating yield curves for beam-induced SEE and backscattering.</p>
+</section>
+<section id="electron-beam-current-on-the-target">
+<h4>Electron beam current on the target<a class="headerlink" href="#electron-beam-current-on-the-target" title="Link to this heading"></a></h4>
+<p>The target beam current follows Hammerl’s reachability condition and exponential turn-on (Eq. (11) in <a class="reference internal" href="#hammerl2024" id="id13"><span>[Hammerl2024]</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}I_{\mathrm{EB,T}}(\phi_T,\phi_S) =
+\begin{cases}
+  -\alpha I_{\mathrm{EB}}\left(1-\exp\!\left(-\dfrac{E_{\mathrm{EB}}-\phi_S+\phi_T}{T_{\mathrm{EB}}}\right)\right), &amp; E_{\mathrm{EB}} &gt; \phi_S-\phi_T \\
+  0, &amp; E_{\mathrm{EB}} \le \phi_S-\phi_T
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is modeled as a geometry factor representing the fraction of Ebeam current reaching the target (provided as <code class="docutils literal notranslate"><span class="pre">alphaEB</span></code> in the message payload, constrained to <span class="math notranslate nohighlight">\([0,1]\)</span> at runtime), and <span class="math notranslate nohighlight">\(T_{\mathrm{EB}}\)</span> is represented by the model parameter <code class="docutils literal notranslate"><span class="pre">beamElectronTemperature</span></code>.</p>
+</section>
+<section id="electron-beam-current-on-the-servicer">
+<h4>Electron beam current on the servicer<a class="headerlink" href="#electron-beam-current-on-the-servicer" title="Link to this heading"></a></h4>
+<p>The servicer beam current uses the corresponding form (Eq. (13) in <a class="reference internal" href="#hammerl2024" id="id14"><span>[Hammerl2024]</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}I_{\mathrm{EB,S}}(\phi_T,\phi_S) =
+\begin{cases}
+  I_{\mathrm{EB}}\left(1-\exp\!\left(-\dfrac{E_{\mathrm{EB}}-\phi_S+\phi_T}{T_{\mathrm{EB}}}\right)\right), &amp; E_{\mathrm{EB}} &gt; \phi_S-\phi_T \\
+  0, &amp; E_{\mathrm{EB}} \le \phi_S-\phi_T
+\end{cases}\end{split}\]</div>
+</section>
+<section id="beam-induced-see-and-backscattering-on-the-target">
+<h4>Beam-induced SEE and backscattering on the target<a class="headerlink" href="#beam-induced-see-and-backscattering-on-the-target" title="Link to this heading"></a></h4>
+<p>Beam-induced SEE and backscattering are implemented by evaluating the yield at <span class="math notranslate nohighlight">\(E_{\mathrm{eff}}\)</span> and scaling by the magnitude of incoming target beam current:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{SEE,eb}} \approx Y_e(E_{\mathrm{eff}})\,\lvert I_{\mathrm{EB,T}}\rvert,\qquad
+I_{\mathrm{BS,eb}} \approx Y_{\mathrm{BS}}(E_{\mathrm{eff}})\,\lvert I_{\mathrm{EB,T}}\rvert\]</div>
+<dl class="simple">
+<dt>Implementation note:</dt><dd><p>Hammerl (2024) includes a recollection factor for emitted secondaries for <span class="math notranslate nohighlight">\(\phi_T \ge 0\)</span> (see Eq. (12) in <a class="reference internal" href="#hammerl2024" id="id15"><span>[Hammerl2024]</span></a>). The current implementation uses yield-scaling directly; adding an explicit <span class="math notranslate nohighlight">\(\exp(-\phi_T/T_{\mathrm{SEE}})\)</span> factor is straightforward future work if tighter agreement is required.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="servicer-target-equilibrium-solve-workflow">
+<h3>Servicer/target equilibrium solve workflow<a class="headerlink" href="#servicer-target-equilibrium-solve-workflow" title="Link to this heading"></a></h3>
+<p>The implementation uses a servicer-first sequential solve that follows the modeling workflow used in this module:</p>
+<div class="math notranslate nohighlight">
+\[I_{\mathrm{tot,S}}(\phi_S;\phi_{T,\mathrm{ref}})=0,\qquad
+I_{\mathrm{tot,T}}(\phi_T;\phi_S)=0\]</div>
+<p>The implementation solves these sequentially:</p>
+<ol class="arabic simple">
+<li><p>Solve the servicer equilibrium potential <span class="math notranslate nohighlight">\(\phi_S\)</span> by finding the root of the servicer total-current function, using <span class="math notranslate nohighlight">\(\phi_{T,\mathrm{ref}} = 0\,\mathrm{V}\)</span> in the servicer beam term.</p></li>
+<li><p>Fix <span class="math notranslate nohighlight">\(\phi_S\)</span> and solve the target equilibrium potential <span class="math notranslate nohighlight">\(\phi_T\)</span> by finding the root of the target total-current function.</p></li>
+<li><p>Publish the resulting potentials to <code class="docutils literal notranslate"><span class="pre">voltOutMsgs</span></code>.</p></li>
+</ol>
+<p>This sequential approach keeps the servicer and target solves internally consistent with the implemented current expressions, while the specific numerical details (integration bounds, discretization, and bracketing choices) are selected to be stable for tabulated flux inputs.</p>
+</section>
+<section id="numerical-utilities">
+<h3>Numerical utilities<a class="headerlink" href="#numerical-utilities" title="Link to this heading"></a></h3>
+<section id="linear-interpolation-interp">
+<h4>Linear interpolation (<code class="docutils literal notranslate"><span class="pre">interp</span></code>)<a class="headerlink" href="#linear-interpolation-interp" title="Link to this heading"></a></h4>
+<p>Fluxes and yields are evaluated at arbitrary energies using linear interpolation over the tabulated energy grid. Negative values resulting from extrapolation are clamped to zero in <code class="docutils literal notranslate"><span class="pre">getFlux()</span></code> and <code class="docutils literal notranslate"><span class="pre">getYield()</span></code> to avoid nonphysical contributions.</p>
+</section>
+<section id="trapezoidal-integration-trapz">
+<h4>Trapezoidal integration (<code class="docutils literal notranslate"><span class="pre">trapz</span></code>)<a class="headerlink" href="#trapezoidal-integration-trapz" title="Link to this heading"></a></h4>
+<p>Current integrals are evaluated using trapezoidal quadrature:</p>
+<div class="math notranslate nohighlight">
+\[\int_a^b f(x)\,dx \approx h\left(\frac{1}{2}f(a)+\sum_{i=1}^{N-1}f(a+i h)+\frac{1}{2}f(b)\right),\quad
+h = \frac{b-a}{N}\]</div>
+<p>The implementation includes checks for finite bounds and non-degenerate intervals.</p>
+</section>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="creating-and-adding-the-module">
+<h3>Creating and adding the module<a class="headerlink" href="#creating-and-adding-the-module" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraftChargingEquilibrium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+<span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+<span class="n">chg</span> <span class="o">=</span> <span class="n">spacecraftChargingEquilibrium</span><span class="o">.</span><span class="n">SpacecraftChargingEquilibrium</span><span class="p">()</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftChargingEquilibrium&quot;</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">chg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="connecting-the-plasma-environment">
+<h3>Connecting the plasma environment<a class="headerlink" href="#connecting-the-plasma-environment" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chg</span><span class="o">.</span><span class="n">plasmaFluxInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">plasmaMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-spacecraft-servicer-first-target-second">
+<h3>Adding spacecraft (servicer first, target second)<a class="headerlink" href="#adding-spacecraft-servicer-first-target-second" title="Link to this heading"></a></h3>
+<p>The coupled-beam logic assumes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">scStateInMsgs[0]</span></code> is the servicer</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scStateInMsgs[1]</span></code> is the target</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chg</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">scServicer</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>   <span class="c1"># index 0</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">scTarget</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>     <span class="c1"># index 1</span>
+</pre></div>
+</div>
+</section>
+<section id="connecting-electron-beam-parameters">
+<h3>Connecting electron beam parameters<a class="headerlink" href="#connecting-electron-beam-parameters" title="Link to this heading"></a></h3>
+<p>Create and publish an <a class="reference internal" href="../../../architecture/msgPayloadDefC/ElectronBeamMsgPayload.html#_CPPv422ElectronBeamMsgPayload" title="ElectronBeamMsgPayload"><code class="xref cpp cpp-struct docutils literal notranslate"><span class="pre">ElectronBeamMsgPayload</span></code></a> and connect it to the desired spacecraft index. Most coupled runs connect the beam parameters on the servicer (index 0):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="n">beamPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsgPayload</span><span class="p">()</span>
+<span class="n">beamPayload</span><span class="o">.</span><span class="n">energyEB</span>  <span class="o">=</span> <span class="mf">20000.0</span>   <span class="c1"># [eV]</span>
+<span class="n">beamPayload</span><span class="o">.</span><span class="n">currentEB</span> <span class="o">=</span> <span class="mf">1.0e-6</span>    <span class="c1"># [A]</span>
+<span class="n">beamPayload</span><span class="o">.</span><span class="n">alphaEB</span>   <span class="o">=</span> <span class="mf">1.0</span>       <span class="c1"># fraction of Ebeam current reaching the target</span>
+
+<span class="n">beamMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">beamPayload</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">eBeamInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">beamMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the beam message is not linked, the spacecraft is treated as not emitting an electron beam.</p>
+</section>
+<section id="configuring-optional-model-parameters">
+<h3>Configuring optional model parameters<a class="headerlink" href="#configuring-optional-model-parameters" title="Link to this heading"></a></h3>
+<p>The module provides setters for configurable defaults and numerical settings:</p>
+<section id="default-construction-values">
+<h4>Default construction values<a class="headerlink" href="#default-construction-values" title="Link to this heading"></a></h4>
+<p>The table below summarizes the main defaults used at construction time.</p>
+<table class="docutils align-default" id="id17">
+<caption><span class="caption-text">Module Default Values</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 20.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Quantity</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>How to change</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enableDebugPrints</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setEnableDebugPrints(bool)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Surface area used in current equations</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50.264</span> <span class="pre">m^2</span></code> (<code class="docutils literal notranslate"><span class="pre">4*pi*r^2</span></code> for <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">m</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setSurfaceAreaDefault(double)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Sunlit-area fallback</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span> <span class="pre">m^2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setSunlitAreaFallback(double)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Per-spacecraft sunlit-area defaults</p></td>
+<td><p>unset (NaN sentinel)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setSunlitAreaDefault(index,</span> <span class="pre">area)</span></code> / <code class="docutils literal notranslate"><span class="pre">clearSunlitAreaDefault(index)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Root solve lower/upper bracket</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[-4.0e5,</span> <span class="pre">4.0e5]</span> <span class="pre">V</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setRootSolveBounds(lower,</span> <span class="pre">upper)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Servicer solve target reference potential</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span> <span class="pre">V</span></code></p></td>
+<td><p>fixed internal default</p></td>
+</tr>
+<tr class="row-even"><td><p>Bisection tolerance (servicer / target)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-6</span> <span class="pre">V</span></code> / <code class="docutils literal notranslate"><span class="pre">1e-8</span> <span class="pre">V</span></code></p></td>
+<td><p>fixed internal defaults</p></td>
+</tr>
+<tr class="row-odd"><td><p>Trapezoidal integration bins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setTrapzBins(int)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Minimum integration energy</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.1</span> <span class="pre">eV</span></code></p></td>
+<td><p>fixed internal default</p></td>
+</tr>
+<tr class="row-odd"><td><p>Photoelectron flux</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">40e-6</span> <span class="pre">A/m^2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setPhotoelectronFlux(double)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Photoelectron temperature</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2.0</span> <span class="pre">eV</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setPhotoelectronTemperature(double)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Secondary-electron temperature</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5.0</span> <span class="pre">eV</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setSecondaryElectronTemperature(double)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Backscatter-electron temperature</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5.0</span> <span class="pre">eV</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setBackscatterElectronTemperature(double)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Beam-electron temperature</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">20.0</span> <span class="pre">eV</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setBeamElectronTemperature(double)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Electron gun defaults (per spacecraft)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">currentEB=0.0</span> <span class="pre">A,</span> <span class="pre">energyEB=0.0</span> <span class="pre">eV,</span> <span class="pre">alphaEB=1.0</span></code></p></td>
+<td><p>via linked <code class="docutils literal notranslate"><span class="pre">ElectronBeamMsgPayload</span></code> input</p></td>
+</tr>
+<tr class="row-odd"><td><p>Yield tables (electron, ion, backscatter)</p></td>
+<td><p>empty vectors at construction</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setYieldSEEelectron</span></code>, <code class="docutils literal notranslate"><span class="pre">setYieldSEEion</span></code>, <code class="docutils literal notranslate"><span class="pre">setYieldBackscattered</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Optional per-spacecraft sunlit-area defaults [m^2]</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setSunlitAreaDefault</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setSunlitAreaDefault</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+
+<span class="c1"># Optional fallback used only if no message and no per-spacecraft default is provided</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setSunlitAreaFallback</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+<span class="c1"># Optional bisection brackets [V]</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setRootSolveBounds</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0e5</span><span class="p">,</span> <span class="mf">4.0e5</span><span class="p">)</span>
+
+<span class="c1"># Optional environmental model constants (defaults shown)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setPhotoelectronFlux</span><span class="p">(</span><span class="mf">40e-6</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setPhotoelectronTemperature</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setSecondaryElectronTemperature</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setBackscatterElectronTemperature</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setBeamElectronTemperature</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+
+<span class="c1"># Optional trapezoidal integration resolution</span>
+<span class="n">chg</span><span class="o">.</span><span class="n">setTrapzBins</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="logging-output-voltages">
+<h3>Logging output voltages<a class="headerlink" href="#logging-output-voltages" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">servicerVoltRec</span> <span class="o">=</span> <span class="n">chg</span><span class="o">.</span><span class="n">voltOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">targetVoltRec</span>   <span class="o">=</span> <span class="n">chg</span><span class="o">.</span><span class="n">voltOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">servicerVoltRec</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">targetVoltRec</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="logging-output-current-components">
+<h3>Logging output current components<a class="headerlink" href="#logging-output-current-components" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">servicerCurrRec</span> <span class="o">=</span> <span class="n">chg</span><span class="o">.</span><span class="n">currentsOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">targetCurrRec</span>   <span class="o">=</span> <span class="n">chg</span><span class="o">.</span><span class="n">currentsOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">servicerCurrRec</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">targetCurrRec</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="running-the-simulation">
+<h3>Running the simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="hammerl2024" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Hammerl2024<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id8">3</a>,<a role="doc-backlink" href="#id9">4</a>,<a role="doc-backlink" href="#id10">5</a>,<a role="doc-backlink" href="#id12">6</a>,<a role="doc-backlink" href="#id13">7</a>,<a role="doc-backlink" href="#id14">8</a>,<a role="doc-backlink" href="#id15">9</a>)</span>
+<p>Hammerl, J., and Schaub, H., “Coupled Spacecraft Charging Due to Continuous Electron Beam Emission and Impact,” 2024.
+(Equation numbers referenced in this document correspond to that paper.)</p>
+</div>
+<div class="citation" id="lai2011" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">Lai2011</a><span class="fn-bracket">]</span></span>
+<p>Lai, S. T., <em>Fundamentals of Spacecraft Charging</em>, Princeton Univ. Press, Princeton, NJ, 2011.</p>
+</div>
+<div class="citation" id="hippler2001" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Hippler2001</a><span class="fn-bracket">]</span></span>
+<p>Hippler, R., Pfau, S., Schmidt, M., and Schoenbach, K. H., <em>Low Temperature Plasma Physics: Fundamental Aspects and Applications</em>,
+Wiley, Hoboken, NJ, 2001.</p>
+</div>
+<div class="citation" id="davismandell2016" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">DavisMandell2016</a><span class="fn-bracket">]</span></span>
+<p>Davis, V. A., and Mandell, M. J., “NASCAP-2K Version 4.3 Scientific Documentation,”
+AFRL-RV-PS-TR-2017-0001, 2016.</p>
+</div>
+<div class="citation" id="drainesalpeter1979" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">DraineSalpeter1979</a><span class="fn-bracket">]</span></span>
+<p>Draine, B. T., and Salpeter, E. E., “On the Physics of Dust Grains in Hot Gas,”
+<em>Astrophysical Journal</em>, Vol. 231, 1979, pp. 77–94.</p>
+</div>
+<div class="citation" id="romerocalvo2022" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">RomeroCalvo2022</a><span class="fn-bracket">]</span></span>
+<p>Romero-Calvo, Á., Cano-Gómez, G., and Schaub, H.,
+“Simulation and Uncertainty Quantification of Electron Beams in Active Spacecraft Charging Scenarios,” 2022.</p>
+</div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv429SpacecraftChargingEquilibrium">
+<span id="_CPPv329SpacecraftChargingEquilibrium"></span><span id="_CPPv229SpacecraftChargingEquilibrium"></span><span id="SpacecraftChargingEquilibrium"></span><span class="target" id="class_spacecraft_charging_equilibrium"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftChargingEquilibrium</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv429SpacecraftChargingEquilibrium" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftChargingEquilibrium.h&gt;</em></div>
+<p>This module computes coupled equilibrium electric potentials for exactly two spacecraft (servicer index 0 and target index 1). </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium29SpacecraftChargingEquilibriumEv">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium29SpacecraftChargingEquilibriumEv"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium29SpacecraftChargingEquilibriumEv"></span><span id="SpacecraftChargingEquilibrium::SpacecraftChargingEquilibrium"></span><span class="target" id="class_spacecraft_charging_equilibrium_1af90344aee4e48a26757fb7ace77621cf"></span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftChargingEquilibrium</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium29SpacecraftChargingEquilibriumEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor.</p>
+<p>This is the constructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibriumD0Ev">
+<span id="_CPPv3N29SpacecraftChargingEquilibriumD0Ev"></span><span id="_CPPv2N29SpacecraftChargingEquilibriumD0Ev"></span><span id="SpacecraftChargingEquilibrium::~SpacecraftChargingEquilibrium"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a9963ac2207607103ad28890faed73d5c"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpacecraftChargingEquilibrium</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibriumD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor.</p>
+<p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium5ResetE8uint64_t">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium5ResetE8uint64_t"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium5ResetE8uint64_t"></span><span id="SpacecraftChargingEquilibrium::Reset__uint64_t"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a584f9c08b7290918e358753219496c79"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset module state and validate required inputs.</p>
+<p>This method is used to reset the module and checks that required input messages are connected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium11UpdateStateE8uint64_t">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium11UpdateStateE8uint64_t"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium11UpdateStateE8uint64_t"></span><span id="SpacecraftChargingEquilibrium::UpdateState__uint64_t"></span><span class="target" id="class_spacecraft_charging_equilibrium_1afdf908946859c9c5026ed9b66985d27e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update module outputs by solving coupled equilibrium potentials.</p>
+<p>This method updates the state of the module </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium13addSpacecraftEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium13addSpacecraftEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium13addSpacecraftEP7MessageI18SCStatesMsgPayloadE"></span><span id="SpacecraftChargingEquilibrium::addSpacecraft__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ade8871a8a0731bd73c65ee08bf3b7ac3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraft</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium13addSpacecraftEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p><p>Add one spacecraft state input. Exactly two spacecraft are required.</p>
+<p>This method adds a spacecraft to the charging model. Exactly two spacecraft can be added: index 0 = servicer, index 1 = target.</p>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpScMsg</strong> – spacecraft state message (index 0: servicer, index 1: target)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20setEnableDebugPrintsEb">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20setEnableDebugPrintsEb"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20setEnableDebugPrintsEb"></span><span id="SpacecraftChargingEquilibrium::setEnableDebugPrints__b"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a9db05abf35a1aaea88549bd2a00159be"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setEnableDebugPrints</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">enabled</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20setEnableDebugPrintsEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable or disable verbose debug prints in <a class="reference internal" href="#class_spacecraft_charging_equilibrium_1afdf908946859c9c5026ed9b66985d27e"><span class="std std-ref">UpdateState()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium20getEnableDebugPrintsEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium20getEnableDebugPrintsEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium20getEnableDebugPrintsEv"></span><span id="SpacecraftChargingEquilibrium::getEnableDebugPrintsC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a7d7c924f711b1b9590a1618952c6e5f4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getEnableDebugPrints</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium20getEnableDebugPrintsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return whether verbose debug prints are enabled. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium19setYieldSEEelectronERKN5Eigen8VectorXdE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium19setYieldSEEelectronERKN5Eigen8VectorXdE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium19setYieldSEEelectronERKN5Eigen8VectorXdE"></span><span id="SpacecraftChargingEquilibrium::setYieldSEEelectron__Eigen::VectorXdCR"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a21e417a246d7b06ba3455449c16dd75a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setYieldSEEelectron</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">yieldVector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium19setYieldSEEelectronERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set electron-impact SEE yield table aligned with the plasma energy grid. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium14setYieldSEEionERKN5Eigen8VectorXdE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium14setYieldSEEionERKN5Eigen8VectorXdE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium14setYieldSEEionERKN5Eigen8VectorXdE"></span><span id="SpacecraftChargingEquilibrium::setYieldSEEion__Eigen::VectorXdCR"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a29a8d1a295f78a7c2f1437208288a6c9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setYieldSEEion</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">yieldVector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium14setYieldSEEionERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set ion-impact SEE yield table aligned with the plasma energy grid. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium21setYieldBackscatteredERKN5Eigen8VectorXdE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium21setYieldBackscatteredERKN5Eigen8VectorXdE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium21setYieldBackscatteredERKN5Eigen8VectorXdE"></span><span id="SpacecraftChargingEquilibrium::setYieldBackscattered__Eigen::VectorXdCR"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad2794bbfb10f7d1e84ff1958930544d7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setYieldBackscattered</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">yieldVector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium21setYieldBackscatteredERKN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set backscatter yield table aligned with the plasma energy grid. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium19getYieldSEEelectronEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium19getYieldSEEelectronEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium19getYieldSEEelectronEv"></span><span id="SpacecraftChargingEquilibrium::getYieldSEEelectronC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ae634ce2ff93b8710dfe5e510efa075f5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getYieldSEEelectron</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium19getYieldSEEelectronEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the configured electron-impact SEE yield table. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium14getYieldSEEionEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium14getYieldSEEionEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium14getYieldSEEionEv"></span><span id="SpacecraftChargingEquilibrium::getYieldSEEionC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a54d67a996720217583169822c29cee65"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getYieldSEEion</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium14getYieldSEEionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the configured ion-impact SEE yield table. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium21getYieldBackscatteredEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium21getYieldBackscatteredEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium21getYieldBackscatteredEv"></span><span id="SpacecraftChargingEquilibrium::getYieldBackscatteredC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a98bf8406af8bb630226b5bc2d643ffc3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getYieldBackscattered</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium21getYieldBackscatteredEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the configured backscatter yield table. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20setSunlitAreaDefaultEjd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20setSunlitAreaDefaultEjd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20setSunlitAreaDefaultEjd"></span><span id="SpacecraftChargingEquilibrium::setSunlitAreaDefault__unsigned-i.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad33e69607eb9e1f8683bd5e079aa84e8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSunlitAreaDefault</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftIndex</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sunlitArea</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20setSunlitAreaDefaultEjd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set optional default sunlit area [m^2] for one spacecraft index. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium20getSunlitAreaDefaultEj">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium20getSunlitAreaDefaultEj"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium20getSunlitAreaDefaultEj"></span><span id="SpacecraftChargingEquilibrium::getSunlitAreaDefault__unsigned-iC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aa51660c42f1d1c1d9dcf0c903b744832"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSunlitAreaDefault</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium20getSunlitAreaDefaultEj" title="Link to this definition"></a><br /></dt>
+<dd><p>Get optional default sunlit area [m^2] for one spacecraft index. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium22clearSunlitAreaDefaultEj">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium22clearSunlitAreaDefaultEj"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium22clearSunlitAreaDefaultEj"></span><span id="SpacecraftChargingEquilibrium::clearSunlitAreaDefault__unsigned-i"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a64d8f58aa8f32d5306c9268497e51f81"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearSunlitAreaDefault</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium22clearSunlitAreaDefaultEj" title="Link to this definition"></a><br /></dt>
+<dd><p>Clear optional default sunlit area for one spacecraft index. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium21setSunlitAreaFallbackEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium21setSunlitAreaFallbackEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium21setSunlitAreaFallbackEd"></span><span id="SpacecraftChargingEquilibrium::setSunlitAreaFallback__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1af4bd10b94cf318cea5458bb9f6a7390e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSunlitAreaFallback</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sunlitArea</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium21setSunlitAreaFallbackEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set fallback sunlit area [m^2] used when message/default are not available. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium21getSunlitAreaFallbackEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium21getSunlitAreaFallbackEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium21getSunlitAreaFallbackEv"></span><span id="SpacecraftChargingEquilibrium::getSunlitAreaFallbackC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1abd5f25b766ddbe14e0c162b2c74a157f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSunlitAreaFallback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium21getSunlitAreaFallbackEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get fallback sunlit area [m^2]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18setRootSolveBoundsEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18setRootSolveBoundsEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18setRootSolveBoundsEdd"></span><span id="SpacecraftChargingEquilibrium::setRootSolveBounds__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a6c6cff4eef9b49a5225b3b37e81aade2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRootSolveBounds</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lowerBound</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">upperBound</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18setRootSolveBoundsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set lower/upper [V] root-bracket bounds used by bisection solves. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium22getRootSolveLowerBoundEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium22getRootSolveLowerBoundEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium22getRootSolveLowerBoundEv"></span><span id="SpacecraftChargingEquilibrium::getRootSolveLowerBoundC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ac2fe40d4d5670a2e6c1035c1e86d3bd9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRootSolveLowerBound</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium22getRootSolveLowerBoundEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get lower [V] root-bracket bound used by bisection solves. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium22getRootSolveUpperBoundEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium22getRootSolveUpperBoundEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium22getRootSolveUpperBoundEv"></span><span id="SpacecraftChargingEquilibrium::getRootSolveUpperBoundC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a70ffad68902a65e75ca7b1642252533f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRootSolveUpperBound</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium22getRootSolveUpperBoundEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get upper [V] root-bracket bound used by bisection solves. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium21setSurfaceAreaDefaultEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium21setSurfaceAreaDefaultEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium21setSurfaceAreaDefaultEd"></span><span id="SpacecraftChargingEquilibrium::setSurfaceAreaDefault__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aab3d315b53b490e752d494e819894bfc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSurfaceAreaDefault</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">area</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium21setSurfaceAreaDefaultEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set default plasma-exposed spacecraft area [m^2]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium21getSurfaceAreaDefaultEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium21getSurfaceAreaDefaultEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium21getSurfaceAreaDefaultEv"></span><span id="SpacecraftChargingEquilibrium::getSurfaceAreaDefaultC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad3e14d28852dbdc5a9fb004c22c4e822"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSurfaceAreaDefault</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium21getSurfaceAreaDefaultEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get default plasma-exposed spacecraft area [m^2]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20setPhotoelectronFluxEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20setPhotoelectronFluxEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20setPhotoelectronFluxEd"></span><span id="SpacecraftChargingEquilibrium::setPhotoelectronFlux__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a141c1adf8e4cc6ce01465064acbe4e56"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPhotoelectronFlux</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">photoelectronFluxIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20setPhotoelectronFluxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set nominal photoelectron flux [A/m^2]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium20getPhotoelectronFluxEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium20getPhotoelectronFluxEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium20getPhotoelectronFluxEv"></span><span id="SpacecraftChargingEquilibrium::getPhotoelectronFluxC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a472e3f55de29935763fd62ee3bc1f672"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPhotoelectronFlux</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium20getPhotoelectronFluxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get nominal photoelectron flux [A/m^2]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium27setPhotoelectronTemperatureEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium27setPhotoelectronTemperatureEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium27setPhotoelectronTemperatureEd"></span><span id="SpacecraftChargingEquilibrium::setPhotoelectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a58bfddcf1fe61db32c0678c34b2f2519"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPhotoelectronTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">photoelectronTemperatureIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium27setPhotoelectronTemperatureEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set photoelectron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium27getPhotoelectronTemperatureEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium27getPhotoelectronTemperatureEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium27getPhotoelectronTemperatureEv"></span><span id="SpacecraftChargingEquilibrium::getPhotoelectronTemperatureC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad1a495d362732ad2a7cf793b2a0789e2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPhotoelectronTemperature</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium27getPhotoelectronTemperatureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get photoelectron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium31setSecondaryElectronTemperatureEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium31setSecondaryElectronTemperatureEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium31setSecondaryElectronTemperatureEd"></span><span id="SpacecraftChargingEquilibrium::setSecondaryElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a35ee3c4c85056710df9958419a3ea3b2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSecondaryElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">secondaryElectronTemperatureIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium31setSecondaryElectronTemperatureEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set secondary-electron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium31getSecondaryElectronTemperatureEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium31getSecondaryElectronTemperatureEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium31getSecondaryElectronTemperatureEv"></span><span id="SpacecraftChargingEquilibrium::getSecondaryElectronTemperatureC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aa22303f74d28a8537f437ae47c57200f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSecondaryElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium31getSecondaryElectronTemperatureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get secondary-electron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium33setBackscatterElectronTemperatureEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium33setBackscatterElectronTemperatureEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium33setBackscatterElectronTemperatureEd"></span><span id="SpacecraftChargingEquilibrium::setBackscatterElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a81a0c8690a6fdd2673f489aae1aa8010"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBackscatterElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">backscatterElectronTemperatureIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium33setBackscatterElectronTemperatureEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set backscatter-electron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium33getBackscatterElectronTemperatureEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium33getBackscatterElectronTemperatureEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium33getBackscatterElectronTemperatureEv"></span><span id="SpacecraftChargingEquilibrium::getBackscatterElectronTemperatureC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a56822ef7e6a2a3df94bd283871eade9e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getBackscatterElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium33getBackscatterElectronTemperatureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get backscatter-electron characteristic energy [eV]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium26setBeamElectronTemperatureEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium26setBeamElectronTemperatureEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium26setBeamElectronTemperatureEd"></span><span id="SpacecraftChargingEquilibrium::setBeamElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ac0c7443d433b76e7a726833e411c8b9a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBeamElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">beamElectronTemperatureIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium26setBeamElectronTemperatureEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set beam electron characteristic energy [eV] for exponential turn-on. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium26getBeamElectronTemperatureEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium26getBeamElectronTemperatureEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium26getBeamElectronTemperatureEv"></span><span id="SpacecraftChargingEquilibrium::getBeamElectronTemperatureC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a943a0f4f5290a8991e19ea6fc58d5018"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getBeamElectronTemperature</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium26getBeamElectronTemperatureEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get beam electron characteristic energy [eV] for exponential turn-on. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium12setTrapzBinsEi">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium12setTrapzBinsEi"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium12setTrapzBinsEi"></span><span id="SpacecraftChargingEquilibrium::setTrapzBins__i"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aa590ab206ef9ab4d3e66abaf289d6a08"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTrapzBins</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">trapzBinsIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium12setTrapzBinsEi" title="Link to this definition"></a><br /></dt>
+<dd><p>Set number of trapezoids used by numerical integration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpacecraftChargingEquilibrium12getTrapzBinsEv">
+<span id="_CPPv3NK29SpacecraftChargingEquilibrium12getTrapzBinsEv"></span><span id="_CPPv2NK29SpacecraftChargingEquilibrium12getTrapzBinsEv"></span><span id="SpacecraftChargingEquilibrium::getTrapzBinsC"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a8f54926b88f9f0d7ba379a0aecb5ac96"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTrapzBins</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpacecraftChargingEquilibrium12getTrapzBinsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get number of trapezoids used by numerical integration. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium13scStateInMsgsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium13scStateInMsgsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium13scStateInMsgsE"></span><span id="SpacecraftChargingEquilibrium::scStateInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aa1c1f2ca73cde62a04b679c149ebf8a4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium13scStateInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium15plasmaFluxInMsgE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium15plasmaFluxInMsgE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium15plasmaFluxInMsgE"></span><span id="SpacecraftChargingEquilibrium::plasmaFluxInMsg__ReadFunctor:PlasmaFluxMsgPayload:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a16817af15f803f5ab38cad270548e119"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PlasmaFluxMsgPayload.html#_CPPv420PlasmaFluxMsgPayload" title="PlasmaFluxMsgPayload"><span class="n"><span class="pre">PlasmaFluxMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">plasmaFluxInMsg</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium15plasmaFluxInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>plasma flux input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium11eBeamInMsgsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium11eBeamInMsgsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium11eBeamInMsgsE"></span><span id="SpacecraftChargingEquilibrium::eBeamInMsgs__std::vector:ReadFunctor:ElectronBeamMsgPayload::"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a96b6c5252625032e804c80a39dc634c0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ElectronBeamMsgPayload.html#_CPPv422ElectronBeamMsgPayload" title="ElectronBeamMsgPayload"><span class="n"><span class="pre">ElectronBeamMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eBeamInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium11eBeamInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>optional electron beam parameters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18scSunlitAreaInMsgsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18scSunlitAreaInMsgsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18scSunlitAreaInMsgsE"></span><span id="SpacecraftChargingEquilibrium::scSunlitAreaInMsgs__std::vector:ReadFunctor:ScSunlitFacetAreaMsgPayload::"></span><span class="target" id="class_spacecraft_charging_equilibrium_1af725f63e3a1a0b05b8623dfd842a8546"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScSunlitFacetAreaMsgPayload.html#_CPPv427ScSunlitFacetAreaMsgPayload" title="ScSunlitFacetAreaMsgPayload"><span class="n"><span class="pre">ScSunlitFacetAreaMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scSunlitAreaInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18scSunlitAreaInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>optional sunlit area input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium11voltOutMsgsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium11voltOutMsgsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium11voltOutMsgsE"></span><span id="SpacecraftChargingEquilibrium::voltOutMsgs__std::vector:Message:VoltMsgPayload:P:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a663df7ea6b616d0a6c94c37310d96983"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#_CPPv414VoltMsgPayload" title="VoltMsgPayload"><span class="n"><span class="pre">VoltMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">voltOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium11voltOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft equilibrium potential output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium15currentsOutMsgsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium15currentsOutMsgsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium15currentsOutMsgsE"></span><span id="SpacecraftChargingEquilibrium::currentsOutMsgs__std::vector:Message:ScChargingCurrentsMsgPayload:P:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a4c369eca150d53fb264eca4c44ed8e8d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScChargingCurrentsMsgPayload.html#_CPPv428ScChargingCurrentsMsgPayload" title="ScChargingCurrentsMsgPayload"><span class="n"><span class="pre">ScChargingCurrentsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentsOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium15currentsOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft current-term output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium9bskLoggerE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium9bskLoggerE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium9bskLoggerE"></span><span id="SpacecraftChargingEquilibrium::bskLogger__BSKLogger"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a981b1e7ccd97a0a6d79fa235b74c23a3"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Basilisk logging interface. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium12readMessagesEv">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium12readMessagesEv"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium12readMessagesEv"></span><span id="SpacecraftChargingEquilibrium::readMessages"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a4dcee25bec4e2dc9f7af13ae758fb0b4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read in the input messages </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>void </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium26validateSolveConfigurationEv">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium26validateSolveConfigurationEv"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium26validateSolveConfigurationEv"></span><span id="SpacecraftChargingEquilibrium::validateSolveConfiguration"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a24bb744c063969d60a23ca963148b1cc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateSolveConfiguration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium26validateSolveConfigurationEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium15electronCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium15electronCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium15electronCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::electronCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a6edec2c527a28841b93bfb3c240e71ae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium15electronCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the electron current </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma [m^2] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium10ionCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium10ionCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium10ionCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::ionCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a59a9227c67869562d20bd3e01a738499"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ionCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium10ionCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the ion current </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma [m^2] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18SEEelectronCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18SEEelectronCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18SEEelectronCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::SEEelectronCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a136d0846389bdc196ace263bac3ae46f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SEEelectronCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18SEEelectronCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the SEE current due to electrons </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma [m^2] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium13SEEionCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium13SEEionCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium13SEEionCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::SEEionCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a2ddaa61e9a255cc5772f048841b69aed"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SEEionCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium13SEEionCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the SEE current due to ions </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma [m^2] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium21backscatteringCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium21backscatteringCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium21backscatteringCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::backscatteringCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a7e54bc810575c1410a8b77e5db451b9c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">backscatteringCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium21backscatteringCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the SEE current due to backscattering </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma [m^2] </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20photoelectricCurrentEdd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20photoelectricCurrentEdd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20photoelectricCurrentEdd"></span><span id="SpacecraftChargingEquilibrium::photoelectricCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a6a2e85ec7607af3e3a815c5e95183627"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">photoelectricCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phi</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20photoelectricCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given potential and area value and calculates the current due to the photoelectric effect </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> – double defining value for spacecraft potential </p></li>
+<li><p><strong>A</strong> – double defining value for area exposed to plasma </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium19electronBeamCurrentEddRKNSt6stringEddd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium19electronBeamCurrentEddRKNSt6stringEddd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium19electronBeamCurrentEddRKNSt6stringEddd"></span><span id="SpacecraftChargingEquilibrium::electronBeamCurrent__double.double.ssCR.double.double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aed1ead3babe2e1ac125d89e5ff1b7fd4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronBeamCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiS</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiT</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">craftType</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">EEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">IEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alphaEB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium19electronBeamCurrentEddRKNSt6stringEddd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium22SEEelectronBeamCurrentEddddd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium22SEEelectronBeamCurrentEddddd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium22SEEelectronBeamCurrentEddddd"></span><span id="SpacecraftChargingEquilibrium::SEEelectronBeamCurrent__double.double.double.double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ae14330795ff4602f9a60402b7dcc5af5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SEEelectronBeamCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiS</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiT</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">EEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">IEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alphaEB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium22SEEelectronBeamCurrentEddddd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium26electronBeamBackscatteringEddddd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium26electronBeamBackscatteringEddddd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium26electronBeamBackscatteringEddddd"></span><span id="SpacecraftChargingEquilibrium::electronBeamBackscattering__double.double.double.double.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a419e0714143ad0ab2f3f5847ced9c12a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronBeamBackscattering</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiS</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">phiT</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">EEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">IEB</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alphaEB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium26electronBeamBackscatteringEddddd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium6interpERN5Eigen8VectorXdERN5Eigen8VectorXdEd">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium6interpERN5Eigen8VectorXdERN5Eigen8VectorXdEd"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium6interpERN5Eigen8VectorXdERN5Eigen8VectorXdEd"></span><span id="SpacecraftChargingEquilibrium::interp__Eigen::VectorXdR.Eigen::VectorXdR.double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ac7fa269c76f898cd8e46c44e9a3d3ef1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interp</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">xVector</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">yVector</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium6interpERN5Eigen8VectorXdERN5Eigen8VectorXdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function takes in a given set of discrete data points and an x-value and performs linear interpolation to compute the corresponding y-value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xVector</strong> – vector containing the independent variable data points </p></li>
+<li><p><strong>yVector</strong> – vector containing the dependent variable data points </p></li>
+<li><p><strong>x</strong> – x-value at which the data is linearly interpolated </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>interpolated y-value </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium5trapzERNSt8functionIFddEEEddi">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium5trapzERNSt8functionIFddEEEddi"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium5trapzERNSt8functionIFddEEEddi"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a7ed1ba606071b4188d1175c0d82589f3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">trapz</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">f</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium5trapzERNSt8functionIFddEEEddi" title="Link to this definition"></a><br /></dt>
+<dd><p>This function computes the integral of the passed function using trapezoidal integration </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> – function to compute the integral of </p></li>
+<li><p><strong>a</strong> – lower limit of integration </p></li>
+<li><p><strong>b</strong> – upper limit of integration </p></li>
+<li><p><strong>N</strong> – number of trapezoids to use </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium7getFluxEdRKNSt6stringE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium7getFluxEdRKNSt6stringE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium7getFluxEdRKNSt6stringE"></span><span id="SpacecraftChargingEquilibrium::getFlux__double.ssCR"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a738c86b233ea02118ce5719eae19c753"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFlux</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">E</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">particleType</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium7getFluxEdRKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>This function returns the flux type for a given energy and impacting particle type </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E</strong> – energy of interest [eV] </p></li>
+<li><p><strong>particleType</strong> – particle of interest (“electron” or “ion”) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium8getYieldEdRKNSt6stringE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium8getYieldEdRKNSt6stringE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium8getYieldEdRKNSt6stringE"></span><span id="SpacecraftChargingEquilibrium::getYield__double.ssCR"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a414768299542012377a0485c0a0391c9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getYield</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">E</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">yieldType</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium8getYieldEdRKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>This function returns the yield for a given energy and yield type </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E</strong> – energy of interest [eV] </p></li>
+<li><p><strong>yieldType</strong> – yield of interest (“electron”, “ion”, “backscattered”) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium10r_BN_NListE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium10r_BN_NListE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium10r_BN_NListE"></span><span id="SpacecraftChargingEquilibrium::r_BN_NList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad27bd40a33541480c6c39c3d7761adf6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_NList</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium10r_BN_NListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] inertial position vectors for each spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium12sigma_BNListE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium12sigma_BNListE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium12sigma_BNListE"></span><span id="SpacecraftChargingEquilibrium::sigma_BNList__std::vector:Eigen::MRPd:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a104868ff9833ffee5d377b17ab4df4e9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BNList</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium12sigma_BNListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] MRP attitude vectors for each spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium8energiesE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium8energiesE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium8energiesE"></span><span id="SpacecraftChargingEquilibrium::energies__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1abdaef86b4b2970a8900b4349efbac563"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">energies</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium8energiesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] plasma energy bins </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium12electronFluxE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium12electronFluxE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium12electronFluxE"></span><span id="SpacecraftChargingEquilibrium::electronFlux__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a11c8d1293aeb6d99bb3e9ef8879f2dbe"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronFlux</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium12electronFluxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[cm^-2 s^-1 sr^-2 eV^-1] ambient electron flux spectrum </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium7ionFluxE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium7ionFluxE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium7ionFluxE"></span><span id="SpacecraftChargingEquilibrium::ionFlux__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aae07abca5c7c9901e642943cd6dca211"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ionFlux</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium7ionFluxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[cm^-2 s^-1 sr^-2 eV^-1] ambient ion flux spectrum </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium6numSatE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium6numSatE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium6numSatE"></span><span id="SpacecraftChargingEquilibrium::numSat__unsigned-i"></span><span class="target" id="class_spacecraft_charging_equilibrium_1adec846d2a0f0ec119807852293a93586"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numSat</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium6numSatE" title="Link to this definition"></a><br /></dt>
+<dd><p>number of spacecraft configured through <a class="reference internal" href="#class_spacecraft_charging_equilibrium_1ade8871a8a0731bd73c65ee08bf3b7ac3"><span class="std std-ref">addSpacecraft()</span></a></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium16yieldSEEelectronE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium16yieldSEEelectronE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium16yieldSEEelectronE"></span><span id="SpacecraftChargingEquilibrium::yieldSEEelectron__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a4a90d4b68bb644ab2e30394887c5bb21"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yieldSEEelectron</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium16yieldSEEelectronE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] electron-impact SEE yield table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium11yieldSEEionE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium11yieldSEEionE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium11yieldSEEionE"></span><span id="SpacecraftChargingEquilibrium::yieldSEEion__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a9fb3260d7153d64d6d94ae07dde34831"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yieldSEEion</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium11yieldSEEionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ion-impact SEE yield table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18yieldBackscatteredE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18yieldBackscatteredE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18yieldBackscatteredE"></span><span id="SpacecraftChargingEquilibrium::yieldBackscattered__Eigen::VectorXd"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a30f046617acf9aa8ac3e9e21936a771b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yieldBackscattered</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18yieldBackscatteredE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] backscatter yield table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20scSunlitAreaDefaultsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20scSunlitAreaDefaultsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20scSunlitAreaDefaultsE"></span><span id="SpacecraftChargingEquilibrium::scSunlitAreaDefaults__std::vector:double:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a0b0a06fde93f29bafa3b0b82fc204547"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scSunlitAreaDefaults</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20scSunlitAreaDefaultsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] optional per-spacecraft sunlit-area defaults </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18scSunlitAreaWarnedE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18scSunlitAreaWarnedE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18scSunlitAreaWarnedE"></span><span id="SpacecraftChargingEquilibrium::scSunlitAreaWarned__std::vector:b:"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a22e375d379857b36f50e82cc7830660b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scSunlitAreaWarned</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18scSunlitAreaWarnedE" title="Link to this definition"></a><br /></dt>
+<dd><p>warn-once latch for missing sunlit area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17enableDebugPrintsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17enableDebugPrintsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17enableDebugPrintsE"></span><span id="SpacecraftChargingEquilibrium::enableDebugPrints__b"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a30b761ef40172f854bb838ba3a604edf"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">enableDebugPrints</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17enableDebugPrintsE" title="Link to this definition"></a><br /></dt>
+<dd><p>toggles verbose UpdateState diagnostics </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium16elementaryChargeE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium16elementaryChargeE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium16elementaryChargeE"></span><span id="SpacecraftChargingEquilibrium::elementaryCharge__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a6ef67af87a3b37df1151c33a133f1b04"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elementaryCharge</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.60217663e-19</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium16elementaryChargeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[C] elementary charge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium9trapzBinsE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium9trapzBinsE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium9trapzBinsE"></span><span id="SpacecraftChargingEquilibrium::trapzBins__i"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a91936f035a5ed1315e970481fc7d727d"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">trapzBins</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1000</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium9trapzBinsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] trapezoids used by trapz integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium20minIntegrationEnergyE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium20minIntegrationEnergyE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium20minIntegrationEnergyE"></span><span id="SpacecraftChargingEquilibrium::minIntegrationEnergy__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a4c7ae94e89c4da59dd266d4f59b79fd2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minIntegrationEnergy</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.1</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium20minIntegrationEnergyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] lower baseline bound used in current integrals </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17photoelectronFluxE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17photoelectronFluxE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17photoelectronFluxE"></span><span id="SpacecraftChargingEquilibrium::photoelectronFlux__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a603f0b784a2cfca5874440a3738922b2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">photoelectronFlux</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">40e-6</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17photoelectronFluxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[A/m^2] photoelectron current density at non-positive potential </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium24photoelectronTemperatureE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium24photoelectronTemperatureE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium24photoelectronTemperatureE"></span><span id="SpacecraftChargingEquilibrium::photoelectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a92c16d381ff84dd765daa11f2deeff8b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">photoelectronTemperature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium24photoelectronTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] photoelectron characteristic energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium28secondaryElectronTemperatureE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium28secondaryElectronTemperatureE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium28secondaryElectronTemperatureE"></span><span id="SpacecraftChargingEquilibrium::secondaryElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a6fd3c84feaa8ebc2e24a9fa82e2db1d6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">secondaryElectronTemperature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">5.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium28secondaryElectronTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] secondary-electron emission characteristic energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium30backscatterElectronTemperatureE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium30backscatterElectronTemperatureE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium30backscatterElectronTemperatureE"></span><span id="SpacecraftChargingEquilibrium::backscatterElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a7d57ca7f6fd0cb2fc499035bc2df560e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">backscatterElectronTemperature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">5.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium30backscatterElectronTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] backscatter emission characteristic energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23beamElectronTemperatureE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23beamElectronTemperatureE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23beamElectronTemperatureE"></span><span id="SpacecraftChargingEquilibrium::beamElectronTemperature__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aaab2552688f66e3bfdb76f6d25110bf9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beamElectronTemperature</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">20.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23beamElectronTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] beam turn-on characteristic energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18defaultSurfaceAreaE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18defaultSurfaceAreaE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18defaultSurfaceAreaE"></span><span id="SpacecraftChargingEquilibrium::defaultSurfaceArea__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1adb2be4fa7ad2ef1ec5b4aa66dcd2935a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">defaultSurfaceArea</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">50.264</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18defaultSurfaceAreaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] default spacecraft plasma-exposed area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium18sunlitAreaFallbackE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium18sunlitAreaFallbackE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium18sunlitAreaFallbackE"></span><span id="SpacecraftChargingEquilibrium::sunlitAreaFallback__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1ad2063f8970a5b87cc11508176267bb8c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlitAreaFallback</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium18sunlitAreaFallbackE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] fallback sunlit area when neither message nor default exists </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium19rootSolveLowerBoundE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium19rootSolveLowerBoundE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium19rootSolveLowerBoundE"></span><span id="SpacecraftChargingEquilibrium::rootSolveLowerBound__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a72ee85210998468708465c9facf74c84"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rootSolveLowerBound</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">400000.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium19rootSolveLowerBoundE" title="Link to this definition"></a><br /></dt>
+<dd><p>[V] lower bracket for bisection equilibrium solve </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium19rootSolveUpperBoundE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium19rootSolveUpperBoundE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium19rootSolveUpperBoundE"></span><span id="SpacecraftChargingEquilibrium::rootSolveUpperBound__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a97f3642d7ec81087469e82952c30c62c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rootSolveUpperBound</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">400000.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium19rootSolveUpperBoundE" title="Link to this definition"></a><br /></dt>
+<dd><p>[V] upper bracket for bisection equilibrium solve </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium21servicerSolveAccuracyE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium21servicerSolveAccuracyE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium21servicerSolveAccuracyE"></span><span id="SpacecraftChargingEquilibrium::servicerSolveAccuracy__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1aca36d116032017060545b0f05b8c741f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerSolveAccuracy</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1e-6</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium21servicerSolveAccuracyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[V] bisection tolerance for servicer equilibrium </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium19targetSolveAccuracyE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium19targetSolveAccuracyE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium19targetSolveAccuracyE"></span><span id="SpacecraftChargingEquilibrium::targetSolveAccuracy__double"></span><span class="target" id="class_spacecraft_charging_equilibrium_1a84921a11e78469905a73d311c17458bd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetSolveAccuracy</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1e-8</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium19targetSolveAccuracyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[V] bisection tolerance for target equilibrium </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfigE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17ElectronGunConfigE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17ElectronGunConfigE"></span><span id="SpacecraftChargingEquilibrium::ElectronGunConfig"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_electron_gun_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ElectronGunConfig</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfigE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig7alphaEBE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17ElectronGunConfig7alphaEBE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17ElectronGunConfig7alphaEBE"></span><span id="SpacecraftChargingEquilibrium::ElectronGunConfig::alphaEB__double"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_electron_gun_config_1a4d610f38a3e9d1b2725ef8d6fcd073ae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alphaEB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig7alphaEBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] fraction of beam current reaching target </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig9currentEBE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17ElectronGunConfig9currentEBE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17ElectronGunConfig9currentEBE"></span><span id="SpacecraftChargingEquilibrium::ElectronGunConfig::currentEB__double"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_electron_gun_config_1a6148e110a7404704c4c752e9eb418ddb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentEB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig9currentEBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[A] beam current magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig8energyEBE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium17ElectronGunConfig8energyEBE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium17ElectronGunConfig8energyEBE"></span><span id="SpacecraftChargingEquilibrium::ElectronGunConfig::energyEB__double"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_electron_gun_config_1a025fa4de8708918be03f5449dfb09cb6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">energyEB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfig8energyEBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] beam energy </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftStateE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23ChargingSpacecraftStateE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23ChargingSpacecraftStateE"></span><span id="SpacecraftChargingEquilibrium::ChargingSpacecraftState"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_charging_spacecraft_state"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ChargingSpacecraftState</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftStateE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState1AE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23ChargingSpacecraftState1AE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23ChargingSpacecraftState1AE"></span><span id="SpacecraftChargingEquilibrium::ChargingSpacecraftState::A__double"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_charging_spacecraft_state_1a011542b59b669863270adb268184be4d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState1AE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] plasma-exposed area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState8A_sunlitE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23ChargingSpacecraftState8A_sunlitE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23ChargingSpacecraftState8A_sunlitE"></span><span id="SpacecraftChargingEquilibrium::ChargingSpacecraftState::A_sunlit__double"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_charging_spacecraft_state_1a0e71ac22e9e82fddad1a6a3b7d1499ff"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A_sunlit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState8A_sunlitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] sunlit area used for photoelectric current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState7emitsEBE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23ChargingSpacecraftState7emitsEBE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23ChargingSpacecraftState7emitsEBE"></span><span id="SpacecraftChargingEquilibrium::ChargingSpacecraftState::emitsEB__b"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_charging_spacecraft_state_1aa0bfae2cd6d72373506eec869670f9dc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">emitsEB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState7emitsEBE" title="Link to this definition"></a><br /></dt>
+<dd><p>true if e-beam message is linked for this spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState11electronGunE">
+<span id="_CPPv3N29SpacecraftChargingEquilibrium23ChargingSpacecraftState11electronGunE"></span><span id="_CPPv2N29SpacecraftChargingEquilibrium23ChargingSpacecraftState11electronGunE"></span><span id="SpacecraftChargingEquilibrium::ChargingSpacecraftState::electronGun__ElectronGunConfig"></span><span class="target" id="struct_spacecraft_charging_equilibrium_1_1_charging_spacecraft_state_1a1fd794b165fd880359d2ee6f2bb50e4f"></span><a class="reference internal" href="#_CPPv4N29SpacecraftChargingEquilibrium17ElectronGunConfigE" title="SpacecraftChargingEquilibrium::ElectronGunConfig"><span class="n"><span class="pre">ElectronGunConfig</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronGun</span></span></span><a class="headerlink" href="#_CPPv4N29SpacecraftChargingEquilibrium23ChargingSpacecraftState11electronGunE" title="Link to this definition"></a><br /></dt>
+<dd><p>e-beam configuration for this spacecraft </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spacecraftChargingEquilibrium" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

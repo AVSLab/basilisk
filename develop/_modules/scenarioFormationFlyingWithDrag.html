@@ -1,0 +1,1094 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioFormationFlyingWithDrag &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioFormationFlyingWithDrag</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioFormationFlyingWithDrag</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab,</span>
+<span class="c1">#  University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This scenario uses :ref:`MJScene&lt;MJScene&gt;` to model the</span>
+<span class="sd">relative motion of two spacecraft in Low Earth Orbit: a chief and a deputy.</span>
+
+<span class="sd">The spacecraft are defined in ``CHIEF_DEPUTY_SCENE_XML``. Each vehicle is modeled</span>
+<span class="sd">as a single point-mass body with three translational sliding joints (x, y, z).</span>
+<span class="sd">Their inertial properties are assigned directly in the XML.</span>
+
+<span class="sd">Gravity is modeled using the :ref:`NBodyGravity` model, with a point-mass</span>
+<span class="sd">Earth defined by :ref:`pointMassGravityModel`. The exponential atmospheric model</span>
+<span class="sd">(:ref:`exponentialAtmosphere`) is optionally added so that the chief and deputy</span>
+<span class="sd">can experience cannonball drag.</span>
+
+<span class="sd">Aerodynamic drag is computed using :ref:`CannonballDrag&lt;CannonballDrag&gt;`.</span>
+<span class="sd">For each spacecraft, the drag model uses:</span>
+
+<span class="sd">* Its inertial state (to obtain velocity)</span>
+<span class="sd">* The atmospheric density from the ``exponentialAtmosphere`` model</span>
+<span class="sd">* A constant drag geometry message (projected area, drag coefficient, center of pressure)</span>
+
+<span class="sd">The aerodynamic drag model outputs a force vector in the body-fixed site used by MuJoCo.</span>
+<span class="sd">Each spacecraft is given different drag coefficients, thus caussing differential drag</span>
+<span class="sd">between them that makes formation flying harder.</span>
+
+<span class="sd">Feedback control is implemented using the</span>
+<span class="sd">:ref:`OrbitalElementControl&lt;orbitalElementControl&gt;` module.</span>
+<span class="sd">This controller regulates the classical orbital elements of the deputy relative to</span>
+<span class="sd">a target offset from the chief. The controller operates on the orbital elements</span>
+<span class="sd">produced by :ref:`orbElemConvert&lt;orbElemConvert&gt;` and maps commanded inertial</span>
+<span class="sd">forces to a site-fixed force at the deputy&#39;s center of mass using</span>
+<span class="sd">:ref:`CmdForceInertialToForceAtSite&lt;cmdForceInertialToForceAtSite&gt;`.</span>
+
+<span class="sd">This scenario demonstrates:</span>
+
+<span class="sd">* How to construct a multi-body MuJoCo scene with two independent spacecraft</span>
+<span class="sd">* How to configure translation-only scenarios</span>
+<span class="sd">* How to model gravity on multiple bodies using the :ref:`NBodyGravity` model</span>
+<span class="sd">* How to apply aerodynamic forces</span>
+<span class="sd">* How to configure and apply a classical-element feedback controller for formation control</span>
+<span class="sd">* How to record and visualize inertial trajectories, orbital-element histories,</span>
+<span class="sd">  and Hill-frame relative motion</span>
+
+<span class="sd">All simulation models, messages, and recorders are kept alive by storing them in</span>
+<span class="sd">dataclasses defined in this script. This ensures that Python&#39;s garbage collector</span>
+<span class="sd">does not delete any objects that are still needed during the simulation.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFormationFlyingWithDrag_hillXY.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFormationFlyingWithDrag_oeDiff.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFormationFlyingWithDrag_chiefDrag.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioFormationFlyingWithDrag_control.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineCollection</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">pointMassGravityModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBodyGravity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">cannonballDrag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJLinearTimeInvariantSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">exponentialAtmosphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJCmdForceInertialToForceAtSite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simSetPlanetEnvironment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbElemOffset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbElemConvert</span>
+
+
+<span class="n">CHIEF_DEPUTY_SCENE_XML</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">    &lt;worldbody&gt;</span>
+<span class="s2">        &lt;body name=&quot;chief&quot;&gt;</span>
+<span class="s2">            &lt;joint name=&quot;chief_x&quot; axis=&quot;1 0 0&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;joint name=&quot;chief_y&quot; axis=&quot;0 1 0&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;joint name=&quot;chief_z&quot; axis=&quot;0 0 1&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;inertial pos=&quot;0 0 0&quot; mass=&quot;1&quot; diaginertia=&quot;1 1 1&quot;/&gt;</span>
+<span class="s2">        &lt;/body&gt;</span>
+
+<span class="s2">        &lt;body name=&quot;deputy&quot;&gt;</span>
+<span class="s2">            &lt;joint name=&quot;deputy_x&quot; axis=&quot;1 0 0&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;joint name=&quot;deputy_y&quot; axis=&quot;0 1 0&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;joint name=&quot;deputy_z&quot; axis=&quot;0 0 1&quot; type=&quot;slide&quot;/&gt;</span>
+<span class="s2">            &lt;inertial pos=&quot;0 0 0&quot; mass=&quot;1&quot; diaginertia=&quot;1 1 1&quot;/&gt;</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">    &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ScenarioConfig">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.ScenarioConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScenarioConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scenario configuration toggles.&quot;&quot;&quot;</span>
+    <span class="n">drag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">control</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">integralControl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="PlotConfig">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.PlotConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlotConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot configuration and output control.&quot;&quot;&quot;</span>
+    <span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">saveFolder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">plotChiefInertial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotChiefDrag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotChiefDensity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">plotControl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotOeChief</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotOeDeputy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">plotOeDiff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plotHillXY</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="SimulationModels">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.SimulationModels">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationModels</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles to all models and messages that must remain in scope.&quot;&quot;&quot;</span>
+    <span class="n">scSim</span><span class="p">:</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span>
+    <span class="n">integrator</span><span class="p">:</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">StateVecIntegrator</span>
+    <span class="n">scene</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span>
+    <span class="n">chiefBody</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span>
+    <span class="n">deputyBody</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span>
+    <span class="n">gravity</span><span class="p">:</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span>
+    <span class="n">atmo</span><span class="p">:</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span>
+
+    <span class="c1"># Drag models</span>
+    <span class="n">dragChief</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">cannonballDrag</span><span class="o">.</span><span class="n">CannonballDrag</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dragDeputy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">cannonballDrag</span><span class="o">.</span><span class="n">CannonballDrag</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Control models</span>
+    <span class="n">orbElemConvertChief</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">orbElemConvert</span><span class="o">.</span><span class="n">OrbElemConvert</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orbElemConvertDeputy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">orbElemConvert</span><span class="o">.</span><span class="n">OrbElemConvert</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orbElemTarget</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">orbElemOffset</span><span class="o">.</span><span class="n">OrbElemOffset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">oeFeedback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MJLinearTimeInvariantSystem</span><span class="o">.</span><span class="n">OrbitalElementControl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">inertialToSiteForce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MJCmdForceInertialToForceAtSite</span><span class="o">.</span><span class="n">CmdForceInertialToForceAtSite</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Force actuators kept alive explicitly</span>
+    <span class="n">controlActuatorDeputy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJForceActuator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Messages that must not be garbage collected</span>
+    <span class="n">dragGeomChiefMsg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsg</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dragGeomDeputyMsg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsg</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">offsetElementsMsg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsg</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="RecorderHandles">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.RecorderHandles">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RecorderHandles</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles to all recorders used in the simulation.&quot;&quot;&quot;</span>
+    <span class="n">chiefState</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">deputyState</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dragChief</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">densityChief</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">oeFeedbackForce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="InitialOrbitInfo">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.InitialOrbitInfo">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InitialOrbitInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initial orbit geometry for the chief deputy pair.&quot;&quot;&quot;</span>
+    <span class="n">semiMajorAxis</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">orbitPeriod</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="SimulationTimeSeries">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.SimulationTimeSeries">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationTimeSeries</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All time history data required for plotting and analysis.&quot;&quot;&quot;</span>
+    <span class="n">times</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">posChief</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">velChief</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">posDeputy</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">velDeputy</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">oeChief</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">oeDeputy</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">oeDiff</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">hillPosition</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">hillVelocity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span></div>
+
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">scenarioConfig</span><span class="p">:</span> <span class="n">ScenarioConfig</span> <span class="o">=</span> <span class="n">ScenarioConfig</span><span class="p">(),</span> <span class="n">plotConfig</span><span class="p">:</span> <span class="n">PlotConfig</span> <span class="o">=</span> <span class="n">PlotConfig</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the chief deputy relative motion scenario with optional drag and feedback control.</span>
+
+<span class="sd">    This function builds the simulation, sets initial conditions, runs the dynamics,</span>
+<span class="sd">    collects time histories, generates figures, and optionally shows and or saves them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scenarioConfig</span>
+<span class="sd">        High level configuration toggles for drag and control.</span>
+<span class="sd">    plotConfig</span>
+<span class="sd">        Plot visibility and output configuration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Mapping from figure name to matplotlib Figure instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">BODY_DATA</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Proportional and integral gains on classical elements (with mean anomaly)</span>
+    <span class="n">kProp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="n">kInt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Controller target delta elements</span>
+    <span class="n">targetOeDiffPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsgPayload</span><span class="p">(</span>
+        <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">e</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">,</span>
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">Omega</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">omega</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">f</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Fixed time step</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+    <span class="c1"># Build all simulation models and their connections</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="n">createSimulationModels</span><span class="p">(</span>
+        <span class="n">planet</span><span class="o">=</span><span class="n">planet</span><span class="p">,</span>
+        <span class="n">scenarioConfig</span><span class="o">=</span><span class="n">scenarioConfig</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">=</span><span class="n">targetOeDiffPayload</span><span class="p">,</span>
+        <span class="n">kProp</span><span class="o">=</span><span class="n">kProp</span><span class="p">,</span>
+        <span class="n">kInt</span><span class="o">=</span><span class="n">kInt</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Attach recorders that sample the main quantities of interest</span>
+    <span class="n">recorders</span> <span class="o">=</span> <span class="n">addRecorders</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+    <span class="c1"># Set initial chief and deputy orbits and propagate to Cartesian states</span>
+    <span class="n">orbitInfo</span> <span class="o">=</span> <span class="n">setInitialConditions</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">planet</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation for a fixed number of orbits</span>
+    <span class="n">runSimulation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">orbitInfo</span><span class="p">)</span>
+
+    <span class="c1"># Extract time series from recorders and postprocess into useful coordinates</span>
+    <span class="n">timeSeries</span> <span class="o">=</span> <span class="n">extractTimeSeries</span><span class="p">(</span><span class="n">planet</span><span class="p">,</span> <span class="n">recorders</span><span class="p">)</span>
+
+    <span class="c1"># Generate figures, optionally save to disk, and optionally show interactively</span>
+    <span class="n">figures</span> <span class="o">=</span> <span class="n">createFigures</span><span class="p">(</span>
+        <span class="n">scenarioConfig</span><span class="o">=</span><span class="n">scenarioConfig</span><span class="p">,</span>
+        <span class="n">plotConfig</span><span class="o">=</span><span class="n">plotConfig</span><span class="p">,</span>
+        <span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span>
+        <span class="n">recorders</span><span class="o">=</span><span class="n">recorders</span><span class="p">,</span>
+        <span class="n">timeSeries</span><span class="o">=</span><span class="n">timeSeries</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">=</span><span class="n">targetOeDiffPayload</span><span class="p">,</span>
+        <span class="n">kProp</span><span class="o">=</span><span class="n">kProp</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">figures</span></div>
+
+
+
+<div class="viewcode-block" id="createSimulationModels">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.createSimulationModels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createSimulationModels</span><span class="p">(</span>
+    <span class="n">planet</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">scenarioConfig</span><span class="p">:</span> <span class="n">ScenarioConfig</span><span class="p">,</span>
+    <span class="n">targetOeDiffPayload</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsgPayload</span><span class="p">,</span>
+    <span class="n">kProp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">kInt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimulationModels</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create and connect all simulation models, returning a container with live references.&quot;&quot;&quot;</span>
+    <span class="c1"># Create simulation, process, and task</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="c1"># Create the MuJoCo scene and add it as a dynamic object</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">CHIEF_DEPUTY_SCENE_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Select integrator</span>
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integrator</span><span class="o">.</span><span class="n">relTol</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">integrator</span><span class="o">.</span><span class="n">absTol</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="c1"># Get MuJoCo bodies</span>
+    <span class="n">chiefBody</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;chief&quot;</span><span class="p">)</span>
+    <span class="n">deputyBody</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;deputy&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Central body gravity</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;gravity&quot;</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+
+    <span class="n">gravityModel</span> <span class="o">=</span> <span class="n">pointMassGravityModel</span><span class="o">.</span><span class="n">PointMassGravityModel</span><span class="p">()</span>
+    <span class="n">gravityModel</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">gravityModel</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;chief&quot;</span><span class="p">,</span> <span class="n">chiefBody</span><span class="p">)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;deputy&quot;</span><span class="p">,</span> <span class="n">deputyBody</span><span class="p">)</span>
+
+    <span class="c1"># Exponential atmosphere model</span>
+    <span class="n">atmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">atmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+    <span class="n">simSetPlanetEnvironment</span><span class="o">.</span><span class="n">exponentialAtmosphere</span><span class="p">(</span><span class="n">atmo</span><span class="p">,</span> <span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="n">atmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">chiefBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">atmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">deputyBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">atmo</span><span class="p">)</span>
+
+    <span class="c1"># Initialize container for all models and messages that must stay in scope</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="n">SimulationModels</span><span class="p">(</span>
+        <span class="n">scSim</span><span class="o">=</span><span class="n">scSim</span><span class="p">,</span>
+        <span class="n">integrator</span><span class="o">=</span><span class="n">integrator</span><span class="p">,</span>
+        <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span>
+        <span class="n">chiefBody</span><span class="o">=</span><span class="n">chiefBody</span><span class="p">,</span>
+        <span class="n">deputyBody</span><span class="o">=</span><span class="n">deputyBody</span><span class="p">,</span>
+        <span class="n">gravity</span><span class="o">=</span><span class="n">gravity</span><span class="p">,</span>
+        <span class="n">atmo</span><span class="o">=</span><span class="n">atmo</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Optional drag on chief and deputy</span>
+    <span class="k">if</span> <span class="n">scenarioConfig</span><span class="o">.</span><span class="n">drag</span><span class="p">:</span>
+        <span class="n">configureDragModels</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+    <span class="c1"># Optional feedback control based on orbital elements</span>
+    <span class="k">if</span> <span class="n">scenarioConfig</span><span class="o">.</span><span class="n">control</span><span class="p">:</span>
+        <span class="n">configureControlModels</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">planet</span><span class="p">,</span> <span class="n">targetOeDiffPayload</span><span class="p">,</span> <span class="n">kProp</span><span class="p">,</span> <span class="n">kInt</span><span class="p">,</span> <span class="n">scenarioConfig</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">models</span></div>
+
+
+
+<div class="viewcode-block" id="configureDragModels">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.configureDragModels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configureDragModels</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attach aerodynamic drag models to chief and deputy.&quot;&quot;&quot;</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">scene</span>
+    <span class="n">atmo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">atmo</span>
+    <span class="n">chiefBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">chiefBody</span>
+    <span class="n">deputyBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">deputyBody</span>
+
+    <span class="c1"># Chief drag model</span>
+    <span class="n">dragChief</span> <span class="o">=</span> <span class="n">cannonballDrag</span><span class="o">.</span><span class="n">CannonballDrag</span><span class="p">()</span>
+    <span class="n">dragChief</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;dragChief&quot;</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">dragChief</span><span class="p">)</span>
+    <span class="n">dragChief</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">chiefBody</span><span class="p">)</span>
+
+    <span class="n">dragGeomChiefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsg</span><span class="p">()</span>
+    <span class="n">dragGeomChiefMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsgPayload</span><span class="p">(</span>
+            <span class="n">projectedArea</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">dragCoeff</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+            <span class="n">r_CP_S</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dragChief</span><span class="o">.</span><span class="n">dragGeometryInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">dragGeomChiefMsg</span><span class="p">)</span>
+    <span class="n">dragChief</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Deputy drag model</span>
+    <span class="n">dragDeputy</span> <span class="o">=</span> <span class="n">cannonballDrag</span><span class="o">.</span><span class="n">CannonballDrag</span><span class="p">()</span>
+    <span class="n">dragDeputy</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;dragDeputy&quot;</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">dragDeputy</span><span class="p">)</span>
+    <span class="n">dragDeputy</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">deputyBody</span><span class="p">)</span>
+
+    <span class="n">dragGeomDeputyMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsg</span><span class="p">()</span>
+    <span class="n">dragGeomDeputyMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">DragGeometryMsgPayload</span><span class="p">(</span>
+            <span class="n">projectedArea</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">dragCoeff</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">r_CP_S</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dragDeputy</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dragDeputy</span><span class="o">.</span><span class="n">dragGeometryInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">dragGeomDeputyMsg</span><span class="p">)</span>
+
+    <span class="c1"># Store references in models to prevent garbage collection</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">dragChief</span> <span class="o">=</span> <span class="n">dragChief</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">dragDeputy</span> <span class="o">=</span> <span class="n">dragDeputy</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">dragGeomChiefMsg</span> <span class="o">=</span> <span class="n">dragGeomChiefMsg</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">dragGeomDeputyMsg</span> <span class="o">=</span> <span class="n">dragGeomDeputyMsg</span></div>
+
+
+
+<div class="viewcode-block" id="configureControlModels">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.configureControlModels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configureControlModels</span><span class="p">(</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">,</span>
+    <span class="n">planet</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">targetOeDiffPayload</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsgPayload</span><span class="p">,</span>
+    <span class="n">kProp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">kInt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">scenarioConfig</span><span class="p">:</span> <span class="n">ScenarioConfig</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure orbital element feedback control and force mapping.&quot;&quot;&quot;</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">scene</span>
+    <span class="n">chiefBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">chiefBody</span>
+    <span class="n">deputyBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">deputyBody</span>
+
+    <span class="c1"># Convert SC states to classical orbital elements</span>
+    <span class="n">orbElemConvertChief</span> <span class="o">=</span> <span class="n">orbElemConvert</span><span class="o">.</span><span class="n">OrbElemConvert</span><span class="p">()</span>
+    <span class="n">orbElemConvertChief</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">orbElemConvertChief</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">orbElemConvertChief</span><span class="p">)</span>
+
+    <span class="n">orbElemConvertDeputy</span> <span class="o">=</span> <span class="n">orbElemConvert</span><span class="o">.</span><span class="n">OrbElemConvert</span><span class="p">()</span>
+    <span class="n">orbElemConvertDeputy</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">orbElemConvertDeputy</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">deputyBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">orbElemConvertDeputy</span><span class="p">)</span>
+
+    <span class="c1"># Offset elements target (chief plus target delta)</span>
+    <span class="n">offsetElementsMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsg</span><span class="p">()</span>
+    <span class="n">offsetElementsMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">targetOeDiffPayload</span><span class="p">)</span>
+
+    <span class="n">orbElemTarget</span> <span class="o">=</span> <span class="n">orbElemOffset</span><span class="o">.</span><span class="n">OrbElemOffset</span><span class="p">()</span>
+    <span class="n">orbElemTarget</span><span class="o">.</span><span class="n">useMeanAnomalyOffset</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">orbElemTarget</span><span class="o">.</span><span class="n">mainElementsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">orbElemConvertChief</span><span class="o">.</span><span class="n">elemOutMsg</span><span class="p">)</span>
+    <span class="n">orbElemTarget</span><span class="o">.</span><span class="n">offsetElementsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">offsetElementsMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">orbElemTarget</span><span class="p">)</span>
+
+    <span class="c1"># Orbital element feedback controller</span>
+    <span class="n">oeFeedback</span> <span class="o">=</span> <span class="n">MJLinearTimeInvariantSystem</span><span class="o">.</span><span class="n">OrbitalElementControl</span><span class="p">()</span>
+    <span class="n">oeFeedback</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;oeFeedback&quot;</span>
+    <span class="n">oeFeedback</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">oeFeedback</span><span class="o">.</span><span class="n">setProportionalGain</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">kProp</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">scenarioConfig</span><span class="o">.</span><span class="n">integralControl</span><span class="p">:</span>
+        <span class="n">oeFeedback</span><span class="o">.</span><span class="n">setIntegralGain</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">kInt</span><span class="p">))</span>
+
+    <span class="n">oeFeedback</span><span class="o">.</span><span class="n">targetOEInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">orbElemTarget</span><span class="o">.</span><span class="n">elementsOutMsg</span><span class="p">)</span>
+    <span class="n">oeFeedback</span><span class="o">.</span><span class="n">currentOEInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">orbElemConvertDeputy</span><span class="o">.</span><span class="n">elemOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">oeFeedback</span><span class="p">)</span>
+
+    <span class="c1"># Map commanded inertial force to site fixed force at deputy center of mass</span>
+    <span class="n">controlActuatorDeputy</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJForceActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addForceActuator</span><span class="p">(</span>
+        <span class="s2">&quot;deputyControl&quot;</span><span class="p">,</span> <span class="n">deputyBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="n">inertialToSiteForce</span> <span class="o">=</span> <span class="n">MJCmdForceInertialToForceAtSite</span><span class="o">.</span><span class="n">CmdForceInertialToForceAtSite</span><span class="p">()</span>
+    <span class="n">inertialToSiteForce</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertialToSiteForce&quot;</span>
+    <span class="n">inertialToSiteForce</span><span class="o">.</span><span class="n">siteFrameStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">deputyBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+    <span class="n">inertialToSiteForce</span><span class="o">.</span><span class="n">cmdForceInertialInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">oeFeedback</span><span class="o">.</span><span class="n">forceOutMsg</span><span class="p">)</span>
+    <span class="n">controlActuatorDeputy</span><span class="o">.</span><span class="n">forceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertialToSiteForce</span><span class="o">.</span><span class="n">forceOutMsg</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">inertialToSiteForce</span><span class="p">)</span>
+
+    <span class="c1"># Keep references alive</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">orbElemConvertChief</span> <span class="o">=</span> <span class="n">orbElemConvertChief</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">orbElemConvertDeputy</span> <span class="o">=</span> <span class="n">orbElemConvertDeputy</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">orbElemTarget</span> <span class="o">=</span> <span class="n">orbElemTarget</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">offsetElementsMsg</span> <span class="o">=</span> <span class="n">offsetElementsMsg</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">oeFeedback</span> <span class="o">=</span> <span class="n">oeFeedback</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">inertialToSiteForce</span> <span class="o">=</span> <span class="n">inertialToSiteForce</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">controlActuatorDeputy</span> <span class="o">=</span> <span class="n">controlActuatorDeputy</span></div>
+
+
+
+<div class="viewcode-block" id="addRecorders">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.addRecorders">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addRecorders</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecorderHandles</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attach all recorders used for postprocessing and keep them in a container.&quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">scSim</span>
+    <span class="n">chiefBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">chiefBody</span>
+    <span class="n">deputyBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">deputyBody</span>
+
+    <span class="n">recordDt</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Inertial states of chief and deputy</span>
+    <span class="n">chiefStateRecorder</span> <span class="o">=</span> <span class="n">chiefBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">deputyStateRecorder</span> <span class="o">=</span> <span class="n">deputyBody</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">recordDt</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">chiefStateRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">deputyStateRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">dragChiefRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">densityChiefRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">oeFeedbackForceRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Chief drag and density recorders</span>
+    <span class="k">if</span> <span class="n">models</span><span class="o">.</span><span class="n">dragChief</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dragChiefRecorder</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">dragChief</span><span class="o">.</span><span class="n">forceOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">densityChiefRecorder</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">dragChief</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">dragChiefRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">densityChiefRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Orbital element feedback force</span>
+    <span class="k">if</span> <span class="n">models</span><span class="o">.</span><span class="n">inertialToSiteForce</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">oeFeedbackForceRecorder</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">inertialToSiteForce</span><span class="o">.</span><span class="n">forceOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">oeFeedbackForceRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">RecorderHandles</span><span class="p">(</span>
+        <span class="n">chiefState</span><span class="o">=</span><span class="n">chiefStateRecorder</span><span class="p">,</span>
+        <span class="n">deputyState</span><span class="o">=</span><span class="n">deputyStateRecorder</span><span class="p">,</span>
+        <span class="n">dragChief</span><span class="o">=</span><span class="n">dragChiefRecorder</span><span class="p">,</span>
+        <span class="n">densityChief</span><span class="o">=</span><span class="n">densityChiefRecorder</span><span class="p">,</span>
+        <span class="n">oeFeedbackForce</span><span class="o">=</span><span class="n">oeFeedbackForceRecorder</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="setInitialConditions">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.setInitialConditions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setInitialConditions</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">,</span> <span class="n">planet</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InitialOrbitInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set initial orbital elements for chief and deputy and propagate to Cartesian states.&quot;&quot;&quot;</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">chiefBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">chiefBody</span>
+    <span class="n">deputyBody</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">deputyBody</span>
+
+    <span class="c1"># Chief orbit between 250 and 300 km altitude</span>
+    <span class="n">initialMinAlt</span> <span class="o">=</span> <span class="mf">250.0</span>  <span class="c1"># km</span>
+    <span class="n">initialMaxAlt</span> <span class="o">=</span> <span class="mf">300.0</span>  <span class="c1"># km</span>
+    <span class="n">initialRadiusPeriapsis</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="n">initialMinAlt</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">initialRadiusApoapsis</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="n">initialMaxAlt</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">initialSemiMajorAxis</span> <span class="o">=</span> <span class="p">(</span><span class="n">initialRadiusPeriapsis</span> <span class="o">+</span> <span class="n">initialRadiusApoapsis</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">initialOeChief</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">initialSemiMajorAxis</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">initialRadiusPeriapsis</span> <span class="o">/</span> <span class="n">initialSemiMajorAxis</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">initialOeChief</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">rNChief</span><span class="p">,</span> <span class="n">vNChief</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">initialOeChief</span><span class="p">)</span>
+    <span class="n">chiefBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rNChief</span><span class="p">)</span>
+    <span class="n">chiefBody</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vNChief</span><span class="p">)</span>
+
+    <span class="c1"># Apply small differential elements to deputy</span>
+    <span class="n">initialDeltaOe</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0002</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0003</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mf">0.0006</span><span class="p">)</span>
+    <span class="n">initialOeDeputy</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">Omega</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">omega</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="n">initialMeanAnomalyChief</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">initialOeChief</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">initialOeChief</span><span class="o">.</span><span class="n">e</span><span class="p">),</span>
+        <span class="n">initialOeChief</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">initialMeanAnomalyDeputy</span> <span class="o">=</span> <span class="n">initialMeanAnomalyChief</span> <span class="o">+</span> <span class="n">initialDeltaOe</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">initialMeanAnomalyDeputy</span><span class="p">,</span> <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">e</span><span class="p">),</span>
+        <span class="n">initialOeDeputy</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">rNDeputy</span><span class="p">,</span> <span class="n">vNDeputy</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">initialOeDeputy</span><span class="p">)</span>
+    <span class="n">deputyBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rNDeputy</span><span class="p">)</span>
+    <span class="n">deputyBody</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vNDeputy</span><span class="p">)</span>
+
+    <span class="c1"># Compute orbit period for the initial semi major axis</span>
+    <span class="n">initialOrbitPeriod</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">initialSemiMajorAxis</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">InitialOrbitInfo</span><span class="p">(</span><span class="n">semiMajorAxis</span><span class="o">=</span><span class="n">initialSemiMajorAxis</span><span class="p">,</span> <span class="n">orbitPeriod</span><span class="o">=</span><span class="n">initialOrbitPeriod</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="runSimulation">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.runSimulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runSimulation</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">,</span> <span class="n">orbitInfo</span><span class="p">:</span> <span class="n">InitialOrbitInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize and execute the simulation for a fixed multiple of the orbit period.&quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">scSim</span>
+
+    <span class="n">finalTime</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">orbitInfo</span><span class="o">.</span><span class="n">orbitPeriod</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">finalTime</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="extractTimeSeries">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.extractTimeSeries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extractTimeSeries</span><span class="p">(</span>
+    <span class="n">planet</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">recorders</span><span class="p">:</span> <span class="n">RecorderHandles</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimulationTimeSeries</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert raw recorder data into orbital elements, relative coordinates, and time arrays.&quot;&quot;&quot;</span>
+    <span class="n">chiefState</span> <span class="o">=</span> <span class="n">recorders</span><span class="o">.</span><span class="n">chiefState</span>
+    <span class="n">deputyState</span> <span class="o">=</span> <span class="n">recorders</span><span class="o">.</span><span class="n">deputyState</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">chiefState</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span>
+    <span class="n">posChief</span> <span class="o">=</span> <span class="n">chiefState</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velChief</span> <span class="o">=</span> <span class="n">chiefState</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">posDeputy</span> <span class="o">=</span> <span class="n">deputyState</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velDeputy</span> <span class="o">=</span> <span class="n">deputyState</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">oeChief</span> <span class="o">=</span> <span class="n">rv2elemVector</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">posChief</span><span class="p">,</span> <span class="n">velChief</span><span class="p">)</span>
+    <span class="n">oeDeputy</span> <span class="o">=</span> <span class="n">rv2elemVector</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">posDeputy</span><span class="p">,</span> <span class="n">velDeputy</span><span class="p">)</span>
+
+    <span class="c1"># Difference in semimajor axis and eccentricity is simple subtraction</span>
+    <span class="n">oeDiff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">oeDeputy</span><span class="p">)</span>
+    <span class="n">oeDiff</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">oeChief</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Angular elements must be wrapped to avoid jumps near 360 deg</span>
+    <span class="n">oeDiff</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">=</span> <span class="p">((</span><span class="n">oeDeputy</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">oeChief</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">180.0</span>
+
+    <span class="n">hillPosition</span><span class="p">,</span> <span class="n">hillVelocity</span> <span class="o">=</span> <span class="n">deputyToHillFrame</span><span class="p">(</span><span class="n">posChief</span><span class="p">,</span> <span class="n">velChief</span><span class="p">,</span> <span class="n">posDeputy</span><span class="p">,</span> <span class="n">velDeputy</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">SimulationTimeSeries</span><span class="p">(</span>
+        <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+        <span class="n">posChief</span><span class="o">=</span><span class="n">posChief</span><span class="p">,</span>
+        <span class="n">velChief</span><span class="o">=</span><span class="n">velChief</span><span class="p">,</span>
+        <span class="n">posDeputy</span><span class="o">=</span><span class="n">posDeputy</span><span class="p">,</span>
+        <span class="n">velDeputy</span><span class="o">=</span><span class="n">velDeputy</span><span class="p">,</span>
+        <span class="n">oeChief</span><span class="o">=</span><span class="n">oeChief</span><span class="p">,</span>
+        <span class="n">oeDeputy</span><span class="o">=</span><span class="n">oeDeputy</span><span class="p">,</span>
+        <span class="n">oeDiff</span><span class="o">=</span><span class="n">oeDiff</span><span class="p">,</span>
+        <span class="n">hillPosition</span><span class="o">=</span><span class="n">hillPosition</span><span class="p">,</span>
+        <span class="n">hillVelocity</span><span class="o">=</span><span class="n">hillVelocity</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="n">COLORS</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Hcset&#39;</span><span class="p">,</span> <span class="s1">&#39;blue yellow red black&#39;</span><span class="p">)(</span><span class="s1">&#39;#004488&#39;</span><span class="p">,</span> <span class="s1">&#39;#DDAA33&#39;</span><span class="p">,</span> <span class="s1">&#39;#BB5566&#39;</span><span class="p">,</span> <span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="createFigures">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.createFigures">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createFigures</span><span class="p">(</span>
+    <span class="n">scenarioConfig</span><span class="p">:</span> <span class="n">ScenarioConfig</span><span class="p">,</span>
+    <span class="n">plotConfig</span><span class="p">:</span> <span class="n">PlotConfig</span><span class="p">,</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">SimulationModels</span><span class="p">,</span>
+    <span class="n">recorders</span><span class="p">:</span> <span class="n">RecorderHandles</span><span class="p">,</span>
+    <span class="n">timeSeries</span><span class="p">:</span> <span class="n">SimulationTimeSeries</span><span class="p">,</span>
+    <span class="n">targetOeDiffPayload</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ClassicElementsMsgPayload</span><span class="p">,</span>
+    <span class="n">kProp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all requested figures, optionally saving them as PDF files.&quot;&quot;&quot;</span>
+    <span class="n">figures</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">times</span>
+    <span class="n">posChief</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">posChief</span>
+    <span class="n">oeChief</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">oeChief</span>
+    <span class="n">oeDeputy</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">oeDeputy</span>
+    <span class="n">oeDiff</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">oeDiff</span>
+    <span class="n">hillPosition</span> <span class="o">=</span> <span class="n">timeSeries</span><span class="o">.</span><span class="n">hillPosition</span>
+
+    <span class="c1"># Ensure save folder exists if requested</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">saveFolder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">plotConfig</span><span class="o">.</span><span class="n">saveFolder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">maybeSave</span><span class="p">(</span><span class="n">figName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">saveFolder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plotConfig</span><span class="o">.</span><span class="n">saveFolder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">figName</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Chief inertial trajectory</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">plotChiefInertial</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+        <span class="n">plotGradient</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">posChief</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">posChief</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^\mathcal</span><span class="si">{N}</span><span class="s2"> </span><span class="si">{x}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^\mathcal</span><span class="si">{N}</span><span class="s2"> </span><span class="si">{y}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_chiefInertial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="s2">&quot;chiefInertial&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="c1"># Chief drag</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">plotChiefDrag</span> <span class="ow">and</span> <span class="n">recorders</span><span class="o">.</span><span class="n">dragChief</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+        <span class="n">chiefDragMagnitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">recorders</span><span class="o">.</span><span class="n">dragChief</span><span class="o">.</span><span class="n">force_S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">chiefDragMagnitude</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Chief Drag [m/s$^2$]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [hr]&quot;</span><span class="p">)</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_chiefDrag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="s2">&quot;chiefDrag&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="c1"># Chief density</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">plotChiefDensity</span> <span class="ow">and</span> <span class="n">recorders</span><span class="o">.</span><span class="n">densityChief</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">recorders</span><span class="o">.</span><span class="n">densityChief</span><span class="o">.</span><span class="n">neutralDensity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Chief Density [kg/m$^3$]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [hr]&quot;</span><span class="p">)</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_chiefDensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="s2">&quot;chiefDensity&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="c1"># Control forces</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">plotControl</span> <span class="ow">and</span> <span class="n">scenarioConfig</span><span class="o">.</span><span class="n">control</span> <span class="ow">and</span> <span class="n">recorders</span><span class="o">.</span><span class="n">oeFeedbackForce</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+        <span class="n">feedbackForceVec</span> <span class="o">=</span> <span class="n">recorders</span><span class="o">.</span><span class="n">oeFeedbackForce</span><span class="o">.</span><span class="n">force_S</span>
+        <span class="n">feedbackForce</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">feedbackForceVec</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">feedbackForce</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Feedback&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [hr]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Control [m/s$^2$]&quot;</span><span class="p">)</span>  <span class="c1"># Deputy mass is 1, so force equals acceleration</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_control&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="s2">&quot;control&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="c1"># Orbital element plots</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;a [m]&quot;</span><span class="p">,</span> <span class="s2">&quot;e [-]&quot;</span><span class="p">,</span> <span class="s2">&quot;i [deg]&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\Omega$ [deg]&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\omega$ [deg]&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$M$ [deg]&quot;</span><span class="p">)</span>
+    <span class="n">targetDiffVector</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span>
+        <span class="n">targetOeDiffPayload</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">indicesToPlot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">plotOeSet</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">oe</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">isDiff</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">enabled</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indicesToPlot</span><span class="p">)</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
+        <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+        <span class="n">axsArray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indicesToPlot</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">axsArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">oe</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\Delta$&quot;</span> <span class="k">if</span> <span class="n">isDiff</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Draw controller target for states that are regulated</span>
+            <span class="k">if</span> <span class="n">isDiff</span> <span class="ow">and</span> <span class="n">models</span><span class="o">.</span><span class="n">oeFeedback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kProp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">targetValue</span> <span class="o">=</span> <span class="n">targetDiffVector</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">targetValue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">targetValue</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">targetValue</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+
+        <span class="c1"># Label shared x axis on bottom row</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axsArray</span><span class="p">[</span><span class="o">-</span><span class="n">ncols</span><span class="p">:]:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [hr]&quot;</span><span class="p">)</span>
+
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_oe</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;oe</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="n">plotOeSet</span><span class="p">(</span><span class="s2">&quot;chief&quot;</span><span class="p">,</span> <span class="n">oeChief</span><span class="p">,</span> <span class="n">isDiff</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="n">plotConfig</span><span class="o">.</span><span class="n">plotOeChief</span><span class="p">)</span>
+    <span class="n">plotOeSet</span><span class="p">(</span><span class="s2">&quot;deputy&quot;</span><span class="p">,</span> <span class="n">oeDeputy</span><span class="p">,</span> <span class="n">isDiff</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="n">plotConfig</span><span class="o">.</span><span class="n">plotOeDeputy</span><span class="p">)</span>
+    <span class="n">plotOeSet</span><span class="p">(</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span> <span class="n">oeDiff</span><span class="p">,</span> <span class="n">isDiff</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="n">plotConfig</span><span class="o">.</span><span class="n">plotOeDiff</span><span class="p">)</span>
+
+    <span class="c1"># Hill frame deputy relative motion</span>
+    <span class="k">if</span> <span class="n">plotConfig</span><span class="o">.</span><span class="n">plotHillXY</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">])</span>
+        <span class="n">plotGradient</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">hillPosition</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">hillPosition</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^\mathcal</span><span class="si">{H}</span><span class="s2"> </span><span class="si">{x}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^\mathcal</span><span class="si">{H}</span><span class="s2"> </span><span class="si">{y}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+        <span class="n">figures</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_hillXY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">maybeSave</span><span class="p">(</span><span class="s2">&quot;hillXY&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figures</span></div>
+
+
+
+<div class="viewcode-block" id="rv2elemVector">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.rv2elemVector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rv2elemVector</span><span class="p">(</span><span class="n">mu</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rBNN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">vBNN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert arrays of Cartesian states to classical orbital elements with mean anomaly.&quot;&quot;&quot;</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">rBNN</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rBNN</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">oeI</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rBNN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">vBNN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">meanAnomaly</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oeI</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">oeI</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">oeI</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">oe</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">oeI</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+            <span class="n">oeI</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">oeI</span><span class="o">.</span><span class="n">i</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">oeI</span><span class="o">.</span><span class="n">Omega</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">oeI</span><span class="o">.</span><span class="n">omega</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">meanAnomaly</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">oe</span></div>
+
+
+
+<div class="viewcode-block" id="deputyToHillFrame">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.deputyToHillFrame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deputyToHillFrame</span><span class="p">(</span>
+    <span class="n">nRC</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">nVC</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">nRD</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">nVD</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform deputy inertial state to Hill frame relative position and velocity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nRC</span>
+<span class="sd">        Chief position in inertial frame, shape (N, 3).</span>
+<span class="sd">    nVC</span>
+<span class="sd">        Chief velocity in inertial frame, shape (N, 3).</span>
+<span class="sd">    nRD</span>
+<span class="sd">        Deputy position in inertial frame, shape (N, 3).</span>
+<span class="sd">    nVD</span>
+<span class="sd">        Deputy velocity in inertial frame, shape (N, 3).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hillRho</span>
+<span class="sd">        Deputy relative position in Hill frame, shape (N, 3).</span>
+<span class="sd">    hillRhoPrime</span>
+<span class="sd">        Deputy relative velocity in Hill frame, shape (N, 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rowNorm</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">rHat</span> <span class="o">=</span> <span class="n">nRC</span> <span class="o">/</span> <span class="n">rowNorm</span><span class="p">(</span><span class="n">nRC</span><span class="p">)</span>
+    <span class="n">hVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">nRC</span><span class="p">,</span> <span class="n">nVC</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">hHat</span> <span class="o">=</span> <span class="n">hVec</span> <span class="o">/</span> <span class="n">rowNorm</span><span class="p">(</span><span class="n">hVec</span><span class="p">)</span>
+    <span class="n">yHat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">hHat</span><span class="p">,</span> <span class="n">rHat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">hillDcmN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">rHat</span><span class="p">,</span> <span class="n">yHat</span><span class="p">,</span> <span class="n">hHat</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">hMagnitude</span> <span class="o">=</span> <span class="n">rowNorm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">nRC</span><span class="p">,</span> <span class="n">nVC</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">radiusMagnitude</span> <span class="o">=</span> <span class="n">rowNorm</span><span class="p">(</span><span class="n">nRC</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">trueAnomalyDot</span> <span class="o">=</span> <span class="n">hMagnitude</span> <span class="o">/</span> <span class="p">(</span><span class="n">radiusMagnitude</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">trueAnomalyDot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">trueAnomalyDot</span><span class="p">),</span> <span class="n">trueAnomalyDot</span><span class="p">],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">hillRho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;nij,nj-&gt;ni&quot;</span><span class="p">,</span> <span class="n">hillDcmN</span><span class="p">,</span> <span class="p">(</span><span class="n">nRD</span> <span class="o">-</span> <span class="n">nRC</span><span class="p">))</span>
+    <span class="n">hillRhoPrime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;nij,nj-&gt;ni&quot;</span><span class="p">,</span> <span class="n">hillDcmN</span><span class="p">,</span> <span class="p">(</span><span class="n">nVD</span> <span class="o">-</span> <span class="n">nVC</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">hillRho</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">hillRho</span><span class="p">,</span> <span class="n">hillRhoPrime</span></div>
+
+
+
+<div class="viewcode-block" id="plotGradient">
+<a class="viewcode-back" href="../examples/mujoco/scenarioFormationFlyingWithDrag.html#scenarioFormationFlyingWithDrag.plotGradient">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotGradient</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">arrows</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">arrowEvery</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="n">showEndpoints</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineCollection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a line whose color varies along its length, optionally with arrows and endpoints.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax</span>
+<span class="sd">        Matplotlib axes on which to draw.</span>
+<span class="sd">    x, y</span>
+<span class="sd">        Coordinate arrays.</span>
+<span class="sd">    cmap</span>
+<span class="sd">        Name of the colormap to use.</span>
+<span class="sd">    linewidth</span>
+<span class="sd">        Width of the plotted line.</span>
+<span class="sd">    arrows</span>
+<span class="sd">        If True, draw arrows along the trajectory.</span>
+<span class="sd">    arrowEvery</span>
+<span class="sd">        Spacing between arrows in number of points.</span>
+<span class="sd">    showEndpoints</span>
+<span class="sd">        If True, mark start and end points.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    LineCollection</span>
+<span class="sd">        The line collection added to the axes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">lineCollection</span> <span class="o">=</span> <span class="n">LineCollection</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">lineCollection</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">lineCollection</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">arrows</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">arrowEvery</span><span class="p">,</span> <span class="n">arrowEvery</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]),</span>
+                <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">arrowstyle</span><span class="o">=</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">shrinkA</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">shrinkB</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">showEndpoints</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">autoscale</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lineCollection</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">scenarioConfig</span> <span class="o">=</span> <span class="n">ScenarioConfig</span><span class="p">(</span>
+        <span class="n">drag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">control</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">integralControl</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plotConfig</span> <span class="o">=</span> <span class="n">PlotConfig</span><span class="p">(</span>
+        <span class="n">showPlots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">saveFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">scenarioConfig</span><span class="p">,</span> <span class="n">plotConfig</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

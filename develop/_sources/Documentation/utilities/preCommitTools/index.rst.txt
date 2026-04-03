@@ -1,0 +1,16 @@
+.. _Folder_preCommitTools:
+
+preCommitTools
+==============
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+   checkCommitMessage
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+

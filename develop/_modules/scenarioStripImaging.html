@@ -1,0 +1,1110 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioStripImaging &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioStripImaging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioStripImaging</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates sequential strip imaging of three ground strips using the</span>
+<span class="sd">:ref:`stripLocation` and :ref:`locationPointing` modules. A spacecraft in a low-Earth</span>
+<span class="sd">equatorial orbit images three strips one after another, each with a different orientation</span>
+<span class="sd">relative to the orbit track:</span>
+
+<span class="sd">1. **Parallel** to the orbit track (constant latitude, varying longitude)</span>
+<span class="sd">2. **Perpendicular** to the orbit track (varying latitude, constant longitude)</span>
+<span class="sd">3. **Diagonal** to the orbit track (both latitude and longitude vary)</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioStripImaging.py</span>
+
+<span class="sd">Each strip is defined by a start and end geodetic coordinate using the :ref:`stripLocation`</span>
+<span class="sd">module, which propagates a target point along the great-circle arc between the two endpoints</span>
+<span class="sd">at a configurable acquisition speed. The :ref:`locationPointing` module provides three-degree-of-freedom</span>
+<span class="sd">attitude guidance: it points the body-fixed boresight axis ``pHat_B`` toward the moving target while</span>
+<span class="sd">aligning the scanning-line axis ``cHat_B`` orthogonal to the scanning direction.</span>
+
+<span class="sd">Before each imaging phase, a pre-imaging period allows the attitude control system to achieve acceptable</span>
+<span class="sd">attitude accuracy and/or wait for an acceptable viewing angle.</span>
+
+<span class="sd">Attitude control is implemented with an MRP steering law (:ref:`mrpSteering`), a rate servo</span>
+<span class="sd">(:ref:`rateServoFullNonlinear`), and three reaction wheels (:ref:`reactionWheelStateEffector`).</span>
+
+<span class="sd">Two imaging constraints are tracked throughout the mission:</span>
+
+<span class="sd">- **Minimum elevation angle** (10 deg): the view angle between the spacecraft and the target</span>
+<span class="sd">  must exceed this threshold.</span>
+<span class="sd">- **Maximum principal rotation error** (5 deg): the attitude error must remain below this</span>
+<span class="sd">  threshold during imaging.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True</span>
+
+<span class="sd">The first plot shows the principal rotation error over the full mission. Gray-shaded regions</span>
+<span class="sd">indicate pre-imaging periods. During imaging phases, green shading marks times</span>
+<span class="sd">when the error is below the 5 deg threshold and red shading marks times when it is exceeded.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioStripImaging1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The second plot shows the view angle (elevation) over the full mission. Green shading during</span>
+<span class="sd">imaging phases indicates the elevation exceeds the 10 deg minimum, while red indicates it</span>
+<span class="sd">does not.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioStripImaging2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The third plot shows the norm of the perpendicular velocity component</span>
+<span class="sd">:math:`\|\mathbf{v}_{\perp}\|`. When this value is small (hatched red region), the boresight</span>
+<span class="sd">and target velocity are nearly collinear and the :ref:`locationPointing` module falls back to</span>
+<span class="sd">point-only targeting.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioStripImaging3.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># import basic libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># import message declarations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">astroConstants</span>
+
+<span class="c1"># import FSW Algorithm related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">locationPointing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">attTrackingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpSteering</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rateServoFullNonlinear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">rwMotorTorque</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactionWheelStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">stripLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">fswSetupRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+
+<span class="c1"># attempt to import vizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizInterface</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1">#  Helper functions</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="get_target_position">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.get_target_position">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_target_position</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate a point along the great-circle arc from r_start to r_end.&quot;&quot;&quot;</span>
+    <span class="n">R_E</span> <span class="o">=</span> <span class="mf">6378.137e3</span>
+    <span class="n">r_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">r_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_end</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u_start</span> <span class="o">=</span> <span class="n">r_start</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_start</span><span class="p">)</span>
+    <span class="n">u_end</span> <span class="o">=</span> <span class="n">r_end</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_end</span><span class="p">)</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">u_start</span><span class="p">,</span> <span class="n">u_end</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">dot_product</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r_start</span>
+    <span class="n">arc_length</span> <span class="o">=</span> <span class="n">R_E</span> <span class="o">*</span> <span class="n">theta</span>
+    <span class="n">t_total</span> <span class="o">=</span> <span class="n">arc_length</span> <span class="o">/</span> <span class="n">speed</span>
+    <span class="n">t_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">t_total</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">u_interp</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t_frac</span><span class="p">)</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_start</span> <span class="o">+</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t_frac</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_end</span><span class="p">)</span> <span class="o">/</span> <span class="n">sin_theta</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">R_E</span> <span class="o">*</span> <span class="n">u_interp</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_extended_start">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.compute_extended_start">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_extended_start</span><span class="p">(</span><span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">preImagingTime</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extend the strip start backwards along the great circle by preImagingTime to get pStartUpdated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R_E</span> <span class="o">=</span> <span class="mf">6378.137e3</span>
+    <span class="n">pStart</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">pStart</span> <span class="o">=</span> <span class="n">pStart</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pStart</span><span class="p">)</span> <span class="o">*</span> <span class="n">R_E</span>
+    <span class="n">pEnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_end</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">pEnd</span> <span class="o">=</span> <span class="n">pEnd</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pEnd</span><span class="p">)</span> <span class="o">*</span> <span class="n">R_E</span>
+
+    <span class="n">dot_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pStart</span><span class="p">,</span> <span class="n">pEnd</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">R_E</span> <span class="o">*</span> <span class="n">R_E</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">dot_val</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">speed</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">preImagingTime</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">theta</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pStart</span>
+
+    <span class="n">length</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">R_E</span>
+    <span class="n">line_speed_ratio</span> <span class="o">=</span> <span class="n">length</span> <span class="o">/</span> <span class="n">speed</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="n">preImagingTime</span> <span class="o">/</span> <span class="n">line_speed_ratio</span>  <span class="c1"># negative -&gt; backwards</span>
+
+    <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">coeff1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">sin_theta</span>
+    <span class="n">coeff2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">sin_theta</span>
+    <span class="n">interp</span> <span class="o">=</span> <span class="n">coeff1</span> <span class="o">*</span> <span class="n">pStart</span> <span class="o">+</span> <span class="n">coeff2</span> <span class="o">*</span> <span class="n">pEnd</span>
+    <span class="k">return</span> <span class="n">interp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">interp</span><span class="p">)</span> <span class="o">*</span> <span class="n">R_E</span></div>
+
+
+
+<div class="viewcode-block" id="lat_lon_to_surface">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.lat_lon_to_surface">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lat_lon_to_surface</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert geodetic lat/lon (deg) to a spherical-Earth surface position.&quot;&quot;&quot;</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon_deg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">),</span>
+        <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">),</span>
+        <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">),</span>
+    <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="compute_strip_vertices">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.compute_strip_vertices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_strip_vertices</span><span class="p">(</span><span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">10e3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute 4 corner vertices of a rectangular strip on the surface.&quot;&quot;&quot;</span>
+    <span class="n">r_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_start</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">r_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_end</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">d_vec</span> <span class="o">=</span> <span class="n">r_end</span> <span class="o">-</span> <span class="n">r_start</span>
+    <span class="n">d_vec</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">d_vec</span><span class="p">)</span>
+    <span class="n">mid_vec</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_start</span> <span class="o">+</span> <span class="n">r_end</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">mid_vec</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mid_vec</span><span class="p">)</span>
+    <span class="n">p_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">mid_vec</span><span class="p">,</span> <span class="n">d_vec</span><span class="p">)</span>
+    <span class="n">p_vec</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p_vec</span><span class="p">)</span>
+    <span class="n">half_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">r_start</span> <span class="o">+</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">r_start</span> <span class="o">-</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="n">v3</span> <span class="o">=</span> <span class="n">r_end</span> <span class="o">+</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="n">v4</span> <span class="o">=</span> <span class="n">r_end</span> <span class="o">-</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">v3</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">v4</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_scan_line_extremities">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.compute_scan_line_extremities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_scan_line_extremities</span><span class="p">(</span><span class="n">r_s</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute left and right extremity positions of the current scan line.&quot;&quot;&quot;</span>
+    <span class="n">r_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_s</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">r_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_e</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">r_mid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_s</span> <span class="o">+</span> <span class="n">r_e</span><span class="p">)</span>
+    <span class="n">d_vec</span> <span class="o">=</span> <span class="n">r_e</span> <span class="o">-</span> <span class="n">r_s</span>
+    <span class="n">d_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">d_vec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">d_norm</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="n">d_vec</span> <span class="o">/=</span> <span class="n">d_norm</span>
+    <span class="n">radial</span> <span class="o">=</span> <span class="n">r_mid</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_mid</span><span class="p">)</span>
+    <span class="n">p_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">radial</span><span class="p">,</span> <span class="n">d_vec</span><span class="p">)</span>
+    <span class="n">p_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p_vec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p_norm</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="n">p_vec</span> <span class="o">/=</span> <span class="n">p_norm</span>
+    <span class="n">half_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">r_left</span> <span class="o">=</span> <span class="n">r_mid</span> <span class="o">+</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="n">r_right</span> <span class="o">=</span> <span class="n">r_mid</span> <span class="o">-</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">p_vec</span>
+    <span class="k">return</span> <span class="n">r_left</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">r_right</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="compute_v_perp_norm">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.compute_v_perp_norm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_v_perp_norm</span><span class="p">(</span><span class="n">att_ref</span><span class="p">,</span> <span class="n">v_LP_N</span><span class="p">,</span> <span class="n">pHat_B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute ||v_perp|| = ||pHat_B x v_TP_B|| at each time step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pHat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pHat_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">norms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">att_ref</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">att_ref</span><span class="p">)):</span>
+        <span class="n">sigma_RN_i</span> <span class="o">=</span> <span class="n">att_ref</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">v_i</span> <span class="o">=</span> <span class="n">v_LP_N</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v_mag</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">norms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">continue</span>
+        <span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_i</span> <span class="o">/</span> <span class="n">v_mag</span>
+        <span class="n">dcm_RN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_RN_i</span><span class="p">))</span>
+        <span class="n">v_TP_B</span> <span class="o">=</span> <span class="n">dcm_RN</span> <span class="o">@</span> <span class="n">v_hat</span>
+        <span class="n">v_TP_B_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_TP_B</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v_TP_B_mag</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">v_TP_B</span> <span class="o">/=</span> <span class="n">v_TP_B_mag</span>
+        <span class="n">v_perp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">pHat</span><span class="p">,</span> <span class="n">v_TP_B</span><span class="p">)</span>
+        <span class="n">norms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_perp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">norms</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_threshold_shading</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">green_below</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add green/red threshold shading to each imaging region.&quot;&quot;&quot;</span>
+    <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">imaging_regions_min</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">green_below</span><span class="p">:</span>
+            <span class="c1"># green below threshold (good), red above (bad) – for rotation error</span>
+            <span class="k">if</span> <span class="n">y_max</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">y_min</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># green above threshold (good), red below (bad) – for view angle</span>
+            <span class="k">if</span> <span class="n">y_min</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">y_max</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">time_min</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">seg_indices</span><span class="p">,</span> <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+                   <span class="n">gray_indices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot per-phase colored segments and transition segments.&quot;&quot;&quot;</span>
+    <span class="c1"># Transition segments – use the color of the strip they lead into</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gray_indices</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="n">i0</span><span class="p">:</span><span class="n">i1</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i0</span><span class="p">:</span><span class="n">i1</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">strip_colors</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="c1"># Strip segments</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seg_indices</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="n">i0</span><span class="p">:</span><span class="n">i1</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i0</span><span class="p">:</span><span class="n">i1</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">strip_colors</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">strip_labels</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="plot_principal_rotation_error">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.plot_principal_rotation_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_principal_rotation_error</span><span class="p">(</span><span class="n">time_min</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">,</span>
+                                  <span class="n">gray_regions_min</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span>
+                                  <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+                                  <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+                                  <span class="n">maxPrincipalRotationError</span><span class="o">=</span><span class="mf">5.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot principal rotation error over the entire sequential mission.&quot;&quot;&quot;</span>
+    <span class="n">sigma_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dataSigmaBR</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">theta_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">sigma_norm</span><span class="p">))</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">_plot_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">time_min</span><span class="p">,</span> <span class="n">theta_deg</span><span class="p">,</span> <span class="n">seg_indices</span><span class="p">,</span> <span class="n">strip_colors</span><span class="p">,</span>
+                   <span class="n">strip_labels</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Gray shading for pre-imaging / transitions</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">gray_regions_min</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Green/red threshold shading for imaging periods</span>
+    <span class="n">_add_threshold_shading</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">maxPrincipalRotationError</span><span class="p">,</span>
+                           <span class="n">green_below</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [min]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Principal Rotation Error [deg]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_view_angle">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.plot_view_angle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_view_angle</span><span class="p">(</span><span class="n">time_min</span><span class="p">,</span> <span class="n">elevation_rad</span><span class="p">,</span>
+                    <span class="n">gray_regions_min</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span>
+                    <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+                    <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+                    <span class="n">minimumElevation_deg</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot view angle (elevation) over the entire sequential mission.&quot;&quot;&quot;</span>
+    <span class="n">elevation_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">elevation_rad</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">_plot_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">time_min</span><span class="p">,</span> <span class="n">elevation_deg</span><span class="p">,</span> <span class="n">seg_indices</span><span class="p">,</span> <span class="n">strip_colors</span><span class="p">,</span>
+                   <span class="n">strip_labels</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">gray_regions_min</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Green/red threshold shading for imaging periods</span>
+    <span class="n">_add_threshold_shading</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">minimumElevation_deg</span><span class="p">,</span>
+                           <span class="n">green_below</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [min]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;View Angle [deg]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_v_perp_norm">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.plot_v_perp_norm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_v_perp_norm</span><span class="p">(</span><span class="n">time_min</span><span class="p">,</span> <span class="n">v_perp_norms</span><span class="p">,</span>
+                     <span class="n">gray_regions_min</span><span class="p">,</span>
+                     <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+                     <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+                     <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot ||v_perp|| over the entire sequential mission.&quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">_plot_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">time_min</span><span class="p">,</span> <span class="n">v_perp_norms</span><span class="p">,</span> <span class="n">seg_indices</span><span class="p">,</span> <span class="n">strip_colors</span><span class="p">,</span>
+                   <span class="n">strip_labels</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># Hatched area below threshold (point-only targeting region)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">hatch</span><span class="o">=</span><span class="s2">&quot;//&quot;</span><span class="p">,</span>
+               <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+               <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Point Imaging Region&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">gray_regions_min</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [min]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\|\mathbf</span><span class="si">{v}</span><span class="s2">_{\perp}\|$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1">#  Sequential three-strip simulation</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioStripImaging.html#scenarioStripImaging.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a single continuous simulation imaging three strips sequentially:</span>
+<span class="sd">      1. Parallel to orbit track      (constant latitude, varying longitude)</span>
+<span class="sd">      2. Perpendicular to orbit track  (varying latitude, constant longitude)</span>
+<span class="sd">      3. Diagonal to orbit track       (both latitude and longitude vary)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Timing</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">pre_imaging_s</span>  <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># pre-imaging [s]</span>
+    <span class="n">imaging_s</span>      <span class="o">=</span> <span class="mi">167</span>   <span class="c1"># imaging time per strip (500km strip with acquisition speed of 3km/s) [s]</span>
+
+    <span class="n">pre_imaging_ns</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">pre_imaging_s</span><span class="p">)</span>
+    <span class="n">imaging_ns</span>     <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">imaging_s</span><span class="p">)</span>
+
+    <span class="c1"># Phase end-times (cumulative nanoseconds)</span>
+    <span class="n">phase1_img_start</span> <span class="o">=</span> <span class="n">pre_imaging_ns</span>
+    <span class="n">phase1_end</span>       <span class="o">=</span> <span class="n">phase1_img_start</span> <span class="o">+</span> <span class="n">imaging_ns</span>
+
+    <span class="n">phase2_img_start</span> <span class="o">=</span> <span class="n">phase1_end</span> <span class="o">+</span> <span class="n">pre_imaging_ns</span>
+    <span class="n">phase2_end</span>       <span class="o">=</span> <span class="n">phase2_img_start</span> <span class="o">+</span> <span class="n">imaging_ns</span>
+
+    <span class="n">phase3_img_start</span> <span class="o">=</span> <span class="n">phase2_end</span> <span class="o">+</span> <span class="n">pre_imaging_ns</span>
+    <span class="n">phase3_end</span>       <span class="o">=</span> <span class="n">phase3_img_start</span> <span class="o">+</span> <span class="n">imaging_ns</span>
+
+    <span class="c1"># Strip definitions</span>
+    <span class="n">strip_configs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Parallel&quot;</span><span class="p">,</span>      <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">110</span><span class="p">),</span>   <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Perpendicular&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">137</span><span class="p">),</span>  <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">137</span><span class="p">),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;magenta&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Diagonal&quot;</span><span class="p">,</span>      <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">152</span><span class="p">),</span>  <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">142</span><span class="p">),</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;orangered&quot;</span><span class="p">},</span>
+    <span class="p">]</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Simulation setup</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">simTaskName</span>    <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Spacecraft</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">330.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Gravity</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Reaction wheels</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">omega</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mf">500.</span><span class="p">,</span> <span class="mf">500.</span><span class="p">,</span> <span class="mf">500.</span><span class="p">]):</span>
+        <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span>
+                         <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="n">omega</span><span class="p">,</span> <span class="n">u_max</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">numRW</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">getNumOfDevices</span><span class="p">()</span>
+
+    <span class="n">rwStateEffector</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">ReactionWheelStateEffector</span><span class="p">()</span>
+    <span class="n">rwFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span> <span class="n">rwStateEffector</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwStateEffector</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Navigation</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Three strip targets (all added to the task from the start)</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Imaging constraints (used for Vizard tile colouring and plot shading)</span>
+    <span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>          <span class="c1"># view-angle threshold [rad]</span>
+    <span class="n">maxPrincipalRotationError</span> <span class="o">=</span> <span class="mf">5.0</span>              <span class="c1"># attitude error threshold [deg]</span>
+
+    <span class="n">strip_target</span> <span class="o">=</span> <span class="n">stripLocation</span><span class="o">.</span><span class="n">StripLocation</span><span class="p">()</span>
+    <span class="n">strip_target</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Strip_Imaging_Target&quot;</span>
+    <span class="n">strip_target</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_strip_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">camel_name</span><span class="p">,</span> <span class="n">snake_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prefer renamed API while keeping compatibility with older Basilisk builds.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">camel_name</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">camel_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">snake_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">_set_strip_attr</span><span class="p">(</span><span class="n">strip_target</span><span class="p">,</span> <span class="s2">&quot;acquisitionSpeed&quot;</span><span class="p">,</span> <span class="s2">&quot;acquisition_speed&quot;</span><span class="p">,</span> <span class="mf">3e-6</span><span class="p">)</span>
+    <span class="n">_set_strip_attr</span><span class="p">(</span><span class="n">strip_target</span><span class="p">,</span> <span class="s2">&quot;preImagingTime&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_imaging_time&quot;</span><span class="p">,</span> <span class="n">pre_imaging_ns</span><span class="p">)</span>
+    <span class="n">strip_target</span><span class="o">.</span><span class="n">minimumElevation</span> <span class="o">=</span> <span class="n">minimumElevation</span>
+    <span class="n">strip_target</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="mf">1e9</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_strip_target</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+        <span class="n">strip_target</span><span class="o">.</span><span class="n">specifyLocationStart</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">strip_target</span><span class="o">.</span><span class="n">specifyLocationEnd</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">strip_target</span><span class="o">.</span><span class="n">isStartPositionUpdated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">_set_strip_attr</span><span class="p">(</span><span class="n">strip_target</span><span class="p">,</span> <span class="s2">&quot;durationStripImaging&quot;</span><span class="p">,</span> <span class="s2">&quot;duration_strip_imaging&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">configure_strip_target</span><span class="p">(</span><span class="n">strip_configs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">strip_target</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">strip_target</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Guidance – location pointing</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">locPoint</span> <span class="o">=</span> <span class="n">locationPointing</span><span class="o">.</span><span class="n">locationPointing</span><span class="p">()</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;locPoint&quot;</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># pointing vector</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">cHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># scanning line vector</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">useBoresightRateDamping</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># not needed 3 degrees of control for strip imaging</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">locPoint</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Attitude tracking error</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># MRP steering controller</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpSteering</span><span class="o">.</span><span class="n">mrpSteering</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;MRP_Steering&quot;</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K1</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K3</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ignoreOuterLoopFeedforward</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">omega_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">1.8</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Rate servo</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">servo</span> <span class="o">=</span> <span class="n">rateServoFullNonlinear</span><span class="o">.</span><span class="n">rateServoFullNonlinear</span><span class="p">()</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rate_servo&quot;</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">servo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">knownTorquePntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">servo</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># RW motor-torque mapping</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">rwMotorTorqueObj</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwMotorTorqueObj</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Configuration messages</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="n">I</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rw</span> <span class="ow">in</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">rwList</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">),</span>
+                          <span class="n">rw</span><span class="o">.</span><span class="n">Js</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">fswRwParamMsg</span> <span class="o">=</span> <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span>
+    <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>  <span class="c1"># release SWIG-owned objects before shutdown</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Message connections (guidance starts with strip 1)</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">scAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">scTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+    <span class="n">locPoint</span><span class="o">.</span><span class="n">locationstripInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+        <span class="n">strip_target</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">locPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+    <span class="n">servo</span><span class="o">.</span><span class="n">rateSteeringInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">rateCmdOutMsg</span><span class="p">)</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">servo</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+        <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Data logging</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">attErrLog</span>  <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">attrefLog</span>  <span class="o">=</span> <span class="n">locPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attErrLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attrefLog</span><span class="p">)</span>
+
+    <span class="c1"># Single-strip access and target loggers (record throughout)</span>
+    <span class="n">accessLog</span> <span class="o">=</span> <span class="n">strip_target</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">targetLog</span> <span class="o">=</span> <span class="n">strip_target</span><span class="o">.</span><span class="n">currentStripStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">accessLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">targetLog</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Initial conditions – equatorial orbit</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6378</span> <span class="o">+</span> <span class="mi">520</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mi">110</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Vizard visualisation</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># RGBA colours – default grey for not-yet-scanned tiles</span>
+    <span class="n">strip_rgba</span>       <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>     <span class="c1"># black (imaging region, not yet scanned)</span>
+    <span class="n">strip_rgba_faint</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>     <span class="c1"># black (pre-imaging region, not yet scanned)</span>
+    <span class="n">scan_line_rgba</span>   <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>   <span class="c1"># cyan scanning line</span>
+
+    <span class="c1"># Constraint-based tile colours (assigned at runtime)</span>
+    <span class="n">TILE_GREEN</span>       <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>     <span class="c1"># both constraints met – imaging</span>
+    <span class="n">TILE_GREEN_FAINT</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>      <span class="c1"># both constraints met – pre-imaging</span>
+    <span class="n">TILE_RED</span>         <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>     <span class="c1"># constraint violated – imaging</span>
+    <span class="n">TILE_RED_FAINT</span>   <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">]</span>      <span class="c1"># constraint violated – pre-imaging</span>
+
+    <span class="c1"># Phase imaging start/end pairs in nanoseconds for each strip</span>
+    <span class="n">strip_phase_ns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">phase1_img_start</span><span class="p">,</span> <span class="n">phase1_end</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">phase2_img_start</span><span class="p">,</span> <span class="n">phase2_end</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">phase3_img_start</span><span class="p">,</span> <span class="n">phase3_end</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">viz</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+            <span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span>
+            <span class="c1"># saveFile=fileName,</span>
+            <span class="n">oscOrbitColorList</span><span class="o">=</span><span class="p">[[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]])</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">quadMaps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c1"># -- Draw the three full strips as quad-map tiles ----------------</span>
+        <span class="n">dt_viz</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">si</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strip_configs</span><span class="p">):</span>
+            <span class="n">id_base</span> <span class="o">=</span> <span class="p">(</span><span class="n">si</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100000</span>
+            <span class="n">r_start_orig</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+            <span class="n">r_end</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+            <span class="c1"># Extend start backwards to match C++ pStartUpdated</span>
+            <span class="n">r_start_ext</span> <span class="o">=</span> <span class="n">compute_extended_start</span><span class="p">(</span>
+                <span class="n">r_start_orig</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">pre_imaging_ns</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">)</span>
+
+            <span class="n">t_tile</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">tile_id</span> <span class="o">=</span> <span class="n">id_base</span>
+            <span class="n">img_start_ns</span><span class="p">,</span> <span class="n">img_end_ns</span> <span class="o">=</span> <span class="n">strip_phase_ns</span><span class="p">[</span><span class="n">si</span><span class="p">]</span>
+            <span class="k">while</span> <span class="n">t_tile</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">img_end_ns</span> <span class="o">-</span> <span class="n">img_start_ns</span> <span class="o">+</span> <span class="n">pre_imaging_ns</span><span class="p">):</span>
+                <span class="n">r_s</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+                    <span class="n">get_target_position</span><span class="p">(</span><span class="n">t_tile</span><span class="p">,</span> <span class="n">r_start_ext</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+                <span class="n">r_e</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+                    <span class="n">get_target_position</span><span class="p">(</span><span class="n">t_tile</span> <span class="o">+</span> <span class="n">dt_viz</span><span class="p">,</span> <span class="n">r_start_ext</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">compute_strip_vertices</span><span class="p">(</span><span class="n">r_s</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">)</span>
+                <span class="c1"># Default grey – will be updated green/red during simulation</span>
+                <span class="k">if</span> <span class="n">t_tile</span> <span class="o">&lt;</span> <span class="n">pre_imaging_ns</span><span class="p">:</span>
+                    <span class="n">clr</span> <span class="o">=</span> <span class="n">strip_rgba_faint</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">clr</span> <span class="o">=</span> <span class="n">strip_rgba</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">ID</span><span class="o">=</span><span class="n">tile_id</span><span class="p">,</span>
+                                     <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                     <span class="n">vertices</span><span class="o">=</span><span class="n">verts</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">clr</span><span class="p">)</span>
+                <span class="n">t_tile</span> <span class="o">+=</span> <span class="n">dt_viz</span>
+                <span class="n">tile_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Add two locations for the left and right extremities of the scan line</span>
+        <span class="n">r_s0</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+            <span class="n">strip_configs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">strip_configs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">r_e0</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+            <span class="n">strip_configs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">strip_configs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">r_s0_ext</span> <span class="o">=</span> <span class="n">compute_extended_start</span><span class="p">(</span><span class="n">r_s0</span><span class="p">,</span> <span class="n">r_e0</span><span class="p">,</span> <span class="n">pre_imaging_ns</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">)</span>
+        <span class="n">r_init</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+            <span class="n">get_target_position</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_s0_ext</span><span class="p">,</span> <span class="n">r_e0</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+        <span class="n">r_init_next</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+            <span class="n">get_target_position</span><span class="p">(</span><span class="n">dt_viz</span><span class="p">,</span> <span class="n">r_s0_ext</span><span class="p">,</span> <span class="n">r_e0</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+        <span class="n">r_left_init</span><span class="p">,</span> <span class="n">r_right_init</span> <span class="o">=</span> <span class="n">compute_scan_line_extremities</span><span class="p">(</span>
+            <span class="n">r_init</span><span class="p">,</span> <span class="n">r_init_next</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">)</span>
+
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">addLocation</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+            <span class="n">stationName</span><span class="o">=</span><span class="s2">&quot;Left Extremity&quot;</span><span class="p">,</span>
+            <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+            <span class="n">r_GP_P</span><span class="o">=</span><span class="n">r_left_init</span><span class="p">,</span>
+            <span class="n">fieldOfView</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">160.0</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+            <span class="nb">range</span><span class="o">=</span><span class="mf">2000.0</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">markerScale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">isHidden</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">createTargetLine</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+            <span class="n">toBodyName</span><span class="o">=</span><span class="s2">&quot;Left Extremity&quot;</span><span class="p">,</span>
+            <span class="n">lineColor</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span>
+
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">addLocation</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+            <span class="n">stationName</span><span class="o">=</span><span class="s2">&quot;Right Extremity&quot;</span><span class="p">,</span>
+            <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+            <span class="n">r_GP_P</span><span class="o">=</span><span class="n">r_right_init</span><span class="p">,</span>
+            <span class="n">fieldOfView</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">160.0</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+            <span class="nb">range</span><span class="o">=</span><span class="mf">2000.0</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">markerScale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">isHidden</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">createTargetLine</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+            <span class="n">toBodyName</span><span class="o">=</span><span class="s2">&quot;Right Extremity&quot;</span><span class="p">,</span>
+            <span class="n">lineColor</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span>
+
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showLocationCommLines</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showLocationCones</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showLocationLabels</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">spacecraftSizeMultiplier</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">spacecraftCSon</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">planetCSon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">celestialBodyOrbitLineWidth</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">mainCameraTarget</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>         <span class="c1"># target the satellite</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">forceStartAtSpacecraftLocalView</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c1"># start in its local view</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Run the simulation in three phases, switching strips between them</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">t_total_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+    <span class="c1"># Scanning-line quad-map ID base (must not overlap with pre-created strip tile IDs)</span>
+    <span class="n">SCAN_LINE_ID</span> <span class="o">=</span> <span class="mi">900000</span>
+    <span class="c1"># Tile step size must match the dt_viz used when pre-creating tiles</span>
+    <span class="n">dt_tile</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_step_phase</span><span class="p">(</span><span class="n">phase_start_ns</span><span class="p">,</span> <span class="n">phase_end_ns</span><span class="p">,</span> <span class="n">strip_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute a phase in 5-second steps, updating the scanning line.&quot;&quot;&quot;</span>
+        <span class="n">dt_step</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">t_cur</span> <span class="o">=</span> <span class="n">phase_start_ns</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">strip_target</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">strip_configs</span><span class="p">[</span><span class="n">strip_idx</span><span class="p">]</span>
+        <span class="n">r_start_orig</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">r_end</span> <span class="o">=</span> <span class="n">lat_lon_to_surface</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
+        <span class="c1"># Use the same extended start as the C++ module</span>
+        <span class="n">r_start_ext</span> <span class="o">=</span> <span class="n">compute_extended_start</span><span class="p">(</span>
+            <span class="n">r_start_orig</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">pre_imaging_ns</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">)</span>
+        <span class="n">img_start_ns</span> <span class="o">=</span> <span class="n">strip_phase_ns</span><span class="p">[</span><span class="n">strip_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">id_base</span> <span class="o">=</span> <span class="p">(</span><span class="n">strip_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100000</span>
+
+        <span class="k">while</span> <span class="n">t_cur</span> <span class="o">&lt;</span> <span class="n">phase_end_ns</span><span class="p">:</span>
+            <span class="n">t_next</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">t_cur</span> <span class="o">+</span> <span class="n">dt_step</span><span class="p">,</span> <span class="n">phase_end_ns</span><span class="p">)</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">t_next</span><span class="p">)</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+            <span class="c1"># Update scanning line if Vizard is active</span>
+            <span class="k">if</span> <span class="n">viz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Time within the strip&#39;s own timeline</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">t_cur</span> <span class="o">-</span> <span class="n">img_start_ns</span> <span class="o">+</span> <span class="n">pre_imaging_ns</span>
+                <span class="n">r_s</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+                    <span class="n">get_target_position</span><span class="p">(</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">r_start_ext</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+                <span class="n">r_e</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2list</span><span class="p">(</span>
+                    <span class="n">get_target_position</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">+</span> <span class="n">dt_step</span><span class="p">,</span> <span class="n">r_start_ext</span><span class="p">,</span> <span class="n">r_end</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">3e-6</span><span class="p">))</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">compute_strip_vertices</span><span class="p">(</span><span class="n">r_s</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">)</span>
+
+                <span class="c1"># --- Colour the strip tile under the scan line -------</span>
+                <span class="c1"># Check both imaging constraints</span>
+                <span class="n">sigma_BR</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">sigma_BR</span>
+                <span class="n">sigma_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sigma_BR</span><span class="p">)</span>
+                <span class="n">pre_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">sigma_norm</span><span class="p">))</span>
+                <span class="n">elev_rad</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">elevation</span>
+                <span class="n">constraints_met</span> <span class="o">=</span> <span class="p">(</span><span class="n">pre_deg</span> <span class="o">&lt;</span> <span class="n">maxPrincipalRotationError</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">elev_rad</span> <span class="o">&gt;</span> <span class="n">minimumElevation</span><span class="p">)</span>
+                <span class="n">is_pre_imaging</span> <span class="o">=</span> <span class="p">(</span><span class="n">elapsed</span> <span class="o">&lt;</span> <span class="n">pre_imaging_ns</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">constraints_met</span><span class="p">:</span>
+                    <span class="n">tile_clr</span> <span class="o">=</span> <span class="n">TILE_GREEN_FAINT</span> <span class="k">if</span> <span class="n">is_pre_imaging</span> <span class="k">else</span> <span class="n">TILE_GREEN</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tile_clr</span> <span class="o">=</span> <span class="n">TILE_RED_FAINT</span> <span class="k">if</span> <span class="n">is_pre_imaging</span> <span class="k">else</span> <span class="n">TILE_RED</span>
+
+                <span class="c1"># Determine which pre-created tile ID to update</span>
+                <span class="n">tile_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">//</span> <span class="n">dt_tile</span><span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">ID</span><span class="o">=</span><span class="n">id_base</span> <span class="o">+</span> <span class="n">tile_index</span><span class="p">,</span>
+                                     <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                     <span class="n">vertices</span><span class="o">=</span><span class="n">compute_strip_vertices</span><span class="p">(</span><span class="n">r_s</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">),</span>
+                                     <span class="n">color</span><span class="o">=</span><span class="n">tile_clr</span><span class="p">)</span>
+
+                <span class="c1"># Draw scan line last; nudge vertices ~100 m outward to prevent</span>
+                <span class="c1"># z-fighting with the tile (both quads share the same surface plane)</span>
+                <span class="n">LIFT</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="mf">6.371e6</span>
+                <span class="n">scan_verts</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">*</span> <span class="n">LIFT</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">]</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">addQuadMap</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">ID</span><span class="o">=</span><span class="n">SCAN_LINE_ID</span><span class="p">,</span>
+                                     <span class="n">parentBodyName</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span>
+                                     <span class="n">vertices</span><span class="o">=</span><span class="n">scan_verts</span><span class="p">,</span>
+                                     <span class="n">color</span><span class="o">=</span><span class="n">scan_line_rgba</span><span class="p">)</span>
+
+                <span class="c1"># Update extremity location positions</span>
+                <span class="n">r_left</span><span class="p">,</span> <span class="n">r_right</span> <span class="o">=</span> <span class="n">compute_scan_line_extremities</span><span class="p">(</span>
+                    <span class="n">r_s</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">200e3</span><span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">changeLocation</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">stationName</span><span class="o">=</span><span class="s2">&quot;Left Extremity&quot;</span><span class="p">,</span> <span class="n">r_GP_P</span><span class="o">=</span><span class="n">r_left</span><span class="p">)</span>
+                <span class="n">vizSupport</span><span class="o">.</span><span class="n">changeLocation</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">stationName</span><span class="o">=</span><span class="s2">&quot;Right Extremity&quot;</span><span class="p">,</span> <span class="n">r_GP_P</span><span class="o">=</span><span class="n">r_right</span><span class="p">)</span>
+            <span class="n">t_cur</span> <span class="o">=</span> <span class="n">t_next</span>
+
+    <span class="c1"># Phase 1: pre-imaging + strip 1 imaging</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase 1: Pre-imaging + Strip 1 (Parallel) ...&quot;</span><span class="p">)</span>
+    <span class="n">t1_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">_step_phase</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">phase1_end</span><span class="p">,</span> <span class="n">strip_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">t1_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t1_start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; Phase 1 done in </span><span class="si">{</span><span class="n">t1_elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Switch guidance to strip 2 and reset its imaging clock</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase 2: Transition + Strip 2 (Perpendicular) ...&quot;</span><span class="p">)</span>
+    <span class="n">configure_strip_target</span><span class="p">(</span><span class="n">strip_configs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">t2_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">_step_phase</span><span class="p">(</span><span class="n">phase1_end</span><span class="p">,</span> <span class="n">phase2_end</span><span class="p">,</span> <span class="n">strip_idx</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">t2_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t2_start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; Phase 2 done in </span><span class="si">{</span><span class="n">t2_elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Switch guidance to strip 3 and reset its imaging clock</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase 3: Transition + Strip 3 (Diagonal) ...&quot;</span><span class="p">)</span>
+    <span class="n">configure_strip_target</span><span class="p">(</span><span class="n">strip_configs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">t3_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">_step_phase</span><span class="p">(</span><span class="n">phase2_end</span><span class="p">,</span> <span class="n">phase3_end</span><span class="p">,</span> <span class="n">strip_idx</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">t3_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t3_start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; Phase 3 done in </span><span class="si">{</span><span class="n">t3_elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+
+    <span class="n">t_total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t_total_start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Phase 1 : </span><span class="si">{</span><span class="n">t1_elapsed</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2"> s  (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">t1_elapsed</span><span class="o">/</span><span class="n">t_total</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Phase 2 : </span><span class="si">{</span><span class="n">t2_elapsed</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2"> s  (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">t2_elapsed</span><span class="o">/</span><span class="n">t_total</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Phase 3 : </span><span class="si">{</span><span class="n">t3_elapsed</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2"> s  (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">t3_elapsed</span><span class="o">/</span><span class="n">t_total</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total   : </span><span class="si">{</span><span class="n">t_total</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Retrieve and stitch logged data</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">times_ns</span>    <span class="o">=</span> <span class="n">attErrLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">time_min</span>    <span class="o">=</span> <span class="n">times_ns</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">attErrLog</span><span class="o">.</span><span class="n">sigma_BR</span>
+    <span class="n">att_ref</span>     <span class="o">=</span> <span class="n">attrefLog</span><span class="o">.</span><span class="n">sigma_RN</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_ns</span><span class="p">)</span>
+    <span class="n">elevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">v_LP_N</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">elevation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">accessLog</span><span class="o">.</span><span class="n">elevation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">v_LP_N</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">targetLog</span><span class="o">.</span><span class="n">v_LP_N</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">v_perp_norms</span> <span class="o">=</span> <span class="n">compute_v_perp_norm</span><span class="p">(</span><span class="n">att_ref</span><span class="p">,</span> <span class="n">v_LP_N</span><span class="p">,</span> <span class="n">locPoint</span><span class="o">.</span><span class="n">pHat_B</span><span class="p">)</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Compute phase boundaries in minutes for plotting</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">pre_img_min</span>      <span class="o">=</span> <span class="n">pre_imaging_ns</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">p1_end_min</span>       <span class="o">=</span> <span class="n">phase1_end</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">p2_img_start_min</span> <span class="o">=</span> <span class="n">phase2_img_start</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">p2_end_min</span>       <span class="o">=</span> <span class="n">phase2_end</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">p3_img_start_min</span> <span class="o">=</span> <span class="n">phase3_img_start</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">p3_end_min</span>       <span class="o">=</span> <span class="n">phase3_end</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+
+    <span class="c1"># Gray (pre-imaging / transition) regions</span>
+    <span class="n">gray_regions_min</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">time_min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pre_img_min</span><span class="p">),</span>          <span class="c1"># initial pre-imaging</span>
+        <span class="p">(</span><span class="n">p1_end_min</span><span class="p">,</span>  <span class="n">p2_img_start_min</span><span class="p">),</span>     <span class="c1"># transition strip 1 → 2</span>
+        <span class="p">(</span><span class="n">p2_end_min</span><span class="p">,</span>  <span class="n">p3_img_start_min</span><span class="p">),</span>     <span class="c1"># transition strip 2 → 3</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Imaging regions (receive green/red threshold shading)</span>
+    <span class="n">imaging_regions_min</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">pre_img_min</span><span class="p">,</span>      <span class="n">p1_end_min</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">p2_img_start_min</span><span class="p">,</span> <span class="n">p2_end_min</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">p3_img_start_min</span><span class="p">,</span> <span class="n">p3_end_min</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Index ranges for colored curve segments</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_idx</span><span class="p">(</span><span class="n">t_ns</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">times_ns</span><span class="p">,</span> <span class="n">t_ns</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">idx_pre_img</span> <span class="o">=</span> <span class="n">_idx</span><span class="p">(</span><span class="n">pre_imaging_ns</span><span class="p">)</span>
+    <span class="n">idx_p1_end</span>  <span class="o">=</span> <span class="n">_idx</span><span class="p">(</span><span class="n">phase1_end</span><span class="p">)</span>
+    <span class="n">idx_p2_img</span>  <span class="o">=</span> <span class="n">_idx</span><span class="p">(</span><span class="n">phase2_img_start</span><span class="p">)</span>
+    <span class="n">idx_p2_end</span>  <span class="o">=</span> <span class="n">_idx</span><span class="p">(</span><span class="n">phase2_end</span><span class="p">)</span>
+    <span class="n">idx_p3_img</span>  <span class="o">=</span> <span class="n">_idx</span><span class="p">(</span><span class="n">phase3_img_start</span><span class="p">)</span>
+    <span class="n">idx_p3_end</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_ns</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># Gray segments: pre-imaging, transition 1→2, transition 2→3</span>
+    <span class="n">gray_indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx_pre_img</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">idx_p1_end</span><span class="p">,</span> <span class="n">idx_p2_img</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">idx_p2_end</span><span class="p">,</span> <span class="n">idx_p3_img</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="c1"># Imaging segments (one per strip)</span>
+    <span class="n">seg_indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">idx_pre_img</span><span class="p">,</span> <span class="n">idx_p1_end</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">idx_p2_img</span><span class="p">,</span>  <span class="n">idx_p2_end</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">idx_p3_img</span><span class="p">,</span>  <span class="n">idx_p3_end</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">strip_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">strip_configs</span><span class="p">]</span>
+    <span class="n">strip_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">strip_configs</span><span class="p">]</span>
+
+    <span class="c1"># ==================================================================</span>
+    <span class="c1"># Plot</span>
+    <span class="c1"># ==================================================================</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_principal_rotation_error</span><span class="p">(</span>
+        <span class="n">time_min</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">,</span>
+        <span class="n">gray_regions_min</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span>
+        <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+        <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+        <span class="n">maxPrincipalRotationError</span><span class="o">=</span><span class="n">maxPrincipalRotationError</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_view_angle</span><span class="p">(</span>
+        <span class="n">time_min</span><span class="p">,</span> <span class="n">elevation</span><span class="p">,</span>
+        <span class="n">gray_regions_min</span><span class="p">,</span> <span class="n">imaging_regions_min</span><span class="p">,</span>
+        <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+        <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+        <span class="n">minimumElevation_deg</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">minimumElevation</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_v_perp_norm</span><span class="p">(</span>
+        <span class="n">time_min</span><span class="p">,</span> <span class="n">v_perp_norms</span><span class="p">,</span>
+        <span class="n">gray_regions_min</span><span class="p">,</span>
+        <span class="n">seg_indices</span><span class="p">,</span> <span class="n">gray_indices</span><span class="p">,</span>
+        <span class="n">strip_colors</span><span class="p">,</span> <span class="n">strip_labels</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

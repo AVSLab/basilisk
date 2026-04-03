@@ -1,0 +1,13 @@
+.. _test_vscmgGimbalRateServo:
+
+test_vscmgGimbalRateServo
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_vscmgGimbalRateServo
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,8 @@
+.. _LambertValidatorMsgPayload:
+
+LambertValidatorMsgPayload
+==================================
+
+.. autodoxygenfile:: LambertValidatorMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,8 @@
+.. _stateVecStochasticIntegrator:
+
+Module: stateVecStochasticIntegrator
+====================================
+
+.. autodoxygenfile:: stateVecStochasticIntegrator.h
+   :project: _GeneralModuleFiles4
+

@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gravCoeffOps &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gravCoeffOps</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gravCoeffOps</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<div class="viewcode-block" id="loadGravFromFile">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/gravCoeffOps.html#gravCoeffOps.loadGravFromFile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadGravFromFile</span><span class="p">(</span>
+        <span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">spherHarm</span><span class="p">:</span> <span class="s2">&quot;SphericalHarmonicsGravityModel&quot;</span><span class="p">,</span>
+        <span class="n">maxDeg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load spherical-harmonic gravity coefficients into a model object.</span>
+
+<span class="sd">    This is a thin convenience wrapper around :func:`loadGravFromFileToList`</span>
+<span class="sd">    that parses the file and writes the resulting values into the provided</span>
+<span class="sd">    ``SphericalHarmonicsGravityModel`` instance.</span>
+
+<span class="sd">    :param fileName: Path to a JPL-format spherical harmonics CSV file.</span>
+<span class="sd">    :param spherHarm: Gravity model object to populate.</span>
+<span class="sd">    :param maxDeg: Maximum degree/order to load.</span>
+<span class="sd">    :raises ValueError: If the file format or requested degree is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="p">[</span><span class="n">clmList</span><span class="p">,</span> <span class="n">slmList</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">radEquator</span><span class="p">]</span> <span class="o">=</span> <span class="n">loadGravFromFileToList</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">maxDeg</span><span class="o">=</span><span class="n">maxDeg</span><span class="p">)</span>
+
+    <span class="n">spherHarm</span><span class="o">.</span><span class="n">muBody</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">spherHarm</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">radEquator</span>
+    <span class="n">spherHarm</span><span class="o">.</span><span class="n">cBar</span> <span class="o">=</span> <span class="n">clmList</span>
+    <span class="n">spherHarm</span><span class="o">.</span><span class="n">sBar</span> <span class="o">=</span> <span class="n">slmList</span>
+    <span class="n">spherHarm</span><span class="o">.</span><span class="n">maxDeg</span> <span class="o">=</span> <span class="n">maxDeg</span></div>
+
+
+<div class="viewcode-block" id="loadGravFromFileToList">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/gravCoeffOps.html#gravCoeffOps.loadGravFromFileToList">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadGravFromFileToList</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">maxDeg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse spherical-harmonic coefficients from a JPL-format CSV file.</span>
+
+<span class="sd">    The first row is expected to contain metadata in the canonical JPL format:</span>
+<span class="sd">    equatorial radius, gravitational parameter, uncertainty in ``mu`` (unused),</span>
+<span class="sd">    maximum degree, maximum order, normalization flag, reference longitude, and</span>
+<span class="sd">    reference latitude.</span>
+
+<span class="sd">    Coefficients are returned as triangular degree/order lists where each row</span>
+<span class="sd">    has length ``degree + 1``. Rows in the file must be ordered by</span>
+<span class="sd">    non-decreasing degree; duplicate degree/order pairs are rejected.</span>
+
+<span class="sd">    :param fileName: Path to a JPL-format spherical harmonics CSV file.</span>
+<span class="sd">    :param maxDeg: Maximum degree/order to load.</span>
+<span class="sd">    :return: ``[clmList, slmList, mu, radEquator]``.</span>
+<span class="sd">    :raises ValueError: If input arguments or file contents are invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">maxDeg</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Requested using Spherical Harmonics of degree </span><span class="si">{</span><span class="n">maxDeg</span><span class="si">}</span><span class="s2">, but the degree&quot;</span>
+            <span class="s2">&quot; must be non-negative&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+        <span class="n">gravReader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">firstRow</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">gravReader</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">radEquator</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># firstRow[2] is uncertainty in mu, not needed for Basilisk</span>
+            <span class="n">maxDegreeFile</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">maxOrderFile</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">coefficientsNormalized</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="n">refLong</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+            <span class="n">refLat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">firstRow</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File is not in the expected JPL format for &quot;</span>
+                             <span class="s2">&quot;spherical Harmonics&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+
+        <span class="k">if</span> <span class="n">maxDegreeFile</span> <span class="o">&lt;</span> <span class="n">maxDeg</span> <span class="ow">or</span> <span class="n">maxOrderFile</span> <span class="o">&lt;</span> <span class="n">maxDeg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requested using Spherical Harmonics of degree </span><span class="si">{</span><span class="n">maxDeg</span><span class="si">}</span><span class="s2">&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;, but file &#39;</span><span class="si">{</span><span class="n">fileName</span><span class="si">}</span><span class="s2">&#39; has maximum degree/order of&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">maxDegreeFile</span><span class="p">,</span><span class="w"> </span><span class="n">maxOrderFile</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">coefficientsNormalized</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coefficients in given file are not normalized. This is &quot;</span>
+                            <span class="s2">&quot;not currently supported in Basilisk.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">refLong</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">refLat</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coefficients in given file use a reference longitude&quot;</span>
+                             <span class="s2">&quot; or latitude that is not zero. This is not currently &quot;</span>
+                             <span class="s2">&quot;supported in Basilisk.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Allocate a lower-triangular storage layout:</span>
+        <span class="c1"># degree d stores coefficients for orders m in [0, d].</span>
+        <span class="n">clmList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">degree</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxDeg</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">slmList</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">degree</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxDeg</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">assignedCoefficients</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">previousDegree</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">gravRow</span> <span class="ow">in</span> <span class="n">gravReader</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rowDeg</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gravRow</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">rowOrder</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gravRow</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">clm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gravRow</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">slm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gravRow</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Gravity coefficient row is not in the expected format&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+
+            <span class="k">if</span> <span class="n">rowDeg</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rowOrder</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rowOrder</span> <span class="o">&gt;</span> <span class="n">rowDeg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid gravity coefficient row with degree/order (</span><span class="si">{</span><span class="n">rowDeg</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rowOrder</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Enforce monotonic degree ordering so malformed/shuffled files do</span>
+            <span class="c1"># not silently produce ambiguous coefficient tables.</span>
+            <span class="k">if</span> <span class="n">rowDeg</span> <span class="o">&lt;</span> <span class="n">previousDegree</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Gravity coefficient rows must be ordered by non-decreasing degree&quot;</span>
+                <span class="p">)</span>
+            <span class="n">previousDegree</span> <span class="o">=</span> <span class="n">rowDeg</span>
+
+            <span class="c1"># Input files are usually ordered by increasing degree; stop once</span>
+            <span class="c1"># we passed the requested truncation degree.</span>
+            <span class="k">if</span> <span class="n">rowDeg</span> <span class="o">&gt;</span> <span class="n">maxDeg</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">coeffIndex</span> <span class="o">=</span> <span class="p">(</span><span class="n">rowDeg</span><span class="p">,</span> <span class="n">rowOrder</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">coeffIndex</span> <span class="ow">in</span> <span class="n">assignedCoefficients</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Duplicate gravity coefficient row for degree/order (</span><span class="si">{</span><span class="n">rowDeg</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rowOrder</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+            <span class="n">assignedCoefficients</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coeffIndex</span><span class="p">)</span>
+
+            <span class="n">clmList</span><span class="p">[</span><span class="n">rowDeg</span><span class="p">][</span><span class="n">rowOrder</span><span class="p">]</span> <span class="o">=</span> <span class="n">clm</span>
+            <span class="n">slmList</span><span class="p">[</span><span class="n">rowDeg</span><span class="p">][</span><span class="n">rowOrder</span><span class="p">]</span> <span class="o">=</span> <span class="n">slm</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">clmList</span><span class="p">,</span> <span class="n">slmList</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">radEquator</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="loadPolyFromFile">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/gravCoeffOps.html#gravCoeffOps.loadPolyFromFile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadPolyFromFile</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">poly</span><span class="p">:</span> <span class="s2">&quot;PolyhedralGravityModel&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load polyhedral shape data into a model object.</span>
+
+<span class="sd">    This is a thin convenience wrapper around :func:`loadPolyFromFileToList`</span>
+<span class="sd">    that parses supported polyhedron files and writes vertices/facets into the</span>
+<span class="sd">    provided ``PolyhedralGravityModel`` instance.</span>
+
+<span class="sd">    :param fileName: Path to a supported polyhedron file (``.tab``, ``.obj``,</span>
+<span class="sd">        or ``.txt``).</span>
+<span class="sd">    :param poly: Polyhedral gravity model object to populate.</span>
+<span class="sd">    :raises ValueError: If the file extension or contents are invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">vertList</span><span class="p">,</span> <span class="n">faceList</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="n">loadPolyFromFileToList</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+    <span class="n">poly</span><span class="o">.</span><span class="n">xyzVertex</span> <span class="o">=</span> <span class="n">vertList</span>
+    <span class="n">poly</span><span class="o">.</span><span class="n">orderFacet</span> <span class="o">=</span> <span class="n">faceList</span></div>
+
+
+<div class="viewcode-block" id="loadPolyFromFileToList">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/gravCoeffOps.html#gravCoeffOps.loadPolyFromFileToList">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadPolyFromFileToList</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a polyhedral shape model from disk.</span>
+
+<span class="sd">    Supported formats are:</span>
+
+<span class="sd">    - ``.tab``: Gaskell ``(nVertex nFacet + data rows)`` or PDS3/OBJ-like text.</span>
+<span class="sd">    - ``.obj``: Wavefront-style ``v``/``f`` entries.</span>
+<span class="sd">    - ``.txt``: Legacy format with ``nVertex nFacet`` header followed by rows.</span>
+
+<span class="sd">    Vertex positions are converted from kilometers in file inputs to meters in</span>
+<span class="sd">    output lists. Facet index conventions are preserved according to each file</span>
+<span class="sd">    format&#39;s expected indexing.</span>
+
+<span class="sd">    :param fileName: Path to a supported polyhedron file.</span>
+<span class="sd">    :return: ``[vertList, faceList, nVertex, nFacet]``.</span>
+<span class="sd">    :raises ValueError: If the file extension is not supported or file content</span>
+<span class="sd">        cannot be parsed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">polyFile</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.tab&#39;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">firstLine</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">polyFile</span><span class="p">)</span>  <span class="c1"># read first line</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The &#39;.tab&#39; polyhedral file is empty.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Gaskell .tab starts with &quot;&lt;nVertex&gt; &lt;nFacet&gt;&quot;.</span>
+                <span class="n">nVertex</span><span class="p">,</span> <span class="n">nFacet</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">firstLine</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="n">fileType</span> <span class="o">=</span> <span class="s1">&#39;gaskell&#39;</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># PDS3 .tab stores explicit &quot;v&quot;/&quot;f&quot; prefixed rows.</span>
+                <span class="n">polyFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">fileType</span> <span class="o">=</span> <span class="s1">&#39;pds3&#39;</span>
+
+            <span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s1">&#39;gaskell&#39;</span><span class="p">:</span>
+                <span class="n">vertList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">faceList</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="n">contLines</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">polyFile</span><span class="p">:</span>
+                    <span class="n">arrtemp</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                        <span class="n">arrtemp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">contLines</span> <span class="o">&lt;</span> <span class="n">nVertex</span><span class="p">:</span>
+                        <span class="c1"># Input vertex coordinates are in km; Basilisk uses m.</span>
+                        <span class="n">vertList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Facet indices are already in the expected convention.</span>
+                        <span class="n">faceList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">])])</span>
+
+                    <span class="n">contLines</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s1">&#39;pds3&#39;</span><span class="p">:</span>
+                <span class="n">nVertex</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">nFacet</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">vertList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">faceList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">polyFile</span><span class="p">:</span>
+                    <span class="n">arrtemp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">arrtemp</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">:</span>
+                            <span class="n">nVertex</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="c1"># Input vertex coordinates are in km; Basilisk uses m.</span>
+                            <span class="n">vertList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">])</span>
+                        <span class="k">elif</span> <span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                            <span class="n">nFacet</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="c1"># Convert zero-based facet indices to one-based.</span>
+                            <span class="n">faceList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.obj&#39;</span><span class="p">):</span>
+            <span class="n">nVertex</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">nFacet</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">vertList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">faceList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">polyFile</span><span class="p">:</span>
+                <span class="n">arrtemp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">arrtemp</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">:</span>
+                        <span class="n">nVertex</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># Input vertex coordinates are in km; Basilisk uses m.</span>
+                        <span class="n">vertList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mf">1e3</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                        <span class="n">nFacet</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># OBJ facet indices are expected one-based.</span>
+                        <span class="n">faceList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">3</span><span class="p">])])</span>
+        <span class="k">elif</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.txt&#39;</span><span class="p">):</span>
+            <span class="n">nVertex</span><span class="p">,</span> <span class="n">nFacet</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">polyFile</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span> <span class="c1"># read first line</span>
+            <span class="n">vertList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">faceList</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">contLines</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">polyFile</span><span class="p">:</span>
+                <span class="n">arrtemp</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                    <span class="n">arrtemp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">contLines</span> <span class="o">&lt;</span> <span class="n">nVertex</span><span class="p">:</span>
+                    <span class="c1"># Input vertex coordinates are in km; Basilisk uses m.</span>
+                    <span class="n">vertList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">faceList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">arrtemp</span><span class="p">[</span><span class="mi">2</span><span class="p">])])</span>
+
+                <span class="n">contLines</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized file extension. Valid extensions are &quot;</span>
+                             <span class="s2">&quot;&#39;.tab&#39;, &#39;.obj&#39;, and &#39;.txt&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">vertList</span><span class="p">,</span> <span class="n">faceList</span><span class="p">,</span> <span class="n">nVertex</span><span class="p">,</span> <span class="n">nFacet</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

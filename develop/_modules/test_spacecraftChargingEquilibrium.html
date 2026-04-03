@@ -1,0 +1,1118 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spacecraftChargingEquilibrium &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_spacecraftChargingEquilibrium</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_spacecraftChargingEquilibrium</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026,</span>
+<span class="c1">#  Autonomous Vehicle Systems Laboratory, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Python reimplementation of spacecraft charging equilibrium math for unit-test cross-checks.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraftChargingEquilibrium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+
+<span class="c1"># Constants mirrored from `spacecraftChargingEquilibrium.h` defaults.</span>
+<span class="n">Q0</span> <span class="o">=</span> <span class="mf">1.60217663e-19</span>
+<span class="n">TRAPZN</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">JPH</span> <span class="o">=</span> <span class="mf">40e-6</span>
+<span class="n">KTPH</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">TSEE</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="n">TEB</span> <span class="o">=</span> <span class="mf">20.0</span>
+
+<span class="n">DEFAULT_AREA</span> <span class="o">=</span> <span class="mf">50.264</span>
+<span class="n">DEFAULT_SUNLIT_AREA</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">ROOT_BRACKET</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">400000.0</span><span class="p">,</span> <span class="mf">400000.0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BeamParameters">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.BeamParameters">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BeamParameters</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Electron-beam parameters matching ElectronBeamMsgPayload fields.&quot;&quot;&quot;</span>
+
+    <span class="n">energy_eb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">current_eb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">alpha_eb</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="SpacecraftChargingEquilibriumCppReference">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpacecraftChargingEquilibriumCppReference</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ground-truth reference implementation matching spacecraftChargingEquilibrium C++ math.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">electron_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ion_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electronFlux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">electron_flux</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ionFlux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ion_flux</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yieldSEEelectron</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yieldSEEion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yieldBackscattered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yield_backscattered</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1">#  Numerical utilities</span>
+<div class="viewcode-block" id="SpacecraftChargingEquilibriumCppReference.interp">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.interp">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interp</span><span class="p">(</span><span class="n">x_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Linear interpolation with the same edge behavior as C++ interp().&quot;&quot;&quot;</span>
+        <span class="n">idx1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_vector</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_vector</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">:</span>
+                <span class="n">idx1</span> <span class="o">=</span> <span class="n">c</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">idx1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">idx1</span> <span class="o">=</span> <span class="n">x_vector</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">idx1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">idx1</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">ind_x0</span> <span class="o">=</span> <span class="n">idx1</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">ind_x1</span> <span class="o">=</span> <span class="n">idx1</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">y_vector</span><span class="p">[</span><span class="n">ind_x0</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y_vector</span><span class="p">[</span><span class="n">ind_x1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">y0</span> <span class="o">+</span> <span class="p">((</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_vector</span><span class="p">[</span><span class="n">ind_x1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_vector</span><span class="p">[</span><span class="n">ind_x0</span><span class="p">]))</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_vector</span><span class="p">[</span><span class="n">ind_x0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SpacecraftChargingEquilibriumCppReference.trapz">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.SpacecraftChargingEquilibriumCppReference.trapz">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trapz</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Trapezoidal integration matching spacecraftChargingEquilibrium.cpp::trapz().&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">b</span> <span class="o">==</span> <span class="n">a</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">total</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">getFlux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">particle_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">particle_type</span> <span class="o">==</span> <span class="s2">&quot;electron&quot;</span><span class="p">:</span>
+            <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronFlux</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">particle_type</span> <span class="o">==</span> <span class="s2">&quot;ion&quot;</span><span class="p">:</span>
+            <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionFlux</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">getYield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">yield_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">yield_type</span> <span class="o">==</span> <span class="s2">&quot;electron&quot;</span><span class="p">:</span>
+            <span class="n">yield_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yieldSEEelectron</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">yield_type</span> <span class="o">==</span> <span class="s2">&quot;ion&quot;</span><span class="p">:</span>
+            <span class="n">yield_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yieldSEEion</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">yield_type</span> <span class="o">==</span> <span class="s2">&quot;backscattered&quot;</span><span class="p">:</span>
+            <span class="n">yield_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yieldBackscattered</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">yield_value</span><span class="p">)</span>
+
+    <span class="c1">#  Current components</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electronCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q0</span> <span class="o">*</span> <span class="n">area</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFlux</span><span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">TRAPZN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constant</span> <span class="o">*</span> <span class="n">integral</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ionCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">area</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">energy</span> <span class="o">+</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFlux</span><span class="p">(</span><span class="n">energy</span> <span class="o">+</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;ion&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">TRAPZN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constant</span> <span class="o">*</span> <span class="n">integral</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">SEEelectronCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">area</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getYield</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFlux</span><span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">TRAPZN</span><span class="p">)</span>
+        <span class="n">i_see_e</span> <span class="o">=</span> <span class="n">constant</span> <span class="o">*</span> <span class="n">integral</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_see_e</span>
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_see_e</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">phi</span> <span class="o">/</span> <span class="n">TSEE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">SEEionCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">area</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getYield</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="s2">&quot;ion&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">energy</span> <span class="o">+</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFlux</span><span class="p">(</span><span class="n">energy</span> <span class="o">+</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;ion&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">TRAPZN</span><span class="p">)</span>
+        <span class="n">i_see_i</span> <span class="o">=</span> <span class="n">constant</span> <span class="o">*</span> <span class="n">integral</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_see_i</span>
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_see_i</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">phi</span> <span class="o">/</span> <span class="n">TSEE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">backscatteringCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">area</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getYield</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="s2">&quot;backscattered&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFlux</span><span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">phi</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">TRAPZN</span><span class="p">)</span>
+        <span class="n">i_bs</span> <span class="o">=</span> <span class="n">constant</span> <span class="o">*</span> <span class="n">integral</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_bs</span>
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i_bs</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">phi</span> <span class="o">/</span> <span class="n">TSEE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">photoelectricCurrent</span><span class="p">(</span><span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JPH</span> <span class="o">*</span> <span class="n">area</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">phi</span> <span class="o">/</span> <span class="n">KTPH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JPH</span> <span class="o">*</span> <span class="n">area</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">craft_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eeb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ieb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">craft_type</span> <span class="o">==</span> <span class="s2">&quot;servicer&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eeb</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">phi_s</span> <span class="o">-</span> <span class="n">phi_t</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">ieb</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">eeb</span> <span class="o">-</span> <span class="n">phi_s</span> <span class="o">+</span> <span class="n">phi_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">TEB</span><span class="p">))</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">craft_type</span> <span class="o">==</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eeb</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">phi_s</span> <span class="o">-</span> <span class="n">phi_t</span><span class="p">):</span>
+                <span class="k">return</span> <span class="o">-</span><span class="n">alpha_eb</span> <span class="o">*</span> <span class="n">ieb</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">eeb</span> <span class="o">-</span> <span class="n">phi_s</span> <span class="o">+</span> <span class="n">phi_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">TEB</span><span class="p">))</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">SEEelectronBeamCurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">eeb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ieb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">e_eff</span> <span class="o">=</span> <span class="n">eeb</span> <span class="o">-</span> <span class="n">phi_s</span> <span class="o">+</span> <span class="n">phi_t</span>
+        <span class="n">i_beam_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">eeb</span><span class="p">,</span> <span class="n">ieb</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="n">incoming_beam_magnitude</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">i_beam_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getYield</span><span class="p">(</span><span class="n">e_eff</span><span class="p">,</span> <span class="s2">&quot;electron&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">incoming_beam_magnitude</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">electronBeamBackscattering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">eeb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ieb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">e_eff</span> <span class="o">=</span> <span class="n">eeb</span> <span class="o">-</span> <span class="n">phi_s</span> <span class="o">+</span> <span class="n">phi_t</span>
+        <span class="n">i_beam_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">eeb</span><span class="p">,</span> <span class="n">ieb</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="n">incoming_beam_magnitude</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">i_beam_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getYield</span><span class="p">(</span><span class="n">e_eff</span><span class="p">,</span> <span class="s2">&quot;backscattered&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">incoming_beam_magnitude</span>
+
+    <span class="c1">#  Coupled current sums and root solve</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sumCurrentsServicer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sunlit_area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">non_beam_currents</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electronCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEEelectronCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEEionCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">backscatteringCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">photoelectricCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">sunlit_area</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">i_beam_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;servicer&quot;</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">non_beam_currents</span> <span class="o">+</span> <span class="n">i_beam_s</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sumCurrentsTarget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sunlit_area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">non_beam_currents</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electronCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEEelectronCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEEionCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">backscatteringCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">photoelectricCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">sunlit_area</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">i_beam_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="n">i_see_eb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEEelectronBeamCurrent</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="n">i_bs_eb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electronBeamBackscattering</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">non_beam_currents</span> <span class="o">+</span> <span class="n">i_beam_t</span> <span class="o">+</span> <span class="n">i_see_eb</span> <span class="o">+</span> <span class="n">i_bs_eb</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bisectionSolve</span><span class="p">(</span><span class="n">interval</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">interval</span>
+        <span class="n">current_estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="k">if</span> <span class="n">left</span> <span class="o">&gt;</span> <span class="n">right</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">f_left</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">f_right</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f_left</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">left</span>
+        <span class="k">if</span> <span class="n">f_right</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">right</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">f_left</span> <span class="o">*</span> <span class="n">f_right</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">accuracy</span><span class="p">:</span>
+            <span class="n">current_estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">f_mid</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">current_estimate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f_mid</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">f_left</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">f_mid</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">f_left</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">f_mid</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">current_estimate</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">current_estimate</span>
+                <span class="n">f_left</span> <span class="o">=</span> <span class="n">f_mid</span>
+
+        <span class="k">return</span> <span class="n">current_estimate</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">solveCoupledEquilibrium</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">,</span>
+        <span class="n">servicer_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_AREA</span><span class="p">,</span>
+        <span class="n">target_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_AREA</span><span class="p">,</span>
+        <span class="n">servicer_sunlit_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SUNLIT_AREA</span><span class="p">,</span>
+        <span class="n">target_sunlit_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SUNLIT_AREA</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">phi_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisectionSolve</span><span class="p">(</span>
+            <span class="n">ROOT_BRACKET</span><span class="p">,</span>
+            <span class="mf">1e-6</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">phi</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sumCurrentsServicer</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">servicer_area</span><span class="p">,</span> <span class="n">servicer_sunlit_area</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">phi_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisectionSolve</span><span class="p">(</span>
+            <span class="n">ROOT_BRACKET</span><span class="p">,</span>
+            <span class="mf">1e-8</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">phi</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sumCurrentsTarget</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">target_area</span><span class="p">,</span> <span class="n">target_sunlit_area</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_support_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;Support&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_support_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">support</span> <span class="o">=</span> <span class="n">_support_dir</span><span class="p">()</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;particleEnergies.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">electron_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;electronFlux.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">ion_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;ionFlux.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">yield_see_electron</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;yieldSEEelectron.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">yield_see_ion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;yieldSEEion.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">support</span> <span class="o">/</span> <span class="s2">&quot;yieldBackscattered.txt&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_currents_out_messages</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read servicer/target current breakdown messages if SWIG exposes them as a vector wrapper.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;currentsOutMsgs&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;missing currentsOutMsgs attribute&quot;</span><span class="p">)</span>
+
+    <span class="n">out_msgs</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">currentsOutMsgs</span>
+
+    <span class="c1"># Preferred path: vector wrapper with Python indexing.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">currents_servicer</span> <span class="o">=</span> <span class="n">out_msgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">currents_target</span> <span class="o">=</span> <span class="n">out_msgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">currents_servicer</span><span class="p">,</span> <span class="n">currents_target</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Fallback path in case wrapper exposes C++ vector .at().</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">currents_servicer</span> <span class="o">=</span> <span class="n">out_msgs</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">currents_target</span> <span class="o">=</span> <span class="n">out_msgs</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">currents_servicer</span><span class="p">,</span> <span class="n">currents_target</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;currentsOutMsgs is present but not readable as a vector of output messages&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_snapshot_currents_payload</span><span class="p">(</span><span class="n">currents_msg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a SWIG payload object into plain Python floats before module teardown.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;i_e&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">electronCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;i_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">ionCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;i_see_e&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">seeElectronCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;i_see_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">seeIonCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;i_bs&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">backscatteringCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;i_ph&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">photoelectricCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;env_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">nonBeamCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">beamCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;beam_see_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">beamSeeCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;beam_bs_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">beamBackscatteringCurrent</span><span class="p">),</span>
+        <span class="s2">&quot;total_i&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">currents_msg</span><span class="o">.</span><span class="n">totalCurrent</span><span class="p">)</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_cpp_module_once</span><span class="p">(</span>
+    <span class="n">energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">electron_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ion_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_see_electron</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_see_ion</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_backscattered</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">,</span>
+    <span class="n">servicer_sunlit_area</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_sunlit_area</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_currents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc_name</span> <span class="o">=</span> <span class="s2">&quot;chargeProc&quot;</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">proc_name</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftChargingEquilibrium</span><span class="o">.</span><span class="n">SpacecraftChargingEquilibrium</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpacecraftChargingEquilibrium_CPP&quot;</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># Required indexing convention in the C++ module:</span>
+    <span class="c1"># index 0 = servicer, index 1 = target</span>
+    <span class="n">lt</span> <span class="o">=</span> <span class="mf">12.0</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">lt</span> <span class="o">*</span> <span class="mf">360.0</span> <span class="o">/</span> <span class="mf">24.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">orbit_radius</span> <span class="o">=</span> <span class="mf">42000.0e3</span>
+
+    <span class="n">r_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbit_radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">orbit_radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">r_servicer</span> <span class="o">=</span> <span class="n">r_target</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+    <span class="n">sc0_state</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc0_state</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r_servicer</span>
+    <span class="n">sc0_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc0_state</span><span class="p">)</span>
+
+    <span class="n">sc1_state</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc1_state</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r_target</span>
+    <span class="n">sc1_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_state</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">sc0_msg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">sc1_msg</span><span class="p">)</span>
+
+    <span class="n">plasma_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PlasmaFluxMsgPayload</span><span class="p">()</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="n">energies</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">meanElectronFlux</span> <span class="o">=</span> <span class="n">electron_flux</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">meanIonFlux</span> <span class="o">=</span> <span class="n">ion_flux</span>
+    <span class="n">plasma_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PlasmaFluxMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">plasma_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">plasmaFluxInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">plasma_msg</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldSEEelectron</span><span class="p">(</span><span class="n">yield_see_electron</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldSEEion</span><span class="p">(</span><span class="n">yield_see_ion</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldBackscattered</span><span class="p">(</span><span class="n">yield_backscattered</span><span class="p">)</span>
+
+    <span class="n">beam_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsgPayload</span><span class="p">()</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">energyEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">currentEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">alphaEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span>
+    <span class="n">beam_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">beam_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">eBeamInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">beam_msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">servicer_sunlit_area</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sc0_sunlit_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScSunlitFacetAreaMsgPayload</span><span class="p">()</span>
+        <span class="n">sc0_sunlit_payload</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">servicer_sunlit_area</span>
+        <span class="n">sc0_sunlit_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScSunlitFacetAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc0_sunlit_payload</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">scSunlitAreaInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sc0_sunlit_msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">target_sunlit_area</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sc1_sunlit_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScSunlitFacetAreaMsgPayload</span><span class="p">()</span>
+        <span class="n">sc1_sunlit_payload</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">target_sunlit_area</span>
+        <span class="n">sc1_sunlit_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScSunlitFacetAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1_sunlit_payload</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">scSunlitAreaInMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sc1_sunlit_msg</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="n">phi_servicer</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">voltOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">voltage</span>
+    <span class="n">phi_target</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">voltOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">voltage</span>
+    <span class="k">if</span> <span class="n">return_currents</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">currents_servicer</span><span class="p">,</span> <span class="n">currents_target</span> <span class="o">=</span> <span class="n">_read_currents_out_messages</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
+                <span class="s2">&quot;spacecraftChargingEquilibrium Python bindings do not expose usable currentsOutMsgs &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">). Rebuild Basilisk/SWIG wrappers for ScChargingCurrentsMsgPayload.&quot;</span><span class="p">,</span>
+                <span class="n">pytrace</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="n">currents_servicer</span> <span class="o">=</span> <span class="n">_snapshot_currents_payload</span><span class="p">(</span><span class="n">currents_servicer</span><span class="p">)</span>
+        <span class="n">currents_target</span> <span class="o">=</span> <span class="n">_snapshot_currents_payload</span><span class="p">(</span><span class="n">currents_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">phi_servicer</span><span class="p">,</span> <span class="n">phi_target</span><span class="p">,</span> <span class="n">currents_servicer</span><span class="p">,</span> <span class="n">currents_target</span>
+    <span class="k">return</span> <span class="n">phi_servicer</span><span class="p">,</span> <span class="n">phi_target</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_cpp_module_one_spacecraft_once</span><span class="p">(</span>
+    <span class="n">energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">electron_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ion_flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_see_electron</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_see_ion</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">yield_backscattered</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run module with one spacecraft to exercise exact-two-spacecraft guard behavior.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc_name</span> <span class="o">=</span> <span class="s2">&quot;chargeProcOneSc&quot;</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTaskOneSc&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">proc_name</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftChargingEquilibrium</span><span class="o">.</span><span class="n">SpacecraftChargingEquilibrium</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpacecraftChargingEquilibrium_CPP_OneSc&quot;</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="n">lt</span> <span class="o">=</span> <span class="mf">12.0</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">lt</span> <span class="o">*</span> <span class="mf">360.0</span> <span class="o">/</span> <span class="mf">24.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">orbit_radius</span> <span class="o">=</span> <span class="mf">42000.0e3</span>
+    <span class="n">r_servicer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbit_radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">orbit_radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+
+    <span class="n">sc0_state</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc0_state</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r_servicer</span>
+    <span class="n">sc0_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc0_state</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraft</span><span class="p">(</span><span class="n">sc0_msg</span><span class="p">)</span>
+
+    <span class="n">plasma_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PlasmaFluxMsgPayload</span><span class="p">()</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="n">energies</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">meanElectronFlux</span> <span class="o">=</span> <span class="n">electron_flux</span>
+    <span class="n">plasma_payload</span><span class="o">.</span><span class="n">meanIonFlux</span> <span class="o">=</span> <span class="n">ion_flux</span>
+    <span class="n">plasma_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PlasmaFluxMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">plasma_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">plasmaFluxInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">plasma_msg</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldSEEelectron</span><span class="p">(</span><span class="n">yield_see_electron</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldSEEion</span><span class="p">(</span><span class="n">yield_see_ion</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setYieldBackscattered</span><span class="p">(</span><span class="n">yield_backscattered</span><span class="p">)</span>
+
+    <span class="n">beam_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsgPayload</span><span class="p">()</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">energyEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">currentEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span>
+    <span class="n">beam_payload</span><span class="o">.</span><span class="n">alphaEB</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span>
+    <span class="n">beam_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">beam_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">eBeamInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">beam_msg</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">module</span><span class="o">.</span><span class="n">voltOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">voltage</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_python_target_breakdown</span><span class="p">(</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="n">SpacecraftChargingEquilibriumCppReference</span><span class="p">,</span>
+    <span class="n">phi_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">phi_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">,</span>
+    <span class="n">area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_AREA</span><span class="p">,</span>
+    <span class="n">sunlit_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SUNLIT_AREA</span>
+<span class="p">):</span>
+    <span class="n">i_e</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">electronCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">i_i</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">ionCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">i_see_e</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">SEEelectronCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">i_see_i</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">SEEionCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">i_bs</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">backscatteringCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">i_ph</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">photoelectricCurrent</span><span class="p">(</span><span class="n">phi_t</span><span class="p">,</span> <span class="n">sunlit_area</span><span class="p">)</span>
+    <span class="n">env_i</span> <span class="o">=</span> <span class="n">i_e</span> <span class="o">+</span> <span class="n">i_i</span> <span class="o">+</span> <span class="n">i_see_e</span> <span class="o">+</span> <span class="n">i_see_i</span> <span class="o">+</span> <span class="n">i_bs</span> <span class="o">+</span> <span class="n">i_ph</span>
+
+    <span class="n">beam_arrival_i</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">electronBeamCurrent</span><span class="p">(</span>
+        <span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span>
+    <span class="p">)</span>
+    <span class="n">beam_see_i</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">SEEelectronBeamCurrent</span><span class="p">(</span>
+        <span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span>
+    <span class="p">)</span>
+    <span class="n">beam_bs_i</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">electronBeamBackscattering</span><span class="p">(</span>
+        <span class="n">phi_s</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">alpha_eb</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;i_e&quot;</span><span class="p">:</span> <span class="n">i_e</span><span class="p">,</span>
+        <span class="s2">&quot;i_i&quot;</span><span class="p">:</span> <span class="n">i_i</span><span class="p">,</span>
+        <span class="s2">&quot;i_see_e&quot;</span><span class="p">:</span> <span class="n">i_see_e</span><span class="p">,</span>
+        <span class="s2">&quot;i_see_i&quot;</span><span class="p">:</span> <span class="n">i_see_i</span><span class="p">,</span>
+        <span class="s2">&quot;i_bs&quot;</span><span class="p">:</span> <span class="n">i_bs</span><span class="p">,</span>
+        <span class="s2">&quot;i_ph&quot;</span><span class="p">:</span> <span class="n">i_ph</span><span class="p">,</span>
+        <span class="s2">&quot;env_i&quot;</span><span class="p">:</span> <span class="n">env_i</span><span class="p">,</span>
+        <span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">:</span> <span class="n">beam_arrival_i</span><span class="p">,</span>
+        <span class="s2">&quot;beam_see_i&quot;</span><span class="p">:</span> <span class="n">beam_see_i</span><span class="p">,</span>
+        <span class="s2">&quot;beam_bs_i&quot;</span><span class="p">:</span> <span class="n">beam_bs_i</span><span class="p">,</span>
+        <span class="s2">&quot;total_i&quot;</span><span class="p">:</span> <span class="n">env_i</span> <span class="o">+</span> <span class="n">beam_arrival_i</span> <span class="o">+</span> <span class="n">beam_see_i</span> <span class="o">+</span> <span class="n">beam_bs_i</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cpp_currents_payload_to_dict</span><span class="p">(</span><span class="n">currents_msg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currents_msg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">currents_msg</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;i_e&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">electronCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;i_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">ionCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;i_see_e&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">seeElectronCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;i_see_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">seeIonCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;i_bs&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">backscatteringCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;i_ph&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">photoelectricCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;env_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">nonBeamCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">beamCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;beam_see_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">beamSeeCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;beam_bs_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">beamBackscatteringCurrent</span><span class="p">,</span>
+        <span class="s2">&quot;total_i&quot;</span><span class="p">:</span> <span class="n">currents_msg</span><span class="o">.</span><span class="n">totalCurrent</span>
+    <span class="p">}</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">support_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">_load_support_data</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_python_reference_to_cpp</span><span class="p">(</span>
+    <span class="n">support_data</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="n">BeamParameters</span><span class="p">,</span>
+    <span class="n">scale_electron_flux</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">scale_ion_flux</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">servicer_sunlit_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SUNLIT_AREA</span><span class="p">,</span>
+    <span class="n">target_sunlit_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SUNLIT_AREA</span><span class="p">,</span>
+    <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">support_data</span>
+    <span class="n">scaled_electron_flux</span> <span class="o">=</span> <span class="n">electron_flux</span> <span class="o">*</span> <span class="n">scale_electron_flux</span>
+    <span class="n">scaled_ion_flux</span> <span class="o">=</span> <span class="n">ion_flux</span> <span class="o">*</span> <span class="n">scale_ion_flux</span>
+
+    <span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span> <span class="o">=</span> <span class="n">_run_cpp_module_once</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">scaled_electron_flux</span><span class="p">,</span>
+        <span class="n">scaled_ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span><span class="p">,</span>
+        <span class="n">beam</span><span class="p">,</span>
+        <span class="n">servicer_sunlit_area</span><span class="o">=</span><span class="n">servicer_sunlit_area</span><span class="p">,</span>
+        <span class="n">target_sunlit_area</span><span class="o">=</span><span class="n">target_sunlit_area</span>
+    <span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">SpacecraftChargingEquilibriumCppReference</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">scaled_electron_flux</span><span class="p">,</span>
+        <span class="n">scaled_ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span>
+    <span class="p">)</span>
+    <span class="n">phi_servicer_py</span><span class="p">,</span> <span class="n">phi_target_py</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">solveCoupledEquilibrium</span><span class="p">(</span>
+        <span class="n">beam</span><span class="p">,</span>
+        <span class="n">servicer_sunlit_area</span><span class="o">=</span><span class="n">servicer_sunlit_area</span><span class="p">,</span>
+        <span class="n">target_sunlit_area</span><span class="o">=</span><span class="n">target_sunlit_area</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">phi_servicer_cpp</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">phi_target_cpp</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">phi_servicer_py</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">phi_target_py</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">phi_servicer_py</span><span class="p">,</span> <span class="n">phi_target_py</span><span class="p">]),</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">atol</span><span class="o">=</span><span class="n">atol</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span><span class="p">,</span> <span class="n">phi_servicer_py</span><span class="p">,</span> <span class="n">phi_target_py</span>
+
+
+<div class="viewcode-block" id="test_python_reimplementation_matches_cpp_module">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_python_reimplementation_matches_cpp_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_python_reimplementation_matches_cpp_module</span><span class="p">(</span><span class="n">support_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Baseline cross-check under nominal plasma and beam settings.&quot;&quot;&quot;</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_vs_python_plasma_scaling_cases">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_cpp_vs_python_plasma_scaling_cases">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;scale_electron_flux, scale_ion_flux&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_vs_python_plasma_scaling_cases</span><span class="p">(</span><span class="n">support_data</span><span class="p">,</span> <span class="n">scale_electron_flux</span><span class="p">,</span> <span class="n">scale_ion_flux</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare C++ and Python equilibrium outputs across plasma scaling cases.&quot;&quot;&quot;</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="n">scale_electron_flux</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="n">scale_ion_flux</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_plasma_scaling_trends_target_potential">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_plasma_scaling_trends_target_potential">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_plasma_scaling_trends_target_potential</span><span class="p">(</span><span class="n">support_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify target-potential trend ordering across electron/ion flux scaling.&quot;&quot;&quot;</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_base_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_base_py</span> <span class="o">=</span> <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_e_more_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_e_more_py</span> <span class="o">=</span> <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_e_less_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_e_less_py</span> <span class="o">=</span> <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_i_more_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_i_more_py</span> <span class="o">=</span> <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="mf">2.0</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_i_less_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">phi_t_i_less_py</span> <span class="o">=</span> <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">scale_electron_flux</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale_ion_flux</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+
+    <span class="c1"># More ambient electrons =&gt; more negative target potential.</span>
+    <span class="k">assert</span> <span class="n">phi_t_e_more_cpp</span> <span class="o">&lt;</span> <span class="n">phi_t_base_cpp</span> <span class="o">&lt;</span> <span class="n">phi_t_e_less_cpp</span>
+    <span class="k">assert</span> <span class="n">phi_t_e_more_py</span> <span class="o">&lt;</span> <span class="n">phi_t_base_py</span> <span class="o">&lt;</span> <span class="n">phi_t_e_less_py</span>
+
+    <span class="c1"># More ambient ions =&gt; more positive target potential.</span>
+    <span class="k">assert</span> <span class="n">phi_t_i_less_cpp</span> <span class="o">&lt;</span> <span class="n">phi_t_base_cpp</span> <span class="o">&lt;</span> <span class="n">phi_t_i_more_cpp</span>
+    <span class="k">assert</span> <span class="n">phi_t_i_less_py</span> <span class="o">&lt;</span> <span class="n">phi_t_base_py</span> <span class="o">&lt;</span> <span class="n">phi_t_i_more_py</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_vs_python_zero_padded_plasma_bins">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_cpp_vs_python_zero_padded_plasma_bins">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_vs_python_zero_padded_plasma_bins</span><span class="p">(</span><span class="n">support_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure trailing zero-filled plasma bins are ignored consistently.&quot;&quot;&quot;</span>
+    <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">support_data</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">valid_bins</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">energies_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+    <span class="n">electron_flux_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">electron_flux</span><span class="p">)</span>
+    <span class="n">ion_flux_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ion_flux</span><span class="p">)</span>
+    <span class="n">energies_padded</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span>
+    <span class="n">electron_flux_padded</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span> <span class="o">=</span> <span class="n">electron_flux</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span>
+    <span class="n">ion_flux_padded</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span> <span class="o">=</span> <span class="n">ion_flux</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span>
+
+    <span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span> <span class="o">=</span> <span class="n">_run_cpp_module_once</span><span class="p">(</span>
+        <span class="n">energies_padded</span><span class="p">,</span>
+        <span class="n">electron_flux_padded</span><span class="p">,</span>
+        <span class="n">ion_flux_padded</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span><span class="p">,</span>
+        <span class="n">beam</span>
+    <span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">SpacecraftChargingEquilibriumCppReference</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">],</span>
+        <span class="n">electron_flux</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">],</span>
+        <span class="n">ion_flux</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">],</span>
+        <span class="n">yield_see_electron</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">],</span>
+        <span class="n">yield_see_ion</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">],</span>
+        <span class="n">yield_backscattered</span><span class="p">[:</span><span class="n">valid_bins</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">phi_servicer_py</span><span class="p">,</span> <span class="n">phi_target_py</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">solveCoupledEquilibrium</span><span class="p">(</span><span class="n">beam</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">phi_servicer_py</span><span class="p">,</span> <span class="n">phi_target_py</span><span class="p">]),</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_vs_python_beam_parameter_cases">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_cpp_vs_python_beam_parameter_cases">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;energy_eb, current_eb, alpha_eb&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">22000.0</span><span class="p">,</span> <span class="mf">2.0e-6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">33000.0</span><span class="p">,</span> <span class="mf">4.5e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">45000.0</span><span class="p">,</span> <span class="mf">7.0e-6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">40000.0</span><span class="p">,</span> <span class="mf">5.0e-4</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">33000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_vs_python_beam_parameter_cases</span><span class="p">(</span><span class="n">support_data</span><span class="p">,</span> <span class="n">energy_eb</span><span class="p">,</span> <span class="n">current_eb</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare C++ and Python equilibrium outputs across beam parameter cases.&quot;&quot;&quot;</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="n">alpha_eb</span><span class="p">)</span>
+    <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_requires_exactly_two_spacecraft">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_cpp_requires_exactly_two_spacecraft">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_requires_exactly_two_spacecraft</span><span class="p">(</span><span class="n">support_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-spacecraft run should fail reset with the exact-two-spacecraft precondition.&quot;&quot;&quot;</span>
+    <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">support_data</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;requires exactly 2 spacecraft&quot;</span><span class="p">):</span>
+        <span class="n">_run_cpp_module_one_spacecraft_once</span><span class="p">(</span>
+            <span class="n">energies</span><span class="p">,</span>
+            <span class="n">electron_flux</span><span class="p">,</span>
+            <span class="n">ion_flux</span><span class="p">,</span>
+            <span class="n">yield_see_electron</span><span class="p">,</span>
+            <span class="n">yield_see_ion</span><span class="p">,</span>
+            <span class="n">yield_backscattered</span><span class="p">,</span>
+            <span class="n">beam</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_cpp_vs_python_sunlit_area_override_cases">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_cpp_vs_python_sunlit_area_override_cases">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;servicer_sunlit_area, target_sunlit_area&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">25.132</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">25.132</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_vs_python_sunlit_area_override_cases</span><span class="p">(</span><span class="n">support_data</span><span class="p">,</span> <span class="n">servicer_sunlit_area</span><span class="p">,</span> <span class="n">target_sunlit_area</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare C++ and Python equilibrium outputs when sunlit areas are overridden.&quot;&quot;&quot;</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">_compare_python_reference_to_cpp</span><span class="p">(</span>
+        <span class="n">support_data</span><span class="o">=</span><span class="n">support_data</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">servicer_sunlit_area</span><span class="o">=</span><span class="n">servicer_sunlit_area</span><span class="p">,</span>
+        <span class="n">target_sunlit_area</span><span class="o">=</span><span class="n">target_sunlit_area</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;energy_eb, current_eb, alpha_eb&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">22000.0</span><span class="p">,</span> <span class="mf">2.0e-6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">33000.0</span><span class="p">,</span> <span class="mf">4.5e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">45000.0</span><span class="p">,</span> <span class="mf">7.0e-6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_target_current_breakdown_cpp_vs_python_equilibrium_beam_cases</span><span class="p">(</span>
+    <span class="n">support_data</span><span class="p">,</span>
+    <span class="n">energy_eb</span><span class="p">,</span>
+    <span class="n">current_eb</span><span class="p">,</span>
+    <span class="n">alpha_eb</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare C++ current-message target terms to Python terms at equilibrium.&quot;&quot;&quot;</span>
+    <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">support_data</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="n">energy_eb</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="n">current_eb</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="n">alpha_eb</span><span class="p">)</span>
+
+    <span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">currents_target_cpp</span> <span class="o">=</span> <span class="n">_run_cpp_module_once</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">electron_flux</span><span class="p">,</span>
+        <span class="n">ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span><span class="p">,</span>
+        <span class="n">beam</span><span class="p">,</span>
+        <span class="n">return_currents</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">SpacecraftChargingEquilibriumCppReference</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">electron_flux</span><span class="p">,</span>
+        <span class="n">ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span>
+    <span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">_python_target_breakdown</span><span class="p">(</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+        <span class="n">phi_t</span><span class="o">=</span><span class="n">phi_target_cpp</span><span class="p">,</span>
+        <span class="n">phi_s</span><span class="o">=</span><span class="n">phi_servicer_cpp</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span>
+    <span class="p">)</span>
+    <span class="n">cpp</span> <span class="o">=</span> <span class="n">_cpp_currents_payload_to_dict</span><span class="p">(</span><span class="n">currents_target_cpp</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_e&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_e&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_see_e&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_see_e&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_see_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_see_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_bs&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_bs&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_ph&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_ph&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;env_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;env_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;total_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;total_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="c1"># Sign sanity for target beam terms:</span>
+    <span class="c1"># incoming beam is non-positive, emitted SEE/backscatter are non-negative.</span>
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1e-12</span>
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">1e-12</span>
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">1e-12</span></div>
+
+
+
+<div class="viewcode-block" id="test_target_current_breakdown_cpp_vs_python_near_equilibrium">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftChargingEquilibrium/_UnitTest/test_spacecraftChargingEquilibrium.html#test_spacecraftChargingEquilibrium.test_target_current_breakdown_cpp_vs_python_near_equilibrium">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;target_sunlit_area&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">25.132</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_target_current_breakdown_cpp_vs_python_near_equilibrium</span><span class="p">(</span>
+    <span class="n">support_data</span><span class="p">,</span>
+    <span class="n">target_sunlit_area</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare C++ current-message target terms across sunlit-area settings.&quot;&quot;&quot;</span>
+    <span class="n">energies</span><span class="p">,</span> <span class="n">electron_flux</span><span class="p">,</span> <span class="n">ion_flux</span><span class="p">,</span> <span class="n">yield_see_electron</span><span class="p">,</span> <span class="n">yield_see_ion</span><span class="p">,</span> <span class="n">yield_backscattered</span> <span class="o">=</span> <span class="n">support_data</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">BeamParameters</span><span class="p">(</span><span class="n">energy_eb</span><span class="o">=</span><span class="mf">33000.0</span><span class="p">,</span> <span class="n">current_eb</span><span class="o">=</span><span class="mf">4.5e-6</span><span class="p">,</span> <span class="n">alpha_eb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">phi_servicer_cpp</span><span class="p">,</span> <span class="n">phi_target_cpp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">currents_target_cpp</span> <span class="o">=</span> <span class="n">_run_cpp_module_once</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">electron_flux</span><span class="p">,</span>
+        <span class="n">ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span><span class="p">,</span>
+        <span class="n">beam</span><span class="p">,</span>
+        <span class="n">target_sunlit_area</span><span class="o">=</span><span class="n">target_sunlit_area</span><span class="p">,</span>
+        <span class="n">return_currents</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">SpacecraftChargingEquilibriumCppReference</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span>
+        <span class="n">electron_flux</span><span class="p">,</span>
+        <span class="n">ion_flux</span><span class="p">,</span>
+        <span class="n">yield_see_electron</span><span class="p">,</span>
+        <span class="n">yield_see_ion</span><span class="p">,</span>
+        <span class="n">yield_backscattered</span>
+    <span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">_python_target_breakdown</span><span class="p">(</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+        <span class="n">phi_t</span><span class="o">=</span><span class="n">phi_target_cpp</span><span class="p">,</span>
+        <span class="n">phi_s</span><span class="o">=</span><span class="n">phi_servicer_cpp</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+        <span class="n">sunlit_area</span><span class="o">=</span><span class="n">target_sunlit_area</span>
+    <span class="p">)</span>
+    <span class="n">cpp</span> <span class="o">=</span> <span class="n">_cpp_currents_payload_to_dict</span><span class="p">(</span><span class="n">currents_target_cpp</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_e&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_e&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_see_e&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_see_e&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_see_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_see_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_bs&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_bs&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;i_ph&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;i_ph&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;env_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;env_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;total_i&quot;</span><span class="p">],</span> <span class="n">py</span><span class="p">[</span><span class="s2">&quot;total_i&quot;</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_arrival_i&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1e-12</span>
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_see_i&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">1e-12</span>
+    <span class="k">assert</span> <span class="n">cpp</span><span class="p">[</span><span class="s2">&quot;beam_bs_i&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">1e-12</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

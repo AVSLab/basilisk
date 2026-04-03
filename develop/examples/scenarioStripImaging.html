@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioStripImaging &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioAttitudeFeedbackRW" href="scenarioAttitudeFeedbackRW.html" />
+    <link rel="prev" title="scenarioSweepingSpacecraft" href="scenarioSweepingSpacecraft.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-regulation-control">Attitude Regulation Control</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#attitude-guidance">Attitude Guidance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-control-with-actuators">Attitude Control with Actuators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-steering-control">Attitude Steering Control</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioStripImaging</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioStripImaging.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariostripimaging">
+<span id="id1"></span><h1>scenarioStripImaging<a class="headerlink" href="#scenariostripimaging" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioStripImaging"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This scenario demonstrates sequential strip imaging of three ground strips using the
+<a class="reference internal" href="../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">Module: stripLocation</span></a> and <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> modules. A spacecraft in a low-Earth
+equatorial orbit images three strips one after another, each with a different orientation
+relative to the orbit track:</p>
+<ol class="arabic simple">
+<li><p><strong>Parallel</strong> to the orbit track (constant latitude, varying longitude)</p></li>
+<li><p><strong>Perpendicular</strong> to the orbit track (varying latitude, constant longitude)</p></li>
+<li><p><strong>Diagonal</strong> to the orbit track (both latitude and longitude vary)</p></li>
+</ol>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioStripImaging</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Each strip is defined by a start and end geodetic coordinate using the <a class="reference internal" href="../Documentation/simulation/environment/stripLocation/stripLocation.html#striplocation"><span class="std std-ref">Module: stripLocation</span></a>
+module, which propagates a target point along the great-circle arc between the two endpoints
+at a configurable acquisition speed. The <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> module provides three-degree-of-freedom
+attitude guidance: it points the body-fixed boresight axis <code class="docutils literal notranslate"><span class="pre">pHat_B</span></code> toward the moving target while
+aligning the scanning-line axis <code class="docutils literal notranslate"><span class="pre">cHat_B</span></code> orthogonal to the scanning direction.</p>
+<p>Before each imaging phase, a pre-imaging period allows the attitude control system to achieve acceptable
+attitude accuracy and/or wait for an acceptable viewing angle.</p>
+<p>Attitude control is implemented with an MRP steering law (<a class="reference internal" href="../Documentation/fswAlgorithms/attControl/mrpSteering/mrpSteering.html#mrpsteering"><span class="std std-ref">Module: mrpSteering</span></a>), a rate servo
+(<a class="reference internal" href="../Documentation/fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.html#rateservofullnonlinear"><span class="std std-ref">Module: rateServoFullNonlinear</span></a>), and three reaction wheels (<a class="reference internal" href="../Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">Module: reactionWheelStateEffector</span></a>).</p>
+<p>Two imaging constraints are tracked throughout the mission:</p>
+<ul class="simple">
+<li><p><strong>Minimum elevation angle</strong> (10 deg): the view angle between the spacecraft and the target
+must exceed this threshold.</p></li>
+<li><p><strong>Maximum principal rotation error</strong> (5 deg): the attitude error must remain below this
+threshold during imaging.</p></li>
+</ul>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>The first plot shows the principal rotation error over the full mission. Gray-shaded regions
+indicate pre-imaging periods. During imaging phases, green shading marks times
+when the error is below the 5 deg threshold and red shading marks times when it is exceeded.</p>
+<img alt="../_images/scenarioStripImaging1.svg" class="align-center" src="../_images/scenarioStripImaging1.svg" />
+<p>The second plot shows the view angle (elevation) over the full mission. Green shading during
+imaging phases indicates the elevation exceeds the 10 deg minimum, while red indicates it
+does not.</p>
+<img alt="../_images/scenarioStripImaging2.svg" class="align-center" src="../_images/scenarioStripImaging2.svg" />
+<p>The third plot shows the norm of the perpendicular velocity component
+<span class="math notranslate nohighlight">\(\|\mathbf{v}_{\perp}\|\)</span>. When this value is small (hatched red region), the boresight
+and target velocity are nearly collinear and the <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> module falls back to
+point-only targeting.</p>
+<img alt="../_images/scenarioStripImaging3.svg" class="align-center" src="../_images/scenarioStripImaging3.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.compute_extended_start">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">compute_extended_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preImagingTime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#compute_extended_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.compute_extended_start" title="Link to this definition"></a></dt>
+<dd><p>Extend the strip start backwards along the great circle by preImagingTime to get pStartUpdated.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.compute_scan_line_extremities">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">compute_scan_line_extremities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#compute_scan_line_extremities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.compute_scan_line_extremities" title="Link to this definition"></a></dt>
+<dd><p>Compute left and right extremity positions of the current scan line.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.compute_strip_vertices">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">compute_strip_vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#compute_strip_vertices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.compute_strip_vertices" title="Link to this definition"></a></dt>
+<dd><p>Compute 4 corner vertices of a rectangular strip on the surface.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.compute_v_perp_norm">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">compute_v_perp_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">att_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_LP_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pHat_B</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#compute_v_perp_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.compute_v_perp_norm" title="Link to this definition"></a></dt>
+<dd><p>Compute ||v_perp|| = ||pHat_B x v_TP_B|| at each time step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.get_target_position">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">get_target_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#get_target_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.get_target_position" title="Link to this definition"></a></dt>
+<dd><p>Interpolate a point along the great-circle arc from r_start to r_end.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.lat_lon_to_surface">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">lat_lon_to_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat_deg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_deg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#lat_lon_to_surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.lat_lon_to_surface" title="Link to this definition"></a></dt>
+<dd><p>Convert geodetic lat/lon (deg) to a spherical-Earth surface position.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.plot_principal_rotation_error">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">plot_principal_rotation_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataSigmaBR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_regions_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imaging_regions_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seg_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxPrincipalRotationError</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#plot_principal_rotation_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.plot_principal_rotation_error" title="Link to this definition"></a></dt>
+<dd><p>Plot principal rotation error over the entire sequential mission.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.plot_v_perp_norm">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">plot_v_perp_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_perp_norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_regions_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seg_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#plot_v_perp_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.plot_v_perp_norm" title="Link to this definition"></a></dt>
+<dd><p>Plot ||v_perp|| over the entire sequential mission.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.plot_view_angle">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">plot_view_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation_rad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_regions_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imaging_regions_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seg_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gray_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimumElevation_deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#plot_view_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.plot_view_angle" title="Link to this definition"></a></dt>
+<dd><p>Plot view angle (elevation) over the entire sequential mission.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioStripImaging.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioStripImaging.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioStripImaging.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioStripImaging.run" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Run a single continuous simulation imaging three strips sequentially:</dt><dd><ol class="arabic simple">
+<li><p>Parallel to orbit track      (constant latitude, varying longitude)</p></li>
+<li><p>Perpendicular to orbit track  (varying latitude, constant longitude)</p></li>
+<li><p>Diagonal to orbit track       (both latitude and longitude vary)</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioSweepingSpacecraft.html" class="btn btn-neutral float-left" title="scenarioSweepingSpacecraft" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioAttitudeFeedbackRW.html" class="btn btn-neutral float-right" title="scenarioAttitudeFeedbackRW" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

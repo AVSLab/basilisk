@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_Faults &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BSK_Faults</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BSK_Faults</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Fault definitions for BskSim fault-injection scenarios.</span>
+
+<span class="sd">This module provides ``FaultObject`` subclasses that can be assembled into a</span>
+<span class="sd">``faultList`` (for example, in ``scenario_FaultList.py``).</span>
+
+<span class="sd">Each fault object encapsulates:</span>
+
+<span class="sd">1. A trigger time (simulation nanoseconds),</span>
+<span class="sd">2. The mutation applied to the dynamics/FSW model, and</span>
+<span class="sd">3. A one-time status message.</span>
+
+<span class="sd">Usage pattern in scenarios:</span>
+
+<span class="sd">1. Instantiate one or more fault objects.</span>
+<span class="sd">2. Add them to a list.</span>
+<span class="sd">3. Call ``fault.addFaultToSimulation(sim, idx)`` for each element.</span>
+
+<span class="sd">The base class registers each fault as an event through ``createNewEvent`` and</span>
+<span class="sd">executes the fault action at its configured time.</span>
+
+<span class="sd">Indexing conventions:</span>
+
+<span class="sd">- Fault index arguments use 0-based indexing.</span>
+<span class="sd">- Reaction wheel indices must be in the range 0..3.</span>
+<span class="sd">- CSS sensor indices must be in the range 0..7.</span>
+<span class="sd">- Magnetometer axis indices must be in the range 0..2.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">tempMeasurement</span><span class="p">,</span> <span class="n">magnetometer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">vizSupport</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">faultTypeInList</span><span class="p">(</span><span class="n">faultList</span><span class="p">,</span> <span class="n">faultType</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">fault</span><span class="p">)</span> <span class="o">==</span> <span class="n">faultType</span> <span class="k">for</span> <span class="n">fault</span> <span class="ow">in</span> <span class="n">faultList</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getFaultFromList</span><span class="p">(</span><span class="n">faultList</span><span class="p">,</span> <span class="n">faultType</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">faultList</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">fault</span><span class="p">)</span> <span class="o">==</span> <span class="n">faultType</span> <span class="k">for</span> <span class="n">fault</span> <span class="ow">in</span> <span class="n">faultList</span><span class="p">])]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FaultObject</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_printed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a custom execute function!&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_printed</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message_printed</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">addFaultToSimulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">listIdx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniqueFaultIdx</span> <span class="o">=</span> <span class="n">listIdx</span>  <span class="c1"># Index in the faultList array.</span>
+        <span class="n">eventName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;add</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">Fault_</span><span class="si">{</span><span class="n">listIdx</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uniqueFaultIdx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uniqueFaultIdx</span><span class="p">,</span> <span class="n">eventName</span><span class="o">=</span><span class="n">eventName</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">faultList</span><span class="p">[</span><span class="n">uniqueFaultIdx</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">faultList</span><span class="p">[</span><span class="n">uniqueFaultIdx</span><span class="p">]</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEventActivity</span><span class="p">(</span><span class="n">eventName</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">simulation</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="n">eventName</span><span class="p">,</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionTime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="n">fault</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="RwPowerFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.RwPowerFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RwPowerFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a reaction wheel power fault event.</span>
+
+<span class="sd">    This fault reduces the maximum power or torque output available</span>
+<span class="sd">    from one or all reaction wheels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    reducedLimit : float</span>
+<span class="sd">        Power limit value (in watts).</span>
+<span class="sd">    wheelIdx : int or str</span>
+<span class="sd">        Index (0, 1, 2, or 3) of the affected reaction wheel(s),</span>
+<span class="sd">        or &quot;all&quot; to apply to every wheel.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;rwPowerLimited&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">reducedLimit</span><span class="p">,</span> <span class="n">wheelIdx</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rwPowerLimited&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span> <span class="o">=</span> <span class="n">reducedLimit</span>
+
+        <span class="k">if</span> <span class="n">wheelIdx</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span> <span class="o">=</span> <span class="n">wheelIdx</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wheelIdx</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wheelIdx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span> <span class="o">=</span> <span class="n">idx</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Fault parameter &#39;wheelIdx&#39; must be 0-3 or &#39;all&#39;&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Fault parameter &#39;wheelIdx&#39; must either be a number corresponding to a reaction wheel or the string &#39;all&#39;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="c1"># option to trigger the fault in all wheels (not supported for all fault types)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">RW1</span><span class="o">.</span><span class="n">P_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">RW2</span><span class="o">.</span><span class="n">P_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">RW3</span><span class="o">.</span><span class="n">P_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">RW4</span><span class="o">.</span><span class="n">P_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rwList</span> <span class="o">=</span> <span class="p">[</span><span class="n">dynModels</span><span class="o">.</span><span class="n">RW1</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW2</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW3</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW4</span><span class="p">]</span>
+            <span class="n">rwList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span><span class="p">]</span><span class="o">.</span><span class="n">P_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW Power Fault: all RW&#39;s power limit reduced to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span><span class="si">}</span><span class="s2"> Watts at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW Power Fault: RW</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span><span class="si">}</span><span class="s2">&#39;s power limit reduced to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reducedLimit</span><span class="si">}</span><span class="s2"> Watts at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RwFrictionFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.RwFrictionFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RwFrictionFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a reaction wheel friction fault event.</span>
+
+<span class="sd">    This fault increases the friction in one of reaction wheels,</span>
+<span class="sd">    reducing their effective torque output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    frictionMultiplier : float</span>
+<span class="sd">        Multiplier applied to the reaction wheel friction.</span>
+<span class="sd">        For example, 2.0 doubles the nominal friction.</span>
+<span class="sd">    wheelIdx : int</span>
+<span class="sd">        Index (0, 1, 2, or 3) of the affected reaction wheel.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;rwFriction&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">frictionMultiplier</span><span class="p">,</span> <span class="n">wheelIdx</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rwFriction&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frictionMultiplier</span> <span class="o">=</span> <span class="n">frictionMultiplier</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wheelIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;wheelIdx&#39; must be 0-3&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">rwList</span> <span class="o">=</span> <span class="p">[</span><span class="n">dynModels</span><span class="o">.</span><span class="n">RW1</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW2</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW3</span><span class="p">,</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">RW4</span><span class="p">]</span>
+        <span class="n">rwList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span><span class="p">]</span><span class="o">.</span><span class="n">fCoulomb</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frictionMultiplier</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW Friction Fault: RW</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wheelIdx</span><span class="si">}</span><span class="s2">&#39;s friction multiplied by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frictionMultiplier</span><span class="si">}</span><span class="s2">x at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DebrisImpactOn">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.DebrisImpactOn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DebrisImpactOn</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a debris impact fault on the spacecraft.</span>
+
+<span class="sd">    This fault simulates an impact from space debris at a specified location</span>
+<span class="sd">    on the spacecraft body. The momentum transfer due to the impact generates</span>
+<span class="sd">    both force and torque on the spacecraft.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the impact occurs.</span>
+<span class="sd">    debris_location : array_like</span>
+<span class="sd">        Impact location in body coordinates [m] as a 3-element vector.</span>
+<span class="sd">    direction : array_like</span>
+<span class="sd">        Impact direction in body coordinates as a 3-element vector.</span>
+<span class="sd">        The vector is normalized internally.</span>
+<span class="sd">    mass : float</span>
+<span class="sd">        Mass of the debris particle in kilograms (kg).</span>
+<span class="sd">    velocityMag : float, optional</span>
+<span class="sd">        Magnitude of the debris velocity in meters per second (m/s)</span>
+<span class="sd">        (default: 8e3 m/s).</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;DebrisImpactOn&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">,</span>
+        <span class="n">debris_location</span><span class="p">,</span>
+        <span class="n">direction</span><span class="p">,</span>
+        <span class="n">mass</span><span class="p">,</span>
+        <span class="n">velocityMag</span><span class="o">=</span><span class="mf">8e3</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DebrisImpactOn&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">debris_location</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Fault parameter &#39;debris_location&#39; must be a 3-element vector&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">direction</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Fault parameter &#39;direction&#39; must be a 3-element vector&quot;</span>
+            <span class="p">)</span>
+        <span class="n">direction_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">direction_norm</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;direction&#39; must be non-zero&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">direction_norm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityMag</span> <span class="o">=</span> <span class="n">velocityMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocityMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">mass</span>  <span class="c1"># kg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">dynRate</span>
+        <span class="n">momentum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span>
+        <span class="n">force_B</span> <span class="o">=</span> <span class="n">momentum</span> <span class="o">/</span> <span class="n">dt</span>
+
+        <span class="n">torque_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">force_B</span><span class="p">)</span>
+
+        <span class="n">dynModels</span><span class="o">.</span><span class="n">extForceTorqueObject</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="n">force_B</span>
+        <span class="n">dynModels</span><span class="o">.</span><span class="n">extForceTorqueObject</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="n">torque_B</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Debris impact case </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="si">}</span><span class="s2"> kg and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="si">}</span><span class="s2"> m/s of debris hit at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2"> m at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DebrisImpactOff">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.DebrisImpactOff">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DebrisImpactOff</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the end of a debris impact fault.</span>
+
+<span class="sd">    This fault resets the external force and torque applied by a previous</span>
+<span class="sd">    debris impact (e.g., DebrisImpactOn) back to zero, effectively ending</span>
+<span class="sd">    the impact event.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the impact effect ends.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;DebrisImpactOff&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DebrisImpactOff&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+
+        <span class="n">force_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">torque_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">dynModels</span><span class="o">.</span><span class="n">extForceTorqueObject</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="n">force_B</span>
+        <span class="n">dynModels</span><span class="o">.</span><span class="n">extForceTorqueObject</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="n">torque_B</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Debris impact done!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CssSignalFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.CssSignalFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CssSignalFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a coarse sun sensor (CSS) measurement fault.</span>
+
+<span class="sd">    The types of CSS faults are as follows:</span>
+<span class="sd">    1. The specified CSS measurement is turned off (&quot;CSSFAULT_OFF&quot;).</span>
+<span class="sd">    2. The CSS measurement is stuck at the current value (&quot;CSSFAULT_STUCK_CURRENT&quot;).</span>
+<span class="sd">    3. The CSS measurement is stuck at the maximum value (&quot;CSSFAULT_STUCK_MAX&quot;).</span>
+<span class="sd">    4. The CSS measurement is stuck at a random value (&quot;CSSFAULT_STUCK_RAND&quot;).</span>
+<span class="sd">    5. The CSS measurement is randomly altered (&quot;CSSFAULT_RAND&quot;).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    type : str</span>
+<span class="sd">        Type of CSS fault, one of:</span>
+<span class="sd">        &quot;CSSFAULT_OFF&quot;, &quot;CSSFAULT_STUCK_CURRENT&quot;, &quot;CSSFAULT_STUCK_MAX&quot;,</span>
+<span class="sd">        &quot;CSSFAULT_STUCK_RAND&quot;, or &quot;CSSFAULT_RAND&quot;.</span>
+<span class="sd">    cssIdx : list[int]</span>
+<span class="sd">        Index (0, 1, 2, 3, 4, 5, 6, 7) of the affected CSS sensor.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;cssSignalOff&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">cssIdx</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cssSignalOff&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+        <span class="n">valid_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;CSSFAULT_OFF&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_CURRENT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_MAX&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_RAND&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_RAND&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Fault parameter &#39;type&#39; must be one of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">valid_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssIdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cssIdx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssIdx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssIdx</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;cssIdx&#39; must be in the range 0-7&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">coarseSunSensor</span>
+
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+
+        <span class="n">fault_state_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;CSSFAULT_OFF&quot;</span><span class="p">:</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSFAULT_OFF</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_CURRENT&quot;</span><span class="p">:</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSFAULT_STUCK_CURRENT</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_MAX&quot;</span><span class="p">:</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSFAULT_STUCK_MAX</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_STUCK_RAND&quot;</span><span class="p">:</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSFAULT_STUCK_RAND</span><span class="p">,</span>
+            <span class="s2">&quot;CSSFAULT_RAND&quot;</span><span class="p">:</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSFAULT_RAND</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">faultState</span> <span class="o">=</span> <span class="n">fault_state_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cssIdx</span><span class="p">:</span>
+            <span class="c1"># idx needs to get wrapped in int() because it&#39;s not just an int when returned from self.cssIdx?</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting CSS </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> fault state to </span><span class="si">{</span><span class="n">faultState</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">CSSConstellationObject</span><span class="o">.</span><span class="n">sensorList</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span><span class="o">.</span><span class="n">faultState</span> <span class="o">=</span> <span class="n">faultState</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CSS Signal Fault </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> executed on CSS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cssIdx</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RWBitFlipFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.RWBitFlipFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RWBitFlipFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a reaction wheel control bit-flip fault.</span>
+
+<span class="sd">    This fault simulates a scenario in which a single bit in the reaction wheel</span>
+<span class="sd">    control axis configuration is flipped.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    bitFlipIdx : int</span>
+<span class="sd">        Zero-based index of the bit to flip (0–15).</span>
+<span class="sd">    RW_Idx : int</span>
+<span class="sd">        Index of the affected reaction wheel (0–3).</span>
+<span class="sd">    elementIdx : int</span>
+<span class="sd">        Zero-based index of the axis to flip within the reaction wheel control (0–2).</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;RWBitFlipFault&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">bitFlipIdx</span><span class="p">,</span> <span class="n">RW_Idx</span><span class="p">,</span> <span class="n">elementIdx</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RWBitFlipFault&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bitFlipIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;bitFlipIdx&#39; must be 0-15&quot;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">RW_Idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RW_Idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;RW_Idx&#39; must be 0-3&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elementIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;elementIdx&#39; must be 0-2&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="c1"># Convert float16 to raw bits</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bits_to_float16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bits</span><span class="p">):</span>
+        <span class="c1"># Convert raw bits back to float16</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">flip_one_bit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">bit_idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">^</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bit_idx</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Print the binary representation with leading zeros for 16 bits</span>
+        <span class="k">return</span> <span class="nb">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;016b&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">fswModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+
+        <span class="n">rw_Idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RW_Idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynModels</span><span class="p">,</span> <span class="n">rw_Idx</span><span class="p">)</span><span class="o">.</span><span class="n">gsHat_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original</span><span class="p">)</span>
+
+        <span class="c1"># Flip just one bit</span>
+        <span class="n">flipped_bits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_one_bit</span><span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bits_to_float16</span><span class="p">(</span><span class="n">flipped_bits</span><span class="p">)</span>
+        <span class="n">GsHat_B</span> <span class="o">=</span> <span class="n">fswModels</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">GsMatrix_B</span>
+        <span class="n">GsHat_B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RW_Idx</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span>
+        <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fswModels</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">GsMatrix_B</span> <span class="o">=</span> <span class="n">GsHat_B</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW Bit Flip Fault occurred for RW</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RW_Idx</span><span class="si">}</span><span class="s2"> of element </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="si">}</span><span class="s2"> on bit </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes! The value changed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original</span><span class="si">}</span><span class="s2"> (binary: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original</span><span class="p">))</span><span class="si">}</span><span class="s2">) to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (binary: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">elementIdx</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RWGainBitFlipFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.RWGainBitFlipFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RWGainBitFlipFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a reaction wheel feedback gain bit-flip fault.</span>
+
+<span class="sd">    This fault simulates a scenario in which a single bit in the reaction wheel</span>
+<span class="sd">    feedback gain configuration is flipped.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    bitFlipIdx : int</span>
+<span class="sd">        Zero-based index of the bit to flip (0–15).</span>
+<span class="sd">    gainType : str</span>
+<span class="sd">        Type of gain affected, one of:</span>
+<span class="sd">        - &quot;K&quot;  : Proportional gain applied to MRP errors (rad/sec)</span>
+<span class="sd">        - &quot;P&quot;  : Rate error feedback gain (N·m·s)</span>
+<span class="sd">        - &quot;Ki&quot; : Integral feedback on rate error (N·m)</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;RWGainBitFlipFault&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">bitFlipIdx</span><span class="p">,</span> <span class="n">gainType</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RWGainBitFlipFault&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bitFlipIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;bitFlipIdx&#39; must be 0-15&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gainType</span> <span class="o">=</span> <span class="n">gainType</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="c1"># Convert float16 to raw bits</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bits_to_float16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bits</span><span class="p">):</span>
+        <span class="c1"># Convert raw bits back to float16</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">flip_one_bit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">bit_idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">^</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bit_idx</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Print the binary representation with leading zeros for 16 bits</span>
+        <span class="k">return</span> <span class="nb">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;016b&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">fswModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fswModels</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gainType</span><span class="p">)</span>
+        <span class="n">bits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
+
+        <span class="c1"># Flip just one bit</span>
+        <span class="n">flipped_bits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_one_bit</span><span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flipped_gain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bits_to_float16</span><span class="p">(</span><span class="n">flipped_bits</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">fswModels</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gainType</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flipped_gain</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RW Gain </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gainType</span><span class="si">}</span><span class="s2"> Bit Flip Fault occurred on bit </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bitFlipIdx</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes! The value changed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="si">}</span><span class="s2"> (binary: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">))</span><span class="si">}</span><span class="s2">) to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">flipped_gain</span><span class="si">}</span><span class="s2"> (binary: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">print_binary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float16_to_bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flipped_gain</span><span class="p">))</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MagnetometerFault">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.MagnetometerFault">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MagnetometerFault</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a magnetometer sensor fault.</span>
+
+<span class="sd">    This fault simulates scenarios in which magnetometer measurements become inaccurate</span>
+<span class="sd">    due to stuck readings or random spikes, depending on the selected fault type.</span>
+<span class="sd">    It can affect one or more of the sensor’s three axes (x, y, z).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time (in nanoseconds) when the fault occurs.</span>
+<span class="sd">    faultType : str</span>
+<span class="sd">        Type of magnetometer fault. Supported types include:</span>
+<span class="sd">        - &quot;MAG_FAULT_STUCK_CURRENT&quot; : Output held at the current value.</span>
+<span class="sd">        - &quot;MAG_FAULT_STUCK_VALUE&quot;   : Output fixed at a given constant value.</span>
+<span class="sd">        - &quot;MAG_FAULT_SPIKING&quot;       : Output intermittently spiking.</span>
+<span class="sd">    faultyAxis : int</span>
+<span class="sd">        Axis affected by the fault (0–2), corresponding to x, y, z.</span>
+<span class="sd">    stuckValue : float, optional</span>
+<span class="sd">        Constant value used when the fault type is &quot;MAG_FAULT_STUCK_VALUE&quot; (default: 0.0).</span>
+<span class="sd">    spikeProbability : float, optional</span>
+<span class="sd">        Probability of a spike occurring at each time step when the fault type is</span>
+<span class="sd">        &quot;MAG_FAULT_SPIKING&quot; (default: 0.01).</span>
+<span class="sd">    spikeAmount : float, optional</span>
+<span class="sd">        Magnitude of the spike added to the nominal measurement when a spike occurs</span>
+<span class="sd">        (default: 2.0).</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name identifier for the fault (default: &quot;magnetometerFault&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">,</span>
+        <span class="n">faultType</span><span class="p">,</span>
+        <span class="n">faultyAxis</span><span class="p">,</span>
+        <span class="n">stuckValue</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">spikeProbability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">spikeAmount</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;magnetometerFault&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="n">valid_fault_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAG_FAULT_STUCK_CURRENT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAG_FAULT_STUCK_VALUE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAG_FAULT_SPIKING&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">faultType</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_fault_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Fault parameter &#39;faultType&#39; must be one of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">valid_fault_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">=</span> <span class="n">faultType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">faultyAxis</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fault parameter &#39;faultyAxis&#39; must be 0-2&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Pull optional args from kwargs with defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stuckValue</span> <span class="o">=</span> <span class="n">stuckValue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spikeProbability</span> <span class="o">=</span> <span class="n">spikeProbability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spikeAmount</span> <span class="o">=</span> <span class="n">spikeAmount</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_STUCK_CURRENT&quot;</span><span class="p">:</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_STUCK_CURRENT</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_STUCK_VALUE&quot;</span><span class="p">:</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_STUCK_VALUE</span>
+            <span class="p">)</span>
+            <span class="n">stuckValue</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stuckValue</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">stuckValue</span> <span class="o">=</span> <span class="n">stuckValue</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_SPIKING&quot;</span><span class="p">:</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+            <span class="n">spikeProbability</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spikeProbability</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeProbability</span> <span class="o">=</span> <span class="n">spikeProbability</span>
+            <span class="n">spikeAmount</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">spikeAmount</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeAmount</span> <span class="o">=</span> <span class="n">spikeAmount</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_STUCK_CURRENT&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Magnetometer Fault: Magnetometer</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="si">}</span><span class="s2"> is stuck at current value at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_STUCK_VALUE&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Magnetometer Fault: Magnetometer</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="si">}</span><span class="s2"> is stuck at value </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stuckValue</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;MAG_FAULT_SPIKING&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Magnetometer Fault: Magnetometer</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="si">}</span><span class="s2"> is spiking with probability </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spikeProbability</span><span class="si">}</span><span class="s2"> and spike amount </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spikeAmount</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Magnetometer Nominal: Magnetometer</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">faultyAxis</span><span class="si">}</span><span class="s2"> is nominal at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="si">}</span><span class="s2"> minutes!&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">print_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MagPolarNoise">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Faults.html#BSK_Faults.MagPolarNoise">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MagPolarNoise</span><span class="p">(</span><span class="n">FaultObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Magnetometer fault model that emulates degradation effects in Earth&#39;s polar regions.</span>
+
+<span class="sd">    This fault object modifies the behavior of a three-axis magnetometer (TAM)</span>
+<span class="sd">    based on the spacecraft&#39;s geomagnetic latitude. As the spacecraft enters</span>
+<span class="sd">    high-latitude regions (:math:`|\\mathrm{latitude}| \\gtrsim 60\\,\\mathrm{deg}`),</span>
+<span class="sd">    the fault severity transitions</span>
+<span class="sd">    smoothly from nominal to polar conditions using a sigmoid weighting function.</span>
+
+<span class="sd">    Depending on the selected fault type, the model can:</span>
+
+<span class="sd">    - Increase sensor noise and random-walk bounds (&quot;NOISE&quot;)</span>
+<span class="sd">    - Inject sporadic measurement spikes (&quot;SPIKE&quot;)</span>
+<span class="sd">    - Apply both noise degradation and spiking behavior (&quot;BOTH&quot;)</span>
+
+<span class="sd">    The spacecraft position is obtained in the inertial frame, transformed into</span>
+<span class="sd">    the Earth-fixed frame using SPICE-provided planet state information, and</span>
+<span class="sd">    converted to geodetic latitude. Fault parameters are then interpolated</span>
+<span class="sd">    between nominal and polar values based on latitude.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : float</span>
+<span class="sd">        Simulation time at which the fault is executed.</span>
+<span class="sd">    faultType : str</span>
+<span class="sd">        Type of magnetometer fault to apply. Must be one of:</span>
+<span class="sd">        {&quot;NOISE&quot;, &quot;SPIKE&quot;, &quot;BOTH&quot;}.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of the fault object (default is &quot;magPolarFault&quot;).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    - The latitude transition is centered at 60 degrees with a 5-degree</span>
+<span class="sd">      smoothing width.</span>
+<span class="sd">    - Noise and random-walk bounds are applied directly to the TAM model.</span>
+<span class="sd">    - Spiking faults are enabled via the magnetometer fault-state interface.</span>
+<span class="sd">    - This model assumes an Earth-centered mission and valid SPICE ephemerides.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">,</span>
+        <span class="n">faultType</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;magPolarFault&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">=</span> <span class="n">faultType</span>  <span class="c1"># &quot;NOISE&quot;, &quot;SPIKE&quot;, &quot;BOTH&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dynModels</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">dynModels</span><span class="o">.</span><span class="n">earth</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">J20002Pfix</span>
+        <span class="n">r_PN_N</span> <span class="o">=</span> <span class="n">dynModels</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">dynModels</span><span class="o">.</span><span class="n">earth</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">PositionVector</span>
+
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_BN_N</span><span class="p">)</span>
+        <span class="n">r_PN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_PN_N</span><span class="p">)</span>
+        <span class="n">C_PN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">J20002Pfix</span><span class="p">)</span>
+
+        <span class="n">r_BP_N</span> <span class="o">=</span> <span class="n">r_BN_N</span> <span class="o">-</span> <span class="n">r_PN_N</span>
+        <span class="n">r_BP_P</span> <span class="o">=</span> <span class="n">C_PN</span> <span class="o">@</span> <span class="n">r_BP_N</span>
+        <span class="n">lat_rad</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">fixedframe2lla</span><span class="p">(</span>
+            <span class="n">r_BP_P</span><span class="p">,</span>
+            <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">RP_EARTH</span> <span class="o">/</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lat_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">))</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span> <span class="o">-</span> <span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span><span class="p">))</span>  <span class="c1"># 60 deg threshold, 5 deg transition</span>
+
+        <span class="n">nominalsenNoiseStd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4e-9</span><span class="p">,</span> <span class="mf">4e-9</span><span class="p">,</span> <span class="mf">4e-9</span><span class="p">])</span>
+        <span class="n">nominalwalkBounds</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">15e-9</span><span class="p">,</span> <span class="mf">15e-9</span><span class="p">,</span> <span class="mf">15e-9</span><span class="p">])</span>
+        <span class="n">polarsenNoiseStd</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">120e-9</span><span class="p">,</span> <span class="mf">120e-9</span><span class="p">,</span> <span class="mf">120e-9</span><span class="p">])</span>
+        <span class="n">polarwalkBounds</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">600e-9</span><span class="p">,</span> <span class="mf">600e-9</span><span class="p">,</span> <span class="mf">600e-9</span><span class="p">])</span>
+        <span class="n">senNoise</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">*</span><span class="n">nominalsenNoiseStd</span> <span class="o">+</span> <span class="n">S</span><span class="o">*</span><span class="n">polarsenNoiseStd</span>
+        <span class="n">walkBounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">*</span><span class="n">nominalwalkBounds</span> <span class="o">+</span> <span class="n">S</span><span class="o">*</span><span class="n">polarwalkBounds</span>
+        <span class="c1"># GaussMarkov checks new bounds against the previous noise matrix.</span>
+        <span class="c1"># Keep bounds above 3-sigma for both current and previous noise levels</span>
+        <span class="c1"># to avoid transient truncation warnings during latitude transitions.</span>
+        <span class="n">prevNoise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">senNoiseStd</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prevNoise</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">prevNoise</span> <span class="o">=</span> <span class="n">senNoise</span>
+        <span class="n">safetySigma</span> <span class="o">=</span> <span class="mf">3.1</span>
+        <span class="n">walkBounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">walkBounds</span><span class="p">,</span> <span class="n">safetySigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">senNoise</span><span class="p">,</span> <span class="n">prevNoise</span><span class="p">))</span>
+
+        <span class="n">nominalSpikeRate</span> <span class="o">=</span> <span class="mf">0.005</span>
+        <span class="n">polarSpikeRate</span>  <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">spikeAmount</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;NOISE&quot;</span><span class="p">:</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="n">senNoise</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">walkBounds</span>  <span class="o">=</span> <span class="n">walkBounds</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;SPIKE&quot;</span><span class="p">:</span>
+            <span class="n">spikeRate</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">*</span><span class="n">nominalSpikeRate</span> <span class="o">+</span> <span class="n">S</span><span class="o">*</span><span class="n">polarSpikeRate</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeProbability</span> <span class="o">=</span> <span class="p">[</span><span class="n">spikeRate</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeAmount</span> <span class="o">=</span> <span class="p">[</span><span class="n">spikeAmount</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">faultType</span> <span class="o">==</span> <span class="s2">&quot;BOTH&quot;</span><span class="p">:</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="n">senNoise</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">walkBounds</span>  <span class="o">=</span> <span class="n">walkBounds</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+            <span class="n">spikeRate</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">*</span><span class="n">nominalSpikeRate</span> <span class="o">+</span> <span class="n">S</span><span class="o">*</span><span class="n">polarSpikeRate</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_SPIKING</span><span class="p">)</span>
+
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeProbability</span> <span class="o">=</span> <span class="p">[</span><span class="n">spikeRate</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+            <span class="n">dynModels</span><span class="o">.</span><span class="n">TAM</span><span class="o">.</span><span class="n">spikeAmount</span> <span class="o">=</span> <span class="p">[</span><span class="n">spikeAmount</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid fault type. Must be &#39;NOISE&#39;, &#39;SPIKE&#39;, or &#39;BOTH&#39;.&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+        <span class="c1"># self.message = &quot;&quot;</span>
+        <span class="c1"># super().print_message(self.message)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

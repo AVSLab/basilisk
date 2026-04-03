@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_Faults &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="BSK_FormationDynamics" href="BSK_FormationDynamics.html" />
+    <link rel="prev" title="BSK_Dynamics" href="BSK_Dynamics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#single-satellite">Single Satellite</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html#satellite-formation">Satellite Formation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Integrated Example Scripts</a></li>
+          <li class="breadcrumb-item"><a href="index.html">models</a></li>
+      <li class="breadcrumb-item active">BSK_Faults</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/examples/BskSim/models/BSK_Faults.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bsk-faults">
+<span id="id1"></span><h1>BSK_Faults<a class="headerlink" href="#bsk-faults" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-BSK_Faults">Fault definitions for BskSim fault-injection scenarios.</p>
+<p>This module provides <code class="docutils literal notranslate"><span class="pre">FaultObject</span></code> subclasses that can be assembled into a
+<code class="docutils literal notranslate"><span class="pre">faultList</span></code> (for example, in <code class="docutils literal notranslate"><span class="pre">scenario_FaultList.py</span></code>).</p>
+<p>Each fault object encapsulates:</p>
+<ol class="arabic simple">
+<li><p>A trigger time (simulation nanoseconds),</p></li>
+<li><p>The mutation applied to the dynamics/FSW model, and</p></li>
+<li><p>A one-time status message.</p></li>
+</ol>
+<p>Usage pattern in scenarios:</p>
+<ol class="arabic simple">
+<li><p>Instantiate one or more fault objects.</p></li>
+<li><p>Add them to a list.</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">fault.addFaultToSimulation(sim,</span> <span class="pre">idx)</span></code> for each element.</p></li>
+</ol>
+<p>The base class registers each fault as an event through <code class="docutils literal notranslate"><span class="pre">createNewEvent</span></code> and
+executes the fault action at its configured time.</p>
+<p>Indexing conventions:</p>
+<ul class="simple">
+<li><p>Fault index arguments use 0-based indexing.</p></li>
+<li><p>Reaction wheel indices must be in the range 0..3.</p></li>
+<li><p>CSS sensor indices must be in the range 0..7.</p></li>
+<li><p>Magnetometer axis indices must be in the range 0..2.</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.CssSignalFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">CssSignalFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cssIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cssSignalOff'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#CssSignalFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.CssSignalFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a coarse sun sensor (CSS) measurement fault.</p>
+<p>The types of CSS faults are as follows:
+1. The specified CSS measurement is turned off (“CSSFAULT_OFF”).
+2. The CSS measurement is stuck at the current value (“CSSFAULT_STUCK_CURRENT”).
+3. The CSS measurement is stuck at the maximum value (“CSSFAULT_STUCK_MAX”).
+4. The CSS measurement is stuck at a random value (“CSSFAULT_STUCK_RAND”).
+5. The CSS measurement is randomly altered (“CSSFAULT_RAND”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – Type of CSS fault, one of:
+“CSSFAULT_OFF”, “CSSFAULT_STUCK_CURRENT”, “CSSFAULT_STUCK_MAX”,
+“CSSFAULT_STUCK_RAND”, or “CSSFAULT_RAND”.</p></li>
+<li><p><strong>cssIdx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Index (0, 1, 2, 3, 4, 5, 6, 7) of the affected CSS sensor.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “cssSignalOff”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.DebrisImpactOff">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">DebrisImpactOff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DebrisImpactOff'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#DebrisImpactOff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.DebrisImpactOff" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents the end of a debris impact fault.</p>
+<p>This fault resets the external force and torque applied by a previous
+debris impact (e.g., DebrisImpactOn) back to zero, effectively ending
+the impact event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the impact effect ends.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “DebrisImpactOff”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.DebrisImpactOn">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">DebrisImpactOn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debris_location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocityMag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DebrisImpactOn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#DebrisImpactOn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.DebrisImpactOn" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a debris impact fault on the spacecraft.</p>
+<p>This fault simulates an impact from space debris at a specified location
+on the spacecraft body. The momentum transfer due to the impact generates
+both force and torque on the spacecraft.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the impact occurs.</p></li>
+<li><p><strong>debris_location</strong> (<em>array_like</em>) – Impact location in body coordinates [m] as a 3-element vector.</p></li>
+<li><p><strong>direction</strong> (<em>array_like</em>) – Impact direction in body coordinates as a 3-element vector.
+The vector is normalized internally.</p></li>
+<li><p><strong>mass</strong> (<em>float</em>) – Mass of the debris particle in kilograms (kg).</p></li>
+<li><p><strong>velocityMag</strong> (<em>float</em><em>, </em><em>optional</em>) – Magnitude of the debris velocity in meters per second (m/s)
+(default: 8e3 m/s).</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “DebrisImpactOn”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.MagPolarNoise">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">MagPolarNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faultType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'magPolarFault'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#MagPolarNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.MagPolarNoise" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Magnetometer fault model that emulates degradation effects in Earth’s polar regions.</p>
+<p>This fault object modifies the behavior of a three-axis magnetometer (TAM)
+based on the spacecraft’s geomagnetic latitude. As the spacecraft enters
+high-latitude regions (<span class="math notranslate nohighlight">\(|\mathrm{latitude}| \gtrsim 60\,\mathrm{deg}\)</span>),
+the fault severity transitions
+smoothly from nominal to polar conditions using a sigmoid weighting function.</p>
+<p>Depending on the selected fault type, the model can:</p>
+<ul class="simple">
+<li><p>Increase sensor noise and random-walk bounds (“NOISE”)</p></li>
+<li><p>Inject sporadic measurement spikes (“SPIKE”)</p></li>
+<li><p>Apply both noise degradation and spiking behavior (“BOTH”)</p></li>
+</ul>
+<p>The spacecraft position is obtained in the inertial frame, transformed into
+the Earth-fixed frame using SPICE-provided planet state information, and
+converted to geodetic latitude. Fault parameters are then interpolated
+between nominal and polar values based on latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time at which the fault is executed.</p></li>
+<li><p><strong>faultType</strong> (<em>str</em>) – Type of magnetometer fault to apply. Must be one of:
+{“NOISE”, “SPIKE”, “BOTH”}.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the fault object (default is “magPolarFault”).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The latitude transition is centered at 60 degrees with a 5-degree
+smoothing width.</p></li>
+<li><p>Noise and random-walk bounds are applied directly to the TAM model.</p></li>
+<li><p>Spiking faults are enabled via the magnetometer fault-state interface.</p></li>
+<li><p>This model assumes an Earth-centered mission and valid SPICE ephemerides.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.MagnetometerFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">MagnetometerFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faultType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">faultyAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stuckValue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spikeProbability</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spikeAmount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'magnetometerFault'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#MagnetometerFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.MagnetometerFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a magnetometer sensor fault.</p>
+<p>This fault simulates scenarios in which magnetometer measurements become inaccurate
+due to stuck readings or random spikes, depending on the selected fault type.
+It can affect one or more of the sensor’s three axes (x, y, z).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>faultType</strong> (<em>str</em>) – Type of magnetometer fault. Supported types include:
+- “MAG_FAULT_STUCK_CURRENT” : Output held at the current value.
+- “MAG_FAULT_STUCK_VALUE”   : Output fixed at a given constant value.
+- “MAG_FAULT_SPIKING”       : Output intermittently spiking.</p></li>
+<li><p><strong>faultyAxis</strong> (<em>int</em>) – Axis affected by the fault (0–2), corresponding to x, y, z.</p></li>
+<li><p><strong>stuckValue</strong> (<em>float</em><em>, </em><em>optional</em>) – Constant value used when the fault type is “MAG_FAULT_STUCK_VALUE” (default: 0.0).</p></li>
+<li><p><strong>spikeProbability</strong> (<em>float</em><em>, </em><em>optional</em>) – Probability of a spike occurring at each time step when the fault type is
+“MAG_FAULT_SPIKING” (default: 0.01).</p></li>
+<li><p><strong>spikeAmount</strong> (<em>float</em><em>, </em><em>optional</em>) – Magnitude of the spike added to the nominal measurement when a spike occurs
+(default: 2.0).</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “magnetometerFault”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.RWBitFlipFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">RWBitFlipFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitFlipIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RW_Idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elementIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RWBitFlipFault'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#RWBitFlipFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.RWBitFlipFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a reaction wheel control bit-flip fault.</p>
+<p>This fault simulates a scenario in which a single bit in the reaction wheel
+control axis configuration is flipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>bitFlipIdx</strong> (<em>int</em>) – Zero-based index of the bit to flip (0–15).</p></li>
+<li><p><strong>RW_Idx</strong> (<em>int</em>) – Index of the affected reaction wheel (0–3).</p></li>
+<li><p><strong>elementIdx</strong> (<em>int</em>) – Zero-based index of the axis to flip within the reaction wheel control (0–2).</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “RWBitFlipFault”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.RWGainBitFlipFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">RWGainBitFlipFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitFlipIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gainType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RWGainBitFlipFault'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#RWGainBitFlipFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.RWGainBitFlipFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a reaction wheel feedback gain bit-flip fault.</p>
+<p>This fault simulates a scenario in which a single bit in the reaction wheel
+feedback gain configuration is flipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>bitFlipIdx</strong> (<em>int</em>) – Zero-based index of the bit to flip (0–15).</p></li>
+<li><p><strong>gainType</strong> (<em>str</em>) – Type of gain affected, one of:
+- “K”  : Proportional gain applied to MRP errors (rad/sec)
+- “P”  : Rate error feedback gain (N·m·s)
+- “Ki” : Integral feedback on rate error (N·m)</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “RWGainBitFlipFault”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.RwFrictionFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">RwFrictionFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frictionMultiplier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wheelIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rwFriction'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#RwFrictionFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.RwFrictionFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a reaction wheel friction fault event.</p>
+<p>This fault increases the friction in one of reaction wheels,
+reducing their effective torque output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>frictionMultiplier</strong> (<em>float</em>) – Multiplier applied to the reaction wheel friction.
+For example, 2.0 doubles the nominal friction.</p></li>
+<li><p><strong>wheelIdx</strong> (<em>int</em>) – Index (0, 1, 2, or 3) of the affected reaction wheel.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “rwFriction”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BSK_Faults.RwPowerFault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BSK_Faults.</span></span><span class="sig-name descname"><span class="pre">RwPowerFault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducedLimit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wheelIdx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rwPowerLimited'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_Faults.html#RwPowerFault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_Faults.RwPowerFault" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FaultObject</span></code></p>
+<p>Represents a reaction wheel power fault event.</p>
+<p>This fault reduces the maximum power or torque output available
+from one or all reaction wheels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time (in nanoseconds) when the fault occurs.</p></li>
+<li><p><strong>reducedLimit</strong> (<em>float</em>) – Power limit value (in watts).</p></li>
+<li><p><strong>wheelIdx</strong> (<em>int</em><em> or </em><em>str</em>) – Index (0, 1, 2, or 3) of the affected reaction wheel(s),
+or “all” to apply to every wheel.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name identifier for the fault (default: “rwPowerLimited”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BSK_Dynamics.html" class="btn btn-neutral float-left" title="BSK_Dynamics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BSK_FormationDynamics.html" class="btn btn-neutral float-right" title="BSK_FormationDynamics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: inertialCartFeedback &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="inertialCartFeedback" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../etSphericalControl/index.html">etSphericalControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../formationBarycenter/index.html">formationBarycenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillFrameRelativeControl/index.html">hillFrameRelativeControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillStateConverter/index.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillToAttRef/index.html">hillToAttRef</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">inertialCartFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanOEFeedback/index.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftPointing/index.html">spacecraftPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftReconfig/index.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="index.html">inertialCartFeedback</a></li>
+      <li class="breadcrumb-item active">Module: inertialCartFeedback</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/formationFlying/inertialCartFeedback/inertialCartFeedback.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-inertialcartfeedback">
+<span id="inertialcartfeedback"></span><h1>Module: inertialCartFeedback<a class="headerlink" href="#module-inertialcartfeedback" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">inertialCartFeedback</span></code> module computes an inertial-frame deputy force command for translational tracking of a desired deputy inertial state.
+This module uses Lyapunov control theory described in chapter 14 of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>.</p>
+<p>The control force <span class="math notranslate nohighlight">\(\mathbf{F}_N\)</span> used in this module is found through Eq. <a class="reference internal" href="#equation-eq-control-law">(1)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-control-law">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-control-law" title="Link to this equation"></a></span>\[\mathbf{F}_N = -m_d\left(\mathbf{a}_d - \mathbf{a}_d^*\right) - m_d[K]\Delta \mathbf{r} - m_d[P]\Delta \dot{\mathbf{r}} + \mathbf{F}_N^*\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight" id="equation-eq-state-errors">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-state-errors" title="Link to this equation"></a></span>\[\Delta \mathbf{r} = \mathbf{r}_d - \mathbf{r}_d^*, \qquad
+\Delta \dot{\mathbf{r}} = \dot{\mathbf{r}}_d - \dot{\mathbf{r}}_d^*\]</div>
+<p><span class="math notranslate nohighlight">\(m_d\)</span> is the deputy mass, and a superscript * denotes the desired state.</p>
+<p>The gravity-difference term is found using:</p>
+<div class="math notranslate nohighlight" id="equation-eq-gravity-diff">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-gravity-diff" title="Link to this equation"></a></span>\[\mathbf{a}_d = -\mu \frac{\mathbf{r}_d}{\|\mathbf{r}_d\|^3}, \qquad
+\mathbf{a}_d^* = -\mu \frac{\mathbf{r}_d^*}{\|\mathbf{r}_d^*\|^3}\]</div>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from Python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>deputyNavInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>Deputy inertial position and velocity input msg</p></td>
+</tr>
+<tr class="row-odd"><td><p>deputyRefInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#transrefmsgpayload"><span class="std std-ref">TransRefMsgPayload</span></a></p></td>
+<td><p>Deputy inertial reference state input msg containing desired position, velocity, and total inertial acceleration</p></td>
+</tr>
+<tr class="row-even"><td><p>deputyVehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Deputy spacecraft configuration input msg</p></td>
+</tr>
+<tr class="row-odd"><td><p>forceOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a></p></td>
+<td><p>Inertial force command output msg</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section outlines the steps needed to set up the <code class="docutils literal notranslate"><span class="pre">inertialCartFeedback</span></code> module in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">inertialCartFeedback</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instance of <code class="docutils literal notranslate"><span class="pre">InertialCartFeedback</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">inertialCartFeedback</span><span class="o">.</span><span class="n">InertialCartFeedback</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set gain matrices using row-major flattened 3x3 lists:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0e-5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0e-5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0e-5</span><span class="p">]</span>
+<span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.0e-2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">6.0e-2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">7.0e-2</span><span class="p">]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) set <code class="docutils literal notranslate"><span class="pre">mu</span></code> for gravity compensation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setMu</span><span class="p">(</span><span class="mf">3.986004418e14</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to a task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv420InertialCartFeedback">
+<span id="_CPPv320InertialCartFeedback"></span><span id="_CPPv220InertialCartFeedback"></span><span id="InertialCartFeedback"></span><span class="target" id="class_inertial_cart_feedback"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InertialCartFeedback</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv420InertialCartFeedback" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;inertialCartFeedback.h&gt;</em></div>
+<p>Inertial Cartesian translational feedback controller for deputy desired-state tracking. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback20InertialCartFeedbackEv">
+<span id="_CPPv3N20InertialCartFeedback20InertialCartFeedbackEv"></span><span id="_CPPv2N20InertialCartFeedback20InertialCartFeedbackEv"></span><span id="InertialCartFeedback::InertialCartFeedback"></span><span class="target" id="class_inertial_cart_feedback_1a86f85dcfed4dc5b01b8ee2515a850282"></span><span class="sig-name descname"><span class="n"><span class="pre">InertialCartFeedback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback20InertialCartFeedbackEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedbackD0Ev">
+<span id="_CPPv3N20InertialCartFeedbackD0Ev"></span><span id="_CPPv2N20InertialCartFeedbackD0Ev"></span><span id="InertialCartFeedback::~InertialCartFeedback"></span><span class="target" id="class_inertial_cart_feedback_1a8467626e6aaa4796251220234e34ad13"></span><span class="sig-name descname"><span class="n"><span class="pre">~InertialCartFeedback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedbackD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback8SelfInitEv">
+<span id="_CPPv3N20InertialCartFeedback8SelfInitEv"></span><span id="_CPPv2N20InertialCartFeedback8SelfInitEv"></span><span id="InertialCartFeedback::SelfInit"></span><span class="target" id="class_inertial_cart_feedback_1a28d2dce31ffa6a16d9b24162c1d4e7a0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Self initialization method for the c-wrapped message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback5ResetE8uint64_t">
+<span id="_CPPv3N20InertialCartFeedback5ResetE8uint64_t"></span><span id="_CPPv2N20InertialCartFeedback5ResetE8uint64_t"></span><span id="InertialCartFeedback::Reset__uint64_t"></span><span class="target" id="class_inertial_cart_feedback_1a34490a336a42813b80802a06e314a720"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback11UpdateStateE8uint64_t">
+<span id="_CPPv3N20InertialCartFeedback11UpdateStateE8uint64_t"></span><span id="_CPPv2N20InertialCartFeedback11UpdateStateE8uint64_t"></span><span id="InertialCartFeedback::UpdateState__uint64_t"></span><span class="target" id="class_inertial_cart_feedback_1a2fa1ef75b48533e6215d83ed501068c4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. It computes the inertial force for the relative motion control. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback5setMuEKd">
+<span id="_CPPv3N20InertialCartFeedback5setMuEKd"></span><span id="_CPPv2N20InertialCartFeedback5setMuEKd"></span><span id="InertialCartFeedback::setMu__doubleC"></span><span class="target" id="class_inertial_cart_feedback_1af6a40f796d2a1c5f04e76e4798c6d3bb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback5setMuEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20InertialCartFeedback5getMuEv">
+<span id="_CPPv3NK20InertialCartFeedback5getMuEv"></span><span id="_CPPv2NK20InertialCartFeedback5getMuEv"></span><span id="InertialCartFeedback::getMuC"></span><span class="target" id="class_inertial_cart_feedback_1a972eef5641e8c1c50bc98881d67447fe"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMu</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20InertialCartFeedback5getMuEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback4setKERKNSt6vectorIdEE">
+<span id="_CPPv3N20InertialCartFeedback4setKERKNSt6vectorIdEE"></span><span id="_CPPv2N20InertialCartFeedback4setKERKNSt6vectorIdEE"></span><span id="InertialCartFeedback::setK__std::vector:double:CR"></span><span class="target" id="class_inertial_cart_feedback_1ab12a0d888478610c7ab8f15e3f40cded"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback4setKERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">K</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20InertialCartFeedback4getKEv">
+<span id="_CPPv3NK20InertialCartFeedback4getKEv"></span><span id="_CPPv2NK20InertialCartFeedback4getKEv"></span><span id="InertialCartFeedback::getKC"></span><span class="target" id="class_inertial_cart_feedback_1a047703476df3a0885b9f0573ff27d6b0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20InertialCartFeedback4getKEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">K</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback4setPERKNSt6vectorIdEE">
+<span id="_CPPv3N20InertialCartFeedback4setPERKNSt6vectorIdEE"></span><span id="_CPPv2N20InertialCartFeedback4setPERKNSt6vectorIdEE"></span><span id="InertialCartFeedback::setP__std::vector:double:CR"></span><span class="target" id="class_inertial_cart_feedback_1a2866e13d001e79152bd9638ecd997e9d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setP</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback4setPERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">P</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK20InertialCartFeedback4getPEv">
+<span id="_CPPv3NK20InertialCartFeedback4getPEv"></span><span id="_CPPv2NK20InertialCartFeedback4getPEv"></span><span id="InertialCartFeedback::getPC"></span><span class="target" id="class_inertial_cart_feedback_1af2d7f6c944041ca700ff8883e77eff7b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getP</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK20InertialCartFeedback4getPEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">P</span></code></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback14deputyNavInMsgE">
+<span id="_CPPv3N20InertialCartFeedback14deputyNavInMsgE"></span><span id="_CPPv2N20InertialCartFeedback14deputyNavInMsgE"></span><span id="InertialCartFeedback::deputyNavInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_inertial_cart_feedback_1a5ee23d98d14908f73c1e6ec7c86e8274"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyNavInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback14deputyNavInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy translational navigation input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback14deputyRefInMsgE">
+<span id="_CPPv3N20InertialCartFeedback14deputyRefInMsgE"></span><span id="_CPPv2N20InertialCartFeedback14deputyRefInMsgE"></span><span id="InertialCartFeedback::deputyRefInMsg__ReadFunctor:TransRefMsgPayload:"></span><span class="target" id="class_inertial_cart_feedback_1a39f93b6aac3f0e08913bee6eb69f0ace"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#_CPPv418TransRefMsgPayload" title="TransRefMsgPayload"><span class="n"><span class="pre">TransRefMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyRefInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback14deputyRefInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy translational reference input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback24deputyVehicleConfigInMsgE">
+<span id="_CPPv3N20InertialCartFeedback24deputyVehicleConfigInMsgE"></span><span id="_CPPv2N20InertialCartFeedback24deputyVehicleConfigInMsgE"></span><span id="InertialCartFeedback::deputyVehicleConfigInMsg__ReadFunctor:VehicleConfigMsgPayload:"></span><span class="target" id="class_inertial_cart_feedback_1ac537358015596094167e368405864661"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyVehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback24deputyVehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy spacecraft mass/config input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback11forceOutMsgE">
+<span id="_CPPv3N20InertialCartFeedback11forceOutMsgE"></span><span id="_CPPv2N20InertialCartFeedback11forceOutMsgE"></span><span id="InertialCartFeedback::forceOutMsg__Message:CmdForceInertialMsgPayload:"></span><span class="target" id="class_inertial_cart_feedback_1acfd28c38af3fb098daa8a13e36e1982f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#_CPPv426CmdForceInertialMsgPayload" title="CmdForceInertialMsgPayload"><span class="n"><span class="pre">CmdForceInertialMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback11forceOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>inertial force command output msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback12forceOutMsgCE">
+<span id="_CPPv3N20InertialCartFeedback12forceOutMsgCE"></span><span id="_CPPv2N20InertialCartFeedback12forceOutMsgCE"></span><span id="InertialCartFeedback::forceOutMsgC__CmdForceInertialMsg_C"></span><span class="target" id="class_inertial_cart_feedback_1a68af3a060e8a3f6af71181f11ad98bce"></span><span class="n"><span class="pre">CmdForceInertialMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback12forceOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped inertial force command output msg. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback9bskLoggerE">
+<span id="_CPPv3N20InertialCartFeedback9bskLoggerE"></span><span id="_CPPv2N20InertialCartFeedback9bskLoggerE"></span><span id="InertialCartFeedback::bskLogger__BSKLogger"></span><span class="target" id="class_inertial_cart_feedback_1a5db569ba6a6dbcb02dd3c42edcaf5343"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK logging interface. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback10deputyMassE">
+<span id="_CPPv3N20InertialCartFeedback10deputyMassE"></span><span id="_CPPv2N20InertialCartFeedback10deputyMassE"></span><span id="InertialCartFeedback::deputyMass__double"></span><span class="target" id="class_inertial_cart_feedback_1ac11220c741e020299054226b7debb5a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyMass</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback10deputyMassE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] deputy system mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback2muE">
+<span id="_CPPv3N20InertialCartFeedback2muE"></span><span id="_CPPv2N20InertialCartFeedback2muE"></span><span id="InertialCartFeedback::mu__double"></span><span class="target" id="class_inertial_cart_feedback_1ada87c6b738c5374d6eae93d999282cb2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3/s^2] (optional) gravitational parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback8setKFlagE">
+<span id="_CPPv3N20InertialCartFeedback8setKFlagE"></span><span id="_CPPv2N20InertialCartFeedback8setKFlagE"></span><span id="InertialCartFeedback::setKFlag__b"></span><span class="target" id="class_inertial_cart_feedback_1ab61753314e24deb0eace1f00b6ac7ccd"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setKFlag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback8setKFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag to check if K has been set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback8setPFlagE">
+<span id="_CPPv3N20InertialCartFeedback8setPFlagE"></span><span id="_CPPv2N20InertialCartFeedback8setPFlagE"></span><span id="InertialCartFeedback::setPFlag__b"></span><span class="target" id="class_inertial_cart_feedback_1aaf1e949e96d89a9718638dcede379419"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPFlag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback8setPFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag to check if P has been set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback1KE">
+<span id="_CPPv3N20InertialCartFeedback1KE"></span><span id="_CPPv2N20InertialCartFeedback1KE"></span><span id="InertialCartFeedback::K__Eigen::Matrix3d"></span><span class="target" id="class_inertial_cart_feedback_1a2bfbbdede2d761cf004f5abca4fb9c1d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback1KE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N/m] Proportional gain applied to position errors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20InertialCartFeedback1PE">
+<span id="_CPPv3N20InertialCartFeedback1PE"></span><span id="_CPPv2N20InertialCartFeedback1PE"></span><span id="InertialCartFeedback::P__Eigen::Matrix3d"></span><span class="target" id="class_inertial_cart_feedback_1a064c67668e7b005b5ae03bd0e9f23863"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><a class="headerlink" href="#_CPPv4N20InertialCartFeedback1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*s/m] Rate error feedback gain applied </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="inertialCartFeedback" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

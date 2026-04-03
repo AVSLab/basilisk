@@ -1,0 +1,8 @@
+.. _AntennaLogMsgPayload:
+
+AntennaLogMsgPayload
+============================
+
+.. autodoxygenfile:: AntennaLogMsgPayload.h
+   :project: msgPayloadDefC
+

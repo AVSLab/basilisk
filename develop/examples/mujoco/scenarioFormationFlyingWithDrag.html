@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioFormationFlyingWithDrag &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioThrArmControl" href="scenarioThrArmControl.html" />
+    <link rel="prev" title="scenarioAttitudeFeedbackRWMuJoCo" href="scenarioAttitudeFeedbackRWMuJoCo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAttitudeFeedbackRWMuJoCo.html">Pointing with Reaction Wheels in MuJoCo</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Translation-only formation flying under differential drag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioStochasticDrag.html">Satellite Drag with Stochastic (Random) Density using MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioThrArmControl.html">Spacecraft Control with Thruster Arms using MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#support-files">Support Files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../scenarioFormationBasic.html">Basic Servicer/Debris Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioFormationMeanOEFeedback.html">Mean orbit element based relative motion control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioFormationReconfig.html">Impulsive feedback control of relative motion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioDebrisReorbitET.html">Electrostatic Tractor Debris Reorbiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioDragRendezvous.html">Attitude-Driven differential drag control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioRendezVous.html">Servicer approaching a debris object with 3 flight modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioSatelliteConstellation.html">Walker-Delta Satellite Constellation</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Translation-only formation flying under differential drag using MuJoCo</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioFormationFlyingWithDrag</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/mujoco/scenarioFormationFlyingWithDrag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioformationflyingwithdrag">
+<span id="id1"></span><h1>scenarioFormationFlyingWithDrag<a class="headerlink" href="#scenarioformationflyingwithdrag" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioFormationFlyingWithDrag">This scenario uses <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> to model the
+relative motion of two spacecraft in Low Earth Orbit: a chief and a deputy.</p>
+<p>The spacecraft are defined in <code class="docutils literal notranslate"><span class="pre">CHIEF_DEPUTY_SCENE_XML</span></code>. Each vehicle is modeled
+as a single point-mass body with three translational sliding joints (x, y, z).
+Their inertial properties are assigned directly in the XML.</p>
+<p>Gravity is modeled using the <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">Module: NBodyGravity</span></a> model, with a point-mass
+Earth defined by <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/pointMassGravityModel.html#pointmassgravitymodel"><span class="std std-ref">Module: pointMassGravityModel</span></a>. The exponential atmospheric model
+(<a class="reference internal" href="../../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">Module: exponentialAtmosphere</span></a>) is optionally added so that the chief and deputy
+can experience cannonball drag.</p>
+<p>Aerodynamic drag is computed using <a class="reference internal" href="../../Documentation/simulation/forceTorque/cannonballDrag/cannonballDrag.html#cannonballdrag"><span class="std std-ref">CannonballDrag</span></a>.
+For each spacecraft, the drag model uses:</p>
+<ul class="simple">
+<li><p>Its inertial state (to obtain velocity)</p></li>
+<li><p>The atmospheric density from the <code class="docutils literal notranslate"><span class="pre">exponentialAtmosphere</span></code> model</p></li>
+<li><p>A constant drag geometry message (projected area, drag coefficient, center of pressure)</p></li>
+</ul>
+<p>The aerodynamic drag model outputs a force vector in the body-fixed site used by MuJoCo.
+Each spacecraft is given different drag coefficients, thus caussing differential drag
+between them that makes formation flying harder.</p>
+<p>Feedback control is implemented using the
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/linearTimeInvariantSystem/orbitalElementControl.html#orbitalelementcontrol"><span class="std std-ref">OrbitalElementControl</span></a> module.
+This controller regulates the classical orbital elements of the deputy relative to
+a target offset from the chief. The controller operates on the orbital elements
+produced by <a class="reference internal" href="../../Documentation/simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.html#orbelemconvert"><span class="std std-ref">orbElemConvert</span></a> and maps commanded inertial
+forces to a site-fixed force at the deputy’s center of mass using
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/cmdForceInertialToForceAtSite/cmdForceInertialToForceAtSite.html#cmdforceinertialtoforceatsite"><span class="std std-ref">CmdForceInertialToForceAtSite</span></a>.</p>
+<p>This scenario demonstrates:</p>
+<ul class="simple">
+<li><p>How to construct a multi-body MuJoCo scene with two independent spacecraft</p></li>
+<li><p>How to configure translation-only scenarios</p></li>
+<li><p>How to model gravity on multiple bodies using the <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">Module: NBodyGravity</span></a> model</p></li>
+<li><p>How to apply aerodynamic forces</p></li>
+<li><p>How to configure and apply a classical-element feedback controller for formation control</p></li>
+<li><p>How to record and visualize inertial trajectories, orbital-element histories,
+and Hill-frame relative motion</p></li>
+</ul>
+<p>All simulation models, messages, and recorders are kept alive by storing them in
+dataclasses defined in this script. This ensures that Python’s garbage collector
+does not delete any objects that are still needed during the simulation.</p>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<img alt="../../_images/scenarioFormationFlyingWithDrag_hillXY.svg" class="align-center" src="../../_images/scenarioFormationFlyingWithDrag_hillXY.svg" />
+<img alt="../../_images/scenarioFormationFlyingWithDrag_oeDiff.svg" class="align-center" src="../../_images/scenarioFormationFlyingWithDrag_oeDiff.svg" />
+<img alt="../../_images/scenarioFormationFlyingWithDrag_chiefDrag.svg" class="align-center" src="../../_images/scenarioFormationFlyingWithDrag_chiefDrag.svg" />
+<img alt="../../_images/scenarioFormationFlyingWithDrag_control.svg" class="align-center" src="../../_images/scenarioFormationFlyingWithDrag_control.svg" />
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.InitialOrbitInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">InitialOrbitInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semiMajorAxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbitPeriod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#InitialOrbitInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.InitialOrbitInfo" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Initial orbit geometry for the chief deputy pair.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.PlotConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">PlotConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveFolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotChiefInertial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotChiefDrag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotChiefDensity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotControl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotOeChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotOeDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotOeDiff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotHillXY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#PlotConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.PlotConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Plot configuration and output control.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.RecorderHandles">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">RecorderHandles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chiefState</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deputyState</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">densityChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oeFeedbackForce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#RecorderHandles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.RecorderHandles" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles to all recorders used in the simulation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.ScenarioConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">ScenarioConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integralControl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#ScenarioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.ScenarioConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Scenario configuration toggles.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.SimulationModels">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">SimulationModels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scSim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SimBaseClass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StateVecIntegrator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MJScene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chiefBody</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MJBody</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deputyBody</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MJBody</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gravity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NBodyGravity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atmo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExponentialAtmosphere</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CannonballDrag</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CannonballDrag</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbElemConvertChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrbElemConvert</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbElemConvertDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrbElemConvert</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbElemTarget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrbElemOffset</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oeFeedback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrbitalElementControl</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inertialToSiteForce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CmdForceInertialToForceAtSite</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlActuatorDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MJForceActuator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragGeomChiefMsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DragGeometryMsg</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragGeomDeputyMsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DragGeometryMsg</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offsetElementsMsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElementsMsg</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#SimulationModels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles to all models and messages that must remain in scope.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.SimulationTimeSeries">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">SimulationTimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oeChief</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oeDeputy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oeDiff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hillPosition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hillVelocity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#SimulationTimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.SimulationTimeSeries" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>All time history data required for plotting and analysis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.addRecorders">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">addRecorders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.RecorderHandles" title="scenarioFormationFlyingWithDrag.RecorderHandles"><span class="pre">RecorderHandles</span></a></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#addRecorders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.addRecorders" title="Link to this definition"></a></dt>
+<dd><p>Attach all recorders used for postprocessing and keep them in a container.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.configureControlModels">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">configureControlModels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">planet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetOeDiffPayload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElementsMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kProp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kInt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenarioConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.ScenarioConfig" title="scenarioFormationFlyingWithDrag.ScenarioConfig"><span class="pre">ScenarioConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#configureControlModels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.configureControlModels" title="Link to this definition"></a></dt>
+<dd><p>Configure orbital element feedback control and force mapping.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.configureDragModels">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">configureDragModels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#configureDragModels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.configureDragModels" title="Link to this definition"></a></dt>
+<dd><p>Attach aerodynamic drag models to chief and deputy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.createFigures">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">createFigures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenarioConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.ScenarioConfig" title="scenarioFormationFlyingWithDrag.ScenarioConfig"><span class="pre">ScenarioConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.PlotConfig" title="scenarioFormationFlyingWithDrag.PlotConfig"><span class="pre">PlotConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorders</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.RecorderHandles" title="scenarioFormationFlyingWithDrag.RecorderHandles"><span class="pre">RecorderHandles</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeSeries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationTimeSeries" title="scenarioFormationFlyingWithDrag.SimulationTimeSeries"><span class="pre">SimulationTimeSeries</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetOeDiffPayload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElementsMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kProp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#createFigures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.createFigures" title="Link to this definition"></a></dt>
+<dd><p>Generate all requested figures, optionally saving them as PDF files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.createSimulationModels">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">createSimulationModels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenarioConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.ScenarioConfig" title="scenarioFormationFlyingWithDrag.ScenarioConfig"><span class="pre">ScenarioConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetOeDiffPayload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassicElementsMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kProp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kInt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#createSimulationModels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.createSimulationModels" title="Link to this definition"></a></dt>
+<dd><p>Create and connect all simulation models, returning a container with live references.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.deputyToHillFrame">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">deputyToHillFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nRC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nVC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nRD</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nVD</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#deputyToHillFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.deputyToHillFrame" title="Link to this definition"></a></dt>
+<dd><p>Transform deputy inertial state to Hill frame relative position and velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nRC</strong> – Chief position in inertial frame, shape (N, 3).</p></li>
+<li><p><strong>nVC</strong> – Chief velocity in inertial frame, shape (N, 3).</p></li>
+<li><p><strong>nRD</strong> – Deputy position in inertial frame, shape (N, 3).</p></li>
+<li><p><strong>nVD</strong> – Deputy velocity in inertial frame, shape (N, 3).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>hillRho</em> – Deputy relative position in Hill frame, shape (N, 3).</p></li>
+<li><p><em>hillRhoPrime</em> – Deputy relative velocity in Hill frame, shape (N, 3).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.extractTimeSeries">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">extractTimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorders</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.RecorderHandles" title="scenarioFormationFlyingWithDrag.RecorderHandles"><span class="pre">RecorderHandles</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationTimeSeries" title="scenarioFormationFlyingWithDrag.SimulationTimeSeries"><span class="pre">SimulationTimeSeries</span></a></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#extractTimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.extractTimeSeries" title="Link to this definition"></a></dt>
+<dd><p>Convert raw recorder data into orbital elements, relative coordinates, and time arrays.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.plotGradient">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">plotGradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowEvery</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showEndpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LineCollection</span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#plotGradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.plotGradient" title="Link to this definition"></a></dt>
+<dd><p>Plot a line whose color varies along its length, optionally with arrows and endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – Matplotlib axes on which to draw.</p></li>
+<li><p><strong>x</strong> – Coordinate arrays.</p></li>
+<li><p><strong>y</strong> – Coordinate arrays.</p></li>
+<li><p><strong>cmap</strong> – Name of the colormap to use.</p></li>
+<li><p><strong>linewidth</strong> – Width of the plotted line.</p></li>
+<li><p><strong>arrows</strong> – If True, draw arrows along the trajectory.</p></li>
+<li><p><strong>arrowEvery</strong> – Spacing between arrows in number of points.</p></li>
+<li><p><strong>showEndpoints</strong> – If True, mark start and end points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The line collection added to the axes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LineCollection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenarioConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.ScenarioConfig" title="scenarioFormationFlyingWithDrag.ScenarioConfig"><span class="pre">ScenarioConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ScenarioConfig(drag=True,</span> <span class="pre">control=True,</span> <span class="pre">integralControl=True)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.PlotConfig" title="scenarioFormationFlyingWithDrag.PlotConfig"><span class="pre">PlotConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PlotConfig(showPlots=False,</span> <span class="pre">saveFolder=None,</span> <span class="pre">plotChiefInertial=True,</span> <span class="pre">plotChiefDrag=True,</span> <span class="pre">plotChiefDensity=False,</span> <span class="pre">plotControl=True,</span> <span class="pre">plotOeChief=True,</span> <span class="pre">plotOeDeputy=False,</span> <span class="pre">plotOeDiff=True,</span> <span class="pre">plotHillXY=True)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.run" title="Link to this definition"></a></dt>
+<dd><p>Run the chief deputy relative motion scenario with optional drag and feedback control.</p>
+<p>This function builds the simulation, sets initial conditions, runs the dynamics,
+collects time histories, generates figures, and optionally shows and or saves them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenarioConfig</strong> – High level configuration toggles for drag and control.</p></li>
+<li><p><strong>plotConfig</strong> – Plot visibility and output configuration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mapping from figure name to matplotlib Figure instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.runSimulation">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">runSimulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbitInfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.InitialOrbitInfo" title="scenarioFormationFlyingWithDrag.InitialOrbitInfo"><span class="pre">InitialOrbitInfo</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#runSimulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.runSimulation" title="Link to this definition"></a></dt>
+<dd><p>Initialize and execute the simulation for a fixed multiple of the orbit period.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.rv2elemVector">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">rv2elemVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rBNN</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vBNN</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#rv2elemVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.rv2elemVector" title="Link to this definition"></a></dt>
+<dd><p>Convert arrays of Cartesian states to classical orbital elements with mean anomaly.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFormationFlyingWithDrag.setInitialConditions">
+<span class="sig-prename descclassname"><span class="pre">scenarioFormationFlyingWithDrag.</span></span><span class="sig-name descname"><span class="pre">setInitialConditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.SimulationModels" title="scenarioFormationFlyingWithDrag.SimulationModels"><span class="pre">SimulationModels</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">planet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenarioFormationFlyingWithDrag.InitialOrbitInfo" title="scenarioFormationFlyingWithDrag.InitialOrbitInfo"><span class="pre">InitialOrbitInfo</span></a></span></span><a class="reference internal" href="../../_modules/scenarioFormationFlyingWithDrag.html#setInitialConditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFormationFlyingWithDrag.setInitialConditions" title="Link to this definition"></a></dt>
+<dd><p>Set initial orbital elements for chief and deputy and propagate to Cartesian states.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioAttitudeFeedbackRWMuJoCo.html" class="btn btn-neutral float-left" title="scenarioAttitudeFeedbackRWMuJoCo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioThrArmControl.html" class="btn btn-neutral float-right" title="scenarioThrArmControl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

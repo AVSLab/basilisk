@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_unitFacetDrag &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53447332"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_unitFacetDrag</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_unitFacetDrag</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the facetDrag module.</span>
+<span class="c1"># Author:   Andrew Harris</span>
+<span class="c1"># Creation Date:  May 16 2019</span>
+<span class="c1">#</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">bskName</span> <span class="o">=</span> <span class="s1">&#39;Basilisk&#39;</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bskName</span><span class="p">)</span>
+
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">exponentialAtmosphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">facetDragDynamicEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">zeroWindModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+
+
+<span class="n">test_drag</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+             <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+             <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+             <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])]),</span>
+             <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])]),</span>
+             <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+<span class="p">]</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;scAreas, scCoeff, B_normals, B_locations&quot;</span><span class="p">,</span> <span class="n">test_drag</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_DragCalculation</span><span class="p">(</span><span class="n">scAreas</span><span class="p">,</span> <span class="n">scCoeff</span><span class="p">,</span> <span class="n">B_normals</span><span class="p">,</span> <span class="n">B_locations</span><span class="p">):</span>
+
+    <span class="c1">##   Simulation initialization</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1">##   Initialize new atmosphere and drag model, add them to task</span>
+    <span class="n">newAtmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">newDrag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;FacetDrag&quot;</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">scAreas</span><span class="p">)):</span>
+            <span class="n">newDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">scAreas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scCoeff</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">B_normals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">B_locations</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;ERROR: FacetDrag unit test failed while setting facet parameters.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+
+    <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>          <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+
+    <span class="n">r_eq</span> <span class="o">=</span> <span class="mi">6371</span><span class="o">*</span><span class="mf">1000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">refBaseDens</span> <span class="o">=</span> <span class="mf">1.217</span>  <span class="c1"># [kg/m^3]</span>
+    <span class="n">refScaleHeight</span> <span class="o">=</span> <span class="mf">8500.0</span>  <span class="c1"># [m]</span>
+
+    <span class="c1">#   Set base density, equitorial radius, scale height in Atmosphere</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="n">refBaseDens</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="n">refScaleHeight</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">r_eq</span>
+
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r_eq</span><span class="o">+</span><span class="mf">200.0e3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">7.788e3</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">sig_BN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [-] MRP</span>
+    <span class="c1">#   initialize Spacecraft States with the initialization variables</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sig_BN</span>
+
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># add BSK objects to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newAtmo</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="c1"># setup logging</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">atmoLog</span> <span class="o">=</span> <span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">)</span>
+    <span class="n">newDragLog</span> <span class="o">=</span> <span class="n">newDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">,</span> <span class="s2">&quot;torqueExternalPntB_B&quot;</span><span class="p">])</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDragLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   Retrieve logged data</span>
+    <span class="n">dragDataForce_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">newDragLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">newDragLog</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">)</span>
+    <span class="n">dragTorqueData</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">newDragLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">newDragLog</span><span class="o">.</span><span class="n">torqueExternalPntB_B</span><span class="p">)</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">attData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">densData</span> <span class="o">=</span> <span class="n">atmoLog</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkFacetDragForce</span><span class="p">(</span><span class="n">dens</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">facet_dir</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">,</span> <span class="n">inertial_vel</span><span class="p">):</span>
+        <span class="n">dcm</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">vMag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">inertial_vel</span><span class="p">)</span>
+        <span class="n">v_hat_B</span> <span class="o">=</span> <span class="n">dcm</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">inertial_vel</span><span class="p">)</span> <span class="o">/</span> <span class="n">vMag</span>
+        <span class="n">projArea</span> <span class="o">=</span> <span class="n">area</span> <span class="o">*</span> <span class="p">(</span><span class="n">facet_dir</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_hat_B</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">projArea</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">drag_force</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">dens</span> <span class="o">*</span> <span class="n">projArea</span> <span class="o">*</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">vMag</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">v_hat_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">drag_force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,])</span>
+        <span class="k">return</span> <span class="n">drag_force</span>
+
+
+    <span class="c1">#   Compare to expected values</span>
+
+    <span class="n">test_val_force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,])</span>
+    <span class="n">test_val_torque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scAreas</span><span class="p">)):</span>
+        <span class="n">val_force_i</span> <span class="o">=</span> <span class="n">checkFacetDragForce</span><span class="p">(</span><span class="n">densData</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scAreas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scCoeff</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">B_normals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">attData</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">velData</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">test_val_force</span> <span class="o">+=</span> <span class="n">val_force_i</span>
+        <span class="n">test_val_torque</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">B_locations</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">val_force_i</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">densData</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;FAILED:  ExpAtmo failed to pull any logged data&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dragDataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">test_val_force</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-06</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dragTorqueData</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">test_val_torque</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-06</span><span class="p">)</span>
+
+
+<span class="n">test_shadow</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+               <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+               <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]),</span>
+<span class="p">]</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;scAreas, scCoeff, B_normals, B_locations&quot;</span><span class="p">,</span> <span class="n">test_shadow</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_ShadowCalculation</span><span class="p">(</span><span class="n">scAreas</span><span class="p">,</span> <span class="n">scCoeff</span><span class="p">,</span> <span class="n">B_normals</span><span class="p">,</span> <span class="n">B_locations</span><span class="p">):</span>
+
+    <span class="c1">##   Simulation initialization</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">simpleNavObj</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1">##   Initialize new atmosphere and drag model, add them to task</span>
+    <span class="n">newAtmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">newDrag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;FacetDrag&quot;</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">scAreas</span><span class="p">)):</span>
+            <span class="n">newDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">scAreas</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">scCoeff</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">B_normals</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">B_locations</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;ERROR: FacetDrag unit test failed while setting facet parameters.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+
+    <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>          <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+
+    <span class="n">r_eq</span> <span class="o">=</span> <span class="mi">6371</span><span class="o">*</span><span class="mf">1000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">refBaseDens</span> <span class="o">=</span> <span class="mf">1.217</span>  <span class="c1"># [kg/m^3]</span>
+    <span class="n">refScaleHeight</span> <span class="o">=</span> <span class="mf">8500.0</span>  <span class="c1"># [m]</span>
+
+    <span class="c1">#   Set base density, equitorial radius, scale height in Atmosphere</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="n">refBaseDens</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="n">refScaleHeight</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">r_eq</span>
+
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r_eq</span><span class="o">+</span><span class="mf">200.0e3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">7.788e3</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">sig_BN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># [-] MRP</span>
+
+    <span class="c1">#   initialize Spacecraft States with the initialization variables</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sig_BN</span>
+
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># add BSK objects to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newAtmo</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="c1"># setup logging</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">atmoLog</span> <span class="o">=</span> <span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">)</span>
+    <span class="n">newDragLog</span> <span class="o">=</span> <span class="n">newDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">,</span> <span class="s2">&quot;torqueExternalPntB_B&quot;</span><span class="p">])</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDragLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   Retrieve logged data</span>
+    <span class="n">dragDataForce_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">newDragLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">newDragLog</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">)</span>
+    <span class="n">dragTorqueData</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">newDragLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">newDragLog</span><span class="o">.</span><span class="n">torqueExternalPntB_B</span><span class="p">)</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">attData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">densData</span> <span class="o">=</span> <span class="n">atmoLog</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">densData</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;FAILED:  ExpAtmo failed to pull any logged data&quot;</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">densData</span><span class="p">)):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dragDataForce_B</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-11</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dragTorqueData</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-11</span><span class="p">)</span>
+
+<div class="viewcode-block" id="facetDragComp">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/facetDragEffector/_UnitTest/test_unitFacetDrag.html#test_unitFacetDrag.facetDragComp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">facetDragComp</span><span class="p">(</span><span class="n">dens</span><span class="p">,</span> <span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">att</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference facet drag force in body frame using inertial velocity.&quot;&quot;&quot;</span>
+    <span class="n">dcm</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+    <span class="n">vMag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span>
+    <span class="n">v_hat_B</span> <span class="o">=</span> <span class="n">dcm</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span> <span class="o">/</span> <span class="n">vMag</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">area</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">normal</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span><span class="p">):</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_hat_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">area</span>
+        <span class="k">if</span> <span class="n">proj</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">force</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">dens</span> <span class="o">*</span> <span class="n">proj</span> <span class="o">*</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">vMag</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v_hat_B</span>
+    <span class="k">return</span> <span class="n">force</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_basic_facet_drag_sim</span><span class="p">(</span><span class="n">rN</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vN</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigmaBN</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">areas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">locations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">newAtmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="mf">1.217</span>  <span class="c1"># [kg/m^3]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="mf">8500.0</span>  <span class="c1"># [m]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="mf">6371.0</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">newDrag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;FacetDrag&quot;</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">areas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">areas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.2</span><span class="p">]</span>
+        <span class="n">normals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
+        <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
+    <span class="k">for</span> <span class="n">area</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">locations</span><span class="p">):</span>
+        <span class="n">newDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">loc</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newAtmo</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7000e3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">vN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7500.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="k">if</span> <span class="n">sigmaBN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sigmaBN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [-] MRP</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sigmaBN</span>
+
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">atmoLog</span> <span class="o">=</span> <span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">dragLog</span> <span class="o">=</span> <span class="n">newDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dragLog</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="n">newDrag</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">,</span> <span class="n">dragLog</span><span class="p">,</span> <span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span>
+
+
+<div class="viewcode-block" id="test_facetDragInertialVelocity">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/facetDragEffector/_UnitTest/test_unitFacetDrag.html#test_unitFacetDrag.test_facetDragInertialVelocity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_facetDragInertialVelocity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify drag uses inertial velocity when no wind message is linked.</span>
+
+<span class="sd">    Velocity has a component along the default facet normal [1, 0, 0] to ensure</span>
+<span class="sd">    non-zero projected area and a non-trivial reference force.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7000e3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3000.0</span><span class="p">,</span> <span class="mf">7000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">sigmaBN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [-] MRP</span>
+
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">,</span> <span class="n">dragLog</span><span class="p">,</span> <span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span> <span class="o">=</span> <span class="n">setup_basic_facet_drag_sim</span><span class="p">(</span>
+        <span class="n">rN</span><span class="o">=</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="o">=</span><span class="n">vN</span><span class="p">,</span> <span class="n">sigmaBN</span><span class="o">=</span><span class="n">sigmaBN</span>
+    <span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">attData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">densData</span> <span class="o">=</span> <span class="n">atmoLog</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">dragForce</span> <span class="o">=</span> <span class="n">dragLog</span><span class="o">.</span><span class="n">forceExternal_B</span>
+
+    <span class="n">refForce</span> <span class="o">=</span> <span class="n">facetDragComp</span><span class="p">(</span><span class="n">densData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">areas</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">velData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">attData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dragForce</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">refForce</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="test_facetDragAtmosphereRelativeVelocityWhenWindLinked">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/facetDragEffector/_UnitTest/test_unitFacetDrag.html#test_unitFacetDrag.test_facetDragAtmosphereRelativeVelocityWhenWindLinked">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_facetDragAtmosphereRelativeVelocityWhenWindLinked</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that drag uses atmosphere-relative velocity when wind message is linked.</span>
+
+<span class="sd">    Two simulation steps are needed: step 1 populates windInData via ReadInputs();</span>
+<span class="sd">    step 2&#39;s computeForceTorque uses that cached wind velocity.</span>
+<span class="sd">    The force at step 2 is compared against facetDragComp using step-1 cached</span>
+<span class="sd">    density/wind and step-2 velocity/attitude.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;sim&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">newAtmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="mf">1.217</span>  <span class="c1"># [kg/m^3]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="mf">8500.0</span>  <span class="c1"># [m]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="mf">6371e3</span>  <span class="c1"># [m]</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">windMdl</span> <span class="o">=</span> <span class="n">zeroWindModel</span><span class="o">.</span><span class="n">ZeroWindModel</span><span class="p">()</span>
+    <span class="n">windMdl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;wind&quot;</span>
+    <span class="n">windMdl</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">planetStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">())</span>
+    <span class="n">windMdl</span><span class="o">.</span><span class="n">planetPosInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetStateMsg</span><span class="p">)</span>
+    <span class="n">omega_earth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">OMEGA_EARTH</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">windMdl</span><span class="o">.</span><span class="n">setPlanetOmega_N</span><span class="p">(</span><span class="n">omega_earth</span><span class="p">)</span>
+
+    <span class="n">newDrag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;FacetDrag&quot;</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]))</span>  <span class="c1"># area [m^2], Cd [-], normal [-], CoP_B [m]</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">newDrag</span><span class="o">.</span><span class="n">windVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">windMdl</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7000e3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7600.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [-] MRP</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newAtmo</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">windMdl</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">newDrag</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">windLog</span> <span class="o">=</span> <span class="n">windMdl</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">atmoLog</span> <span class="o">=</span> <span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">dragLog</span> <span class="o">=</span> <span class="n">newDrag</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">windLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmoLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dragLog</span><span class="p">)</span>
+
+    <span class="c1"># 2 steps: step 1 loads wind/atmo into cache; step 2 uses cache in computeForceTorque</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Wind velocity at step 2 should match co-rotation at step-2 position</span>
+    <span class="n">v_air_step2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">windLog</span><span class="o">.</span><span class="n">v_air_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">r_step2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scLog</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">v_air_step2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_earth</span><span class="p">,</span> <span class="n">r_step2</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+
+    <span class="c1"># Force at step 2 uses cached step-1 wind/density with step-2 velocity/attitude</span>
+    <span class="n">dens_step1</span> <span class="o">=</span> <span class="n">atmoLog</span><span class="o">.</span><span class="n">neutralDensity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wind_step1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">windLog</span><span class="o">.</span><span class="n">v_air_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">v_step2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scLog</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">sigma_step2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">drag_force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dragLog</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">expected_force</span> <span class="o">=</span> <span class="n">facetDragComp</span><span class="p">(</span><span class="n">dens_step1</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.2</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span>
+                                   <span class="n">v_step2</span> <span class="o">-</span> <span class="n">wind_step1</span><span class="p">,</span> <span class="n">sigma_step2</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">drag_force</span><span class="p">,</span> <span class="n">expected_force</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">scAreas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">scCoeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+    <span class="n">B_normals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
+    <span class="n">B_locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
+    <span class="n">test_DragCalculation</span><span class="p">(</span><span class="n">scAreas</span><span class="p">,</span> <span class="n">scCoeff</span><span class="p">,</span> <span class="n">B_normals</span><span class="p">,</span> <span class="n">B_locations</span><span class="p">)</span>
+    <span class="n">test_ShadowCalculation</span><span class="p">(</span><span class="n">scAreas</span><span class="p">,</span> <span class="n">scCoeff</span><span class="p">,</span> <span class="n">B_normals</span><span class="p">,</span> <span class="n">B_locations</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

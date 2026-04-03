@@ -1,0 +1,8 @@
+.. _TorqueAtSiteMsgPayload:
+
+TorqueAtSiteMsgPayload
+==============================
+
+.. autodoxygenfile:: TorqueAtSiteMsgPayload.h
+   :project: msgPayloadDefC
+

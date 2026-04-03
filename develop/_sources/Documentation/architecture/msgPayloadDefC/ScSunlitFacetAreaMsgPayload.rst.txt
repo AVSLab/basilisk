@@ -1,0 +1,8 @@
+.. _ScSunlitFacetAreaMsgPayload:
+
+ScSunlitFacetAreaMsgPayload
+===================================
+
+.. autodoxygenfile:: ScSunlitFacetAreaMsgPayload.h
+   :project: msgPayloadDefC
+

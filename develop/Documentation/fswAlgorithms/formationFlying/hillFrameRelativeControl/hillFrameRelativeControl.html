@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: hillFrameRelativeControl &mdash; Basilisk 2.11.0beta
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53447332"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="hillFrameRelativeControl" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../etSphericalControl/index.html">etSphericalControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../formationBarycenter/index.html">formationBarycenter</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">hillFrameRelativeControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillStateConverter/index.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillToAttRef/index.html">hillToAttRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertialCartFeedback/index.html">inertialCartFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanOEFeedback/index.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftPointing/index.html">spacecraftPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftReconfig/index.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="index.html">hillFrameRelativeControl</a></li>
+      <li class="breadcrumb-item active">Module: hillFrameRelativeControl</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/formationFlying/hillFrameRelativeControl/hillFrameRelativeControl.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-hillframerelativecontrol">
+<span id="hillframerelativecontrol"></span><h1>Module: hillFrameRelativeControl<a class="headerlink" href="#module-hillframerelativecontrol" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes an inertial control force command for deputy spacecraft relative motion using a Hill-frame
+proportional-derivative (PD) law with additional feedforward compensation terms. The chief translational navigation
+input is <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a>, which matches the output type of <code class="docutils literal notranslate"><span class="pre">simpleNav.transOutMsg</span></code>.</p>
+<p>Relative Hill-frame position and velocity can be supplied either directly via <a class="reference internal" href="../../../architecture/msgPayloadDefC/HillRelStateMsgPayload.html#hillrelstatemsgpayload"><span class="std std-ref">HillRelStateMsgPayload</span></a> (for
+example from <code class="docutils literal notranslate"><span class="pre">hillStateConverter</span></code>) or computed internally from deputy inertial state. Exactly one of these input
+paths must be connected. The controller evaluates tracking error against user-provided Hill-frame references and maps
+the commanded acceleration back to inertial-frame force using deputy mass.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from Python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>chiefTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>chief translational navigation input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>hillStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/HillRelStateMsgPayload.html#hillrelstatemsgpayload"><span class="std std-ref">HillRelStateMsgPayload</span></a></p></td>
+<td><p>deputy-relative-to-chief Hill-frame state input message (exclusive with <code class="docutils literal notranslate"><span class="pre">deputyTransInMsg</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>deputyTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>deputy translational navigation input message (exclusive with <code class="docutils literal notranslate"><span class="pre">hillStateInMsg</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>deputyVehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>deputy mass configuration input message</p></td>
+</tr>
+<tr class="row-even"><td><p>forceOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a></p></td>
+<td><p>inertial-frame force command output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>forceOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#cmdforceinertialmsgpayload"><span class="std std-ref">CmdForceInertialMsgPayload</span></a></p></td>
+<td><p>C-wrapped inertial-frame force command output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>Let <span class="math notranslate nohighlight">\(\mathbf{r}_{rel,H}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}_{rel,H}\)</span> be deputy-relative-to-chief position and velocity in the
+chief Hill frame. Let <span class="math notranslate nohighlight">\(\mathbf{r}_{ref,H}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}_{ref,H}\)</span> be the desired Hill-frame references.
+The command acceleration includes PD feedback plus feedforward compensation <span class="math notranslate nohighlight">\(-(A_1\mathbf{r}_{rel,H} + A_2\mathbf{v}_{rel,H})\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{a}_{cmd,H} = -A_1\mathbf{r}_{rel,H} - A_2\mathbf{v}_{rel,H}
+                     -\mathbf{K}(\mathbf{r}_{rel,H}-\mathbf{r}_{ref,H})
+                     -\mathbf{P}(\mathbf{v}_{rel,H}-\mathbf{v}_{ref,H}).\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}A_1 =
+\begin{bmatrix}
+2\mu/R^3 + \dot{\theta}^2 &amp; \ddot{\theta} &amp; 0 \\
+-\ddot{\theta} &amp; \dot{\theta}^2 - \mu/R^3 &amp; 0 \\
+0 &amp; 0 &amp; -\mu/R^3
+\end{bmatrix},
+\qquad
+A_2 =
+\begin{bmatrix}
+0 &amp; 2\dot{\theta} &amp; 0 \\
+-2\dot{\theta} &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0
+\end{bmatrix}.\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(R\)</span> is chief radius magnitude, <span class="math notranslate nohighlight">\(\theta\)</span> is chief true latitude, <span class="math notranslate nohighlight">\(\mu\)</span> is central-body
+gravitational parameter, and overdots denote time derivatives.</p>
+<p>This formulation follows Schaub and Junkins,
+<a class="reference external" href="https://doi.org/10.2514/4.107597">Analytical Mechanics of Space Systems</a>.</p>
+<p>The inertial command force is</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{F}_{cmd,N} = m_d \mathbf{C}_{NH}\mathbf{a}_{cmd,H},\]</div>
+<p>with <span class="math notranslate nohighlight">\(m_d\)</span> the deputy mass from <a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a>.</p>
+</section>
+<section id="model-assumptions-and-limitations">
+<h2>Model Assumptions and Limitations<a class="headerlink" href="#model-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Deputy mass from <code class="docutils literal notranslate"><span class="pre">deputyVehicleConfigInMsg.massSC</span></code> must be positive.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu</span></code> must be set to a positive value using <code class="docutils literal notranslate"><span class="pre">setMu</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">K</span></code> and <code class="docutils literal notranslate"><span class="pre">P</span></code> must be set before simulation start using <code class="docutils literal notranslate"><span class="pre">setK</span></code> and <code class="docutils literal notranslate"><span class="pre">setP</span></code>.</p></li>
+<li><p>Exactly one of <code class="docutils literal notranslate"><span class="pre">hillStateInMsg</span></code> or <code class="docutils literal notranslate"><span class="pre">deputyTransInMsg</span></code> must be connected.</p></li>
+<li><p>Chief radius and angular momentum vectors must be non-zero.</p></li>
+<li><p>Gains are full 3x3 matrices in Hill frame and must be symmetric positive definite.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The module is created in Python using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">hillFrameRelativeControl</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="n">ctrl</span> <span class="o">=</span> <span class="n">hillFrameRelativeControl</span><span class="o">.</span><span class="n">HillFrameRelativeControl</span><span class="p">()</span>
+<span class="linenos">4</span><span class="n">ctrl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;hillFrameRelativeControl&quot;</span>
+</pre></div>
+</div>
+<p>Then connect messages for one of the following two modes:</p>
+<ol class="arabic simple">
+<li><p>direct deputy navigation input mode</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">ctrl</span><span class="o">.</span><span class="n">chiefTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefSimpleNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">ctrl</span><span class="o">.</span><span class="n">deputyTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">deputySimpleNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">ctrl</span><span class="o">.</span><span class="n">deputyVehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vehicleConfigMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>precomputed Hill-state input mode</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">hillStateConverter</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="n">hillConv</span> <span class="o">=</span> <span class="n">hillStateConverter</span><span class="o">.</span><span class="n">hillStateConverter</span><span class="p">()</span>
+<span class="linenos">4</span><span class="n">hillConv</span><span class="o">.</span><span class="n">chiefStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefSimpleNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="linenos">5</span><span class="n">hillConv</span><span class="o">.</span><span class="n">depStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">deputySimpleNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="n">ctrl</span><span class="o">.</span><span class="n">chiefTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">chiefSimpleNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="linenos">8</span><span class="n">ctrl</span><span class="o">.</span><span class="n">hillStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">hillConv</span><span class="o">.</span><span class="n">hillStateOutMsg</span><span class="p">)</span>
+<span class="linenos">9</span><span class="n">ctrl</span><span class="o">.</span><span class="n">deputyVehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vehicleConfigMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Configure gains, references and gravitational parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">ctrl</span><span class="o">.</span><span class="n">setMu</span><span class="p">(</span><span class="mf">3.986004418e14</span><span class="p">)</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="linenos">2</span><span class="n">ctrl</span><span class="o">.</span><span class="n">setK</span><span class="p">([</span><span class="mf">2e-6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2e-6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2e-6</span><span class="p">])</span>  <span class="c1"># [1/s^2]</span>
+<span class="linenos">3</span><span class="n">ctrl</span><span class="o">.</span><span class="n">setP</span><span class="p">([</span><span class="mf">2e-3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2e-3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2e-3</span><span class="p">])</span>  <span class="c1"># [1/s]</span>
+<span class="linenos">4</span><span class="n">ctrl</span><span class="o">.</span><span class="n">setReferencePosition</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+<span class="linenos">5</span><span class="n">ctrl</span><span class="o">.</span><span class="n">setReferenceVelocity</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv424HillFrameRelativeControl">
+<span id="_CPPv324HillFrameRelativeControl"></span><span id="_CPPv224HillFrameRelativeControl"></span><span id="HillFrameRelativeControl"></span><span class="target" id="class_hill_frame_relative_control"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HillFrameRelativeControl</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv424HillFrameRelativeControl" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;hillFrameRelativeControl.h&gt;</em></div>
+<p>Computes an inertial control force command from Hill-frame relative position and velocity errors. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl24HillFrameRelativeControlEv">
+<span id="_CPPv3N24HillFrameRelativeControl24HillFrameRelativeControlEv"></span><span id="_CPPv2N24HillFrameRelativeControl24HillFrameRelativeControlEv"></span><span id="HillFrameRelativeControl::HillFrameRelativeControl"></span><span class="target" id="class_hill_frame_relative_control_1a7c070c44e45b0cd1b39637d00b3fbde7"></span><span class="sig-name descname"><span class="n"><span class="pre">HillFrameRelativeControl</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl24HillFrameRelativeControlEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+<p>This is the constructor for the module class. It sets default variable values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControlD0Ev">
+<span id="_CPPv3N24HillFrameRelativeControlD0Ev"></span><span id="_CPPv2N24HillFrameRelativeControlD0Ev"></span><span id="HillFrameRelativeControl::~HillFrameRelativeControl"></span><span class="target" id="class_hill_frame_relative_control_1a97638829383660b539270a737f5bba4b"></span><span class="sig-name descname"><span class="n"><span class="pre">~HillFrameRelativeControl</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControlD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+<p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl5ResetE8uint64_t">
+<span id="_CPPv3N24HillFrameRelativeControl5ResetE8uint64_t"></span><span id="_CPPv2N24HillFrameRelativeControl5ResetE8uint64_t"></span><span id="HillFrameRelativeControl::Reset__uint64_t"></span><span class="target" id="class_hill_frame_relative_control_1a0e01c45a12bd58ae10a782ec62bae653"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset module and validate required input message wiring. </p>
+<p>
+This method is used to reset the module and checks that required input messages are connected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – [ns] Current simulation time</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl11UpdateStateE8uint64_t">
+<span id="_CPPv3N24HillFrameRelativeControl11UpdateStateE8uint64_t"></span><span id="_CPPv2N24HillFrameRelativeControl11UpdateStateE8uint64_t"></span><span id="HillFrameRelativeControl::UpdateState__uint64_t"></span><span class="target" id="class_hill_frame_relative_control_1a4e7fcf29ac2239bb51518573b21f892a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Read messages, compute command, and write output. </p>
+<p>
+This is the main method that gets called every time the module is updated. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – [ns] Current simulation time</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl8SelfInitEv">
+<span id="_CPPv3N24HillFrameRelativeControl8SelfInitEv"></span><span id="_CPPv2N24HillFrameRelativeControl8SelfInitEv"></span><span id="HillFrameRelativeControl::SelfInit"></span><span class="target" id="class_hill_frame_relative_control_1a5a72346facf67ff0714e676144cd29ae"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize C-wrapped output messages. </p>
+<p>This method self initializes the C-wrapped output message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl4setKERKNSt6vectorIdEE">
+<span id="_CPPv3N24HillFrameRelativeControl4setKERKNSt6vectorIdEE"></span><span id="_CPPv2N24HillFrameRelativeControl4setKERKNSt6vectorIdEE"></span><span id="HillFrameRelativeControl::setK__std::vector:double:CR"></span><span class="target" id="class_hill_frame_relative_control_1a9a9d358a6f8eb3c17539f11752c1653c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gain</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl4setKERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set Hill-frame position feedback gain matrix. </p>
+<p>
+Sets the position feedback gain matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gain</strong> – [1/s^2] Position-error gain matrix in row-major order (length 9)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl4setPERKNSt6vectorIdEE">
+<span id="_CPPv3N24HillFrameRelativeControl4setPERKNSt6vectorIdEE"></span><span id="_CPPv2N24HillFrameRelativeControl4setPERKNSt6vectorIdEE"></span><span id="HillFrameRelativeControl::setP__std::vector:double:CR"></span><span class="target" id="class_hill_frame_relative_control_1a012ec2d6a6ffed79b79e1ae8cc8871aa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setP</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gain</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl4setPERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set Hill-frame velocity feedback gain matrix. </p>
+<p>
+Sets the velocity feedback gain matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gain</strong> – [1/s] Velocity-error gain matrix in row-major order (length 9)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl20setReferencePositionERKNSt6vectorIdEE">
+<span id="_CPPv3N24HillFrameRelativeControl20setReferencePositionERKNSt6vectorIdEE"></span><span id="_CPPv2N24HillFrameRelativeControl20setReferencePositionERKNSt6vectorIdEE"></span><span id="HillFrameRelativeControl::setReferencePosition__std::vector:double:CR"></span><span class="target" id="class_hill_frame_relative_control_1aaee7fdddf5fb1409fc3ab8f1894cafba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setReferencePosition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rRef_H</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl20setReferencePositionERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set Hill-frame relative position reference. </p>
+<p>
+Sets the Hill-frame relative position reference. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rRef_H</strong> – [m] Relative-position reference vector in Hill frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl20setReferenceVelocityERKNSt6vectorIdEE">
+<span id="_CPPv3N24HillFrameRelativeControl20setReferenceVelocityERKNSt6vectorIdEE"></span><span id="_CPPv2N24HillFrameRelativeControl20setReferenceVelocityERKNSt6vectorIdEE"></span><span id="HillFrameRelativeControl::setReferenceVelocity__std::vector:double:CR"></span><span class="target" id="class_hill_frame_relative_control_1a2b1b7aefbf9dfa3ad5aaed285500c5a4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setReferenceVelocity</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">vRef_H</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl20setReferenceVelocityERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set Hill-frame relative velocity reference. </p>
+<p>
+Sets the Hill-frame relative velocity reference. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vRef_H</strong> – [m/s] Relative-velocity reference vector in Hill frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl5setMuEd">
+<span id="_CPPv3N24HillFrameRelativeControl5setMuEd"></span><span id="_CPPv2N24HillFrameRelativeControl5setMuEd"></span><span id="HillFrameRelativeControl::setMu__double"></span><span class="target" id="class_hill_frame_relative_control_1a544e2d41301b5d752c1abe1cda26af1c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMu</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl5setMuEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set central-body gravitational parameter. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mu</strong> – [m^3/s^2] Gravitational parameter used in A1 feedforward dynamics </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK24HillFrameRelativeControl4getKEv">
+<span id="_CPPv3NK24HillFrameRelativeControl4getKEv"></span><span id="_CPPv2NK24HillFrameRelativeControl4getKEv"></span><span id="HillFrameRelativeControl::getKC"></span><span class="target" id="class_hill_frame_relative_control_1a885f74cab93083e2da8cd069615c951f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK24HillFrameRelativeControl4getKEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get Hill-frame position feedback gain matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[1/s^2] Position-error gain matrix in row-major order </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK24HillFrameRelativeControl4getPEv">
+<span id="_CPPv3NK24HillFrameRelativeControl4getPEv"></span><span id="_CPPv2NK24HillFrameRelativeControl4getPEv"></span><span id="HillFrameRelativeControl::getPC"></span><span class="target" id="class_hill_frame_relative_control_1a6a6365ace04d1d20d081fc315a918de4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getP</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK24HillFrameRelativeControl4getPEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get Hill-frame velocity feedback gain matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[1/s] Velocity-error gain matrix in row-major order </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK24HillFrameRelativeControl20getReferencePositionEv">
+<span id="_CPPv3NK24HillFrameRelativeControl20getReferencePositionEv"></span><span id="_CPPv2NK24HillFrameRelativeControl20getReferencePositionEv"></span><span id="HillFrameRelativeControl::getReferencePositionC"></span><span class="target" id="class_hill_frame_relative_control_1a2db92f093bd666a701784965e5e25367"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getReferencePosition</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK24HillFrameRelativeControl20getReferencePositionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get Hill-frame relative position reference. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[m] Relative-position reference vector in Hill frame </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK24HillFrameRelativeControl20getReferenceVelocityEv">
+<span id="_CPPv3NK24HillFrameRelativeControl20getReferenceVelocityEv"></span><span id="_CPPv2NK24HillFrameRelativeControl20getReferenceVelocityEv"></span><span id="HillFrameRelativeControl::getReferenceVelocityC"></span><span class="target" id="class_hill_frame_relative_control_1a7e6cbecf3bf245b08dae4928d67f0f24"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getReferenceVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK24HillFrameRelativeControl20getReferenceVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get Hill-frame relative velocity reference. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[m/s] Relative-velocity reference vector in Hill frame </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK24HillFrameRelativeControl5getMuEv">
+<span id="_CPPv3NK24HillFrameRelativeControl5getMuEv"></span><span id="_CPPv2NK24HillFrameRelativeControl5getMuEv"></span><span id="HillFrameRelativeControl::getMuC"></span><span class="target" id="class_hill_frame_relative_control_1a2779cc84a7bbf21c3918eb7c3a2cfd4e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMu</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK24HillFrameRelativeControl5getMuEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get central-body gravitational parameter. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[m^3/s^2] Gravitational parameter </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl15chiefTransInMsgE">
+<span id="_CPPv3N24HillFrameRelativeControl15chiefTransInMsgE"></span><span id="_CPPv2N24HillFrameRelativeControl15chiefTransInMsgE"></span><span id="HillFrameRelativeControl::chiefTransInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_hill_frame_relative_control_1a8e25f567c18f2d3569df6ebd1ac24335"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chiefTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl15chiefTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>chief translational nav input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl14hillStateInMsgE">
+<span id="_CPPv3N24HillFrameRelativeControl14hillStateInMsgE"></span><span id="_CPPv2N24HillFrameRelativeControl14hillStateInMsgE"></span><span id="HillFrameRelativeControl::hillStateInMsg__ReadFunctor:HillRelStateMsgPayload:"></span><span class="target" id="class_hill_frame_relative_control_1ad9ea397593c2089e8c8c5820464b731c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/HillRelStateMsgPayload.html#_CPPv422HillRelStateMsgPayload" title="HillRelStateMsgPayload"><span class="n"><span class="pre">HillRelStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hillStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl14hillStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>optional deputy-relative-to-chief Hill-frame state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl16deputyTransInMsgE">
+<span id="_CPPv3N24HillFrameRelativeControl16deputyTransInMsgE"></span><span id="_CPPv2N24HillFrameRelativeControl16deputyTransInMsgE"></span><span id="HillFrameRelativeControl::deputyTransInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_hill_frame_relative_control_1ab2d2a5ee48a16221c07070e726bdf5b1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl16deputyTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>optional deputy translational nav input message (exclusive with hillStateInMsg) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl24deputyVehicleConfigInMsgE">
+<span id="_CPPv3N24HillFrameRelativeControl24deputyVehicleConfigInMsgE"></span><span id="_CPPv2N24HillFrameRelativeControl24deputyVehicleConfigInMsgE"></span><span id="HillFrameRelativeControl::deputyVehicleConfigInMsg__ReadFunctor:VehicleConfigMsgPayload:"></span><span class="target" id="class_hill_frame_relative_control_1a5762c46095fcbe19a4515d003a693bc1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyVehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl24deputyVehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy mass configuration input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl11forceOutMsgE">
+<span id="_CPPv3N24HillFrameRelativeControl11forceOutMsgE"></span><span id="_CPPv2N24HillFrameRelativeControl11forceOutMsgE"></span><span id="HillFrameRelativeControl::forceOutMsg__Message:CmdForceInertialMsgPayload:"></span><span class="target" id="class_hill_frame_relative_control_1ad7f2b11df500b2c6fe4671f360a6543f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdForceInertialMsgPayload.html#_CPPv426CmdForceInertialMsgPayload" title="CmdForceInertialMsgPayload"><span class="n"><span class="pre">CmdForceInertialMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl11forceOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>inertial force command output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl12forceOutMsgCE">
+<span id="_CPPv3N24HillFrameRelativeControl12forceOutMsgCE"></span><span id="_CPPv2N24HillFrameRelativeControl12forceOutMsgCE"></span><span id="HillFrameRelativeControl::forceOutMsgC__CmdForceInertialMsg_C"></span><span class="target" id="class_hill_frame_relative_control_1ac037423eb84a4889e68372eddf3d2a38"></span><span class="n"><span class="pre">CmdForceInertialMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl12forceOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped inertial force command output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl9bskLoggerE">
+<span id="_CPPv3N24HillFrameRelativeControl9bskLoggerE"></span><span id="_CPPv2N24HillFrameRelativeControl9bskLoggerE"></span><span id="HillFrameRelativeControl::bskLogger__BSKLogger"></span><span class="target" id="class_hill_frame_relative_control_1aaaa649ad32edb6affe4ba367532db167"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK logging object. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl12readMessagesEv">
+<span id="_CPPv3N24HillFrameRelativeControl12readMessagesEv"></span><span id="_CPPv2N24HillFrameRelativeControl12readMessagesEv"></span><span id="HillFrameRelativeControl::readMessages"></span><span class="target" id="class_hill_frame_relative_control_1a35feec2ca39ea2ebc0fcd787a2b3ffcb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read all subscribed input messages into local buffers. </p>
+<p>Reads the input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl19computeForceCommandEv">
+<span id="_CPPv3N24HillFrameRelativeControl19computeForceCommandEv"></span><span id="_CPPv2N24HillFrameRelativeControl19computeForceCommandEv"></span><span id="HillFrameRelativeControl::computeForceCommand"></span><span class="target" id="class_hill_frame_relative_control_1acdf296b51f9ebe080de0df9585bd42b7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeForceCommand</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl19computeForceCommandEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute inertial force command from Hill-frame tracking errors. </p>
+<p>Computes the inertial force command from Hill-frame relative-state tracking errors. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl13writeMessagesE8uint64_t">
+<span id="_CPPv3N24HillFrameRelativeControl13writeMessagesE8uint64_t"></span><span id="_CPPv2N24HillFrameRelativeControl13writeMessagesE8uint64_t"></span><span id="HillFrameRelativeControl::writeMessages__uint64_t"></span><span class="target" id="class_hill_frame_relative_control_1a7cda6f2557188e17b7c536b15efad31e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write inertial force command output message. </p>
+<p>
+Writes the output message </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – [ns] Current simulation time</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl14chiefNavBufferE">
+<span id="_CPPv3N24HillFrameRelativeControl14chiefNavBufferE"></span><span id="_CPPv2N24HillFrameRelativeControl14chiefNavBufferE"></span><span id="HillFrameRelativeControl::chiefNavBuffer__NavTransMsgPayload"></span><span class="target" id="class_hill_frame_relative_control_1afe2861e59c5ebf7ca0a63a20ee391d9d"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chiefNavBuffer</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl14chiefNavBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>chief nav input message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl15hillStateBufferE">
+<span id="_CPPv3N24HillFrameRelativeControl15hillStateBufferE"></span><span id="_CPPv2N24HillFrameRelativeControl15hillStateBufferE"></span><span id="HillFrameRelativeControl::hillStateBuffer__HillRelStateMsgPayload"></span><span class="target" id="class_hill_frame_relative_control_1ac8b31d7f3e3747c4f409d9506705839d"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/HillRelStateMsgPayload.html#_CPPv422HillRelStateMsgPayload" title="HillRelStateMsgPayload"><span class="n"><span class="pre">HillRelStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hillStateBuffer</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl15hillStateBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hill relative state input message buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl15deputyNavBufferE">
+<span id="_CPPv3N24HillFrameRelativeControl15deputyNavBufferE"></span><span id="_CPPv2N24HillFrameRelativeControl15deputyNavBufferE"></span><span id="HillFrameRelativeControl::deputyNavBuffer__NavTransMsgPayload"></span><span class="target" id="class_hill_frame_relative_control_1a79354f2d82d8a767416d21026a6de622"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyNavBuffer</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl15deputyNavBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy nav input message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl19deputyVehicleBufferE">
+<span id="_CPPv3N24HillFrameRelativeControl19deputyVehicleBufferE"></span><span id="_CPPv2N24HillFrameRelativeControl19deputyVehicleBufferE"></span><span id="HillFrameRelativeControl::deputyVehicleBuffer__VehicleConfigMsgPayload"></span><span class="target" id="class_hill_frame_relative_control_1addc79f8fce76544edd8cf6cc17249f8d"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyVehicleBuffer</span></span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl19deputyVehicleBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy vehicle config buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl1KE">
+<span id="_CPPv3N24HillFrameRelativeControl1KE"></span><span id="_CPPv2N24HillFrameRelativeControl1KE"></span><span id="HillFrameRelativeControl::K__doubleAA"></span><span class="target" id="class_hill_frame_relative_control_1a17504d12cbbd46db65c7d259789cbcbf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl1KE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hill-frame position feedback gain matrix [1/s^2]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl1PE">
+<span id="_CPPv3N24HillFrameRelativeControl1PE"></span><span id="_CPPv2N24HillFrameRelativeControl1PE"></span><span id="HillFrameRelativeControl::P__doubleAA"></span><span class="target" id="class_hill_frame_relative_control_1a7e0a6cf1a04af22f56ce927965e024d5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hill-frame velocity feedback gain matrix [1/s]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl8setKFlagE">
+<span id="_CPPv3N24HillFrameRelativeControl8setKFlagE"></span><span id="_CPPv2N24HillFrameRelativeControl8setKFlagE"></span><span id="HillFrameRelativeControl::setKFlag__b"></span><span class="target" id="class_hill_frame_relative_control_1a6f8b20552d63721eec8d16a2304f6972"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setKFlag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl8setKFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag to check if K has been set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl8setPFlagE">
+<span id="_CPPv3N24HillFrameRelativeControl8setPFlagE"></span><span id="_CPPv2N24HillFrameRelativeControl8setPFlagE"></span><span id="HillFrameRelativeControl::setPFlag__b"></span><span class="target" id="class_hill_frame_relative_control_1a3fd23e734f20a23c92202405b0cc387b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPFlag</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl8setPFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag to check if P has been set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl6rRef_HE">
+<span id="_CPPv3N24HillFrameRelativeControl6rRef_HE"></span><span id="_CPPv2N24HillFrameRelativeControl6rRef_HE"></span><span id="HillFrameRelativeControl::rRef_H__std::array:double.3:"></span><span class="target" id="class_hill_frame_relative_control_1af2e520eda6011301df68765bb72b8e5f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rRef_H</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl6rRef_HE" title="Link to this definition"></a><br /></dt>
+<dd><p>reference Hill-frame relative position [m] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl6vRef_HE">
+<span id="_CPPv3N24HillFrameRelativeControl6vRef_HE"></span><span id="_CPPv2N24HillFrameRelativeControl6vRef_HE"></span><span id="HillFrameRelativeControl::vRef_H__std::array:double.3:"></span><span class="target" id="class_hill_frame_relative_control_1a0e1dff01ab20a4fc0a313d5f4a1941ad"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vRef_H</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl6vRef_HE" title="Link to this definition"></a><br /></dt>
+<dd><p>reference Hill-frame relative velocity [m/s] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl2muE">
+<span id="_CPPv3N24HillFrameRelativeControl2muE"></span><span id="_CPPv2N24HillFrameRelativeControl2muE"></span><span id="HillFrameRelativeControl::mu__double"></span><span class="target" id="class_hill_frame_relative_control_1aaa781a9e10f5b6faca36fb06b0740d05"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3/s^2] gravitational parameter used in feedforward dynamics </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24HillFrameRelativeControl10forceCmd_NE">
+<span id="_CPPv3N24HillFrameRelativeControl10forceCmd_NE"></span><span id="_CPPv2N24HillFrameRelativeControl10forceCmd_NE"></span><span id="HillFrameRelativeControl::forceCmd_N__doubleA"></span><span class="target" id="class_hill_frame_relative_control_1a1d400ca942017ac6cd2a65c37296e937"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceCmd_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24HillFrameRelativeControl10forceCmd_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>commanded force in inertial frame [N] </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="hillFrameRelativeControl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

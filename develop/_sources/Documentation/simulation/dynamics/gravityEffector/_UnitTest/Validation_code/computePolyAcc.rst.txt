@@ -1,0 +1,5 @@
+.. _computePolyAcc:
+
+Module: computePolyAcc
+======================
+
