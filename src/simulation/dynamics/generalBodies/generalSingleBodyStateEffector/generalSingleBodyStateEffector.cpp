@@ -268,6 +268,64 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
             this->TPrimeMat.col(dofIndex).head<3>() = omegaTilde_GB_B * jointDOF->screwConstant * jointDOFAxis_B;
             this->TPrimeMat.col(dofIndex).tail<3>().setZero();
         }
+
+        // Compute G matrix
+        Eigen::VectorXd sumTerm1 = Eigen::VectorXd::Zero(6);
+        for (uint64_t sumIdx1 = dofIndex; sumIdx1 < this->numDOF; sumIdx1++) {
+            Eigen::VectorXd term1 = this->TMat.col(sumIdx1) * this->jointDOFList.at(sumIdx1).beta;
+            sumTerm1 += term1;
+        }
+        Eigen::Vector3d tildeVecTerm1 = rotMap * this->TMat.col(dofIndex);
+        Eigen::Matrix3d tildeMatrixTerm1 = eigenTilde(tildeVecTerm1);
+        Eigen::Matrix<double, 6, 6> tildeSixMatrixTerm1 = Eigen::Matrix<double, 6, 6>::Zero();
+        tildeSixMatrixTerm1.topLeftCorner<3, 3>() = tildeMatrixTerm1;
+        tildeSixMatrixTerm1.bottomRightCorner<3, 3>() = tildeMatrixTerm1;
+        this->GMat.col(dofIndex) = tildeSixMatrixTerm1 * sumTerm1;
+    }
+
+    // Compute h vector
+    this->hVec.setZero();
+    Eigen::VectorXd hVecPart1 = Eigen::VectorXd::Zero(6);
+    Eigen::VectorXd hVecPart2 = Eigen::VectorXd::Zero(6);
+    for (uint64_t idx1 = 0; idx1 < this->numDOF; idx1++) {
+
+        Eigen::VectorXd sumTerm2 = Eigen::VectorXd::Zero(6);
+        Eigen::VectorXd sumTerm4 = Eigen::VectorXd::Zero(6);
+        for (uint64_t idx2 = 0; idx2 <= idx1; idx2++) {
+
+            Eigen::VectorXd sumTerm3 = Eigen::VectorXd::Zero(6);
+            for (uint64_t idx3 = 0; idx3 <= idx2; idx3++) {
+                Eigen::VectorXd term3 = this->TMat.col(idx3) * this->jointDOFList.at(idx3).betaDot;
+                sumTerm3 += term3;
+            }
+
+            Eigen::Vector3d tildeVecTerm2 = rotMap * sumTerm3;
+            Eigen::Matrix3d tildeMatrixTerm2 = eigenTilde(tildeVecTerm2);
+            Eigen::Matrix<double, 6, 6> tildeSixMatrixTerm2 = Eigen::Matrix<double, 6, 6>::Zero();
+            tildeSixMatrixTerm2.topLeftCorner<3, 3>() = tildeMatrixTerm2;
+            tildeSixMatrixTerm2.bottomRightCorner<3, 3>() = tildeMatrixTerm2;
+
+            Eigen::VectorXd term2 = tildeSixMatrixTerm2 * this->TMat.col(idx2) * this->jointDOFList.at(idx2).betaDot;
+            sumTerm2 += term2;
+
+            sumTerm4 += this->TMat.col(idx2) * this->jointDOFList.at(idx2).betaDot;
+        }
+
+        Eigen::Vector3d tildeVecTerm3 = rotMap * sumTerm2;
+        Eigen::Matrix3d tildeMatrixTerm3 = eigenTilde(tildeVecTerm3);
+        Eigen::Matrix<double, 6, 6> tildeSixMatrixTerm3 = Eigen::Matrix<double, 6, 6>::Zero();
+        tildeSixMatrixTerm3.topLeftCorner<3, 3>() = tildeMatrixTerm3;
+        tildeSixMatrixTerm3.bottomRightCorner<3, 3>() = tildeMatrixTerm3;
+        hVecPart1 = tildeSixMatrixTerm3 * this->TMat.col(idx1) * this->jointDOFList.at(idx1).beta;
+
+        Eigen::Vector3d tildeVecTerm4 = rotMap * sumTerm4;
+        Eigen::Matrix3d tildeMatrixTerm4 = eigenTilde(tildeVecTerm4) * eigenTilde(tildeVecTerm4);
+        Eigen::Matrix<double, 6, 6> tildeSixMatrixTerm4 = Eigen::Matrix<double, 6, 6>::Zero();
+        tildeSixMatrixTerm4.topLeftCorner<3, 3>() = tildeMatrixTerm4;
+        tildeSixMatrixTerm4.bottomRightCorner<3, 3>() = tildeMatrixTerm4;
+        hVecPart2 = tildeSixMatrixTerm4 * this->TMat.col(idx1) * this->jointDOFList.at(idx1).beta;
+
+        this->hVec += (hVecPart1 + hVecPart2);
     }
 
     // Compute and set effProps.rEff_CB_B
