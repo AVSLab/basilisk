@@ -78,6 +78,7 @@ private:
     double betaDotRef{};
     Eigen::Matrix3d dcm_GB = Eigen::Matrix3d::Identity();
     Eigen::Vector3d r_GB_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d omega_GB_B = Eigen::Vector3d::Zero();
     double u{};
     double f{};
 };
@@ -135,12 +136,14 @@ private:
     Eigen::Matrix3d IPntGc_G;
     Eigen::Vector3d r_GcG_G{0.0, 0.0, 0.0};
     Eigen::Vector3d r_GB_B{0.0, 0.0, 0.0};
-    int numDOF = 0;
+    uint64_t numDOF = 0;
 
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
 
     Eigen::MatrixXd TMat;
+    Eigen::MatrixXd TPrimeMat;
+    Eigen::MatrixXd TPrimePrimeMat;
 
     static uint64_t effectorID;                                         //!< ID number of this panel
 
