@@ -241,6 +241,7 @@ Related Publications
 
    Vizard/Vizard
    Vizard/VizardDownload
+   Vizard/buildFromSource/index
    Vizard/VizardReleaseNotes
    Vizard/VizardGUI
    Vizard/vizardAdvanced/index
