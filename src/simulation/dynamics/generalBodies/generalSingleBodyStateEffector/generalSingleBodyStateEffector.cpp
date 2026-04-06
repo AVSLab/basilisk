@@ -47,6 +47,8 @@ GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector()
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
+    this->hVec = Eigen::VectorXd::Zero(6);
+
     this->nameOfBetaState = "generalBodyBeta" + std::to_string(GeneralSingleBodyStateEffector::effectorID);
     this->nameOfBetaDotState = "generalBodyBetaDot" + std::to_string(GeneralSingleBodyStateEffector::effectorID);
     this->nameOfInertialPositionProperty = "generalBodyInertialPosition" + std::to_string(GeneralSingleBodyStateEffector::effectorID);
@@ -252,8 +254,8 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         Eigen::Vector3d jointDOFAxis_B = jointDOF->dcm_GB.transpose() * jointDOF->axis_G;
         Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(jointDOF->omega_GB_B);
 
-        this->TPrimePrimeMat.col(dofIndex).head<3>().setZero();
-        this->TPrimePrimeMat.col(dofIndex).tail<3>().setZero();
+        this->GMat.col(dofIndex).head<3>().setZero();
+        this->GMat.col(dofIndex).tail<3>().setZero();
 
         if (jointDOF->type == DOF::Type::ROTATION) {
             this->TMat.col(dofIndex).head<3>().setZero();
@@ -324,10 +326,10 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-    MBeta1.topRows(3) = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat;
+    MBeta1.topRows(3) = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat;
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
     Eigen::Matrix3d IPntG_B = IPntGc_B - this->mass * rTilde_GcG_B * rTilde_GcG_B;
-    MBeta1.bottomRows(3) = (IPntG_B * rotMap + this->mass * rTilde_GcG_B * transMap) * this->TMat;
+    MBeta1.bottomRows(3) = (IPntG_B * rotMap + this->mass * rTilde_GcG_B * transMap) * this->TMat + transMap * this->GMat;
 
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MBeta;
     MBeta.resize(this->numDOF, this->numDOF);
@@ -365,12 +367,12 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
             - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + this->r_GB_B)
             - this->mass * (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
             - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
-            - this->mass * transMap * this->TPrimePrimeMat * this->beta;
+            - this->mass * transMap * this->hVec;
     CBetaStar1.tail(3) = gravityTorquePntG_B - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
             - IPntG_B * rotMap * this->TPrimeMat * this->betaDot
             - IPntG_B * omegaTilde_BN_B * rotMap * this->TMat * this->betaDot
             - this->mass * rTilde_GcG_B * (
-                    transMap * (2 * this->TPrimeMat * this->betaDot + this->TPrimePrimeMat * this->beta)
+                    transMap * (2 * this->TPrimeMat * this->betaDot + this->hVec)
                     + 2 * omegaTilde_BN_B * transMap * (this->TMat * this->betaDot + this->TPrimeMat * this->beta)
                     + omegaTilde_BN_B * omegaTilde_BN_B * this->r_GB_B);
     Eigen::VectorXd CBetaStar;
@@ -396,26 +398,27 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     this->CBeta = MBeta.inverse() * CBetaStar;
 
     // Define BSM [A] [B] [C] [D] contributions
-    backSubContr.matrixA = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->ABeta;
-    backSubContr.matrixB = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->BBeta;
-    backSubContr.matrixC = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->ABeta;
-    backSubContr.matrixD = (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->BBeta;
+    backSubContr.matrixA = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat) * this->ABeta;
+    backSubContr.matrixB = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat) * this->BBeta;
+    backSubContr.matrixC = (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat)) * this->ABeta;
+    backSubContr.matrixD = (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat)) * this->BBeta;
 
     // Define BSM vecTrans and vecRot contributions
     backSubContr.vecTrans = - this->mass * (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
                             - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
-                            - this->mass * transMap * this->TPrimePrimeMat * this->beta
-                            - this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->CBeta;
+                            - this->mass * transMap * this->hVec
+                            - this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat) * this->CBeta;
+
     backSubContr.vecRot = - IPntGc_B * rotMap * this->TPrimeMat * this->betaDot
             - this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (
             (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
             + eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
-            + transMap * this->TPrimePrimeMat * this->beta)
+            + transMap * this->hVec)
             - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
             - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + this->r_GB_B) * (
                     (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
                     + transMap * this->TPrimeMat * this->beta)
-            - (IPntGc_B * rotMap + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (transMap - rTilde_GcG_B * rotMap)) * this->TMat * this->CBeta;
+            - (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat)) * this->CBeta;
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -517,7 +520,7 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
     Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
     this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
-    Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot + rotMap * this->TPrimeMat * this->beta;;
+    Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot + rotMap * this->TPrimeMat * this->beta;
     Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * this->r_GB_B;
     *this->v_GN_N = this->dcm_BN.transpose() * rDot_GB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
 }
@@ -578,8 +581,8 @@ void GeneralSingleBodyStateEffector::addRotationalDOF(DOF newDOF) {
 
     // Resize required matrices
     this->TMat.conservativeResize(6, this->TMat.cols() + 1);
-    this->TPrimeMat.conservativeResize(6, this->TMat.cols() + 1);
-    this->TPrimePrimeMat.conservativeResize(6, this->TPrimePrimeMat.cols() + 1);
+    this->TPrimeMat.conservativeResize(6, this->TPrimeMat.cols() + 1);
+    this->GMat.conservativeResize(6, this->GMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
@@ -602,8 +605,8 @@ void GeneralSingleBodyStateEffector::addTranslationalDOF(DOF newDOF) {
 
     // Resize required matrices
     this->TMat.conservativeResize(6, this->TMat.cols() + 1);
-    this->TPrimeMat.conservativeResize(6, this->TPrimePrimeMat.cols() + 1);
-    this->TPrimePrimeMat.conservativeResize(6, this->TMat.cols() + 1);
+    this->TPrimeMat.conservativeResize(6, this->TPrimeMat.cols() + 1);
+    this->GMat.conservativeResize(6, this->GMat.cols() + 1);
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
