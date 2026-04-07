@@ -35,7 +35,7 @@ void ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
 
     if (this->numThr != this->thrMag.size()) {
         bskLogger.bskLog(BSK_ERROR,
-                         "ThrOnTimeToForce thruster count (%d) does not match size of thrMag vector (%zu).",
+                         "ThrOnTimeToForce thruster count (%zu) does not match size of thrMag vector (%zu).",
                          this->numThr, this->thrMag.size());
     }
 
@@ -105,6 +105,6 @@ void ThrOnTimeToForce::setThrMag(const std::vector<double>& value)
 
 void ThrOnTimeToForce::addThruster()
 {
-    this->numThr++;
+    ++this->numThr;
     this->thrusterForceOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
 }

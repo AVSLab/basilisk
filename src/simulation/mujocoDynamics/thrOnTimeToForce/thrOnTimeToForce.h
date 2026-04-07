@@ -63,7 +63,7 @@ public:
     void addThruster();
 
 private:
-    int numThr = 0;                            //!< number of thrusters
+    size_t numThr = 0;                         //!< number of thrusters
     std::vector<double> thrMag;               //!< [N] fixed force magnitude for each thruster
     std::vector<double> firingTimeRemaining;      //!< [s] remaining commanded firing time for each thruster
     uint64_t prevCommandWriteNanos;                //!< [ns] last processed command message time stamp

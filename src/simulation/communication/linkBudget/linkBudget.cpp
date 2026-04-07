@@ -424,7 +424,6 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
 
             // Extract values from the JSON line
             double f0 = 0, c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-            size_t pos = line.find("\"f0\":");
 
             if (gasType == LinkBudgetTypes::GasType::OXYGEN) {
                 // Parse oxygen data line
@@ -504,8 +503,6 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
     // Verify that data was loaded
     if (lookupTable->f_l.empty()) {
         bskLogger.bskLog(BSK_WARNING, ("LinkBudget: No data loaded from " + filename).c_str());
-    } else {
-        // Table was loaded successfully
     }
 }
 void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* attenuationLookup, double frequency)
@@ -538,10 +535,6 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
     f_GHz = frequency / 1.0e9;             // [GHz] Convert from Hz to GHz for ITU-R P.676 formulas
 
     // Calculate slant angle at the ground antenna location
-    Eigen::Vector3d r_AgN_N = {this->gndAntPnt->r_AN_N[0],     this->gndAntPnt->r_AN_N[1],    this->gndAntPnt->r_AN_N[2]};       // Position of gnd antenna wrt to {N} frame in {N} frame
-    Eigen::Vector3d r_AsN_N = {this->scAntPnt->r_AN_N[0],      this->scAntPnt->r_AN_N[1],     this->scAntPnt->r_AN_N[2]};        // Position of sc antenna wrt {A} frame in {N} frame
-    Eigen::Vector3d n_Ag_n  = {this->gndAntPnt->nHat_LP_N [0], this->gndAntPnt->nHat_LP_N [1], this->gndAntPnt->nHat_LP_N [2]};    // n-vector at antenna location in {N} frame
-
     while (h_i < this->h_Toa) {
         // Calculate atmospheric conditions at the current altitude (humidity, pressure, temperature)
         T_i        = ItuAtmosphere::getTempISA(h_i);
@@ -558,7 +551,7 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
         N_ox_i = 0.0;
         N_wv_i = 0.0;
         // Loop through OXYGEN lines
-        for (int j = 0; j < this->oxygenLookup.f_l.size(); j++) {
+        for (size_t j = 0; j < this->oxygenLookup.f_l.size(); ++j) {
             // Get line frequency
             f_j    = this->oxygenLookup.f_l[j];
             // Calculate line strengths (ITU-R P.676-13 eq 3);
@@ -576,7 +569,7 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
             N_ox_i += S_ox_i * F_j;
         }
         // Loop through WATER VAPOR lines
-        for (int j = 0; j < this->waterVaporLookup.f_l.size(); j++) {
+        for (size_t j = 0; j < this->waterVaporLookup.f_l.size(); ++j) {
             // Get line frequency
             f_j = this->waterVaporLookup.f_l[j];
             // Calculate line strengths (ITU-R P.676-13 eq 3);

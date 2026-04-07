@@ -139,9 +139,9 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
     this->storageStatusMsg.storageLevel = this->storedDataSum;
 
     //! - Loop through stored data and copy over to the output message
-    for(uint64_t i = 0; i < this->storedData.size(); i++){
+    for(size_t i = 0; i < this->storedData.size(); i++){
         this->storageStatusMsg.storedDataName.push_back(this->storedData[i].dataInstanceName);
-        this->storageStatusMsg.storedData.push_back(this->storedData[i].dataInstanceSum);
+        this->storageStatusMsg.storedData.push_back(static_cast<double>(this->storedData[i].dataInstanceSum));
     }
 
     this->storageUnitDataOutMsg.write(&this->storageStatusMsg, this->moduleID, CurrentClock);
@@ -172,7 +172,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
            if (index != -1) {
                //! If this operation takes the sum below zero, set it to zero
                if ((this->storedData[(size_t)index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
-                   this->storedData[(size_t)index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+                   this->storedData[(size_t)index].dataInstanceSum += static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
                } else {
                    this->storedData[(size_t)index].dataInstanceSum = 0;
                }
@@ -180,7 +180,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
            }
            else if (strcmp(it->dataName, "") != 0) {
                strncpy(tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName));
-               tmpDataInstance.dataInstanceSum = round(it->baudRate * (this->currentTimestep));
+               tmpDataInstance.dataInstanceSum = static_cast<int64_t>(round(it->baudRate * (this->currentTimestep)));
                this->storedData.push_back(tmpDataInstance);
            }
        }
@@ -204,7 +204,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
     int index = -1;
 
     // Loop through storedData. If dataName is found, set index = i
-    for (uint64_t i = 0; i < this->storedData.size(); i++){
+    for (size_t i = 0; i < this->storedData.size(); i++){
         if (strcmp(this->storedData[i].dataInstanceName, tmpNodeMsg->dataName) == 0){
             index = (int) i;
         }
@@ -216,7 +216,7 @@ int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg
  @return double
  */
 int64_t DataStorageUnitBase::sumAllData(){
-    double dataSum = 0;
+    int64_t dataSum = 0;
 
     std::vector<dataInstance>::iterator it;
     for(it = storedData.begin(); it != storedData.end(); it++) {

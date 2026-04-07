@@ -170,7 +170,7 @@ void SensorThermal::computeSunData()
 5. Computing the current temperature based on the change in temperature
 
  */
-void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
+void SensorThermal::evaluateThermalModel(double CurrentSimSeconds) {
 
     //! - Compute the sun data
     this->computeSunData();

@@ -35,7 +35,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
     this->C_SRP = 1.0;
     this->P_0 = 4.56e-6;
     this->rho = 0.4;
-    this->prevTime = 0.0;
+    this->prevTime = 0;
     return;
 }
 
