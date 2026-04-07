@@ -56,9 +56,8 @@ The prescribed translational states are then written to the output message.
 */
 void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
     // Read the input message
-    LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
+    LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
     if (this->linearTranslationRigidBodyInMsg.isWritten()) {
-        linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
     }
 
