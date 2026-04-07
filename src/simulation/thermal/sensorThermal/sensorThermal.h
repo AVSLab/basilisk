@@ -44,7 +44,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 private:
-    void evaluateThermalModel(uint64_t CurrentSimSeconds);
+    void evaluateThermalModel(double CurrentSimSeconds);
     void computeSunData();
     void writeMessages(uint64_t CurrentClock);
     void readMessages();
@@ -80,7 +80,7 @@ private:
     double Q_out;                               //!< [W] Current power out
     double S;                                   //!< [W/m^2] Solar constant
     double boltzmannConst;                      //!< [W/m^2/K^4] Boltzmann constant
-    uint64_t CurrentSimSecondsOld;              //!< [s] Seconds at last iteration
+    double CurrentSimSecondsOld;                //!< [s] Seconds at last iteration
 
 
 };

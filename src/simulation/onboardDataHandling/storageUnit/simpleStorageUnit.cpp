@@ -66,7 +66,7 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
         else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity) || (it->baudRate <= 0)){
             //! If this operation takes the sum below zero, set it to zero
             if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
-                this->storedData[0].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+                this->storedData[0].dataInstanceSum += static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
             } else {
                 this->storedData[0].dataInstanceSum = 0;
             }

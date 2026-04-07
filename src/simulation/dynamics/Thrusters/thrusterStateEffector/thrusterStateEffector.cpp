@@ -386,7 +386,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
     THROperation* ops;
 
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
-    int index;
+    size_t index;
     for(index = 0; index < this->thrusterData.size(); ++index)
     {
         // Save the thruster ops information

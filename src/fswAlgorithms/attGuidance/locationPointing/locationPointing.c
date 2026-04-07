@@ -149,7 +149,6 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double sigma_BR[3];                 /*!< MRP of B relative to R */
     double sigma_RB[3];                 /*!< MRP of R relative to B */
     double sigma_RN[3];                 /*!< MRP of R relative to N */
-    double omega_RN_B[3];               /*!< angular velocity of the R frame w.r.t the B frame in B frame components */
     double difference[3];
     double time_diff;                   /*!< module update time */
     double Binv[3][3];                  /*!< BinvMRP for dsigma_RB_R calculations*/
@@ -164,12 +163,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     double angle;                       /*!< [rad] angle between cHat_B and v_perp  */
     double sigma_R2R[3];                /*!< MRP of R2 (reference after pointing at the target and being perpendicular to the strip) relative to R (reference after only pointing at the target) */
     double sigma_R2N[3];                /*!< MRP of R2 relative to N */
-    double sigma_N2R[3];
     double sigma_BR2[3];                /*!< MRP of B relative to R2 */
-    double sigma_R2B[3];                /*!< MRP of R2 relative to B */
-    double sigma_NB[3];
-    double neg_sigma_R2N[3];
-    double r_TP_B[3];
     // zero output buffer
     attGuidOutMsgBuffer = AttGuidMsg_C_zeroMsgPayload();
     attRefOutMsgBuffer = AttRefMsg_C_zeroMsgPayload();

@@ -306,7 +306,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     THROperation* ops;
 
     // Iterate through all of the thrusters to aggregate the force/torque in the system
-    int index;
+    size_t index;
     for(index = 0; index < this->thrusterData.size(); ++index)
     {
         it = this->thrusterData[index];
