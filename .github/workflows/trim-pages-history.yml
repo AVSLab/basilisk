@@ -1,0 +1,45 @@
+name: Trim GitHub Pages History
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  trim-pages-history:
+    name: Rewrite gh-pages as a single commit
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+
+      - name: Rewrite gh-pages history
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          archive_path="${RUNNER_TEMP}/gh-pages-site.tar"
+          temp_branch="gh-pages-reset"
+
+          tar \
+            --exclude=.git \
+            -cf "${archive_path}" \
+            .
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout --orphan "${temp_branch}"
+
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+          tar -xf "${archive_path}"
+
+          git add -A
+          git commit -m "Trim gh-pages history"
+          git branch -M gh-pages
+          git push --force origin gh-pages
