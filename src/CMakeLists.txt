@@ -486,6 +486,15 @@ elseif(APPLE)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -gdwarf-3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -Wall")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall")
+  # Multiple static Conan dependencies can legitimately pull in the same archive
+  # (for example zlib through cfitsio, OpenCV, and protobuf). Apple ld warns even
+  # though it safely ignores the duplicate archive, so suppress that linker noise
+  # only on AppleClang toolchains new enough to recognize this linker option.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"
+     AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15.0)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-no_warn_duplicate_libraries")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-no_warn_duplicate_libraries")
+  endif()
   if(${CMAKE_GENERATOR} MATCHES "Xcode")
     set(CMAKE_XCODE_GENERATE_SCHEME YES)
   endif()
