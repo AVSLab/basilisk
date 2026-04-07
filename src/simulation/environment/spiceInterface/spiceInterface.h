@@ -67,7 +67,7 @@ public:
      * This runs once when the last shared_ptr owning this SpiceKernel
      * instance is destroyed.
      */
-    ~SpiceKernel();
+    ~SpiceKernel() noexcept;
 
     /// Canonical absolute path used as the cache key and SPICE file name.
     const std::string& getPath() const { return path; }
